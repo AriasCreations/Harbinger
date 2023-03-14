@@ -8,7 +8,8 @@ import dev.zontreck.harbinger.commands.support.SupportCommands;
 public enum Commands {
     help(HelpCommand.Help, "Displays the available commands"),
     stop(StopCommand.Stop, "Stops the server immediately"),
-    support(SupportCommands.SUPPORT, "Manipulates the support representative list");
+    support(SupportCommands.SUPPORT, "Manipulates the support representative list"),
+    nbt(NBTTestCommands.NBT, "NBT Testing commands");
 
     public String cmd;
     public String usage;
