@@ -3,10 +3,12 @@ package dev.zontreck.harbinger.commands;
 import java.util.function.Consumer;
 
 import dev.zontreck.ariaslib.events.EventBus;
+import dev.zontreck.harbinger.commands.support.SupportCommands;
 
 public enum Commands {
     help(HelpCommand.Help, "Displays the available commands"),
-    stop(StopCommand.Stop, "Stops the server immediately");
+    stop(StopCommand.Stop, "Stops the server immediately"),
+    support(SupportCommands.SUPPORT, "Manipulates the support representative list");
 
     public String cmd;
     public String usage;

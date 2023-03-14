@@ -15,6 +15,7 @@ import dev.zontreck.ariaslib.nbt.CompoundTag;
 import dev.zontreck.ariaslib.nbt.NBTIO;
 import dev.zontreck.harbinger.data.containers.Products;
 import dev.zontreck.harbinger.data.containers.Servers;
+import dev.zontreck.harbinger.data.containers.SupportReps;
 
 public class Persist {
     public static final Logger LOGGER = LoggerFactory.getLogger(Persist.class.getName());
@@ -42,6 +43,7 @@ public class Persist {
 
             products = Products.deserialize(MEMORY.getCompound("products"));
             servers = Servers.deserialize(MEMORY.getList("servers"));
+            SupportReps.load(MEMORY.getList("support"));
 
             LOGGER.info("NBT File loaded successfully");
         }
@@ -66,6 +68,7 @@ public class Persist {
             ev.tag.clear();
             ev.tag.put("products", products.save());
             ev.tag.put("servers", servers.save());
+            ev.tag.put("support", SupportReps.save());
 
             
             ev.setCancelled(true);

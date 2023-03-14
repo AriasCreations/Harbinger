@@ -9,7 +9,7 @@ public class StopCommand {
 
 
     @Subscribe
-    public void onStop(CommandEvent event)
+    public static void onStop(CommandEvent event)
     {
         if(event.command.equals(Stop))
         {

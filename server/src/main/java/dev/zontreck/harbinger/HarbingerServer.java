@@ -15,7 +15,7 @@ import dev.zontreck.harbinger.commands.CommandRegistry;
 import dev.zontreck.harbinger.data.Persist;
 
 public class HarbingerServer {
-    private static final Logger LOGGER = LoggerFactory.getLogger(HarbingerServer.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(HarbingerServer.class.getSimpleName());
 
     public static void main(String[] args) {
         LOGGER.info("We are Harbinger");
@@ -28,16 +28,16 @@ public class HarbingerServer {
         // This is designed to work without mysql
         if(Persist.MEMORY.size() == 0)
         {
-            LOGGER.info("Initializing new data file...");
+            LOGGER.info("No settings exist yet!");
             
-        }else {
-            LOGGER.info("Memory was found, validating data");
-
         }
 
-
+        Terminal.PREFIX = "HARBINGER";
         Terminal.startTerminal();
+        LOGGER.info("Server is running");
         while(Terminal.isRunning()){}
         
+        LOGGER.info("Saving...");
+        Persist.save();
     }
 }
