@@ -67,11 +67,8 @@ public class Persist {
             ev.tag.put("products", products.save());
             ev.tag.put("servers", servers.save());
 
-            try {
-                ev.setCancelled(true);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            
+            ev.setCancelled(true);
         }
     }
 

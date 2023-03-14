@@ -10,6 +10,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import dev.zontreck.ariaslib.events.EventBus;
+import dev.zontreck.ariaslib.terminal.Terminal;
+import dev.zontreck.harbinger.commands.CommandRegistry;
 import dev.zontreck.harbinger.data.Persist;
 
 public class HarbingerServer {
@@ -17,8 +19,9 @@ public class HarbingerServer {
 
     public static void main(String[] args) {
         LOGGER.info("We are Harbinger");
-        
+
         EventBus.BUS.register(Persist.class);
+        CommandRegistry.register(EventBus.BUS);
 
         // Start up the server
         // Read the NBT Files for the database
@@ -31,6 +34,10 @@ public class HarbingerServer {
             LOGGER.info("Memory was found, validating data");
 
         }
+
+
+        Terminal.startTerminal();
+        while(Terminal.isRunning()){}
         
     }
 }
