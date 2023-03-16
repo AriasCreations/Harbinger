@@ -5,8 +5,8 @@ import java.util.UUID;
 
 import com.google.common.collect.Lists;
 
-import dev.zontreck.ariaslib.nbt.CompoundTag;
-import dev.zontreck.ariaslib.nbt.ListTag;
+import dev.zontreck.ariaslib.nbt.old.CompoundTag;
+import dev.zontreck.ariaslib.nbt.old.ListTag;
 import dev.zontreck.harbinger.data.types.Person;
 
 public class SupportReps {

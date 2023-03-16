@@ -1,6 +1,6 @@
 package dev.zontreck.harbinger.data.types;
 
-import dev.zontreck.ariaslib.nbt.CompoundTag;
+import dev.zontreck.ariaslib.nbt.old.CompoundTag;
 
 public class Server {
     public String serverNick;

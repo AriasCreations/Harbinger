@@ -8,17 +8,17 @@ import dev.zontreck.ariaslib.events.CommandEvent;
 import dev.zontreck.ariaslib.events.NBTLoadFailedEvent;
 import dev.zontreck.ariaslib.events.NBTLoadedEvent;
 import dev.zontreck.ariaslib.events.annotations.Subscribe;
-import dev.zontreck.ariaslib.nbt.ByteTag;
-import dev.zontreck.ariaslib.nbt.CompoundTag;
-import dev.zontreck.ariaslib.nbt.DoubleTag;
-import dev.zontreck.ariaslib.nbt.FloatTag;
-import dev.zontreck.ariaslib.nbt.IntTag;
-import dev.zontreck.ariaslib.nbt.ListTag;
-import dev.zontreck.ariaslib.nbt.LongTag;
-import dev.zontreck.ariaslib.nbt.NBTIO;
-import dev.zontreck.ariaslib.nbt.ShortTag;
-import dev.zontreck.ariaslib.nbt.StringTag;
-import dev.zontreck.ariaslib.nbt.Tag;
+import dev.zontreck.ariaslib.nbt.old.ByteTag;
+import dev.zontreck.ariaslib.nbt.old.CompoundTag;
+import dev.zontreck.ariaslib.nbt.old.DoubleTag;
+import dev.zontreck.ariaslib.nbt.old.FloatTag;
+import dev.zontreck.ariaslib.nbt.old.IntTag;
+import dev.zontreck.ariaslib.nbt.old.ListTag;
+import dev.zontreck.ariaslib.nbt.old.LongTag;
+import dev.zontreck.ariaslib.nbt.old.NBTIO;
+import dev.zontreck.ariaslib.nbt.old.ShortTag;
+import dev.zontreck.ariaslib.nbt.old.StringTag;
+import dev.zontreck.ariaslib.nbt.old.Tag;
 
 public class NBTTestCommands
 {

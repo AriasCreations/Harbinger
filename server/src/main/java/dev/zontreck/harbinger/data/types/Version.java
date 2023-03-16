@@ -8,9 +8,8 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 
-import dev.zontreck.ariaslib.nbt.CompoundTag;
-import dev.zontreck.ariaslib.nbt.IntArrayTag;
-import dev.zontreck.ariaslib.nbt.Tag;
+import dev.zontreck.ariaslib.nbt.old.IntArrayTag;
+import dev.zontreck.ariaslib.nbt.old.Tag;
 
 public class Version {
     public List<Integer> versionDigits = Lists.newArrayList();

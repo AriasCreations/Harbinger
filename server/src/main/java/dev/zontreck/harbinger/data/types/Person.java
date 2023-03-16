@@ -2,7 +2,7 @@ package dev.zontreck.harbinger.data.types;
 
 import java.util.UUID;
 
-import dev.zontreck.ariaslib.nbt.CompoundTag;
+import dev.zontreck.ariaslib.nbt.old.CompoundTag;
 
 public class Person {
     public UUID ID;

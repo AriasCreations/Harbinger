@@ -4,9 +4,9 @@ import java.util.Map;
 
 import com.google.common.collect.Maps;
 
-import dev.zontreck.ariaslib.nbt.CompoundTag;
-import dev.zontreck.ariaslib.nbt.ListTag;
-import dev.zontreck.ariaslib.nbt.Tag;
+import dev.zontreck.ariaslib.nbt.old.CompoundTag;
+import dev.zontreck.ariaslib.nbt.old.ListTag;
+import dev.zontreck.ariaslib.nbt.old.Tag;
 import dev.zontreck.harbinger.data.types.Server;
 
 public class Servers {

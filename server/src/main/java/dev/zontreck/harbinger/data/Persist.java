@@ -1,7 +1,6 @@
 package dev.zontreck.harbinger.data;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import org.slf4j.Logger;
@@ -11,8 +10,8 @@ import dev.zontreck.ariaslib.events.NBTLoadFailedEvent;
 import dev.zontreck.ariaslib.events.NBTLoadedEvent;
 import dev.zontreck.ariaslib.events.NBTSavingEvent;
 import dev.zontreck.ariaslib.events.annotations.Subscribe;
-import dev.zontreck.ariaslib.nbt.CompoundTag;
-import dev.zontreck.ariaslib.nbt.NBTIO;
+import dev.zontreck.ariaslib.nbt.old.CompoundTag;
+import dev.zontreck.ariaslib.nbt.old.NBTIO;
 import dev.zontreck.harbinger.data.containers.Products;
 import dev.zontreck.harbinger.data.containers.Servers;
 import dev.zontreck.harbinger.data.containers.SupportReps;

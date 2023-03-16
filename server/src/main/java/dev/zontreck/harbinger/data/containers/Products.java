@@ -3,8 +3,8 @@ package dev.zontreck.harbinger.data.containers;
 import java.util.ArrayList;
 import java.util.List;
 
-import dev.zontreck.ariaslib.nbt.CompoundTag;
-import dev.zontreck.ariaslib.nbt.ListTag;
+import dev.zontreck.ariaslib.nbt.old.CompoundTag;
+import dev.zontreck.ariaslib.nbt.old.ListTag;
 import dev.zontreck.harbinger.data.types.Product;
 
 public class Products {
