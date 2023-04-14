@@ -2,6 +2,7 @@ package dev.zontreck.harbinger.commands;
 
 import java.util.Iterator;
 
+import dev.zontreck.harbinger.commands.http.HTTPServerCommands;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,7 +18,7 @@ public class CommandRegistry {
         bus.register(HelpCommand.class);
         bus.register(StopCommand.class);
         bus.register(SupportCommands.class);
-        bus.register(NBTTestCommands.class);
+        bus.register(HTTPServerCommands.class);
 
 
 

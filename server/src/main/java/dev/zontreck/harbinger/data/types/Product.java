@@ -1,6 +1,13 @@
 package dev.zontreck.harbinger.data.types;
 
-import dev.zontreck.ariaslib.nbt.old.CompoundTag;
+import dev.zontreck.ariaslib.file.Entry;
+import dev.zontreck.ariaslib.file.EntryUtils;
+import dev.zontreck.ariaslib.file.Folder;
+
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.util.List;
+import java.util.UUID;
 
 public class Product {
     public String productName;
@@ -8,23 +15,38 @@ public class Product {
     public String productItem;
     public Server containingServer;
 
+    public UUID productID;
 
-    public CompoundTag save()
+
+
+    public Entry<List<Entry>> save()
     {
-        CompoundTag tag = new CompoundTag();
-        tag.putString("product", productName);
-        tag.put("ver", versionNumber.save());
-        tag.putString("item", productItem);
+        Entry<List<Entry>> tag = Folder.getNew(productName);
+
+        tag.value.add(EntryUtils.mkStr("product", productName));
+        tag.value.add(versionNumber.save());
+        tag.value.add(EntryUtils.mkStr("item", productItem));
+        tag.value.add(EntryUtils.mkUUID("id", productID));
+
         return tag;
     }
 
-    public static Product deserialize(CompoundTag tag)
+    public static Product deserialize(Entry<List<Entry>> tag)
     {
-        Product p=new Product();
-        p.productName = tag.getString("product");
-        p.versionNumber = new Version(tag.getIntArray("ver"));
-        p.productItem = tag.getString("item");
+        try{
 
-        return p;
+            Product p=new Product();
+            p.productName = EntryUtils.getStr(Folder.getEntry(tag, "product"));
+            p.versionNumber = new Version((Entry<int[]>) Folder.getEntry(tag,"ver"));
+            p.productItem = EntryUtils.getStr(Folder.getEntry(tag,"item"));
+            p.productID = EntryUtils.getUUID(Folder.getEntry(tag, "id"));
+
+
+            return p;
+        }catch (Exception e)
+        {
+            return null;
+        }
     }
+
 }

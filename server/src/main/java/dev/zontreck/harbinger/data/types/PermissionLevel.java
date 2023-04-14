@@ -20,7 +20,14 @@ public enum PermissionLevel {
     public static PermissionLevel of(int flags)
     {
         PermissionLevel p = PermissionLevel.NONE;
-        p.flag = flags;
+
+        for (PermissionLevel lvl :
+                values()) {
+            if(lvl.flag == flags)
+            {
+                return lvl;
+            }
+        }
 
         return p;
     }

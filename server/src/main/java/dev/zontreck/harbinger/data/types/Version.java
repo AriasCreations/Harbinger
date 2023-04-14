@@ -3,13 +3,11 @@ package dev.zontreck.harbinger.data.types;
 import java.util.Iterator;
 import java.util.List;
 
+import dev.zontreck.ariaslib.file.Entry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
-
-import dev.zontreck.ariaslib.nbt.old.IntArrayTag;
-import dev.zontreck.ariaslib.nbt.old.Tag;
 
 public class Version {
     public List<Integer> versionDigits = Lists.newArrayList();
@@ -24,16 +22,17 @@ public class Version {
         }
     }
 
-    public Version(IntArrayTag tag)
+    public Version(Entry<int[]> tag)
     {
         versionDigits = Lists.newArrayList();
-        for (Integer integer : tag.asIntArray()) {
+        for (Integer integer : tag.value) {
             versionDigits.add(integer);
         }
     }
 
-    public Tag save()
+    public Entry<int[]> save()
     {
+
         int[] arr = new int[versionDigits.size()];
         
         for(int i=0;i<versionDigits.size();i++)
@@ -42,8 +41,7 @@ public class Version {
             arr[i] = integer;
         }
 
-        IntArrayTag array = IntArrayTag.valueOf(arr);
-        return array;
+        return new Entry<int[]>(arr, "version");
     }
 
     @Override

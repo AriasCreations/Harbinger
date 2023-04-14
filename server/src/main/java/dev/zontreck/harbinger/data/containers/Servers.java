@@ -1,38 +1,44 @@
 package dev.zontreck.harbinger.data.containers;
 
+import java.util.List;
 import java.util.Map;
 
 import com.google.common.collect.Maps;
 
-import dev.zontreck.ariaslib.nbt.old.CompoundTag;
-import dev.zontreck.ariaslib.nbt.old.ListTag;
-import dev.zontreck.ariaslib.nbt.old.Tag;
+import dev.zontreck.ariaslib.file.Entry;
+import dev.zontreck.ariaslib.file.Folder;
 import dev.zontreck.harbinger.data.types.Server;
 
 public class Servers {
     public Map<String, Server> servers = Maps.newHashMap();
 
-    public Tag save()
+    public Entry<List<Entry>> save()
     {
-        ListTag tags = new ListTag();
+        Entry<List<Entry>> tag = Folder.getNew("servers");
         for (Map.Entry<String, Server> entry : servers.entrySet()) {
-            tags.add(entry.getValue().save());
+            tag.value.add(entry.getValue().save());
         }
 
-        return tags;
+        return tag;
     }
 
-    public static Servers deserialize(ListTag lst)
+    public static Servers deserialize(Entry<List<Entry>> lst)
     {
-        Servers servers = new Servers();
-        for(int i=0;i<lst.size(); i++)
-        {
-            CompoundTag entry = (CompoundTag)lst.get(i);
-            Server serv = Server.deserialize(entry);
-            servers.servers.put(serv.serverNick, serv);
-        }
+        try{
 
-        return servers;
+            Servers servers = new Servers();
+            for(int i=0;i<lst.value.size(); i++)
+            {
+                Entry<?> eX = lst.value.get(i);
+                Server serv = Server.deserialize((Entry<List<Entry>>)eX);
+                servers.servers.put(serv.serverNick, serv);
+            }
+
+            return servers;
+        }catch(Exception e)
+        {
+            return new Servers();
+        }
     }
 
     public void add(Server server)

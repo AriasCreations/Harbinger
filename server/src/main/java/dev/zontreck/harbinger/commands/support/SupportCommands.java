@@ -34,7 +34,7 @@ public class SupportCommands{
             }else {
                 if(ev.arguments.get(0).equals(LIST_SUPPORT))
                 {
-                    CommandRegistry.LOGGER.info("The following are the support reps: \n"+SupportReps.save().getAsString(0));
+                    CommandRegistry.LOGGER.info("The following are the support reps: \n"+SupportReps.dump());
                 } else if(ev.arguments.get(0).equals(SUPPORT_ADD))
                 {
                     ev.setCancelled(true);
