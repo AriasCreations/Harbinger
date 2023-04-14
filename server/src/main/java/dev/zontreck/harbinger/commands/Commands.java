@@ -12,7 +12,8 @@ public enum Commands {
     support(SupportCommands.SUPPORT, "Manipulates the support representative list"),
     save(StopCommand.Save, "Saves the memory file immediately"),
     httpserver(HTTPServerCommands.HTTPCommands, "HTTP Server commands"),
-    setpsk(SetPresharedKeyCommand.SETPSK, "Sets the HTTP Preshared Key");
+    setpsk(SetPresharedKeyCommand.SETPSK, "Sets the HTTP Preshared Key"),
+    setsig(SetSignature.SETSIG, "Sets the signature");
 
 
 

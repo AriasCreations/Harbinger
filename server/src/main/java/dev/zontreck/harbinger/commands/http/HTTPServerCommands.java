@@ -1,12 +1,14 @@
 package dev.zontreck.harbinger.commands.http;
 
 import dev.zontreck.ariaslib.events.CommandEvent;
+import dev.zontreck.ariaslib.events.EventBus;
 import dev.zontreck.ariaslib.events.annotations.Subscribe;
 import dev.zontreck.ariaslib.terminal.ConsolePrompt;
 import dev.zontreck.ariaslib.terminal.Terminal;
 import dev.zontreck.harbinger.commands.CommandRegistry;
 import dev.zontreck.harbinger.daemons.HTTPServer;
 import dev.zontreck.harbinger.data.Persist;
+import dev.zontreck.harbinger.events.MemoryAlteredEvent;
 
 public class HTTPServerCommands {
     public static final String HTTPCommands = "httpserver";
@@ -35,7 +37,7 @@ public class HTTPServerCommands {
 
                     ConsolePrompt.console.printf("What should the port be changed to? ["+ Persist.serverSettings.port+"] ");
                     Persist.serverSettings.port = Integer.parseInt(ConsolePrompt.console.readLine());
-                    Persist.save();
+                    EventBus.BUS.post(new MemoryAlteredEvent());
 
                     Terminal.startTerminal();
                 } else if(ev.arguments.get(0).equals(START))
@@ -48,7 +50,7 @@ public class HTTPServerCommands {
                     }
                     Persist.serverSettings.enabled=true;
                     HTTPServer.startServer();
-                    Persist.save();
+                    EventBus.BUS.post(new MemoryAlteredEvent());
                 } else if(ev.arguments.get(0).equals(STOP))
                 {
                     CommandRegistry.LOGGER.info("Stopping server...");
@@ -59,7 +61,7 @@ public class HTTPServerCommands {
                     }
                     Persist.serverSettings.enabled=false;
                     HTTPServer.stopServer();
-                    Persist.save();
+                    EventBus.BUS.post(new MemoryAlteredEvent());
                 }
             }
         }

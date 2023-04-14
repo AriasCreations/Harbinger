@@ -6,6 +6,8 @@ package dev.zontreck.harbinger;
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.nio.file.Path;
+import java.util.Random;
+import java.util.UUID;
 
 import dev.zontreck.ariaslib.file.Folder;
 import dev.zontreck.ariaslib.util.DelayedExecutorService;
@@ -15,6 +17,8 @@ import dev.zontreck.harbinger.data.containers.Products;
 import dev.zontreck.harbinger.data.containers.Servers;
 import dev.zontreck.harbinger.data.containers.SupportReps;
 import dev.zontreck.harbinger.data.types.*;
+import dev.zontreck.harbinger.events.MemoryAlteredEvent;
+import dev.zontreck.harbinger.events.ServerTickEvent;
 import dev.zontreck.harbinger.handlers.HandlerRegistry;
 import dev.zontreck.harbinger.handlers.ModifyProduct;
 import dev.zontreck.harbinger.httphandlers.HTTPEvents;
@@ -40,6 +44,9 @@ public class HarbingerServer {
     }
 
     public static void main(String[] args) {
+
+        UUID ID = Product.makeProductID(1, 59);
+
         LOGGER.info("We are Harbinger");
 
         EventBus.BUS.register(Persist.class);
@@ -56,6 +63,15 @@ public class HarbingerServer {
         HandlerRegistry.register(EventBus.BUS);
         CommandRegistry.register(EventBus.BUS);
 
+        Runnable run = new Runnable() {
+            @Override
+            public void run() {
+                EventBus.BUS.post(new ServerTickEvent());
+            }
+        };
+        DelayedExecutorService.getInstance().scheduleRepeating(run, ServerTickEvent.FREQUENCY);
+
+        
         // Start up the server
         // Read the NBT Files for the database
         // This is designed to work without mysql
@@ -85,6 +101,7 @@ public class HarbingerServer {
         while(Terminal.isRunning()){}
         
         LOGGER.info("Saving...");
-        Persist.save();
+
+        EventBus.BUS.post(new MemoryAlteredEvent());
     }
 }

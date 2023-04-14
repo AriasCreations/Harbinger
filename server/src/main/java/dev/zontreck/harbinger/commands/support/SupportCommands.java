@@ -3,6 +3,7 @@ package dev.zontreck.harbinger.commands.support;
 import java.util.UUID;
 
 import dev.zontreck.ariaslib.events.CommandEvent;
+import dev.zontreck.ariaslib.events.EventBus;
 import dev.zontreck.ariaslib.events.annotations.Subscribe;
 import dev.zontreck.ariaslib.terminal.ConsolePrompt;
 import dev.zontreck.ariaslib.terminal.Terminal;
@@ -10,6 +11,7 @@ import dev.zontreck.harbinger.commands.CommandRegistry;
 import dev.zontreck.harbinger.data.containers.SupportReps;
 import dev.zontreck.harbinger.data.types.PermissionLevel;
 import dev.zontreck.harbinger.data.types.Person;
+import dev.zontreck.harbinger.events.MemoryAlteredEvent;
 
 public class SupportCommands{
     public static final String LIST_SUPPORT = "list";
@@ -56,6 +58,8 @@ public class SupportCommands{
                     SupportReps.add(p);
 
                     Terminal.startTerminal();
+
+                    EventBus.BUS.post(new MemoryAlteredEvent());
                     
                 }
             }

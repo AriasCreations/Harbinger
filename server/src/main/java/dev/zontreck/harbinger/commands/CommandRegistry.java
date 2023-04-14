@@ -19,6 +19,8 @@ public class CommandRegistry {
         bus.register(StopCommand.class);
         bus.register(SupportCommands.class);
         bus.register(HTTPServerCommands.class);
+        bus.register(SetPresharedKeyCommand.class);
+
 
 
 

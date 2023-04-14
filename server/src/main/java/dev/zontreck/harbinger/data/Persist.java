@@ -11,6 +11,7 @@ import dev.zontreck.ariaslib.file.AriaIO;
 import dev.zontreck.ariaslib.file.Entry;
 import dev.zontreck.ariaslib.file.Folder;
 import dev.zontreck.harbinger.data.containers.HTTPServerSettings;
+import dev.zontreck.harbinger.data.types.Signature;
 import dev.zontreck.harbinger.events.MemoryAlteredEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,6 +30,8 @@ public class Persist {
     public static Servers servers = new Servers();
     public static HTTPServerSettings serverSettings = new HTTPServerSettings();
 
+    public static Signature SIGNATURE = new Signature();
+
     static
     {
         try{
@@ -41,6 +44,8 @@ public class Persist {
             SupportReps.load(Folder.getEntry(MEMORY, "support"));
 
             serverSettings = new HTTPServerSettings(Folder.getEntry(MEMORY, HTTPServerSettings.TAG_NAME));
+
+            SIGNATURE = new Signature(Folder.getEntry(MEMORY, "sig"));
 
             LOGGER.info("Memory file loaded");
         }catch(Exception e)
@@ -56,13 +61,14 @@ public class Persist {
         save();
     }
 
-    protected static void save()
+    private static void save()
     {
         MEMORY = Folder.getNew("root");
         MEMORY.value.add(products.write());
         MEMORY.value.add(servers.save());
         MEMORY.value.add(SupportReps.save());
         MEMORY.value.add(serverSettings.save());
+        MEMORY.value.add(SIGNATURE.save());
 
         LOGGER.info("Memory file saved");
 
