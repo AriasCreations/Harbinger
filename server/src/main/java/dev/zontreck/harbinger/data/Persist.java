@@ -56,7 +56,7 @@ public class Persist {
         save();
     }
 
-    public static void save()
+    protected static void save()
     {
         MEMORY = Folder.getNew("root");
         MEMORY.value.add(products.write());

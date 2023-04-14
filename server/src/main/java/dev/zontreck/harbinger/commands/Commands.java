@@ -11,7 +11,10 @@ public enum Commands {
     stop(StopCommand.Stop, "Stops the server immediately"),
     support(SupportCommands.SUPPORT, "Manipulates the support representative list"),
     save(StopCommand.Save, "Saves the memory file immediately"),
-    httpserver(HTTPServerCommands.HTTPCommands, "HTTP Server commands");
+    httpserver(HTTPServerCommands.HTTPCommands, "HTTP Server commands"),
+    setpsk(SetPresharedKeyCommand.SETPSK, "Sets the HTTP Preshared Key");
+
+
 
     public String cmd;
     public String usage;
