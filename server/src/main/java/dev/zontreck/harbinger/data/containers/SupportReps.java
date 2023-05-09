@@ -3,6 +3,7 @@ package dev.zontreck.harbinger.data.containers;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import com.google.common.collect.Lists;
 
@@ -35,6 +36,12 @@ public class SupportReps {
     {
         return REPS.stream().filter(m->m.ID.equals(id)).count()>0;
 
+    }
+
+    public static Person get(UUID ID)
+    {
+        if(!hasID(ID))return null;
+        return REPS.stream().filter(m->m.ID.equals(ID)).toList().get(0);
     }
 
     public static Entry<List<Entry>> save()
