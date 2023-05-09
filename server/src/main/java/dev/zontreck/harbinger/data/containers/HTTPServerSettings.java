@@ -5,7 +5,9 @@ import dev.zontreck.ariaslib.file.EntryType;
 import dev.zontreck.ariaslib.file.EntryUtils;
 import dev.zontreck.ariaslib.file.Folder;
 import dev.zontreck.harbinger.data.types.PresharedKey;
+import dev.zontreck.harbinger.utils.Key;
 
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 public class HTTPServerSettings {
@@ -25,6 +27,13 @@ public class HTTPServerSettings {
 
         if(Folder.getEntry(tag,"psk").type == EntryType.FOLDER)
             PSK = new PresharedKey(Folder.getEntry(tag, "psk"));
+        else {
+            try {
+                PSK = Key.computeSecuredKey("change_me");
+            } catch (NoSuchAlgorithmException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 
 

@@ -23,7 +23,8 @@ public class PresharedKey
 
 	public PresharedKey(Entry<List<Entry>> tag)
 	{
-
+		salt = EntryUtils.getStr(Folder.getEntry(tag, "salt"));
+		hash = EntryUtils.getStr(Folder.getEntry(tag, "hash"));
 	}
 
 	public boolean validate(String key)
