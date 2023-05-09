@@ -7,6 +7,7 @@ import dev.zontreck.ariaslib.events.EventBus;
 import dev.zontreck.harbinger.data.Persist;
 import dev.zontreck.harbinger.data.containers.SupportReps;
 import dev.zontreck.harbinger.data.types.Person;
+import dev.zontreck.harbinger.data.types.PresharedKey;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -26,7 +27,7 @@ public class StopServerHandler implements HttpHandler
 
 		JSONObject obj = new JSONObject(reqJson);
 		String reply = "Stop;;";
-		if(obj.getString("psk").equals(Persist.serverSettings.PSK))
+		if(Persist.serverSettings.PSK.validate(obj.getString("psk")))
 		{
 			reply += "OK";
 			CommandEvent ce = new CommandEvent("stop");

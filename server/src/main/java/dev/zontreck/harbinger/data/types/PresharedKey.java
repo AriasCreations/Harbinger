@@ -26,6 +26,12 @@ public class PresharedKey
 
 	}
 
+	public boolean validate(String key)
+	{
+		String hsh = DigestUtils.md5hex((key + ":" + salt).getBytes());
+		return hsh.equals(hash);
+	}
+
 	public Entry<List<Entry>> save()
 	{
 		Entry<List<Entry>> entries = Folder.getNew("psk");
