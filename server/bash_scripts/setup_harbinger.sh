@@ -1,7 +1,7 @@
 #!/bin/bash
 
-UID=$(id -uz)
-if [ $UID -eq 0 ]
+UserID=$(id -uz)
+if [ $UserID -eq 0 ]
 then
   echo "We are root. Processing harbinger setup commands"
 
