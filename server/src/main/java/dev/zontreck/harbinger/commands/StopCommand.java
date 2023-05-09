@@ -4,6 +4,7 @@ import dev.zontreck.ariaslib.events.CommandEvent;
 import dev.zontreck.ariaslib.events.EventBus;
 import dev.zontreck.ariaslib.events.annotations.Subscribe;
 import dev.zontreck.ariaslib.terminal.Terminal;
+import dev.zontreck.ariaslib.util.DelayedExecutorService;
 import dev.zontreck.harbinger.daemons.HTTPServer;
 import dev.zontreck.harbinger.data.Persist;
 import dev.zontreck.harbinger.events.MemoryAlteredEvent;
@@ -21,6 +22,7 @@ public class StopCommand {
             HTTPServer.stopServer();
             CommandRegistry.LOGGER.info("Server is stopping...");
             Terminal.setRunning(false);
+            DelayedExecutorService.stop();
 
             event.setCancelled(true);
         } else if(event.command.equals("save"))

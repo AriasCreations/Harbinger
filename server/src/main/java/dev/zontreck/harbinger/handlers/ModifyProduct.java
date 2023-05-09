@@ -1,6 +1,7 @@
 package dev.zontreck.harbinger.handlers;
 
 import dev.zontreck.harbinger.data.Persist;
+import dev.zontreck.harbinger.data.types.Product;
 import dev.zontreck.harbinger.events.APIRequestEvent;
 import org.json.JSONObject;
 
@@ -23,7 +24,10 @@ public class ModifyProduct
 				}
 				case "make":
 				{
-					UUID ID = UUID.randomUUID();
+					long prod_num = Product.SEQUENCE.getAndIncrement();
+					UUID ID = Product.makeProductID(event.request_object.getLong("group"), prod_num);
+					JSONObject resp = new JSONObject();
+					resp.put("product", prod_num);
 
 					break;
 				}

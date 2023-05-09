@@ -20,7 +20,7 @@ public class CommandRegistry {
         bus.register(SupportCommands.class);
         bus.register(HTTPServerCommands.class);
         bus.register(SetPresharedKeyCommand.class);
-
+        bus.register(SetSignature.class);
 
 
 

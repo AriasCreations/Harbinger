@@ -9,7 +9,10 @@ import java.nio.file.Path;
 import java.util.Random;
 import java.util.UUID;
 
+import dev.zontreck.ariaslib.events.CommandEvent;
 import dev.zontreck.ariaslib.file.Folder;
+import dev.zontreck.ariaslib.terminal.Task;
+import dev.zontreck.ariaslib.terminal.TaskBus;
 import dev.zontreck.ariaslib.util.DelayedExecutorService;
 import dev.zontreck.harbinger.daemons.HTTPServer;
 import dev.zontreck.harbinger.daemons.plugins.PluginLoader;
@@ -49,29 +52,40 @@ public class HarbingerServer {
 
         LOGGER.info("We are Harbinger");
 
-        EventBus.BUS.register(Persist.class);
-        EventBus.BUS.register(Product.class);
-        EventBus.BUS.register(Products.class);
-        EventBus.BUS.register(Servers.class);
-        EventBus.BUS.register(SupportReps.class);
-        EventBus.BUS.register(Server.class);
-        EventBus.BUS.register(Version.class);
-        EventBus.BUS.register(Person.class);
-        EventBus.BUS.register(PermissionLevel.class);
-        EventBus.BUS.register(HTTPEvents.class);
+        DelayedExecutorService.start();
+        TaskBus.register();
 
-        HandlerRegistry.register(EventBus.BUS);
-        CommandRegistry.register(EventBus.BUS);
-
-        Runnable run = new Runnable() {
+        TaskBus.tasks.add(new Task("Register Events") {
             @Override
             public void run() {
-                EventBus.BUS.post(new ServerTickEvent());
-            }
-        };
-        DelayedExecutorService.getInstance().scheduleRepeating(run, ServerTickEvent.FREQUENCY);
 
-        
+                EventBus.BUS.register(Persist.class);
+                EventBus.BUS.register(Product.class);
+                EventBus.BUS.register(Products.class);
+                EventBus.BUS.register(Servers.class);
+                EventBus.BUS.register(SupportReps.class);
+                EventBus.BUS.register(Server.class);
+                EventBus.BUS.register(Version.class);
+                EventBus.BUS.register(Person.class);
+                EventBus.BUS.register(PermissionLevel.class);
+                EventBus.BUS.register(HTTPEvents.class);
+
+                HandlerRegistry.register(EventBus.BUS);
+                CommandRegistry.register(EventBus.BUS);
+
+                Task run = new Task("server-tick", true) {
+                    @Override
+                    public void run() {
+                        EventBus.BUS.post(new ServerTickEvent());
+                    }
+                };
+                DelayedExecutorService.getInstance().scheduleRepeating(run, ServerTickEvent.FREQUENCY);
+
+
+                setSuccess();
+            }
+        });
+
         // Start up the server
         // Read the NBT Files for the database
         // This is designed to work without mysql
@@ -81,22 +95,52 @@ public class HarbingerServer {
             
         }
 
-        Terminal.PREFIX = "HARBINGER";
-        Terminal.startTerminal();
-        LOGGER.info("Server is running");
-        HTTPServer.startServer();
+
+        TaskBus.tasks.add(new Task("Start HTTP Server") {
+            @Override
+            public void run()
+            {
+                if(HTTPServer.startServer()){
+                    setSuccess();
+                }else setFail();
+
+            }
+        });
+
+        TaskBus.tasks.add(new Task("Scan plugins") {
+            @Override
+            public void run() {
+                try {
+                    PluginLoader.scan();
+                    setSuccess();
+                } catch (Exception E)
+                {
+                    setFail();
+                }
+            }
+        });
+
+        TaskBus.tasks.add(new Task("Activate plugins") {
+            @Override
+            public void run()
+            {
+                PluginLoader.activate();
+                setSuccess();
+            }
+        });
+
+        TaskBus.tasks.add(new Task("Startup Completed", true) {
+            @Override
+            public void run()
+            {
+
+                Terminal.PREFIX = "HARBINGER";
+                Terminal.startTerminal();
+                LOGGER.info("Server is running");
+            }
+        });
 
 
-        LOGGER.info("Scanning plugins...");
-        try {
-            PluginLoader.scan();
-            PluginLoader.activate();
-        } catch (MalformedURLException |
-                 IllegalAccessException |
-                 InvocationTargetException |
-                 NoSuchMethodException e) {
-            e.printStackTrace();
-        }
 
         while(Terminal.isRunning()){}
         

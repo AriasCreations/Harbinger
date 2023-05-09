@@ -28,12 +28,13 @@ public class HTTPServer {
 
     public boolean running=false;
     public HttpServer server;
-    public static void startServer()
+    public static boolean startServer()
     {
         if(instance.running)
         {
             // Server is already running
             LOGGER.info("Server is already running");
+            return true;
         }else {
             if(Persist.serverSettings.enabled)
             {
@@ -51,12 +52,14 @@ public class HTTPServer {
                     instance.server.setExecutor(new ScheduledThreadPoolExecutor(1024));
                     instance.server.start();
                     instance.running=true;
+                    return true;
 
                 } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    return false;
                 }
             }else {
                 LOGGER.warn("HTTP Server cannot be started because it is disabled");
+                return false;
             }
         }
     }

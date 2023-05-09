@@ -6,9 +6,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 import dev.zontreck.ariaslib.file.Entry;
+import dev.zontreck.ariaslib.file.EntryUtils;
 import dev.zontreck.ariaslib.file.Folder;
 import dev.zontreck.harbinger.data.types.Product;
 
@@ -22,6 +25,7 @@ public class Products {
                 products) {
             tag.value.add(prod.save());
         }
+        tag.value.add(EntryUtils.mkLong("sequence", Product.SEQUENCE.get()));
         return tag;
 
     }
@@ -46,6 +50,7 @@ public class Products {
             {
                 products.add(Product.deserialize((Entry<List<Entry>>)E));
             }
+            Product.SEQUENCE = new AtomicLong(EntryUtils.getInt(Folder.getEntry(tag, "sequence")));
         }catch ( Exception e)
         {
             products = new ArrayList<>();

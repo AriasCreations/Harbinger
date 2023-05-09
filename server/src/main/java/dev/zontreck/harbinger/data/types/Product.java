@@ -11,8 +11,11 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class Product {
+    public static AtomicLong SEQUENCE = new AtomicLong(0);
     public String productName;
     public Version versionNumber;
     public String productItem;

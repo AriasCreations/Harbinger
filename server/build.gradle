@@ -6,6 +6,10 @@ plugins {
 repositories {
     // Use Maven Central for resolving dependencies.
     mavenCentral()
+    maven {
+        url = "https://maven.zontreck.dev"
+        name = "Aria's Creations"
+    }
 }
 dependencies {
 
@@ -21,7 +25,7 @@ dependencies {
 
     implementation("org.json:json:20230227")
 
-    implementation project(":LibAC")
+    implementation ("dev.zontreck:LibAC:${libac_version}")
 }
 
 application {

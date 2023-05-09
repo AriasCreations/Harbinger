@@ -23,13 +23,14 @@ public class PluginLoader
 	public static List<Path> JARS = new ArrayList<>();
 
 	public static void scan() throws MalformedURLException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-		URLClassLoader loader = (URLClassLoader) ClassLoader.getSystemClassLoader();
+		ClassLoader loader = ClassLoader.getSystemClassLoader();
+
 		File[] lst = HarbingerServer.PLUGINS.toFile().listFiles();
 		boolean iNextJar=false;
-		for(File f : lst)
+		/*for(File f : lst)
 		{
 			URL jar = f.toURI().toURL();
-			for(URL it : Arrays.asList(loader.getURLs()))
+			for(URL it : Arrays.asList())
 			{
 				if(it.equals(jar))iNextJar=true;
 				if(iNextJar)break;
@@ -40,7 +41,7 @@ public class PluginLoader
 				method.setAccessible(true);
 				method.invoke(loader, new Object[]{jar});
 			}
-		}
+		}*/
 	}
 
 	public static void activate()

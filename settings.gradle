@@ -1,2 +1,2 @@
 rootProject.name = 'HarbingerServer'
-include('server', 'LibAC')
+include('server')
