@@ -1,8 +1,13 @@
 #!/bin/bash
 
 # Do not execute this by itself!
-PORT=$1
-PSK=$2
+PORT=$(</tmp/.harbinger_port)
+PSK=$(</tmp/.harbinger_psk)
+
+rm /tmp/.harbinger_port
+rm /tmp/.harbinger_psk
+
+
 mv /tmp/harbinger_service_script /etc/systemd/system/harbinger.service
 mv /tmp/harbinger_updater /bin/harbinger_update
 mv /tmp/harbinger_updater2 /bin/pesc_harbinger_update_runner
