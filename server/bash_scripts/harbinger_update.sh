@@ -10,7 +10,7 @@ then
   PSK=$(<~/.harbinger_psk)
   PORT=7768
   echo "Moving Harbinger Update into place"
-  mv build/libs/Harbinger-*.jar /tmp/harbinger_server.jar
+  cp build/libs/Harbinger-*.jar /tmp/harbinger_server.jar
   echo "Allowing Harbinger to exit and be automatically restarted"
 
   echo "Updating service files..."
