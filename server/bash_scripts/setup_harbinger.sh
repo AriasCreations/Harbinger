@@ -13,16 +13,19 @@ then
   cp ./harbinger.service /etc/systemd/system/
   chown root:root /bin/harbinger_update
   chown root:root /etc/systemd/system/harbinger.service
-  mv bash_scripts/pesc_harbinger_update_runner.sh /bin/pesc_harbinger_update_runner
+  mv ./pesc_harbinger_update_runner.sh /bin/pesc_harbinger_update_runner
   chmod +x /bin/pesc_harbinger_update_runner
   chown root:root /bin/pesc_harbinger_update_runner
 
   systemctl daemon-reload
   systemctl enable harbinger
-  cd ..
+  cd ../..
   ./gradlew build
+  cd server
   mv build/libs/Harbinger-*.jar /harbinger/server.jar
   chown harbinger:harbinger /harbinger/server.jar
+  cd bash_scripts
+
 
   gcc -c privesc.c -o privesc.o
   g++ privesc.o -o /bin/pesc_harbinger_update

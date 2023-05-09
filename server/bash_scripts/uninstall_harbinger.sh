@@ -3,7 +3,7 @@
 UID=$(id -uz)
 if [ $UID -eq 0 ]
 then
-  echo "Please wait while we uninstall Harbinger Server\n\n* ALERT * Data files will not be deleted"
+  echo -ne "Please wait while we uninstall Harbinger Server\n\n* ALERT * Data files will not be deleted"
 
   systemctl disable harbinger
   systemctl stop harbinger
