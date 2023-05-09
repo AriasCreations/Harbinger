@@ -13,7 +13,7 @@ then
   cp ./harbinger.service /etc/systemd/system/
   chown root:root /bin/harbinger_update
   chown root:root /etc/systemd/system/harbinger.service
-  mv ./pesc_harbinger_update_runner.sh /bin/pesc_harbinger_update_runner
+  cp ./pesc_harbinger_update_runner.sh /bin/pesc_harbinger_update_runner
   chmod +x /bin/pesc_harbinger_update_runner
   chown root:root /bin/pesc_harbinger_update_runner
 
