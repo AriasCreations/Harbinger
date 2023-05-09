@@ -3,13 +3,9 @@
  */
 package dev.zontreck.harbinger;
 
-import java.lang.reflect.InvocationTargetException;
-import java.net.MalformedURLException;
 import java.nio.file.Path;
-import java.util.Random;
 import java.util.UUID;
 
-import dev.zontreck.ariaslib.events.CommandEvent;
 import dev.zontreck.ariaslib.file.Folder;
 import dev.zontreck.ariaslib.terminal.Task;
 import dev.zontreck.ariaslib.terminal.TaskBus;
@@ -22,8 +18,7 @@ import dev.zontreck.harbinger.data.containers.SupportReps;
 import dev.zontreck.harbinger.data.types.*;
 import dev.zontreck.harbinger.events.MemoryAlteredEvent;
 import dev.zontreck.harbinger.events.ServerTickEvent;
-import dev.zontreck.harbinger.handlers.HandlerRegistry;
-import dev.zontreck.harbinger.handlers.ModifyProduct;
+import dev.zontreck.harbinger.handlers.EventsRegistry;
 import dev.zontreck.harbinger.httphandlers.HTTPEvents;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,8 +64,8 @@ public class HarbingerServer {
                 EventBus.BUS.register(Person.class);
                 EventBus.BUS.register(PermissionLevel.class);
                 EventBus.BUS.register(HTTPEvents.class);
+                EventsRegistry.register(EventBus.BUS);
 
-                HandlerRegistry.register(EventBus.BUS);
                 CommandRegistry.register(EventBus.BUS);
 
                 Task run = new Task("server-tick", true) {
