@@ -1,0 +1,14 @@
+[Unit]
+Description=Harbinger Service
+After=network.target
+
+[Service]
+Type=simple
+Restart=always
+WorkingDirectory=/harbinger
+RestartSec=1
+User=harbinger
+ExecStart=/usr/bin/java -Xmx256m -jar /harbinger/server.jar
+
+[Install]
+WantedBy=multi-user.target
