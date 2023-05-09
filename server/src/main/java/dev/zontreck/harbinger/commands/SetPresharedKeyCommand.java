@@ -7,6 +7,9 @@ import dev.zontreck.ariaslib.terminal.ConsolePrompt;
 import dev.zontreck.ariaslib.terminal.Terminal;
 import dev.zontreck.harbinger.data.Persist;
 import dev.zontreck.harbinger.events.MemoryAlteredEvent;
+import dev.zontreck.harbinger.utils.Key;
+
+import java.security.NoSuchAlgorithmException;
 
 public class SetPresharedKeyCommand
 {
@@ -26,7 +29,11 @@ public class SetPresharedKeyCommand
 
 			Terminal.startTerminal();
 
-			Persist.serverSettings.PSK=psk;
+			try {
+				Persist.serverSettings.PSK= Key.computeSecuredKey(psk);
+			} catch (NoSuchAlgorithmException e) {
+				ConsolePrompt.console.printf("Error while setting PSK: "+e.getMessage());
+			}
 			EventBus.BUS.post(new MemoryAlteredEvent());
 		}
 	}

@@ -8,7 +8,7 @@ then
   mkdir /harbinger
   useradd -m harbinger -s /bin/bash -d /harbinger
   chown -Rv harbinger:harbinger /harbinger
-  cp ./harbinger_update.sh /bin/
+  cp ./harbinger_update.sh /bin/harbinger_update
   chmod +x /bin/harbinger_update.sh
   cp ./harbinger.service /etc/systemd/system/
   chown root:root /bin/harbinger_update
