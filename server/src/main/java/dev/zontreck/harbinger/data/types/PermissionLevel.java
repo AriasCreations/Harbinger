@@ -5,8 +5,8 @@ public enum PermissionLevel {
     Customer(1),
     Support(2),
     Mod(4),
-    Admin(8),
-    Developer(16);
+    Developer(8),
+    Admin(16);
 
     private int flag;
     public int getFlag(){

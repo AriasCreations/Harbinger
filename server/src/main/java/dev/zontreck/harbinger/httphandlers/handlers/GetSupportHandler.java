@@ -22,7 +22,7 @@ public class GetSupportHandler implements HttpHandler
 			items.add(per.ID.toString());
 			items.add(String.valueOf(per.Permissions.getFlag()));
 		}
-		String reply = "GetSupport;;"+items.stream().collect(Collectors.joining("~"));
+		String reply = "GetSupport;;"+ String.join("~", items);
 		byte[] bRep = reply.getBytes();
 		httpExchange.sendResponseHeaders(200, bRep.length);
 		OutputStream os = httpExchange.getResponseBody();
