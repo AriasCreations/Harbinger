@@ -6,12 +6,12 @@ default
     state_entry()
     {
         llSay(0, "Checking Harbinger server version...");
-        llHTTPRequest("https://harbinger.zontreck.dev/version", [], "");
+        llHTTPRequest(VERSION_ENDPOINT, [], "");
     }
     touch_start(integer n)
     {
         llSay(0, "Checking Harbinger server version...");
-        llHTTPRequest("https://harbinger.zontreck.dev/version", [], "");
+        llHTTPRequest(VERSION_ENDPOINT, [], "");
     }
 
     http_response(key kID, integer iStat, list lMeta, string sBody)

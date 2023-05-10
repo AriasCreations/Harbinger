@@ -24,6 +24,7 @@ public class GetSupportHandler implements HttpHandler
 		}
 		String reply = "GetSupport;;"+ String.join("~", items);
 		byte[] bRep = reply.getBytes();
+		httpExchange.getResponseHeaders().add("Content-Type", "text/plain");
 		httpExchange.sendResponseHeaders(200, bRep.length);
 		OutputStream os = httpExchange.getResponseBody();
 		os.write(bRep);

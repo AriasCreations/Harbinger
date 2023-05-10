@@ -30,6 +30,7 @@ public class APIHandler  implements HttpHandler
 		}else {
 			String reply = "API;;" + ARE.response_object.toString();
 			byte[] bRep = reply.getBytes();
+			httpExchange.getResponseHeaders().add("Content-Type", "application/json");
 			httpExchange.sendResponseHeaders(ARE.response_status, bRep.length);
 			OutputStream os = httpExchange.getResponseBody();
 			os.write(bRep);
