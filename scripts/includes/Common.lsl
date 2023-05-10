@@ -133,6 +133,18 @@ list ParseTimeNotation(string sNotation)
 #define R_CUSTOMER 1
 #define R_NONE 0
 
+string rank2Title(integer iNum)
+{
+    switch(iNum)
+    {
+        case R_ADMIN: return "Admin";
+        case R_DEVELOPER: return "Developer";
+        case R_MOD: return "Moderator";
+        case R_SUPPORT: return "Support";
+        case R_CUSTOMER: return "Customer";
+        default: return "None";
+    }
+}
 
 list g_lSupport;
 integer g_iLastSupportCheck;
