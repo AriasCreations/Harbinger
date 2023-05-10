@@ -133,6 +133,8 @@ public class HarbingerServer {
             public void run()
             {
                 Persist.HARBINGER_VERSION  = this.getClass().getPackage().getImplementationVersion();
+
+                setSuccess();
             }
         });
 
