@@ -149,6 +149,7 @@ public class HarbingerServer {
             }
         });
 
+        Servers.registerServerHandler();
 
 
         while(Terminal.isRunning()){}

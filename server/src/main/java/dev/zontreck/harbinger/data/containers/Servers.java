@@ -7,6 +7,8 @@ import com.google.common.collect.Maps;
 
 import dev.zontreck.ariaslib.file.Entry;
 import dev.zontreck.ariaslib.file.Folder;
+import dev.zontreck.ariaslib.terminal.Task;
+import dev.zontreck.ariaslib.util.DelayedExecutorService;
 import dev.zontreck.harbinger.data.types.Server;
 
 public class Servers {
@@ -54,5 +56,17 @@ public class Servers {
     public Server retrieve(String nick)
     {
         return servers.get(nick);
+    }
+
+    public static void registerServerHandler()
+    {
+        Task watchdog = new Task("server_check_watchdog", true) {
+            @Override
+            public void run() {
+
+            }
+        };
+
+        DelayedExecutorService.scheduleRepeatingTask(watchdog, 60);
     }
 }

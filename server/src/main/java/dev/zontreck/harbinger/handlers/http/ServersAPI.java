@@ -25,6 +25,7 @@ public class ServersAPI
 					if(!Persist.serverSettings.PSK.validate(event.request_object.getString("psk")))
 					{
 						event.response_object.put("result", "Admin access required");
+						event.response_object.put("success", false);
 						return;
 					}
 					String srvName = event.request_object.getString("name");
@@ -38,12 +39,14 @@ public class ServersAPI
 					{
 						// Add request denied
 						event.response_object.put("result", "The server could not be added for a unknown reason");
+						event.response_object.put("success", false);
 						return;
 					}else {
 						Persist.servers.add(srv);
 
 						EventBus.BUS.post(new MemoryAlteredEvent());
 						event.response_object.put("result", "The server has been added");
+						event.response_object.put("success", true);
 					}
 
 					break;
@@ -53,6 +56,7 @@ public class ServersAPI
 					if(!Persist.serverSettings.PSK.validate(event.request_object.getString("psk")))
 					{
 						event.response_object.put("result", "Admin access required");
+						event.response_object.put("success", false);
 						return;
 					}
 
@@ -63,6 +67,7 @@ public class ServersAPI
 					Persist.servers.remove(srv.serverNick);
 					EventBus.BUS.post(new MemoryAlteredEvent());
 
+					event.response_object.put("success", true);
 					event.response_object.put("result", "The server has been removed");
 
 					break;
