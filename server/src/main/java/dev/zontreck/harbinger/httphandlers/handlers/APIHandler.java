@@ -27,7 +27,6 @@ public class APIHandler  implements HttpHandler
 		{
 			httpExchange.sendResponseHeaders(404, 0);
 			httpExchange.close();
-			return;
 		}else {
 			String reply = "API;;" + ARE.response_object.toString();
 			byte[] bRep = reply.getBytes();
