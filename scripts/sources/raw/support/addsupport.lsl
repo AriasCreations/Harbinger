@@ -21,7 +21,7 @@ get_id()
 submit()
 {
     // Send API Request to Harbinger
-    UpdateDSRequest(NULL, llHTTPRequest(API_ENDPOINT, [HTTP_METHOD, "POST", HTTP_MIMETYPE, "application/json"], llList2Json(JSON_OBJECT, ["type", "support", "sub_command", "add", "id", g_kID, "psk", PRESHAREDKEY, "name", g_sName]), SetDSMeta(["submit_api_call"])));
+    UpdateDSRequest(NULL, llHTTPRequest(API_ENDPOINT, [HTTP_METHOD, "POST", HTTP_MIMETYPE, "application/json"], llList2Json(JSON_OBJECT, ["type", "support", "sub_command", "add", "id", g_kID, "psk", PRESHAREDKEY, "name", g_sName])), SetDSMeta(["submit_api_call"]));
 }
 default
 {
