@@ -51,7 +51,8 @@ default
                     llOwnerSay("ERROR: Harbinger returned a 404 page. Endpoint not found\n \n"+sBody);
                     return;
                 }
-                string result = llJsonGetValue(sBody, ["result"]);
+                list lTmp = llParseString2List(sBody, [";;",],[]);
+                string result = llJsonGetValue(llList2String(lTmp,1), ["result"]);
                 llOwnerSay("HARBINGER> " +result);
 
                 llResetScript();

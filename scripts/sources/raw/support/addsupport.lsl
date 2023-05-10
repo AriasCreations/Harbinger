@@ -21,7 +21,7 @@ get_id()
 submit()
 {
     // Send API Request to Harbinger
-    UpdateDSRequest(NULL, llHTTPRequest(API_ENDPOINT, [HTTP_METHOD, "POST", HTTP_MIMETYPE, "application/json"], llList2Json(JSON_OBJECT, ["type", "support", "sub_command", "add", "id", g_kID, "psk", PRESHAREDKEY, "name", g_sName])), SetDSMeta(["submit_api_call"]));
+    UpdateDSRequest(NULL, llHTTPRequest(API_ENDPOINT, [HTTP_METHOD, "POST", HTTP_MIMETYPE, "application/json"], llList2Json(JSON_OBJECT, ["type", "support", "sub_command", "add", "id", g_kID, "psk", PRESHAREDKEY, "name", g_sName, "level", SUPPORT_LEVEL])), SetDSMeta(["submit_api_call"]));
 }
 default
 {
@@ -42,6 +42,7 @@ default
     {
         if(~HasDSRequest(kID))
         {
+            //llOwnerSay(sBody);
             list lMeta = GetMetaList(kID);
             if(llList2String(lMeta,0) == "submit_api_call")
             {
@@ -51,7 +52,8 @@ default
                     return;
                 }
                 // Call was submitted
-                string result = llJsonGetValue(sBody, ["result"]);
+                list lTmp = llParseString2List(sBody, [";;",],[]);
+                string result = llJsonGetValue(llList2String(lTmp,1), ["result"]);
                 llOwnerSay("HARBINGER> "+result);
 
                 llRemoveInventory(llGetScriptName());
