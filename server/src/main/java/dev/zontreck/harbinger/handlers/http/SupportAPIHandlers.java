@@ -28,6 +28,7 @@ public class SupportAPIHandlers
 			}
 			event.setCancelled(true);
 			UUID ID = UUID.fromString(event.request_object.getString("id"));
+			event.response_status=200;
 			switch(event.request_object.getString("sub_command"))
 			{
 				case "delete":
