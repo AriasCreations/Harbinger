@@ -55,9 +55,11 @@ shadowJar{
 
     manifest {
         attributes (
-            'Main-Class': "${mainClass}",
-            'Specification-Version': "${myVersion}",
-            'Implementation-Version': "${version}"
+                'Main-Class': "${mainClass}",
+                'Specification-Version': myVersion,
+                'Implementation-Version': version,
+                'Implementation-Title': "Harbinger",
+                'Specification-Title': "Harbinger-API"
         )
     }
 }
