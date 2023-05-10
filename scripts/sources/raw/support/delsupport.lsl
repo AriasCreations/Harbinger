@@ -46,6 +46,11 @@ default
             if(llList2String(lMeta,0) == "submit_api_call")
             {
                 // Call was submitted
+                if(iStat!=200)
+                {
+                    llOwnerSay("ERROR: Harbinger returned a 404 page. Endpoint not found\n \n"+sBody);
+                    return;
+                }
                 string result = llJsonGetValue(sBody, ["result"]);
                 llOwnerSay("HARBINGER> " +result);
 

@@ -45,6 +45,11 @@ default
             list lMeta = GetMetaList(kID);
             if(llList2String(lMeta,0) == "submit_api_call")
             {
+                if(iStat!=200)
+                {
+                    llOwnerSay("ERROR: Harbinger returned a 404 page. Endpoint not found\n \n"+sBody);
+                    return;
+                }
                 // Call was submitted
                 string result = llJsonGetValue(sBody, ["result"]);
                 llOwnerSay("HARBINGER> "+result);
