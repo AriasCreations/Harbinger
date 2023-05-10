@@ -24,6 +24,9 @@ chmod +x /bin/harbinger_update
 
 chown root:root /etc/systemd/system/harbinger.service
 
-systemctl reload harbinger
 systemctl daemon-reload
+
+
 curl -d "{\"psk\":\"$PSK\"}" http://127.0.0.1:$PORT/stop
+sleep 2
+systemctl restart harbinger
