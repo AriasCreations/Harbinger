@@ -1,0 +1,73 @@
+package dev.zontreck.harbinger.handlers.http;
+
+import dev.zontreck.ariaslib.events.EventBus;
+import dev.zontreck.ariaslib.events.annotations.Subscribe;
+import dev.zontreck.harbinger.data.Persist;
+import dev.zontreck.harbinger.data.types.Server;
+import dev.zontreck.harbinger.events.APIRequestEvent;
+import dev.zontreck.harbinger.events.HarbingerClientAddedEvent;
+import dev.zontreck.harbinger.events.HarbingerClientRemovedEvent;
+import dev.zontreck.harbinger.events.MemoryAlteredEvent;
+
+public class ServersAPI
+{
+	@Subscribe
+	public static void onServersRequest(APIRequestEvent event)
+	{
+		if(event.request_object.getString("type").equals("servers"))
+		{
+			String subcmd = event.request_object.getString("sub_command");
+			event.setCancelled(true);
+			switch(subcmd)
+			{
+				case "register":
+				{
+					if(!Persist.serverSettings.PSK.validate(event.request_object.getString("psk")))
+					{
+						event.response_object.put("result", "Admin access required");
+						return;
+					}
+					String srvName = event.request_object.getString("name");
+					String srvUrl = event.request_object.getString("url");
+					Server srv = new Server();
+					srv.serverURL=srvUrl;
+					srv.serverNick=srvName;
+
+					// Add to server registry
+					if(EventBus.BUS.post(new HarbingerClientAddedEvent(srv)))
+					{
+						// Add request denied
+						event.response_object.put("result", "The server could not be added for a unknown reason");
+						return;
+					}else {
+						Persist.servers.add(srv);
+
+						EventBus.BUS.post(new MemoryAlteredEvent());
+						event.response_object.put("result", "The server has been added");
+					}
+
+					break;
+				}
+				case "deregister":
+				{
+					if(!Persist.serverSettings.PSK.validate(event.request_object.getString("psk")))
+					{
+						event.response_object.put("result", "Admin access required");
+						return;
+					}
+
+					Server srv = Persist.servers.retrieve(event.request_object.getString("name"));
+
+					EventBus.BUS.post(new HarbingerClientRemovedEvent(srv));
+
+					Persist.servers.remove(srv.serverNick);
+					EventBus.BUS.post(new MemoryAlteredEvent());
+
+					event.response_object.put("result", "The server has been removed");
+
+					break;
+				}
+			}
+		}
+	}
+}

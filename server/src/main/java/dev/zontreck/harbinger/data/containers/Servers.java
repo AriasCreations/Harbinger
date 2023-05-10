@@ -50,4 +50,9 @@ public class Servers {
     {
         servers.remove(nick);
     }
+
+    public Server retrieve(String nick)
+    {
+        return servers.get(nick);
+    }
 }

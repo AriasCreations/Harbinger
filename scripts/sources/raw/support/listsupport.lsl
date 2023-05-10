@@ -27,7 +27,7 @@ default
                 integer end = llGetListLength(lSup);
                 for(i=0;i<end;i+=2)
                 {
-                    llOwnerSay("Rep: "+SLURL(llList2String(lSup,i)) + " [Level : "+rank2Title((integer)llList2String(lSup,i+1))+"]");
+                    llOwnerSay("Rep: "+SLURL(llList2String(lSup,i)) + " [ Level : "+rank2Title((integer)llList2String(lSup,i+1))+" ]");
                 }
             }
         }
