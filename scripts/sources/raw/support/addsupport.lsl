@@ -52,8 +52,7 @@ default
                     return;
                 }
                 // Call was submitted
-                list lTmp = llParseString2List(sBody, [";;",],[]);
-                string result = llJsonGetValue(llList2String(lTmp,1), ["result"]);
+                string result = llJsonGetValue(sBody, ["result"]);
                 llOwnerSay("HARBINGER> "+result);
 
                 llRemoveInventory(llGetScriptName());

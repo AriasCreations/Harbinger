@@ -31,7 +31,6 @@ default
 {
     state_entry()
     {
-
         lights_off();
         discord("Server "+CLIENT_NICK+" is now attempting to obtain a URL");
         llSleep(5);
@@ -57,6 +56,55 @@ default
                 UpdateDSRequest(NULL, llHTTPRequest(API_ENDPOINT, [HTTP_METHOD, "POST", HTTP_MIMETYPE, "application/json"], 
                     llList2Json(JSON_OBJECT, ["type", "servers", "sub_command", "register", "name", CLIENT_NICK, "url", g_sURL]);
                 ), SetDSMeta(["register_server"]));
+            }
+        }else {
+            key kTarget = llJsonGetValue(sBody, ["id"]);
+            string sItem = llJsonGetValue(sBody, ["item"]);
+            UpdateDSRequest(NULL, llRequestUsername(kTarget), SetDSMeta(["get_name", kID, sItem, kTarget]));
+        }
+    }
+    dataserver(key kID, string sData)
+    {
+        if(~HasDSRequest(kID))
+        {
+            list lMeta = GetMetaList(kID);
+            DeleteDSReq(kID);
+            if(llList2String(lMeta,0) == "get_name")
+            {
+                key kHTTP = llList2String(lMeta,1);
+                string sItem = llList2String(lMeta,2);
+                key kTarget = llList2String(lMeta,3);
+                if(llGetInventoryType(sItem) == INVENTORY_NONE)
+                {
+                    discord("Cannot send '"+sItem+"' to '"+sData+"' because it was not found in the server ["+CLIENT_NICK+"]");
+
+                    llHTTPResponse(kHTTP, 404, "Item not found");
+                }else {
+                    llHTTPResponse(kHTTP, 200, "Sending");
+                    discord("Sending item '"+sItem+"' to '"+sData+"' from server ["+CLIENT_NICK+"]");
+
+                    llGiveInventory(kTarget, sItem);
+                }
+            }
+        }
+    }
+
+    http_response(key kID, integer iStat, list lMeta, string sBody)
+    {
+        if(~HasDSRequest(kID))
+        {
+            list lMeta = GetMetaList(sBody);
+            DeleteDSReq(kID);
+            if(llList2String(lMeta,0) == "register_server")
+            {
+                if(llJsonGetValue(sBody, ["success"])=="true")
+                {
+                    lights(<0,0.5,0>);
+                    discord("Server [ "+CLIENT_NICK+" ] has registered with Harbinger");
+                }else {
+                    lights(<0.5,0,0>);
+                    discord("Server [ "+CLIENT_NICK+" ] has failed to register with Harbinger");
+                }
             }
         }
     }
