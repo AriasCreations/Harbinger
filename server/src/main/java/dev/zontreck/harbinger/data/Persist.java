@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.jar.Manifest;
 
 import dev.zontreck.ariaslib.file.AriaIO;
 import dev.zontreck.ariaslib.file.Entry;
@@ -31,6 +32,8 @@ public class Persist {
     public static HTTPServerSettings serverSettings = new HTTPServerSettings();
 
     public static Signature SIGNATURE = new Signature();
+
+    public static String HARBINGER_VERSION;
 
     static
     {

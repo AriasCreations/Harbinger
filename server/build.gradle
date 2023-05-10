@@ -55,7 +55,9 @@ shadowJar{
 
     manifest {
         attributes (
-            'Main-Class': "${mainClass}"
+            'Main-Class': "${mainClass}",
+            'Specification-Version': "${myVersion}",
+            'Implementation-Version': "${version}"
         )
     }
 }

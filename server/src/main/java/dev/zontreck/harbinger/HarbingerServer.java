@@ -3,8 +3,12 @@
  */
 package dev.zontreck.harbinger;
 
+import java.io.IOException;
+import java.net.URL;
 import java.nio.file.Path;
+import java.util.Enumeration;
 import java.util.UUID;
+import java.util.jar.Manifest;
 
 import dev.zontreck.ariaslib.file.Folder;
 import dev.zontreck.ariaslib.terminal.Task;
@@ -121,6 +125,14 @@ public class HarbingerServer {
             {
                 PluginLoader.activate();
                 setSuccess();
+            }
+        });
+
+        TaskBus.tasks.add(new Task("Load Version from Jar") {
+            @Override
+            public void run()
+            {
+                Persist.HARBINGER_VERSION  = this.getClass().getPackage().getImplementationVersion();
             }
         });
 
