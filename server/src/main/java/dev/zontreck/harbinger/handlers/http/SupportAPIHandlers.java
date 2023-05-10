@@ -34,16 +34,16 @@ public class SupportAPIHandlers
 				{
 					if(!auth)
 					{
-						response.put("result", "DENY");
+						response.put("result", "Admin access required");
 						break;
 					}
 					// Deletes the support rep if possible
 					if(SupportReps.hasID(ID))
 					{
 						SupportReps.remove(SupportReps.get(ID));
-						response.put("result", "OK");
+						response.put("result", "Support representative deleted.");
 						EventBus.BUS.post(new MemoryAlteredEvent());
-					}else response.put("result", "NO");
+					}else response.put("result", "No such support rep. No changes have been made.");
 					break;
 				}
 				case "get":
@@ -64,7 +64,7 @@ public class SupportAPIHandlers
 					}
 					break;
 				}
-				case "set":
+				case "add":
 				{
 					// Set a new support rep
 					if(!auth)

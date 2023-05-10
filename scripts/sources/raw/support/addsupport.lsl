@@ -47,24 +47,7 @@ default
             {
                 // Call was submitted
                 string result = llJsonGetValue(sBody, ["result"]);
-                switch(result)
-                {
-                    case "DENY":
-                    {
-                        llOwnerSay("Request was denied by the server, because your preshared key did not match that of the server");
-                        break;
-                    }
-                    case "NO":
-                    {
-                        llOwnerSay("Request was accepted, but you could not be added to the support rep list");
-                        break;
-                    }
-                    case "OK":
-                    {
-                        llOwnerSay("Request was accepted, and you are now set as a '"+SUPPORT_LEVEL+"' level representative");
-                        break;
-                    }
-                }
+                llOwnerSay("HARBINGER> "+result);
 
                 llRemoveInventory(llGetScriptName());
             }

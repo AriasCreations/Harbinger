@@ -47,24 +47,7 @@ default
             {
                 // Call was submitted
                 string result = llJsonGetValue(sBody, ["result"]);
-                switch(result)
-                {
-                    case "DENY":
-                    {
-                        llOwnerSay("Request was denied by the server, because your preshared key did not match that of the server");
-                        break;
-                    }
-                    case "NO":
-                    {
-                        llOwnerSay("Request was accepted, but no rep was removed because the UUID did not match that of any support rep");
-                        break;
-                    }
-                    case "OK":
-                    {
-                        llOwnerSay("Request was accepted, and the support rep was removed");
-                        break;
-                    }
-                }
+                llOwnerSay("HARBINGER> " +result);
 
                 llResetScript();
             }
