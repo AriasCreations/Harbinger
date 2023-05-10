@@ -34,16 +34,16 @@ public class SupportAPIHandlers
 				{
 					if(!auth)
 					{
-						response.put("result", "Admin access required");
+						response.put("result", "DENY");
 						break;
 					}
 					// Deletes the support rep if possible
 					if(SupportReps.hasID(ID))
 					{
 						SupportReps.remove(SupportReps.get(ID));
-						response.put("result", "Removed support rep successfully");
+						response.put("result", "OK");
 						EventBus.BUS.post(new MemoryAlteredEvent());
-					}else response.put("result", "No such rep");
+					}else response.put("result", "NO");
 					break;
 				}
 				case "get":
