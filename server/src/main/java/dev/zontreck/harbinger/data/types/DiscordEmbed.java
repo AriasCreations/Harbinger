@@ -1,6 +1,7 @@
 package dev.zontreck.harbinger.data.types;
 
 import dev.zontreck.harbinger.exceptions.DiscordEmbedLimitsException;
+import dev.zontreck.harbinger.utils.TimeUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -13,6 +14,12 @@ import java.util.TimeZone;
 
 public class DiscordEmbed implements IJsonSerializable
 {
+	public DiscordEmbed(String title, String description)
+	{
+		this.title=title;
+		this.description = description;
+		this.timestamp = TimeUtils.makeTimestamp(new Date());
+	}
 	public String title;
 	public String type = "rich";
 	public String description;
