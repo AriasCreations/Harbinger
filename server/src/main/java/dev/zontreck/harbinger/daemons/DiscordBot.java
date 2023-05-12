@@ -21,7 +21,7 @@ public class DiscordBot
 	public static void onBotSettingsUpdated(DiscordBotTokenUpdatedEvent event)
 	{
 		// We cannot login to discord if the settings are null
-		if(Persist.discordSettings==null)return;
+		if(Persist.discordSettings.BOT_TOKEN.isEmpty())return;
 		if(jda!=null)
 		{
 			jda.shutdownNow();

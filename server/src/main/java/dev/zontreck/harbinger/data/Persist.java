@@ -49,6 +49,8 @@ public class Persist {
 
             SIGNATURE = new Signature(Folder.getEntry(MEMORY, "sig"));
 
+            discordSettings = new DiscordSettings(Folder.getEntry(MEMORY, "discord"));
+
             LOGGER.info("Memory file loaded");
         }catch(Exception e)
         {
@@ -71,6 +73,8 @@ public class Persist {
         MEMORY.value.add(SupportReps.save());
         MEMORY.value.add(serverSettings.save());
         MEMORY.value.add(SIGNATURE.save());
+        MEMORY.value.add(discordSettings.save());
+
 
         LOGGER.info("Memory file saved");
 
