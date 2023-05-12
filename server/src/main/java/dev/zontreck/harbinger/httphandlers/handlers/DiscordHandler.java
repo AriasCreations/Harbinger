@@ -44,6 +44,22 @@ public class DiscordHandler implements HttpHandler
 					EventBus.BUS.post(new DiscordBotTokenUpdatedEvent());
 					break;
 				}
+				case "set_webhook":
+				{
+					// Simply set the webhook URL and flush the settings
+					Persist.discordSettings.WEBHOOKS.put(request.getString("nick"), request.getString("url"));
+					EventBus.BUS.post(new MemoryAlteredEvent());
+
+
+					break;
+				}
+				case "del_webhook":
+				{
+					// Delete the webhook and flush
+					Persist.discordSettings.WEBHOOKS.remove(request.getString("nick"));
+					EventBus.BUS.post(new MemoryAlteredEvent());
+					break;
+				}
 			}
 		}
 
