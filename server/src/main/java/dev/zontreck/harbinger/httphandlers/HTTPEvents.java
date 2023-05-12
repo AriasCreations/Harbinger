@@ -14,6 +14,5 @@ public class HTTPEvents
 		hse.contexts.put("/api", new APIHandler());
 		hse.contexts.put("/version", new VersionCheckHandler());
 		hse.contexts.put("/discord", new DiscordHandler());
-
 	}
 }
