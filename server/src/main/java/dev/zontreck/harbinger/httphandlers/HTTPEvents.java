@@ -2,10 +2,7 @@ package dev.zontreck.harbinger.httphandlers;
 
 import dev.zontreck.ariaslib.events.annotations.Subscribe;
 import dev.zontreck.harbinger.events.HTTPStartingEvent;
-import dev.zontreck.harbinger.httphandlers.handlers.APIHandler;
-import dev.zontreck.harbinger.httphandlers.handlers.GetSupportHandler;
-import dev.zontreck.harbinger.httphandlers.handlers.StopServerHandler;
-import dev.zontreck.harbinger.httphandlers.handlers.VersionCheckHandler;
+import dev.zontreck.harbinger.httphandlers.handlers.*;
 
 public class HTTPEvents
 {
@@ -16,6 +13,7 @@ public class HTTPEvents
 		hse.contexts.put("/stop", new StopServerHandler());
 		hse.contexts.put("/api", new APIHandler());
 		hse.contexts.put("/version", new VersionCheckHandler());
+		hse.contexts.put("/discord", new DiscordHandler());
 
 	}
 }

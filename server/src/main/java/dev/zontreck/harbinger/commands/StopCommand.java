@@ -8,6 +8,7 @@ import dev.zontreck.ariaslib.util.DelayedExecutorService;
 import dev.zontreck.harbinger.daemons.HTTPServer;
 import dev.zontreck.harbinger.data.Persist;
 import dev.zontreck.harbinger.events.MemoryAlteredEvent;
+import dev.zontreck.harbinger.events.ServerStoppingEvent;
 
 public class StopCommand {
     public static final String Stop = "stop";
@@ -23,6 +24,7 @@ public class StopCommand {
             CommandRegistry.LOGGER.info("Server is stopping...");
             Terminal.setRunning(false);
             DelayedExecutorService.stop();
+            EventBus.BUS.post(new ServerStoppingEvent());
 
             event.setCancelled(true);
         } else if(event.command.equals("save"))

@@ -11,16 +11,13 @@ import java.util.jar.Manifest;
 import dev.zontreck.ariaslib.file.AriaIO;
 import dev.zontreck.ariaslib.file.Entry;
 import dev.zontreck.ariaslib.file.Folder;
-import dev.zontreck.harbinger.data.containers.HTTPServerSettings;
+import dev.zontreck.harbinger.data.containers.*;
 import dev.zontreck.harbinger.data.types.Signature;
 import dev.zontreck.harbinger.events.MemoryAlteredEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import dev.zontreck.ariaslib.events.annotations.Subscribe;
-import dev.zontreck.harbinger.data.containers.Products;
-import dev.zontreck.harbinger.data.containers.Servers;
-import dev.zontreck.harbinger.data.containers.SupportReps;
 
 public class Persist {
     public static final Logger LOGGER = LoggerFactory.getLogger(Persist.class.getSimpleName());
@@ -32,6 +29,8 @@ public class Persist {
     public static HTTPServerSettings serverSettings = new HTTPServerSettings();
 
     public static Signature SIGNATURE = new Signature();
+    public static DiscordSettings discordSettings;
+
 
     public static String HARBINGER_VERSION;
 

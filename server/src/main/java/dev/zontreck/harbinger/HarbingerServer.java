@@ -14,6 +14,7 @@ import dev.zontreck.ariaslib.file.Folder;
 import dev.zontreck.ariaslib.terminal.Task;
 import dev.zontreck.ariaslib.terminal.TaskBus;
 import dev.zontreck.ariaslib.util.DelayedExecutorService;
+import dev.zontreck.harbinger.daemons.DiscordBot;
 import dev.zontreck.harbinger.daemons.HTTPServer;
 import dev.zontreck.harbinger.daemons.plugins.PluginLoader;
 import dev.zontreck.harbinger.data.containers.Products;
@@ -71,6 +72,7 @@ public class HarbingerServer {
                 EventsRegistry.register(EventBus.BUS);
 
                 CommandRegistry.register(EventBus.BUS);
+                EventBus.BUS.register(DiscordBot.class);
 
                 Task run = new Task("server-tick", true) {
                     @Override
