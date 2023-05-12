@@ -13,7 +13,7 @@ import java.util.Map;
  */
 public class DiscordSettings
 {
-	public String BOT_TOKEN;
+	public String BOT_TOKEN="";
 	public Map<String, String> WEBHOOKS = new HashMap<>();
 
 	public Entry<List<Entry>> save()
@@ -36,12 +36,17 @@ public class DiscordSettings
 
 	public DiscordSettings(Entry<List<Entry>> tag)
 	{
-		BOT_TOKEN = EntryUtils.getStr(Folder.getEntry(tag, "token"));
+		try{
 
-		Entry<List<Entry>> hooks = Folder.getEntry(tag, "hooks");
-		for(Entry<String> e : hooks.value)
+			BOT_TOKEN = EntryUtils.getStr(Folder.getEntry(tag, "token"));
+
+			Entry<List<Entry>> hooks = Folder.getEntry(tag, "hooks");
+			for(Entry<String> e : hooks.value)
+			{
+				WEBHOOKS.put(e.name, e.value);
+			}
+		}catch (Exception e)
 		{
-			WEBHOOKS.put(e.name, e.value);
 		}
 
 	}

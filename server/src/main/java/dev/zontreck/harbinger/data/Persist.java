@@ -29,7 +29,7 @@ public class Persist {
     public static HTTPServerSettings serverSettings = new HTTPServerSettings();
 
     public static Signature SIGNATURE = new Signature();
-    public static DiscordSettings discordSettings;
+    public static DiscordSettings discordSettings=new DiscordSettings();
 
 
     public static String HARBINGER_VERSION;
@@ -54,7 +54,7 @@ public class Persist {
             LOGGER.info("Memory file loaded");
         }catch(Exception e)
         {
-            e.printStackTrace();
+            //e.printStackTrace();
         }
 
     }
