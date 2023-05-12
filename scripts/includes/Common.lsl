@@ -448,6 +448,12 @@ list lSetor(integer a,list b, list c)
     else return c;
 }
 
+float fSetor(integer a, float b, float c)
+{
+    if(a)return b;
+    else return c;
+}
+
 // Partly from SL Wiki, modified by Aria
 string List2Type(list input) { // converts a list to a string with type information prepended to each item
     integer     i;
