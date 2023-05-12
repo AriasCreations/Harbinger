@@ -23,6 +23,8 @@ dependencies {
     implementation( "com.fasterxml.jackson.core:jackson-databind:${jackson_version}")
     implementation( "com.fasterxml.jackson.core:jackson-annotations:${jackson_version}")
 
+    implementation("net.dv8tion:JDA:${JDA_Version}")
+
     implementation("org.json:json:20230227")
 
     implementation ("dev.zontreck:LibAC:${libac_version}")
