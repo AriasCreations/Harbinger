@@ -8,7 +8,7 @@ integer PLUGIN_DISCORD = 4;
 
 discord(string title, string message, string color)
 {
-    llMessageLinked(LINK_SET, PLUGIN_DISCORD, msg, "");
+    llMessageLinked(LINK_SET, PLUGIN_DISCORD, llList2Json(JSON_OBJECT, ["title", title, "desc", message, "color", color]), "");
 }
 
 lights_on()

@@ -6,8 +6,10 @@
 
 */
 string API_ENDPOINT = "https://harbinger.zontreck.dev/api";
+string DISCORD_ENDPOINT = "https://harbinger.zontreck.dev/discord";
 string VERSION_ENDPOINT = "https://harbinger.zontreck.dev/version";
 string SUPPORT_ENDPOINT = "https://harbinger.zontreck.dev/get_support";
+
 
 // VERSION NUMBER
 // CHANGE ME WHEN UPDATING BUILDS
