@@ -6,7 +6,7 @@ integer PLUGIN_LIGHTS_OFF = 3;
 
 integer PLUGIN_DISCORD = 4;
 
-discord(string msg)
+discord(string title, string message, string color)
 {
     llMessageLinked(LINK_SET, PLUGIN_DISCORD, msg, "");
 }
@@ -32,7 +32,7 @@ default
     state_entry()
     {
         lights_off();
-        discord("Server "+CLIENT_NICK+" is now attempting to obtain a URL");
+        discord(CLIENT_NICK, "Server is now attempting to obtain a URL", "yellow");
         llSleep(5);
         lights(<1,0,0>);
         lights_on();
@@ -50,8 +50,8 @@ default
             {
                 g_sURL = sBody;
                 lights(<1,1,0>);
-                discord("Server ["+CLIENT_NICK+"] has obtained a URL");
-                discord("Registering ["+CLIENT_NICK+"] with Harbinger");
+                discord(CLIENT_NICK, "URL obtained", "dark_green");
+                discord(CLIENT_NICK, "Registering with Harbinger", "yellow");
 
                 UpdateDSRequest(NULL, llHTTPRequest(API_ENDPOINT, [HTTP_METHOD, "POST", HTTP_MIMETYPE, "application/json"], 
                     llList2Json(JSON_OBJECT, ["type", "servers", "sub_command", "register", "name", CLIENT_NICK, "url", g_sURL]);
@@ -76,12 +76,12 @@ default
                 key kTarget = llList2String(lMeta,3);
                 if(llGetInventoryType(sItem) == INVENTORY_NONE)
                 {
-                    discord("Cannot send '"+sItem+"' to '"+sData+"' because it was not found in the server ["+CLIENT_NICK+"]");
+                    discord(CLIENT_NICK, "Cannot send '"+sItem+"' to '"+sData+"' because it was not found", "dark_red");
 
                     llHTTPResponse(kHTTP, 404, "Item not found");
                 }else {
                     llHTTPResponse(kHTTP, 200, "Sending");
-                    discord("Sending item '"+sItem+"' to '"+sData+"' from server ["+CLIENT_NICK+"]");
+                    discord(CLIENT_NICK, "Sending item '"+sItem+"' to '"+sData+"'", "dark_green");
 
                     llGiveInventory(kTarget, sItem);
                 }
@@ -100,10 +100,10 @@ default
                 if(llJsonGetValue(sBody, ["success"])=="true")
                 {
                     lights(<0,0.5,0>);
-                    discord("Server [ "+CLIENT_NICK+" ] has registered with Harbinger");
+                    discord(CLIENT_NICK, "Registered with Harbinger", "dark_green");
                 }else {
                     lights(<0.5,0,0>);
-                    discord("Server [ "+CLIENT_NICK+" ] has failed to register with Harbinger");
+                    discord(CLIENT_NICK, "Failed to register with Harbinger", "dark_red");
                 }
             }
         }

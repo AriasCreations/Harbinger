@@ -11,7 +11,7 @@ public class VersionCheckHandler implements HttpHandler
 {
 	@Override
 	public void handle(HttpExchange httpExchange) throws IOException {
-		String reply = "Version;;" + Persist.HARBINGER_VERSION;
+		String reply = Persist.HARBINGER_VERSION;
 
 
 		byte[] bRep = reply.getBytes();
