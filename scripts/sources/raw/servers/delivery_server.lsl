@@ -54,7 +54,7 @@ default
                 discord(CLIENT_NICK, "Registering with Harbinger", "yellow");
 
                 UpdateDSRequest(NULL, llHTTPRequest(API_ENDPOINT, [HTTP_METHOD, "POST", HTTP_MIMETYPE, "application/json"], 
-                    llList2Json(JSON_OBJECT, ["type", "servers", "sub_command", "register", "name", CLIENT_NICK, "url", g_sURL]);
+                    llList2Json(JSON_OBJECT, ["type", "servers", "sub_command", "register", "name", CLIENT_NICK, "url", g_sURL])
                 ), SetDSMeta(["register_server"]));
             }
         }else {
