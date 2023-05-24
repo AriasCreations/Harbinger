@@ -8,6 +8,8 @@ import java.net.URL;
 import java.nio.file.Path;
 import java.util.Enumeration;
 import java.util.UUID;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.jar.Manifest;
 
 import dev.zontreck.ariaslib.file.Folder;
@@ -52,7 +54,10 @@ public class HarbingerServer {
 
         LOGGER.info("We are Harbinger");
 
+        ScheduledThreadPoolExecutor exec;
         DelayedExecutorService.start();
+
+        exec = DelayedExecutorService.getExecutor();
         TaskBus.register();
 
         TaskBus.tasks.add(new Task("Register Events") {
@@ -153,9 +158,12 @@ public class HarbingerServer {
 
         Servers.registerServerHandler();
 
+        try {
+            exec.wait();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
 
-        while(Terminal.isRunning()){}
-        
         LOGGER.info("Saving...");
 
         EventBus.BUS.post(new MemoryAlteredEvent());
