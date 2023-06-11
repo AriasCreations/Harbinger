@@ -1,11 +1,11 @@
 package dev.zontreck.harbinger.simulator.types;
 
 import dev.zontreck.harbinger.utils.MathF;
+import dev.zontreck.harbinger.utils.Matrix4;
 import dev.zontreck.harbinger.utils.SimUtils;
 
 public class Vector3
 {
-
 	/// <summary>A vector with a value of 0,0,0</summary>
 	public static final Vector3 Zero = new Vector3();
 
