@@ -28,6 +28,8 @@ dependencies {
     implementation("org.json:json:20230227")
 
     implementation ("dev.zontreck:LibAC:${libac_version}")
+
+    implementation("com.fasterxml:aalto-xml:1.3.2")
 }
 
 application {

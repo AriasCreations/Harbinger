@@ -5,6 +5,9 @@ import dev.zontreck.harbinger.utils.Matrix4;
 import dev.zontreck.harbinger.utils.SimUtils;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+
 public class Vector4 implements Comparable<Vector4> {
 	/// <summary>X value</summary>
 	public float X;
@@ -213,12 +216,16 @@ public class Vector4 implements Comparable<Vector4> {
 /// </summary>
 /// <returns>A 16 byte array containing X, Y, Z, and W</returns>
 	public byte[] GetBytes() {
-		var dest = new byte[16];
-		SimUtils.FloatToBytesSafepos(X, dest, 0);
-		SimUtils.FloatToBytesSafepos(Y, dest, 4);
-		SimUtils.FloatToBytesSafepos(Z, dest, 8);
-		SimUtils.FloatToBytesSafepos(W, dest, 12);
-		return dest;
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		try {
+			baos.write(SimUtils.FloatToBytesSafepos(X));
+			baos.write(SimUtils.FloatToBytesSafepos(Y));
+			baos.write(SimUtils.FloatToBytesSafepos(Z));
+			baos.write(SimUtils.FloatToBytesSafepos(W));
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+		return baos.toByteArray();
 	}
 
 
