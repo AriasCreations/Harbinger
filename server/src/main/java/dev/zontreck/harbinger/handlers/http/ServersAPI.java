@@ -9,21 +9,15 @@ import dev.zontreck.harbinger.events.HarbingerClientAddedEvent;
 import dev.zontreck.harbinger.events.HarbingerClientRemovedEvent;
 import dev.zontreck.harbinger.events.MemoryAlteredEvent;
 
-public class ServersAPI
-{
+public class ServersAPI {
 	@Subscribe
-	public static void onServersRequest(APIRequestEvent event)
-	{
-		if(event.request_object.getString("type").equals("servers"))
-		{
+	public static void onServersRequest(APIRequestEvent event) {
+		if (event.request_object.getString("type").equals("servers")) {
 			String subcmd = event.request_object.getString("sub_command");
 			event.setCancelled(true);
-			switch(subcmd)
-			{
-				case "register":
-				{
-					if(!Persist.serverSettings.PSK.validate(event.request_object.getString("psk")))
-					{
+			switch (subcmd) {
+				case "register": {
+					if (!Persist.serverSettings.PSK.validate(event.request_object.getString("psk"))) {
 						event.response_object.put("result", "Admin access required");
 						event.response_object.put("success", false);
 						return;
@@ -31,17 +25,16 @@ public class ServersAPI
 					String srvName = event.request_object.getString("name");
 					String srvUrl = event.request_object.getString("url");
 					Server srv = new Server();
-					srv.serverURL=srvUrl;
-					srv.serverNick=srvName;
+					srv.serverURL = srvUrl;
+					srv.serverNick = srvName;
 
 					// Add to server registry
-					if(EventBus.BUS.post(new HarbingerClientAddedEvent(srv)))
-					{
+					if (EventBus.BUS.post(new HarbingerClientAddedEvent(srv))) {
 						// Add request denied
 						event.response_object.put("result", "The server could not be added for a unknown reason");
 						event.response_object.put("success", false);
 						return;
-					}else {
+					} else {
 						Persist.servers.add(srv);
 
 						EventBus.BUS.post(new MemoryAlteredEvent());
@@ -51,10 +44,8 @@ public class ServersAPI
 
 					break;
 				}
-				case "deregister":
-				{
-					if(!Persist.serverSettings.PSK.validate(event.request_object.getString("psk")))
-					{
+				case "deregister": {
+					if (!Persist.serverSettings.PSK.validate(event.request_object.getString("psk"))) {
 						event.response_object.put("result", "Admin access required");
 						event.response_object.put("success", false);
 						return;

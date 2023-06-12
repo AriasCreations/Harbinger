@@ -4,10 +4,10 @@ import dev.zontreck.harbinger.data.types.PresharedKey;
 
 import java.security.NoSuchAlgorithmException;
 
-public class Key
-{
+public class Key {
 	/**
 	 * Secures a key for safely storing in a data file
+	 *
 	 * @param input The key to encode
 	 * @return A hash+salt combo key instance
 	 */

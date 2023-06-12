@@ -9,16 +9,15 @@ import java.util.Map;
 /**
  * Registers context paths with handlers
  */
-public class HTTPStartingEvent extends Event
-{
-	public int port=0x00;
+public class HTTPStartingEvent extends Event {
+	public int port = 0x00;
 	public Map<String, HttpHandler> contexts;
 
-	public HTTPStartingEvent(int port)
-	{
-		this.port=port;
+	public HTTPStartingEvent(int port) {
+		this.port = port;
 		this.contexts = new HashMap<>();
 	}
+
 	@Override
 	public boolean isCancellable() {
 		return false;

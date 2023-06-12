@@ -7,8 +7,7 @@ import dev.zontreck.harbinger.data.Persist;
 import java.io.IOException;
 import java.io.OutputStream;
 
-public class VersionCheckHandler implements HttpHandler
-{
+public class VersionCheckHandler implements HttpHandler {
 	@Override
 	public void handle(HttpExchange httpExchange) throws IOException {
 		String reply = Persist.HARBINGER_VERSION;

@@ -6,8 +6,7 @@ import org.json.JSONObject;
 
 import java.util.List;
 
-public class DiscordWebhookMessage implements IJsonSerializable
-{
+public class DiscordWebhookMessage implements IJsonSerializable {
 	public String content;
 	public String username;
 	public String avatar_url;
@@ -17,7 +16,7 @@ public class DiscordWebhookMessage implements IJsonSerializable
 	 * This is not currently implemented as i do not yet understand the structure behind this. I'll tinker some later
 	 * DO NOT INITIALIZE THIS
 	 * IT WILL BREAK THE PROGRAM
-	 *
+	 * <p>
 	 * TODO: Fix this with its own class/serializers
 	 */
 	public Object allowed_mentions;
@@ -27,28 +26,27 @@ public class DiscordWebhookMessage implements IJsonSerializable
 	 */
 	public Object components;
 
-	public int flags =0;
-
+	public int flags = 0;
 
 
 	@Override
 	public JSONObject serialize() throws DiscordEmbedLimitsException {
 		JSONObject obj = new JSONObject();
 
-		if(!content.isEmpty())
-		{
-			if(content.length()>2000)throw new DiscordEmbedLimitsException("Content length cannot be greater than 2000 characters");
+		if (!content.isEmpty()) {
+			if (content.length() > 2000)
+				throw new DiscordEmbedLimitsException("Content length cannot be greater than 2000 characters");
 			obj.put("content", content);
 		}
 
-		if(!username.isEmpty()) obj.put("username", username);
-		if(!avatar_url.isEmpty())obj.put("avatar_url", avatar_url);
+		if (!username.isEmpty())
+			obj.put("username", username);
+		if (!avatar_url.isEmpty())
+			obj.put("avatar_url", avatar_url);
 		obj.put("tts", tts);
-		if(embeds!=null)
-		{
+		if (embeds != null) {
 			JSONArray arr = new JSONArray();
-			for(DiscordEmbed embed : embeds)
-			{
+			for (DiscordEmbed embed : embeds) {
 				arr.put(embed.serialize());
 			}
 			obj.put("embeds", arr);

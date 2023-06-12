@@ -11,18 +11,15 @@ import java.util.Map;
 /**
  * Contains the settings for the Harbinger Discord Bot
  */
-public class DiscordSettings
-{
-	public String BOT_TOKEN="";
+public class DiscordSettings {
+	public String BOT_TOKEN = "";
 	public Map<String, String> WEBHOOKS = new HashMap<>();
 
-	public Entry<List<Entry>> save()
-	{
+	public Entry<List<Entry>> save() {
 		Entry<List<Entry>> tag = Folder.getNew("discord");
 		tag.value.add(EntryUtils.mkStr("token", BOT_TOKEN));
 		Entry<List<Entry>> hooks = Folder.getNew("hooks");
-		for(Map.Entry<String,String> e : WEBHOOKS.entrySet())
-		{
+		for (Map.Entry<String, String> e : WEBHOOKS.entrySet()) {
 			hooks.value.add(EntryUtils.mkStr(e.getKey(), e.getValue()));
 		}
 		tag.value.add(hooks);
@@ -32,21 +29,19 @@ public class DiscordSettings
 	}
 
 
-	public DiscordSettings(){}
+	public DiscordSettings() {
+	}
 
-	public DiscordSettings(Entry<List<Entry>> tag)
-	{
-		try{
+	public DiscordSettings(Entry<List<Entry>> tag) {
+		try {
 
 			BOT_TOKEN = EntryUtils.getStr(Folder.getEntry(tag, "token"));
 
 			Entry<List<Entry>> hooks = Folder.getEntry(tag, "hooks");
-			for(Entry<String> e : hooks.value)
-			{
+			for (Entry<String> e : hooks.value) {
 				WEBHOOKS.put(e.name, e.value);
 			}
-		}catch (Exception e)
-		{
+		} catch (Exception e) {
 		}
 
 	}

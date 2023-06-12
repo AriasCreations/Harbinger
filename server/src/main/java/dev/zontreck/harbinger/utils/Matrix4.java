@@ -1,58 +1,50 @@
 package dev.zontreck.harbinger.utils;
 
 import dev.zontreck.harbinger.simulator.types.Quaternion;
-import dev.zontreck.harbinger.simulator.types.Vector2;
 import dev.zontreck.harbinger.simulator.types.Vector2i;
 import dev.zontreck.harbinger.simulator.types.Vector3;
 
-public class Matrix4
-{
+public class Matrix4 {
 	/// <summary>A 4x4 matrix containing all zeroes</summary>
 	public static final Matrix4 Zero = new Matrix4();
 
 	/// <summary>A 4x4 identity matrix</summary>
 	public static final Matrix4 Identity = new Matrix4(
-		1f, 0f, 0f, 0f,
-		0f, 1f, 0f, 0f,
-		0f, 0f, 1f, 0f,
-		0f, 0f, 0f, 1f);
+			1f, 0f, 0f, 0f,
+			0f, 1f, 0f, 0f,
+			0f, 0f, 1f, 0f,
+			0f, 0f, 0f, 1f);
 
 	public float M11, M12, M13, M14;
 	public float M21, M22, M23, M24;
 	public float M31, M32, M33, M34;
 	public float M41, M42, M43, M44;
 
-	public Vector3 getAtAxis()
-	{
+	public Vector3 getAtAxis() {
 		return new Vector3(M11, M21, M31);
 	}
 
-	public void setAtAxis(Vector3 vect)
-	{
+	public void setAtAxis(Vector3 vect) {
 		M11 = vect.X;
 		M21 = vect.Y;
 		M31 = vect.Z;
 	}
 
-	public Vector3 getLeftAxis()
-	{
+	public Vector3 getLeftAxis() {
 		return new Vector3(M12, M22, M32);
 	}
 
-	public void setLeftAxis(Vector3 axis)
-	{
+	public void setLeftAxis(Vector3 axis) {
 		M12 = axis.X;
 		M22 = axis.Y;
 		M32 = axis.Z;
 	}
 
-	public Vector3 getUpAxis()
-	{
+	public Vector3 getUpAxis() {
 		return new Vector3(M13, M23, M33);
 	}
 
-	public void setUpAxis(Vector3 axis)
-	{
+	public void setUpAxis(Vector3 axis) {
 		M13 = axis.X;
 		M23 = axis.Y;
 		M33 = axis.Z;
@@ -63,8 +55,7 @@ public class Matrix4
 			float m11, float m12, float m13, float m14,
 			float m21, float m22, float m23, float m24,
 			float m31, float m32, float m33, float m34,
-			float m41, float m42, float m43, float m44)
-	{
+			float m41, float m42, float m43, float m44) {
 		M11 = m11;
 		M12 = m12;
 		M13 = m13;
@@ -86,19 +77,17 @@ public class Matrix4
 		M44 = m44;
 	}
 
-	public Matrix4(){
+	public Matrix4() {
 
 	}
 
-	public Matrix4(float roll, float pitch, float yaw)
-	{
+	public Matrix4(float roll, float pitch, float yaw) {
 		initFromEulers(roll, pitch, yaw);
 
 	}
 
 
-	public Matrix4(Matrix4 m)
-	{
+	public Matrix4(Matrix4 m) {
 		M11 = m.M11;
 		M12 = m.M12;
 		M13 = m.M13;
@@ -121,9 +110,7 @@ public class Matrix4
 	}
 
 
-
-	public float Determinant()
-	{
+	public float Determinant() {
 		return
 				M14 * M23 * M32 * M41 - M13 * M24 * M32 * M41 - M14 * M22 * M33 * M41 + M12 * M24 * M33 * M41 +
 						M13 * M22 * M34 * M41 - M12 * M23 * M34 * M41 - M14 * M23 * M31 * M42 + M13 * M24 * M31 * M42 +
@@ -133,8 +120,7 @@ public class Matrix4
 						M13 * M21 * M32 * M44 - M11 * M23 * M32 * M44 - M12 * M21 * M33 * M44 + M11 * M22 * M33 * M44;
 	}
 
-	public float Determinant3x3()
-	{
+	public float Determinant3x3() {
 		var det = 0f;
 
 		var diag1 = M11 * M22 * M33;
@@ -149,13 +135,11 @@ public class Matrix4
 		return det;
 	}
 
-	public float Trace()
-	{
+	public float Trace() {
 		return M11 + M22 + M33 + M44;
 	}
 
-	public Vector3 GetEulerAngles(float roll, float pitch, float yaw)
-	{
+	public Vector3 GetEulerAngles(float roll, float pitch, float yaw) {
 		float angleX, angleY, angleZ;
 		float cx, cy, cz; // cosines
 		float sx, sz; // sines
@@ -163,8 +147,7 @@ public class Matrix4
 		angleY = MathF.Asin(MathF.Clamp(M13, -1f, 1f));
 		cy = MathF.Cos(angleY);
 
-		if (MathF.Abs(cy) > 0.005f)
-		{
+		if (MathF.Abs(cy) > 0.005f) {
 			// No gimbal lock
 			cx = M33 / cy;
 			sx = -M23 / cy;
@@ -175,9 +158,7 @@ public class Matrix4
 			sz = -M12 / cy;
 
 			angleZ = MathF.Atan2(sz, cz);
-		}
-		else
-		{
+		} else {
 			// Gimbal lock
 			angleX = 0;
 
@@ -199,42 +180,33 @@ public class Matrix4
 		return new Vector3(roll, pitch, yaw);
 	}
 
-	public Quaternion GetQuaternion()
-	{
+	public Quaternion GetQuaternion() {
 		var quat = new Quaternion();
 		var trace = Trace() + 1f;
 
-		if (trace > 1E-6F)
-		{
+		if (trace > 1E-6F) {
 			var s = 0.5f / MathF.Sqrt(trace);
 
 			quat.X = (M32 - M23) * s;
 			quat.Y = (M13 - M31) * s;
 			quat.Z = (M21 - M12) * s;
 			quat.W = 0.25f / s;
-		}
-		else
-		{
-			if (M11 > M22 && M11 > M33)
-			{
+		} else {
+			if (M11 > M22 && M11 > M33) {
 				var s = 2.0f * MathF.Sqrt(1.0f + M11 - M22 - M33);
 
 				quat.X = 0.25f * s;
 				quat.Y = (M12 + M21) / s;
 				quat.Z = (M13 + M31) / s;
 				quat.W = (M23 - M32) / s;
-			}
-			else if (M22 > M33)
-			{
+			} else if (M22 > M33) {
 				var s = 2.0f * MathF.Sqrt(1.0f + M22 - M11 - M33);
 
 				quat.X = (M12 + M21) / s;
 				quat.Y = 0.25f * s;
 				quat.Z = (M23 + M32) / s;
 				quat.W = (M13 - M31) / s;
-			}
-			else
-			{
+			} else {
 				var s = 2.0f * MathF.Sqrt(1.0f + M33 - M11 - M22);
 
 				quat.X = (M13 + M31) / s;
@@ -278,8 +250,7 @@ public class Matrix4
 	}*/
 
 
-	public static Matrix4 Add(Matrix4 matrix1, Matrix4 matrix2)
-	{
+	public static Matrix4 Add(Matrix4 matrix1, Matrix4 matrix2) {
 		Matrix4 matrix = new Matrix4();
 		matrix.M11 = matrix1.M11 + matrix2.M11;
 		matrix.M12 = matrix1.M12 + matrix2.M12;
@@ -303,8 +274,7 @@ public class Matrix4
 		return matrix;
 	}
 
-	public static Matrix4 CreateFromAxisAngle(Vector3 axis, float angle)
-	{
+	public static Matrix4 CreateFromAxisAngle(Vector3 axis, float angle) {
 		var matrix = new Matrix4();
 
 		var x = axis.X;
@@ -346,16 +316,14 @@ public class Matrix4
 	/// <param name="roll">X euler angle in radians</param>
 	/// <param name="pitch">Y euler angle in radians</param>
 	/// <param name="yaw">Z euler angle in radians</param>
-	public static Matrix4 CreateFromEulers(float roll, float pitch, float yaw)
-	{
+	public static Matrix4 CreateFromEulers(float roll, float pitch, float yaw) {
 		Matrix4 m = new Matrix4();
-		m.initFromEulers(roll,pitch,yaw);
+		m.initFromEulers(roll, pitch, yaw);
 
 		return m;
 	}
 
-	private void initFromEulers(float roll, float pitch, float yaw)
-	{
+	private void initFromEulers(float roll, float pitch, float yaw) {
 
 		float a, b, c, d, e, f;
 		float ad, bd;
@@ -389,8 +357,7 @@ public class Matrix4
 		M44 = 1f;
 	}
 
-	public static Matrix4 CreateFromQuaternion(Quaternion rot)
-	{
+	public static Matrix4 CreateFromQuaternion(Quaternion rot) {
 		Matrix4 matrix = new Matrix4();
 
 		var x2 = rot.X + rot.X;
@@ -428,8 +395,7 @@ public class Matrix4
 		return matrix;
 	}
 
-	public static Matrix4 CreateLookAt(Vector3 cameraPosition, Vector3 cameraTarget, Vector3 cameraUpVector)
-	{
+	public static Matrix4 CreateLookAt(Vector3 cameraPosition, Vector3 cameraTarget, Vector3 cameraUpVector) {
 		Matrix4 matrix = new Matrix4();
 
 		var z = Vector3.Normalize(Vector3.Subtract(cameraPosition, cameraTarget));
@@ -459,8 +425,7 @@ public class Matrix4
 		return matrix;
 	}
 
-	public static Matrix4 CreateRotationX(float radians)
-	{
+	public static Matrix4 CreateRotationX(float radians) {
 		Matrix4 matrix = new Matrix4();
 
 		var cos = MathF.Cos(radians);
@@ -489,8 +454,7 @@ public class Matrix4
 		return matrix;
 	}
 
-	public static Matrix4 CreateRotationY(float radians)
-	{
+	public static Matrix4 CreateRotationY(float radians) {
 		Matrix4 matrix = new Matrix4();
 
 		var cos = MathF.Cos(radians);
@@ -519,8 +483,7 @@ public class Matrix4
 		return matrix;
 	}
 
-	public static Matrix4 CreateRotationZ(float radians)
-	{
+	public static Matrix4 CreateRotationZ(float radians) {
 		Matrix4 matrix = new Matrix4();
 
 		var cos = MathF.Cos(radians);
@@ -549,8 +512,7 @@ public class Matrix4
 		return matrix;
 	}
 
-	public static Matrix4 CreateScale(Vector3 scale)
-	{
+	public static Matrix4 CreateScale(Vector3 scale) {
 		Matrix4 matrix = new Matrix4();
 
 		matrix.M11 = scale.X;
@@ -576,8 +538,7 @@ public class Matrix4
 		return matrix;
 	}
 
-	public static Matrix4 CreateTranslation(Vector3 position)
-	{
+	public static Matrix4 CreateTranslation(Vector3 position) {
 		Matrix4 matrix = new Matrix4();
 
 		matrix.M11 = 1f;
@@ -603,8 +564,7 @@ public class Matrix4
 		return matrix;
 	}
 
-	public static Matrix4 CreateWorld(Vector3 position, Vector3 forward, Vector3 up)
-	{
+	public static Matrix4 CreateWorld(Vector3 position, Vector3 forward, Vector3 up) {
 		Matrix4 result = new Matrix4();
 
 		// Normalize forward vector
@@ -641,8 +601,7 @@ public class Matrix4
 		return result;
 	}
 
-	public static Matrix4 Divide(Matrix4 matrix1, Matrix4 matrix2)
-	{
+	public static Matrix4 Divide(Matrix4 matrix1, Matrix4 matrix2) {
 		Matrix4 matrix = new Matrix4();
 
 		matrix.M11 = matrix1.M11 / matrix2.M11;
@@ -668,8 +627,7 @@ public class Matrix4
 		return matrix;
 	}
 
-	public static Matrix4 Divide(Matrix4 matrix1, float divider)
-	{
+	public static Matrix4 Divide(Matrix4 matrix1, float divider) {
 		Matrix4 matrix = new Matrix4();
 
 		var oodivider = 1f / divider;
@@ -696,8 +654,7 @@ public class Matrix4
 		return matrix;
 	}
 
-	public static Matrix4 Lerp(Matrix4 matrix1, Matrix4 matrix2, float amount)
-	{
+	public static Matrix4 Lerp(Matrix4 matrix1, Matrix4 matrix2, float amount) {
 		Matrix4 matrix = new Matrix4();
 
 		matrix.M11 = matrix1.M11 + (matrix2.M11 - matrix1.M11) * amount;
@@ -723,8 +680,7 @@ public class Matrix4
 		return matrix;
 	}
 
-	public static Matrix4 Multiply(Matrix4 matrix1, Matrix4 matrix2)
-	{
+	public static Matrix4 Multiply(Matrix4 matrix1, Matrix4 matrix2) {
 		return new Matrix4(
 				matrix1.M11 * matrix2.M11 + matrix1.M12 * matrix2.M21 + matrix1.M13 * matrix2.M31 +
 						matrix1.M14 * matrix2.M41,
@@ -761,8 +717,7 @@ public class Matrix4
 		);
 	}
 
-	public static Matrix4 Multiply(Matrix4 matrix1, float scaleFactor)
-	{
+	public static Matrix4 Multiply(Matrix4 matrix1, float scaleFactor) {
 		Matrix4 matrix = new Matrix4();
 		matrix.M11 = matrix1.M11 * scaleFactor;
 		matrix.M12 = matrix1.M12 * scaleFactor;
@@ -786,8 +741,7 @@ public class Matrix4
 		return matrix;
 	}
 
-	public static Matrix4 Negate(Matrix4 matrix)
-	{
+	public static Matrix4 Negate(Matrix4 matrix) {
 		Matrix4 result = new Matrix4();
 		result.M11 = -matrix.M11;
 		result.M12 = -matrix.M12;
@@ -811,8 +765,7 @@ public class Matrix4
 		return result;
 	}
 
-	public static Matrix4 Subtract(Matrix4 matrix1, Matrix4 matrix2)
-	{
+	public static Matrix4 Subtract(Matrix4 matrix1, Matrix4 matrix2) {
 		Matrix4 matrix = new Matrix4();
 		matrix.M11 = matrix1.M11 - matrix2.M11;
 		matrix.M12 = matrix1.M12 - matrix2.M12;
@@ -836,8 +789,7 @@ public class Matrix4
 		return matrix;
 	}
 
-	public static Matrix4 Transform(Matrix4 value, Quaternion rotation)
-	{
+	public static Matrix4 Transform(Matrix4 value, Quaternion rotation) {
 		Matrix4 matrix = new Matrix4();
 
 		var x2 = rotation.X + rotation.X;
@@ -877,8 +829,7 @@ public class Matrix4
 		return matrix;
 	}
 
-	public static Matrix4 Transpose(Matrix4 matrix)
-	{
+	public static Matrix4 Transpose(Matrix4 matrix) {
 		Matrix4 result = new Matrix4();
 
 		result.M11 = matrix.M11;
@@ -911,19 +862,17 @@ public class Matrix4
 		return Matrix4.Divide(matrix, matrix.Determinant3x3());
 	}
 
-	public static Matrix4 Adjoint3x3(Matrix4 matrix)
-	{
+	public static Matrix4 Adjoint3x3(Matrix4 matrix) {
 		var adjointMatrix = new Matrix4();
 		for (var i = 0; i < 4; i++)
 			for (var j = 0; j < 4; j++)
-				adjointMatrix.set(new Vector2i(i,j), MathF.Pow(-1, i + j) * Minor(matrix, i, j).Determinant3x3());
+				adjointMatrix.set(new Vector2i(i, j), MathF.Pow(-1, i + j) * Minor(matrix, i, j).Determinant3x3());
 
 		adjointMatrix = Transpose(adjointMatrix);
 		return adjointMatrix;
 	}
 
-	public void set(Vector2i point, float value)
-	{
+	public void set(Vector2i point, float value) {
 		try {
 			setValue(point.X, point.Y, value);
 		} catch (Exception e) {
@@ -931,8 +880,7 @@ public class Matrix4
 		}
 	}
 
-	public float get(Vector2i point)
-	{
+	public float get(Vector2i point) {
 		try {
 			return getValue(point.X, point.Y);
 		} catch (Exception e) {
@@ -941,8 +889,7 @@ public class Matrix4
 	}
 
 	public void set(int row, Quaternion value) throws Exception {
-		switch (row)
-		{
+		switch (row) {
 			case 0:
 				M11 = value.X;
 				M12 = value.Y;
@@ -973,8 +920,7 @@ public class Matrix4
 	}
 
 	public Quaternion get(int row) throws Exception {
-		switch (row)
-		{
+		switch (row) {
 			case 0:
 				return new Quaternion(M11, M12, M13, M14);
 			case 1:
@@ -990,11 +936,9 @@ public class Matrix4
 
 
 	private float getValue(int row, int column) throws Exception {
-		switch (row)
-		{
+		switch (row) {
 			case 0:
-				switch (column)
-				{
+				switch (column) {
 					case 0:
 						return M11;
 					case 1:
@@ -1007,8 +951,7 @@ public class Matrix4
 						throw new Exception("Matrix4 row and column values must be from 0-3");
 				}
 			case 1:
-				switch (column)
-				{
+				switch (column) {
 					case 0:
 						return M21;
 					case 1:
@@ -1021,8 +964,7 @@ public class Matrix4
 						throw new Exception("Matrix4 row and column values must be from 0-3");
 				}
 			case 2:
-				switch (column)
-				{
+				switch (column) {
 					case 0:
 						return M31;
 					case 1:
@@ -1035,8 +977,7 @@ public class Matrix4
 						throw new Exception("Matrix4 row and column values must be from 0-3");
 				}
 			case 3:
-				switch (column)
-				{
+				switch (column) {
 					case 0:
 						return M41;
 					case 1:
@@ -1054,11 +995,9 @@ public class Matrix4
 	}
 
 	private void setValue(int row, int column, float value) throws Exception {
-		switch (row)
-		{
+		switch (row) {
 			case 0:
-				switch (column)
-				{
+				switch (column) {
 					case 0:
 						M11 = value;
 						return;
@@ -1075,8 +1014,7 @@ public class Matrix4
 						throw new Exception("Matrix4 row and column values must be from 0-3");
 				}
 			case 1:
-				switch (column)
-				{
+				switch (column) {
 					case 0:
 						M21 = value;
 						return;
@@ -1093,8 +1031,7 @@ public class Matrix4
 						throw new Exception("Matrix4 row and column values must be from 0-3");
 				}
 			case 2:
-				switch (column)
-				{
+				switch (column) {
 					case 0:
 						M31 = value;
 						return;
@@ -1111,8 +1048,7 @@ public class Matrix4
 						throw new Exception("Matrix4 row and column values must be from 0-3");
 				}
 			case 3:
-				switch (column)
-				{
+				switch (column) {
 					case 0:
 						M41 = value;
 						return;
@@ -1140,33 +1076,29 @@ public class Matrix4
 		return Matrix4.Divide(Adjoint(matrix), matrix.Determinant());
 	}
 
-	public static Matrix4 Adjoint(Matrix4 matrix)
-	{
+	public static Matrix4 Adjoint(Matrix4 matrix) {
 		var adjointMatrix = new Matrix4();
 		for (var i = 0; i < 4; i++)
 			for (var j = 0; j < 4; j++)
-				adjointMatrix.set(new Vector2i(i,j), MathF.Pow(-1, i + j) * Minor(matrix, i, j).Determinant3x3());
+				adjointMatrix.set(new Vector2i(i, j), MathF.Pow(-1, i + j) * Minor(matrix, i, j).Determinant3x3());
 
 		adjointMatrix = Transpose(adjointMatrix);
 		return adjointMatrix;
 	}
 
-	public static Matrix4 Minor(Matrix4 matrix, int row, int col)
-	{
+	public static Matrix4 Minor(Matrix4 matrix, int row, int col) {
 		var minor = new Matrix4();
 		int m = 0, n = 0;
 
-		for (var i = 0; i < 4; i++)
-		{
+		for (var i = 0; i < 4; i++) {
 			if (i == row)
 				continue;
 			n = 0;
-			for (var j = 0; j < 4; j++)
-			{
+			for (var j = 0; j < 4; j++) {
 				if (j == col)
 					continue;
 
-				minor.set(new Vector2i(m,n), matrix.get(new Vector2i(i,j)));
+				minor.set(new Vector2i(m, n), matrix.get(new Vector2i(i, j)));
 				n++;
 			}
 

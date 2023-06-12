@@ -12,52 +12,40 @@ import org.json.JSONObject;
 
 import java.util.UUID;
 
-public class SupportAPIHandlers
-{
+public class SupportAPIHandlers {
 	@Subscribe
-	public static void onSupport(APIRequestEvent event)
-	{
-		if(event.request_object.getString("type").equals("support"))
-		{
+	public static void onSupport(APIRequestEvent event) {
+		if (event.request_object.getString("type").equals("support")) {
 			JSONObject response = new JSONObject();
 			// Validate PSK
-			boolean auth = false; // This is to control if tasks that require admin should be executed or not
-			if(Persist.serverSettings.PSK.validate(event.request_object.getString("psk")))
-			{
-				auth = true;
-			}
+			boolean auth = Persist.serverSettings.PSK.validate(event.request_object.getString("psk")); // This is to control if tasks that require admin should be executed or not
 			event.setCancelled(true);
 			UUID ID = UUID.fromString(event.request_object.getString("id"));
 
-			switch(event.request_object.getString("sub_command"))
-			{
-				case "delete":
-				{
-					if(!auth)
-					{
+			switch (event.request_object.getString("sub_command")) {
+				case "delete": {
+					if (!auth) {
 						response.put("result", "Admin access required");
 						break;
 					}
 					// Deletes the support rep if possible
-					if(SupportReps.hasID(ID))
-					{
+					if (SupportReps.hasID(ID)) {
 						SupportReps.remove(SupportReps.get(ID));
 						response.put("result", "Support representative deleted.");
 						EventBus.BUS.post(new MemoryAlteredEvent());
-					}else response.put("result", "No such support rep. No changes have been made.");
+					} else
+						response.put("result", "No such support rep. No changes have been made.");
 					break;
 				}
-				case "get":
-				{
+				case "get": {
 					// Gets the support level
-					if(SupportReps.hasID(ID))
-					{
+					if (SupportReps.hasID(ID)) {
 						Person p = SupportReps.get(ID);
 						response.put("result", "Found");
 						response.put("level", p.Permissions.getFlag());
 						response.put("level_id", p.Permissions.name());
 						response.put("id", ID.toString());
-					}else {
+					} else {
 						response.put("result", "No user");
 						response.put("level", 0);
 						response.put("level_id", "None");
@@ -65,16 +53,14 @@ public class SupportAPIHandlers
 					}
 					break;
 				}
-				case "add":
-				{
+				case "add": {
 					// Set a new support rep
-					if(!auth)
-					{
+					if (!auth) {
 						response.put("result", "Admin access required");
 						break;
 					}
 					Person rep = new Person(ID, event.request_object.getString("name"), PermissionLevel.valueOf(event.request_object.getString("level")));
-					if(SupportReps.hasID(ID))
+					if (SupportReps.hasID(ID))
 						SupportReps.remove(SupportReps.get(ID));
 
 					SupportReps.add(rep);
@@ -85,7 +71,7 @@ public class SupportAPIHandlers
 				}
 			}
 
-			event.response_object=response;
+			event.response_object = response;
 		}
 	}
 }

@@ -11,16 +11,13 @@ import dev.zontreck.harbinger.utils.Key;
 
 import java.security.NoSuchAlgorithmException;
 
-public class SetPresharedKeyCommand
-{
+public class SetPresharedKeyCommand {
 	public static final String SETPSK = "setpsk";
 
 
 	@Subscribe
-	public static void onSetPSK(CommandEvent event)
-	{
-		if(event.command.equals(SETPSK))
-		{
+	public static void onSetPSK(CommandEvent event) {
+		if (event.command.equals(SETPSK)) {
 			event.setCancelled(true);
 
 			ConsolePrompt.console.printf("What should the new PSK be? ");
@@ -30,9 +27,9 @@ public class SetPresharedKeyCommand
 			Terminal.startTerminal();
 
 			try {
-				Persist.serverSettings.PSK= Key.computeSecuredKey(psk);
+				Persist.serverSettings.PSK = Key.computeSecuredKey(psk);
 			} catch (NoSuchAlgorithmException e) {
-				ConsolePrompt.console.printf("Error while setting PSK: "+e.getMessage());
+				ConsolePrompt.console.printf("Error while setting PSK: " + e.getMessage());
 			}
 			EventBus.BUS.post(new MemoryAlteredEvent());
 		}

@@ -2,8 +2,7 @@ package dev.zontreck.harbinger.data.types;
 
 import org.json.JSONObject;
 
-public class DiscordEmbedImage implements IJsonSerializable
-{
+public class DiscordEmbedImage implements IJsonSerializable {
 	public String url;
 	public String proxy_url;
 	public int height;
@@ -13,10 +12,10 @@ public class DiscordEmbedImage implements IJsonSerializable
 	public JSONObject serialize() {
 		JSONObject obj = new JSONObject();
 
-		if(!url.isEmpty())
+		if (!url.isEmpty())
 			obj.put("url", url);
 
-		if(!proxy_url.isEmpty())
+		if (!proxy_url.isEmpty())
 			obj.put("proxy_url", proxy_url);
 
 		obj.put("height", height);
@@ -25,11 +24,10 @@ public class DiscordEmbedImage implements IJsonSerializable
 		return obj;
 	}
 
-	public DiscordEmbedImage(){
+	public DiscordEmbedImage() {
 	}
 
-	public DiscordEmbedImage(JSONObject obj)
-	{
+	public DiscordEmbedImage(JSONObject obj) {
 
 		url = obj.getString("url");
 		proxy_url = obj.getString("proxy_url");

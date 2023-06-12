@@ -7,17 +7,12 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-public class PluginLoader
-{
+public class PluginLoader {
 	public static final Logger LOGGER = LoggerFactory.getLogger(PluginLoader.class.getSimpleName());
 
 	public static List<Path> JARS = new ArrayList<>();
@@ -26,7 +21,7 @@ public class PluginLoader
 		ClassLoader loader = ClassLoader.getSystemClassLoader();
 
 		File[] lst = HarbingerServer.PLUGINS.toFile().listFiles();
-		boolean iNextJar=false;
+		boolean iNextJar = false;
 		/*for(File f : lst)
 		{
 			URL jar = f.toURI().toURL();
@@ -44,15 +39,14 @@ public class PluginLoader
 		}*/
 	}
 
-	public static void activate()
-	{
+	public static void activate() {
 		Class<?> clazz = Plugin.class;
 		Class<?>[] cls = clazz.getClasses();
 		List<IPlugin> plugins = new ArrayList<>();
 
-		for(Class<?>  C : cls){
+		for (Class<?> C : cls) {
 			Plugin plug = C.getAnnotation(Plugin.class);
-			LOGGER.info("Activating plugin: "+plug.name());
+			LOGGER.info("Activating plugin: " + plug.name());
 
 			try {
 				Constructor<IPlugin> Construct = (Constructor<IPlugin>) C.getConstructor();
@@ -61,7 +55,7 @@ public class PluginLoader
 
 				plugin.init();
 
-				LOGGER.info("Plugin activated ["+plug.name()+"]");
+				LOGGER.info("Plugin activated [" + plug.name() + "]");
 			} catch (NoSuchMethodException |
 					 InvocationTargetException |
 					 InstantiationException |

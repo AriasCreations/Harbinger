@@ -1,7 +1,5 @@
 package dev.zontreck.harbinger.commands.support;
 
-import java.util.UUID;
-
 import dev.zontreck.ariaslib.events.CommandEvent;
 import dev.zontreck.ariaslib.events.EventBus;
 import dev.zontreck.ariaslib.events.annotations.Subscribe;
@@ -13,58 +11,53 @@ import dev.zontreck.harbinger.data.types.PermissionLevel;
 import dev.zontreck.harbinger.data.types.Person;
 import dev.zontreck.harbinger.events.MemoryAlteredEvent;
 
-public class SupportCommands{
-    public static final String LIST_SUPPORT = "list";
-    public static final String SUPPORT_ADD = "add"; // Starts a interactive prompt
-    public static final String SUPPORT = "support";
+import java.util.UUID;
+
+public class SupportCommands {
+	public static final String LIST_SUPPORT = "list";
+	public static final String SUPPORT_ADD = "add"; // Starts a interactive prompt
+	public static final String SUPPORT = "support";
 
 
+	@Subscribe
+	public static void onListSupport(CommandEvent ev) {
+		if (ev.command.equals(SUPPORT)) {
+			if (ev.arguments.size() == 0) {
+				CommandRegistry.LOGGER.info("The following are the accepted subcommands\n \n" +
 
-    @Subscribe
-    public static void onListSupport(CommandEvent ev)
-    {
-        if(ev.command.equals(SUPPORT))
-        {
-            if(ev.arguments.size()==0)
-            {
-                CommandRegistry.LOGGER.info("The following are the accepted subcommands\n \n"+
-                
-                        LIST_SUPPORT+"\t\t- Lists all support representatives\n" +
-                        SUPPORT_ADD+"\t\t- Adds a new support rep\n"
-                        );
-                return;
-            }else {
-                if(ev.arguments.get(0).equals(LIST_SUPPORT))
-                {
-                    CommandRegistry.LOGGER.info("The following are the support reps: \n"+SupportReps.dump());
-                } else if(ev.arguments.get(0).equals(SUPPORT_ADD))
-                {
-                    ev.setCancelled(true);
+						LIST_SUPPORT + "\t\t- Lists all support representatives\n" +
+						SUPPORT_ADD + "\t\t- Adds a new support rep\n"
+				);
+			} else {
+				if (ev.arguments.get(0).equals(LIST_SUPPORT)) {
+					CommandRegistry.LOGGER.info("The following are the support reps: \n" + SupportReps.dump());
+				} else if (ev.arguments.get(0).equals(SUPPORT_ADD)) {
+					ev.setCancelled(true);
 
-                    ConsolePrompt.console.printf("\nPlease enter the Rep's UUID > ");
-                    String input = ConsolePrompt.console.readLine();
-                    ConsolePrompt.console.printf("\nPlease enter the Rep's Second Life User Name (Not display) > ");
-                    String name = ConsolePrompt.console.readLine();
-                    ConsolePrompt.console.printf("\nWhat level is this user? \n");
-                    for (PermissionLevel lPermissionLevel : PermissionLevel.values()) {
-                        System.out.println(String.valueOf(lPermissionLevel.getFlag())+"\t\t-\t"+lPermissionLevel.name());
-                        
-                    }
-                    ConsolePrompt.console.printf("\nChoose a level > ");
-                    String lvl = ConsolePrompt.console.readLine();
-                    PermissionLevel perm = PermissionLevel.of(Integer.parseInt(lvl));
+					ConsolePrompt.console.printf("\nPlease enter the Rep's UUID > ");
+					String input = ConsolePrompt.console.readLine();
+					ConsolePrompt.console.printf("\nPlease enter the Rep's Second Life User Name (Not display) > ");
+					String name = ConsolePrompt.console.readLine();
+					ConsolePrompt.console.printf("\nWhat level is this user? \n");
+					for (PermissionLevel lPermissionLevel : PermissionLevel.values()) {
+						System.out.println(lPermissionLevel.getFlag() + "\t\t-\t" + lPermissionLevel.name());
 
-                    Person p = new Person(UUID.fromString(input), name, perm);
-                    SupportReps.add(p);
+					}
+					ConsolePrompt.console.printf("\nChoose a level > ");
+					String lvl = ConsolePrompt.console.readLine();
+					PermissionLevel perm = PermissionLevel.of(Integer.parseInt(lvl));
 
-                    Terminal.startTerminal();
+					Person p = new Person(UUID.fromString(input), name, perm);
+					SupportReps.add(p);
 
-                    EventBus.BUS.post(new MemoryAlteredEvent());
-                    
-                }
-            }
-        }
-    }
+					Terminal.startTerminal();
+
+					EventBus.BUS.post(new MemoryAlteredEvent());
+
+				}
+			}
+		}
+	}
 
 
 }

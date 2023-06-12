@@ -9,28 +9,24 @@ import dev.zontreck.harbinger.data.Persist;
 import dev.zontreck.harbinger.data.types.Signature;
 import dev.zontreck.harbinger.events.MemoryAlteredEvent;
 
-public class SetSignature
-{
+public class SetSignature {
 	public static final String SETSIG = "setsig";
 
 	@Subscribe
-	public static void onSetSignature(CommandEvent event)
-	{
-		if(event.command.equals(SETSIG))
-		{
+	public static void onSetSignature(CommandEvent event) {
+		if (event.command.equals(SETSIG)) {
 			event.setCancelled(true);
 
 			ConsolePrompt.console.printf("Generate a random signature? [Y/n] ");
 			String yn = ConsolePrompt.console.readLine();
 
-			if(yn.toLowerCase().equals("y") || yn.equals(""))
-			{
+			if (yn.equalsIgnoreCase("y") || yn.equals("")) {
 				Signature sig = Signature.makeNew();
-				Persist.SIGNATURE=sig;
+				Persist.SIGNATURE = sig;
 
 				EventBus.BUS.post(new MemoryAlteredEvent());
 
-			}else {
+			} else {
 				Signature sig = new Signature();
 
 				ConsolePrompt.console.printf("Please enter the first signature: ");
@@ -42,7 +38,7 @@ public class SetSignature
 				sig.v1 = Long.parseLong(A1);
 				sig.v2 = Long.parseLong(A2);
 
-				Persist.SIGNATURE=sig;
+				Persist.SIGNATURE = sig;
 				EventBus.BUS.post(new MemoryAlteredEvent());
 			}
 

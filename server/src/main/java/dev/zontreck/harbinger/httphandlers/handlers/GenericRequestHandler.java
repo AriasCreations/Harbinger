@@ -7,8 +7,7 @@ import dev.zontreck.harbinger.events.GenericRequestEvent;
 
 import java.io.IOException;
 
-public class GenericRequestHandler implements HttpHandler
-{
+public class GenericRequestHandler implements HttpHandler {
 
 	@Override
 	public void handle(HttpExchange httpExchange) throws IOException {
@@ -16,11 +15,10 @@ public class GenericRequestHandler implements HttpHandler
 		EventBus.BUS.post(GRE);
 
 		byte[] response;
-		if(GRE.responseIsBinary)
-		{
-			response=GRE.response;
-		}else{
-			response=GRE.responseText.getBytes();
+		if (GRE.responseIsBinary) {
+			response = GRE.response;
+		} else {
+			response = GRE.responseText.getBytes();
 		}
 
 		httpExchange.getResponseHeaders().add("Content-Type", GRE.contentType);

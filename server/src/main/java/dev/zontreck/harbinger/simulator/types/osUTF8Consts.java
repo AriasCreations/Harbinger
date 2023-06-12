@@ -1,7 +1,6 @@
 package dev.zontreck.harbinger.simulator.types;
 
-public class osUTF8Consts
-{
+public class osUTF8Consts {
 	public static final byte[] XMLundef = osUTF8.GetASCIIBytes("<undef/>");
 	public static final byte[] XMLfullbooleanOne = osUTF8.GetASCIIBytes("<boolean>1</boolean>");
 	public static final byte[] XMLfullbooleanZero = osUTF8.GetASCIIBytes("<boolean>0</boolean>");
@@ -56,7 +55,7 @@ public class osUTF8Consts
 	public static final byte[] XMLformalHeader = osUTF8.GetASCIIBytes("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
 
 	public static final byte[] XMLformalHeaderllsdstart =
-		osUTF8.GetASCIIBytes("<?xml version=\"1.0\" encoding=\"utf-8\"?><llsd>");
+			osUTF8.GetASCIIBytes("<?xml version=\"1.0\" encoding=\"utf-8\"?><llsd>");
 
 	public static final byte[] XMLllsdStart = osUTF8.GetASCIIBytes("<llsd>");
 	public static final byte[] XMLllsdEnd = osUTF8.GetASCIIBytes("</llsd>");
@@ -99,31 +98,31 @@ public class osUTF8Consts
 	public static final byte[] XMLelement_version_Start = osUTF8.GetASCIIBytes("<key>version</key><integer>");
 
 	public static final byte[] XMLelement_sale_info_Empty =
-		osUTF8.GetASCIIBytes(
-				"<key>sale_info</key><map><key>sale_price</key><integer /><key>sale_type</key><integer /></map>");
+			osUTF8.GetASCIIBytes(
+					"<key>sale_info</key><map><key>sale_price</key><integer /><key>sale_type</key><integer /></map>");
 
 	public static final byte[] XMLelement_sale_info_Start =
-		osUTF8.GetASCIIBytes("<key>sale_info</key><map><key>sale_price</key><integer>");
+			osUTF8.GetASCIIBytes("<key>sale_info</key><map><key>sale_price</key><integer>");
 
 	public static final byte[] XMLelement_sale_info_Mid =
-		osUTF8.GetASCIIBytes("</integer><key>sale_type</key><integer>");
+			osUTF8.GetASCIIBytes("</integer><key>sale_type</key><integer>");
 
 	public static final byte[] XMLelement_sale_info_End = osUTF8.GetASCIIBytes("</integer></map>");
 
-	public static final byte[] OSUTF8null = { (byte)'n', (byte)'u', (byte)'l', (byte)'l' };
-	public static final byte[] OSUTF8true = { (byte)'t', (byte)'r', (byte)'u', (byte)'e' };
-	public static final byte[] OSUTF8false = { (byte)'f', (byte)'a', (byte)'l', (byte)'s', (byte)'e' };
+	public static final byte[] OSUTF8null = {(byte) 'n', (byte) 'u', (byte) 'l', (byte) 'l'};
+	public static final byte[] OSUTF8true = {(byte) 't', (byte) 'r', (byte) 'u', (byte) 'e'};
+	public static final byte[] OSUTF8false = {(byte) 'f', (byte) 'a', (byte) 'l', (byte) 's', (byte) 'e'};
 
 	public static final byte[] base64Bytes =
-		{
-				(byte)'A', (byte)'B', (byte)'C', (byte)'D', (byte)'E', (byte)'F', (byte)'G', (byte)'H', (byte)'I', (byte)'J',
-				(byte)'K', (byte)'L', (byte)'M', (byte)'N', (byte)'O',
-				(byte)'P', (byte)'Q', (byte)'R', (byte)'S', (byte)'T', (byte)'U', (byte)'V', (byte)'W', (byte)'X', (byte)'Y',
-				(byte)'Z', (byte)'a', (byte)'b', (byte)'c', (byte)'d',
-				(byte)'e', (byte)'f', (byte)'g', (byte)'h', (byte)'i', (byte)'j', (byte)'k', (byte)'l', (byte)'m', (byte)'n',
-				(byte)'o', (byte)'p', (byte)'q', (byte)'r', (byte)'s',
-				(byte)'t', (byte)'u', (byte)'v', (byte)'w', (byte)'x', (byte)'y', (byte)'z', (byte)'0', (byte)'1', (byte)'2',
-				(byte)'3', (byte)'4', (byte)'5', (byte)'6', (byte)'7',
-				(byte)'8', (byte)'9', (byte)'+', (byte)'/'
-		};
+			{
+					(byte) 'A', (byte) 'B', (byte) 'C', (byte) 'D', (byte) 'E', (byte) 'F', (byte) 'G', (byte) 'H', (byte) 'I', (byte) 'J',
+					(byte) 'K', (byte) 'L', (byte) 'M', (byte) 'N', (byte) 'O',
+					(byte) 'P', (byte) 'Q', (byte) 'R', (byte) 'S', (byte) 'T', (byte) 'U', (byte) 'V', (byte) 'W', (byte) 'X', (byte) 'Y',
+					(byte) 'Z', (byte) 'a', (byte) 'b', (byte) 'c', (byte) 'd',
+					(byte) 'e', (byte) 'f', (byte) 'g', (byte) 'h', (byte) 'i', (byte) 'j', (byte) 'k', (byte) 'l', (byte) 'm', (byte) 'n',
+					(byte) 'o', (byte) 'p', (byte) 'q', (byte) 'r', (byte) 's',
+					(byte) 't', (byte) 'u', (byte) 'v', (byte) 'w', (byte) 'x', (byte) 'y', (byte) 'z', (byte) '0', (byte) '1', (byte) '2',
+					(byte) '3', (byte) '4', (byte) '5', (byte) '6', (byte) '7',
+					(byte) '8', (byte) '9', (byte) '+', (byte) '/'
+			};
 }

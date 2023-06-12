@@ -1,7 +1,6 @@
 package dev.zontreck.harbinger.data.types;
 
-public enum DiscordEmbedColor
-{
+public enum DiscordEmbedColor {
 	WHITE(0xFFFFFF),
 	BLACK(0x000000),
 	RED(0xFF0000),
@@ -17,13 +16,14 @@ public enum DiscordEmbedColor
 	ORANGE(0xFF5F00),
 	TEAL(0x008080);
 
-	private int code;
-	public int getCode(){
+	private final int code;
+
+	public int getCode() {
 		return code;
 	}
 
-	DiscordEmbedColor(int code){
-		this.code=code;
+	DiscordEmbedColor(int code) {
+		this.code = code;
 	}
 
 }

@@ -23,12 +23,11 @@ import java.util.ArrayList;
 
 /**
  * Special Endpoint for Discord
- *
+ * <p>
  * This interacts with the Harbinger Discord Bot
  * Validation via PSK required.
  */
-public class DiscordHandler implements HttpHandler
-{
+public class DiscordHandler implements HttpHandler {
 	@Override
 	public void handle(HttpExchange httpExchange) throws IOException {
 
@@ -37,25 +36,21 @@ public class DiscordHandler implements HttpHandler
 		// Validate PSK
 		JSONObject request = new JSONObject(new String(httpExchange.getRequestBody().readAllBytes()));
 
-		if(!Persist.serverSettings.PSK.validate(request.getString("psk")))
-		{
+		if (!Persist.serverSettings.PSK.validate(request.getString("psk"))) {
 			replyObj.put("result", "DENY");
-		}else {
+		} else {
 			// Process request here
 			replyObj.put("result", "ACCEPT");
 			String operation = request.getString("type");
-			switch(operation)
-			{
-				case "update_token":
-				{
+			switch (operation) {
+				case "update_token": {
 					replyObj.put("token", "updated");
 					Persist.discordSettings.BOT_TOKEN = request.getString("token");
 					EventBus.BUS.post(new MemoryAlteredEvent());
 					EventBus.BUS.post(new DiscordBotTokenUpdatedEvent());
 					break;
 				}
-				case "set_webhook":
-				{
+				case "set_webhook": {
 					// Simply set the webhook URL and flush the settings
 					Persist.discordSettings.WEBHOOKS.put(request.getString("nick"), request.getString("url"));
 					EventBus.BUS.post(new MemoryAlteredEvent());
@@ -63,15 +58,13 @@ public class DiscordHandler implements HttpHandler
 
 					break;
 				}
-				case "del_webhook":
-				{
+				case "del_webhook": {
 					// Delete the webhook and flush
 					Persist.discordSettings.WEBHOOKS.remove(request.getString("nick"));
 					EventBus.BUS.post(new MemoryAlteredEvent());
 					break;
 				}
-				case "send_webhook":
-				{
+				case "send_webhook": {
 					// Send a stylized message
 					DiscordEmbed emb = new DiscordEmbed(request.getString("title"), request.getString("desc"));
 					emb.color = DiscordEmbedColor.valueOf(request.getString("color"));
