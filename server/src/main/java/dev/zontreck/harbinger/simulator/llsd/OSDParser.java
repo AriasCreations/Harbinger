@@ -1,9 +1,22 @@
 package dev.zontreck.harbinger.simulator.llsd;
 
+import dev.zontreck.harbinger.simulator.exceptions.OSDException;
+import dev.zontreck.harbinger.simulator.types.enums.OSDType;
 import dev.zontreck.harbinger.simulator.types.structureddata.OSD;
+import dev.zontreck.harbinger.simulator.types.structureddata.OSDArray;
+import dev.zontreck.harbinger.simulator.types.structureddata.OSDMap;
+import dev.zontreck.harbinger.utils.SimUtils;
 
+import java.io.*;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
+import java.time.Instant;
+import java.util.Arrays;
+import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Stream;
+
+import static dev.zontreck.harbinger.simulator.types.enums.OSDType.*;
 
 public class OSDParser {
 	private static final int initialBufferSize = 128;
@@ -36,9 +49,11 @@ public class OSDParser {
 	/// <param name="binaryData">Serialized data</param>
 	/// <returns>OSD containting deserialized data</returns>
 	public static OSD DeserializeLLSDBinary(byte[] binaryData) {
-		using(var ms = new MemoryStream(binaryData))
-		{
-			return DeserializeLLSDBinary(ms);
+		ByteArrayInputStream IS = new ByteArrayInputStream(binaryData);
+		try {
+			return DeserializeLLSDBinary((Stream) IS);
+		} catch (OSDException e) {
+			throw new RuntimeException(e);
 		}
 	}
 
@@ -47,19 +62,24 @@ public class OSDParser {
 	/// </summary>
 	/// <param name="stream">Stream to read the data from</param>
 	/// <returns>OSD containting deserialized data</returns>
-	public static OSD DeserializeLLSDBinary(Stream stream) {
-		if (!stream.CanSeek)
+	public static OSD DeserializeLLSDBinary(Stream stream) throws OSDException {
+		if (!(stream instanceof InputStream IS))
 			throw new OSDException("Cannot deserialize binary LLSD from unseekable streams");
 
-		SkipWhiteSpace(stream);
 
-		if (!FindString(stream, llsdBinaryHead) && !FindString(stream, llsdBinaryHead2)) {
-			//throw new OSDException("Failed to decode binary LLSD");
+
+
+		try {
+			SkipWhiteSpace(stream);
+
+			if (!FindString(stream, llsdBinaryHead) && !FindString(stream, llsdBinaryHead2)) {
+				//throw new OSDException("Failed to decode binary LLSD");
+			}
+			SkipWhiteSpace(stream);
+			return ParseLLSDBinaryElement(stream);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
 		}
-
-		SkipWhiteSpace(stream);
-
-		return ParseLLSDBinaryElement(stream);
 	}
 
 	/// <summary>
@@ -78,10 +98,8 @@ public class OSDParser {
 	/// <param name="prependHeader"></param>
 	/// <returns>Serialized data</returns>
 	public static byte[] SerializeLLSDBinary(OSD osd, boolean prependHeader) {
-		using(var ms = SerializeLLSDBinaryStream(osd, prependHeader))
-		{
-			return ms.ToArray();
-		}
+		ByteArrayOutputStream ms = SerializeLLSDBinaryStream(osd, prependHeader);
+		return ms.toByteArray();
 	}
 
 	/// <summary>
@@ -89,7 +107,7 @@ public class OSDParser {
 	/// </summary>
 	/// <param name="data">OSD to serialize</param>
 	/// <returns>Serialized data</returns>
-	public static MemoryStream SerializeLLSDBinaryStream(OSD data) {
+	public static ByteArrayOutputStream SerializeLLSDBinaryStream(OSD data) {
 		return SerializeLLSDBinaryStream(data, true);
 	}
 
@@ -99,107 +117,127 @@ public class OSDParser {
 	/// <param name="data">OSD to serialize</param>
 	/// <param name="prependHeader"></param>
 	/// <returns>Serialized data</returns>
-	public static MemoryStream SerializeLLSDBinaryStream(OSD data, boolean prependHeader) {
-		var stream = new MemoryStream(initialBufferSize);
+	public static ByteArrayOutputStream SerializeLLSDBinaryStream(OSD data, boolean prependHeader) {
+		var stream = new ByteArrayOutputStream(initialBufferSize);
 
 		if (prependHeader) {
-			stream.Write(llsdBinaryHeadBytes, 0, llsdBinaryHeadBytes.Length);
-			stream.WriteByte((byte) '\n');
+			stream.write(llsdBinaryHeadBytes, 0, llsdBinaryHeadBytes.length);
+			stream.write((byte) '\n');
 		}
 
-		SerializeLLSDBinaryElement(stream, data);
+		try {
+			SerializeLLSDBinaryElement(stream, data);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		} catch (OSDException e) {
+			throw new RuntimeException(e);
+		}
 		return stream;
 	}
 
-	private static void SerializeLLSDBinaryElement(MemoryStream stream, OSD osd) {
+	private static void SerializeLLSDBinaryElement(ByteArrayOutputStream stream1, OSD osd) throws IOException, OSDException {
+		DataOutputStream stream = new DataOutputStream(stream1);
 		switch (osd.Type) {
-			case OSDType.Unknown:
-				stream.WriteByte(undefBinaryValue);
+			case OSUnknown:
+				stream.writeByte(undefBinaryValue);
 				break;
-			case OSDType.Boolean:
-				stream.Write(osd.AsBinary(), 0, 1);
+			case OSBoolean:
+				stream.write(osd.AsBinary(), 0, 1);
 				break;
-			case OSDType.Integer:
-				stream.WriteByte(integerBinaryMarker);
-				stream.Write(osd.AsBinary(), 0, int32Length);
+			case OSInteger:
+				stream.writeByte(integerBinaryMarker);
+				stream.write(osd.AsBinary(), 0, int32Length);
 				break;
-			case OSDType.Real:
-				stream.WriteByte(realBinaryMarker);
-				stream.Write(osd.AsBinary(), 0, doubleLength);
+			case OSReal:
+				stream.writeByte(realBinaryMarker);
+				stream.write(osd.AsBinary(), 0, doubleLength);
 				break;
-			case OSDType.UUID:
-				stream.WriteByte(uuidBinaryMarker);
-				stream.Write(osd.AsBinary(), 0, 16);
+			case OSUUID:
+				stream.writeByte(uuidBinaryMarker);
+				stream.write(osd.AsBinary(), 0, 16);
 				break;
-			case OSDType.String:
-				stream.WriteByte(stringBinaryMarker);
+			case OSString:
+				stream.writeByte(stringBinaryMarker);
 				var rawString = osd.AsBinary();
-				var stringLengthNetEnd = Utils.IntToBytesBig(rawString.Length);
-				stream.Write(stringLengthNetEnd, 0, int32Length);
-				stream.Write(rawString, 0, rawString.Length);
+				var stringLengthNetEnd = SimUtils.IntToBytesBig(rawString.length);
+				stream.write(stringLengthNetEnd, 0, int32Length);
+				stream.write(rawString, 0, rawString.length);
 				break;
-			case OSDType.Binary:
-				stream.WriteByte(binaryBinaryMarker);
+			case OSBinary:
+				stream.writeByte(binaryBinaryMarker);
 				var rawBinary = osd.AsBinary();
-				var binaryLengthNetEnd = Utils.IntToBytesBig(rawBinary.Length);
-				stream.Write(binaryLengthNetEnd, 0, int32Length);
-				stream.Write(rawBinary, 0, rawBinary.Length);
+				var binaryLengthNetEnd = SimUtils.IntToBytesBig(rawBinary.length);
+				stream.write(binaryLengthNetEnd, 0, int32Length);
+				stream.write(rawBinary, 0, rawBinary.length);
 				break;
-			case OSDType.Date:
-				stream.WriteByte(dateBinaryMarker);
-				stream.Write(osd.AsBinary(), 0, doubleLength);
+			case OSDate:
+				stream.writeByte(dateBinaryMarker);
+				stream.write(osd.AsBinary(), 0, doubleLength);
 				break;
-			case OSDType.URI:
-				stream.WriteByte(uriBinaryMarker);
+			case OSURI:
+				stream.writeByte(uriBinaryMarker);
 				var rawURI = osd.AsBinary();
-				var uriLengthNetEnd = Utils.IntToBytesBig(rawURI.Length);
-				stream.Write(uriLengthNetEnd, 0, int32Length);
-				stream.Write(rawURI, 0, rawURI.Length);
+				var uriLengthNetEnd = SimUtils.IntToBytesBig(rawURI.length);
+				stream.write(uriLengthNetEnd, 0, int32Length);
+				stream.write(rawURI, 0, rawURI.length);
 				break;
-			case OSDType.Array:
-				SerializeLLSDBinaryArray(stream, (OSDArray) osd);
+			case OSArray:
+				SerializeLLSDBinaryArray(stream1, (OSDArray) osd);
 				break;
-			case OSDType.Map:
-				SerializeLLSDBinaryMap(stream, (OSDMap) osd);
+			case OSMap:
+				SerializeLLSDBinaryMap(stream1, (OSDMap) osd);
 				break;
 			default:
 				throw new OSDException("Binary serialization: Not existing element discovered.");
 		}
 	}
 
-	private static void SerializeLLSDBinaryArray(MemoryStream stream, OSDArray osdArray) {
-		stream.WriteByte(arrayBeginBinaryMarker);
-		var binaryNumElementsHostEnd = Utils.IntToBytesBig(osdArray.Count);
-		stream.Write(binaryNumElementsHostEnd, 0, int32Length);
+	private static void SerializeLLSDBinaryArray(ByteArrayOutputStream stream1, OSDArray osdArray) throws IOException {
+		DataOutputStream stream = new DataOutputStream(stream1);
+		stream.writeByte(arrayBeginBinaryMarker);
+		var binaryNumElementsHostEnd = SimUtils.IntToBytesBig(osdArray.Count());
+		stream.write(binaryNumElementsHostEnd, 0, int32Length);
 
-		foreach(var osd in osdArray)
-		SerializeLLSDBinaryElement(stream, osd);
-		stream.WriteByte(arrayEndBinaryMarker);
+		for (OSD osd :
+				osdArray) {
+			try {
+				SerializeLLSDBinaryElement(stream1, osd);
+				stream.writeByte(arrayEndBinaryMarker);
+			} catch (OSDException e) {
+				continue;
+			}
+		}
 	}
 
-	private static void SerializeLLSDBinaryMap(MemoryStream stream, OSDMap osdMap) {
-		stream.WriteByte(mapBeginBinaryMarker);
-		var binaryNumElementsNetEnd = Utils.IntToBytesBig(osdMap.Count);
-		stream.Write(binaryNumElementsNetEnd, 0, int32Length);
+	private static void SerializeLLSDBinaryMap(ByteArrayOutputStream stream1, OSDMap osdMap) throws IOException {
+		DataOutputStream stream = new DataOutputStream(stream1);
+		stream.writeByte(mapBeginBinaryMarker);
+		var binaryNumElementsNetEnd = SimUtils.IntToBytesBig(osdMap.Count());
+		stream.write(binaryNumElementsNetEnd, 0, int32Length);
 
-		foreach(KeyValuePair < string, OSD > kvp in osdMap)
-		{
-			stream.WriteByte(keyBinaryMarker);
-			var binaryKey = Encoding.UTF8.GetBytes(kvp.Key);
-			var binaryKeyLength = Utils.IntToBytesBig(binaryKey.Length);
-			stream.Write(binaryKeyLength, 0, int32Length);
-			stream.Write(binaryKey, 0, binaryKey.Length);
-			SerializeLLSDBinaryElement(stream, kvp.Value);
+		for (Map.Entry<String, OSD> kvp :
+				osdMap.entrySet()) {
+			stream.writeByte(keyBinaryMarker);
+			var binKey = kvp.getKey().getBytes(StandardCharsets.UTF_8);
+			var binKeyLen = SimUtils.IntToBytesBig(binKey.length);
+			stream.write(binKeyLen, 0, int32Length);
+			stream.write(binKey, 0, binKeyLen.length);
+			try {
+				SerializeLLSDBinaryElement(stream1, kvp.getValue());
+			} catch (OSDException e) {
+				throw new RuntimeException(e);
+			}
 		}
 
-		stream.WriteByte(mapEndBinaryMarker);
+		stream.writeByte(mapEndBinaryMarker);
 	}
 
-	private static OSD ParseLLSDBinaryElement(Stream stream) {
-		SkipWhiteSpace(stream);
+	private static OSD ParseLLSDBinaryElement(Stream stream1) throws IOException, OSDException {
+		SkipWhiteSpace(stream1);
 		OSD osd;
+		DataInputStream stream = new DataInputStream((InputStream) stream1);
 
-		var marker = stream.ReadByte();
+		var marker = stream.readByte();
 		if (marker < 0)
 			throw new OSDException("Binary LLSD parsing: Unexpected end of stream.");
 
@@ -214,49 +252,52 @@ public class OSDParser {
 				osd = OSD.FromBoolean(false);
 				break;
 			case integerBinaryMarker:
-				var integer = Utils.BytesToIntBig(ConsumeBytes(stream, int32Length));
+				var integer = SimUtils.BytesToIntBig(ConsumeBytes(stream1, int32Length));
 				osd = OSD.FromInteger(integer);
 				break;
 			case realBinaryMarker:
-				var dbl = Utils.BytesToDoubleBig(ConsumeBytes(stream, doubleLength));
+				var dbl = SimUtils.BytesToDoubleBig(ConsumeBytes(stream1, doubleLength));
 				osd = OSD.FromReal(dbl);
 				break;
 			case uuidBinaryMarker:
-				osd = OSD.FromUUID(new UUID(ConsumeBytes(stream, 16), 0));
+				byte[] consum = ConsumeBytes(stream1, 8);
+				byte[] p2 = ConsumeBytes(stream1, 8);
+				osd = OSD.FromUUID(new UUID(SimUtils.BytesToLong(consum), SimUtils.BytesToLong(p2)));
 				break;
 			case binaryBinaryMarker:
-				var binaryLength = Utils.BytesToIntBig(ConsumeBytes(stream, int32Length));
-				osd = OSD.FromBinary(ConsumeBytes(stream, binaryLength));
+				var binaryLength = SimUtils.BytesToIntBig(ConsumeBytes(stream1, int32Length));
+				osd = OSD.FromBinary(ConsumeBytes(stream1, binaryLength));
 				break;
 			case stringBinaryMarker:
-				var stringLength = Utils.BytesToIntBig(ConsumeBytes(stream, int32Length));
-				var ss = Encoding.UTF8.GetString(ConsumeBytes(stream, stringLength));
+				var stringLength = SimUtils.BytesToIntBig(ConsumeBytes(stream1, int32Length));
+				var ss = Arrays.toString(ConsumeBytes(stream1, stringLength));
 				osd = OSD.FromString(ss);
 				break;
 			case uriBinaryMarker:
-				var uriLength = Utils.BytesToIntBig(ConsumeBytes(stream, int32Length));
-				var sUri = Encoding.UTF8.GetString(ConsumeBytes(stream, uriLength));
-				Uri uri;
+				var uriLength = SimUtils.BytesToIntBig(ConsumeBytes(stream1, int32Length));
+				var sUri = Arrays.toString(ConsumeBytes(stream1, uriLength));
+				URI uri;
 				try {
-					uri = new Uri(sUri, UriKind.RelativeOrAbsolute);
-				} catch
-			{
-				throw new OSDException("Binary LLSD parsing: Invalid Uri format detected.");
-			}
+					uri = URI.create(sUri);
+				} catch (Exception e)
+				{
+					throw new OSDException("Binary LLSD parsing: Invalid Uri format detected.");
+				}
 
-			osd = OSD.FromUri(uri);
-			break;
+				osd = OSD.FromUri(uri);
+				break;
 			case dateBinaryMarker:
-				var timestamp = Utils.BytesToDouble(ConsumeBytes(stream, doubleLength));
-				var dateTime = DateTime.SpecifyKind(Utils.Epoch, DateTimeKind.Utc);
-				dateTime = dateTime.AddSeconds(timestamp);
-				osd = OSD.FromDate(dateTime.ToLocalTime());
+				var timestamp = SimUtils.BytesToDouble(ConsumeBytes(stream1, doubleLength));
+				Instant n = Instant.now();
+				n=n.plusSeconds((long) timestamp);
+
+				osd = OSD.FromInstant(n);
 				break;
 			case arrayBeginBinaryMarker:
-				osd = ParseLLSDBinaryArray(stream);
+				osd = ParseLLSDBinaryArray(stream1);
 				break;
 			case mapBeginBinaryMarker:
-				osd = ParseLLSDBinaryMap(stream);
+				osd = ParseLLSDBinaryMap(stream1);
 				break;
 			default:
 				throw new OSDException("Binary LLSD parsing: Unknown type marker.");
@@ -265,8 +306,8 @@ public class OSDParser {
 		return osd;
 	}
 
-	private static OSD ParseLLSDBinaryArray(Stream stream) {
-		var numElements = Utils.BytesToIntBig(ConsumeBytes(stream, int32Length));
+	private static OSD ParseLLSDBinaryArray(Stream stream) throws OSDException, IOException {
+		var numElements = SimUtils.BytesToIntBig(ConsumeBytes(stream, int32Length));
 		var crrElement = 0;
 		var osdArray = new OSDArray();
 		while (crrElement < numElements) {
@@ -280,16 +321,16 @@ public class OSDParser {
 		return osdArray;
 	}
 
-	private static OSD ParseLLSDBinaryMap(Stream stream) {
-		var numElements = Utils.BytesToIntBig(ConsumeBytes(stream, int32Length));
+	private static OSD ParseLLSDBinaryMap(Stream stream) throws OSDException, IOException {
+		var numElements = SimUtils.BytesToIntBig(ConsumeBytes(stream, int32Length));
 		var crrElement = 0;
 		var osdMap = new OSDMap();
 		while (crrElement < numElements) {
 			if (!FindByte(stream, keyBinaryMarker))
 				throw new OSDException("Binary LLSD parsing: Missing key marker in map.");
-			var keyLength = Utils.BytesToIntBig(ConsumeBytes(stream, int32Length));
-			var key = Encoding.UTF8.GetString(ConsumeBytes(stream, keyLength));
-			osdMap[key] = ParseLLSDBinaryElement(stream);
+			var keyLength = SimUtils.BytesToIntBig(ConsumeBytes(stream, int32Length));
+			var key = Arrays.toString(ConsumeBytes(stream, keyLength));
+			osdMap.put(key, ParseLLSDBinaryElement(stream));
 			crrElement++;
 		}
 
@@ -302,16 +343,16 @@ public class OSDParser {
 	/// <summary>
 	/// </summary>
 	/// <param name="stream"></param>
-	public static void SkipWhiteSpace(Stream stream) {
+	public static void SkipWhiteSpace(Stream stream1) throws IOException {
+
+		DataInputStream stream = new DataInputStream((InputStream) stream1);
 		int bt;
-		while ((bt = stream.ReadByte()) > 0 &&
+		while ((bt = stream.readByte()) > 0 &&
 				((byte) bt == ' ' || (byte) bt == '\t' ||
 						(byte) bt == '\n' || (byte) bt == '\r')
 		) {
 		}
 
-		if (stream.Position > 0)
-			stream.Seek(-1, SeekOrigin.Current);
 	}
 
 	/// <summary>
@@ -319,14 +360,18 @@ public class OSDParser {
 	/// <param name="stream"></param>
 	/// <param name="toFind"></param>
 	/// <returns></returns>
-	public static boolean FindByte(Stream stream, byte toFind) {
-		var bt = stream.ReadByte();
-		if (bt < 0)
+	public static boolean FindByte(Stream stream, byte toFind) throws IOException {
+		if (stream instanceof InputStream IS) {
+			DataInputStream dis = new DataInputStream(IS);
+
+			var bt = dis.readByte();
+			if (bt < 0)
+				return false;
+			if ((byte) bt == toFind) return true;
+
+
 			return false;
-		if ((byte) bt == toFind) return true;
-
-		stream.Seek(-1L, SeekOrigin.Current);
-		return false;
+		} else return false;
 	}
 
 	/// <summary>
@@ -334,30 +379,26 @@ public class OSDParser {
 	/// <param name="stream"></param>
 	/// <param name="toFind"></param>
 	/// <returns></returns>
-	public static boolean FindString(Stream stream, String toFind) {
-		var lastIndexToFind = toFind.Length - 1;
+	public static boolean FindString(Stream stream, String toFind) throws IOException {
+		var lastIndexToFind = toFind.length() - 1;
 		var crrIndex = 0;
 		var found = true;
 		int bt;
-		var lastPosition = stream.Position;
+
+		DataInputStream stream1 = new DataInputStream((InputStream) stream);
 
 		while (found &&
-				(bt = stream.ReadByte()) > 0 &&
+				(bt = stream1.readByte()) > 0 &&
 				crrIndex <= lastIndexToFind
 		)
-			if (toFind[crrIndex].ToString().Equals(((char) bt).ToString(), StringComparison.InvariantCultureIgnoreCase)) {
+			if (String.valueOf(toFind.charAt(crrIndex)).equals(((char) bt))) {
 				found = true;
 				crrIndex++;
 			} else {
 				found = false;
 			}
 
-		if (found && crrIndex > lastIndexToFind) {
-			stream.Seek(-1L, SeekOrigin.Current);
-			return true;
-		}
 
-		stream.Position = lastPosition;
 		return false;
 	}
 
@@ -366,10 +407,11 @@ public class OSDParser {
 	/// <param name="stream"></param>
 	/// <param name="consumeBytes"></param>
 	/// <returns></returns>
-	public static byte[] ConsumeBytes(Stream stream, int consumeBytes) {
+	public static byte[] ConsumeBytes(Stream stream, int consumeBytes) throws IOException {
 		var bytes = new byte[consumeBytes];
-		if (stream.Read(bytes, 0, consumeBytes) < consumeBytes)
-			throw new OSDException("Binary LLSD parsing: Unexpected end of stream.");
-		return bytes;
+		if (stream instanceof InputStream IS) {
+			DataInputStream dis = new DataInputStream(IS);
+			return dis.readNBytes(consumeBytes);
+		} else return new byte[0];
 	}
 }

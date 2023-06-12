@@ -14,18 +14,18 @@ public class OSDMap extends OSD implements Map<String, OSD> {
 	public final Map<String, OSD> dicvalue;
 
 	public OSDMap() {
-		Type = OSDType.Map;
+		Type = OSDType.OSMap;
 		dicvalue = new HashMap<>();
 	}
 
 
 	public OSDMap(int capacity) {
-		Type = OSDType.Map;
+		Type = OSDType.OSMap;
 		dicvalue = new HashMap<>(capacity);
 	}
 
 	public OSDMap(Map<String, OSD> value) {
-		Type = OSDType.Map;
+		Type = OSDType.OSMap;
 		if (value != null)
 			dicvalue = value;
 		else

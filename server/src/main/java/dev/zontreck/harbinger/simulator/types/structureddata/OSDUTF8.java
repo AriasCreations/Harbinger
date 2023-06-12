@@ -12,7 +12,7 @@ public class OSDUTF8 extends OSD {
 	public final osUTF8 value;
 
 	public OSDUTF8(osUTF8 value) {
-		Type = OSDType.OSDUTF8;
+		Type = OSDType.OSOSDUTF8;
 		// Refuse to hold null pointers
 		if (value != null)
 			this.value = value;
@@ -21,7 +21,7 @@ public class OSDUTF8 extends OSD {
 	}
 
 	public OSDUTF8(byte[] value) {
-		Type = OSDType.OSDUTF8;
+		Type = OSDType.OSOSDUTF8;
 		// Refuse to hold null pointers
 		if (value != null)
 			this.value = new osUTF8(value);
@@ -30,7 +30,7 @@ public class OSDUTF8 extends OSD {
 	}
 
 	public OSDUTF8(String value) {
-		Type = OSDType.OSDUTF8;
+		Type = OSDType.OSOSDUTF8;
 		// Refuse to hold null pointers
 		if (value != null)
 			this.value = new osUTF8(value);

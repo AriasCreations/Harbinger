@@ -12,7 +12,7 @@ public class OSDUUID extends OSD {
 	public static final OSDUUID ZERO = new OSDUUID(NULL_ID);
 
 	public OSDUUID(UUID value) {
-		Type = OSDType.UUID;
+		Type = OSDType.OSUUID;
 		this.value = value;
 	}
 

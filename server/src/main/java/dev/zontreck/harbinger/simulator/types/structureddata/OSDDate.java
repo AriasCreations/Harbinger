@@ -11,7 +11,7 @@ public class OSDDate extends OSD {
 	public final Instant value;
 
 	public OSDDate(Instant value) {
-		Type = OSDType.Date;
+		Type = OSDType.OSDate;
 		this.value = value;
 	}
 

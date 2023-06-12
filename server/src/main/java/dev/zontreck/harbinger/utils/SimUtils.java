@@ -2,6 +2,7 @@ package dev.zontreck.harbinger.utils;
 
 import dev.zontreck.harbinger.simulator.types.osUTF8ByteCount;
 
+import java.io.*;
 import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -18,7 +19,7 @@ public class SimUtils {
 	private static final byte ASCIIzero = (byte) '0';
 	private static final byte ASCIIminus = (byte) '-';
 
-	private static final Instant Epoch = Instant.EPOCH;
+	public static final Instant Epoch = Instant.EPOCH;
 
 
 	public static boolean IsBigEndian() {
@@ -373,9 +374,54 @@ public class SimUtils {
 		return (byte)(255 * val);
 	}
 
-	public static byte[] FloatToBytesSafepos(float value, byte[] dest, int pos)
+	public static byte[] FloatToBytesSafepos(float value)
 	{
-		return IntToByteString(Float.floatToIntBits(value));
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		DataOutputStream dos = new DataOutputStream(baos);
+
+		try {
+			dos.writeFloat(value);
+			return baos.toByteArray();
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	public static int BytesToIntBig(byte[] bytes)
+	{
+		return (bytes[0] << 24) |
+				(bytes[1] << 16) |
+				(bytes[2] << 8) |
+				bytes[3];
+	}
+
+	public static double BytesToDouble(byte[] bytes)
+	{
+		ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
+		var dis = new DataInputStream(bis);
+
+		try {
+			return dis.readDouble();
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	public static double BytesToDoubleBig(byte[] bytes){
+		return BytesToDouble(bytes);
+	}
+
+	public static long BytesToLong(byte[] arr)
+	{
+
+		ByteArrayInputStream bis = new ByteArrayInputStream(arr);
+		var dis = new DataInputStream(bis);
+
+		try {
+			return dis.readLong();
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 }

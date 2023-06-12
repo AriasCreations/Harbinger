@@ -1,5 +1,6 @@
 package dev.zontreck.harbinger.simulator.types.structureddata;
 
+import dev.zontreck.harbinger.simulator.llsd.OSDParser;
 import dev.zontreck.harbinger.simulator.types.*;
 import dev.zontreck.harbinger.simulator.types.enums.OSDType;
 import org.jetbrains.annotations.NotNull;
@@ -10,17 +11,17 @@ public class OSDArray extends OSD implements List<OSD> {
 	public final List<OSD> value;
 
 	public OSDArray() {
-		Type = OSDType.Array;
+		Type = OSDType.OSArray;
 		value = new ArrayList<>();
 	}
 
 	public OSDArray(int capacity) {
-		Type = OSDType.Array;
+		Type = OSDType.OSArray;
 		value = new ArrayList<>();
 	}
 
 	public OSDArray(List<OSD> value) {
-		Type = OSDType.Array;
+		Type = OSDType.OSArray;
 		if (value != null)
 			this.value = value;
 		else

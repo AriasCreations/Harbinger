@@ -8,7 +8,7 @@ public class OSDllsdxml extends OSD {
 	public final String value;
 
 	public OSDllsdxml(String value) {
-		Type = OSDType.LLSDxml;
+		Type = OSDType.OSLLSDxml;
 		// Refuse to hold null pointers
 		if (value != null)
 			this.value = value;

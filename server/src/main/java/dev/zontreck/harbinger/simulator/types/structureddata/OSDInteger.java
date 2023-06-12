@@ -7,7 +7,7 @@ public class OSDInteger extends OSD {
 	public final int value;
 
 	public OSDInteger(int value) {
-		Type = OSDType.Integer;
+		Type = OSDType.OSInteger;
 		this.value = value;
 	}
 

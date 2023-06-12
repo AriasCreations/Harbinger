@@ -9,7 +9,7 @@ public class OSDUri extends OSD {
 	public final URI value;
 
 	public OSDUri(URI value) {
-		Type = OSDType.URI;
+		Type = OSDType.OSURI;
 		this.value = value;
 	}
 

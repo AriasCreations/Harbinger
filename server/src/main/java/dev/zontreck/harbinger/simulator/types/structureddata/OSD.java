@@ -16,7 +16,7 @@ public class OSD {
 	protected static final byte[] trueBinary = {0x31};
 	protected static final byte[] falseBinary = {0x30};
 
-	public OSDType Type = OSDType.Unknown;
+	public OSDType Type = OSDType.OSUnknown;
 
 	// .net4.8 64Bit JIT fails polimorphism
 	public boolean AsBoolean() {
@@ -99,38 +99,38 @@ public class OSD {
 		}
 	}
 
-	public virtual
-
-	long AsLong() {
+	public long AsLong() {
 		switch (Type) {
-			case OSDType.Boolean:
+			case OSBoolean:
 				return ((OSDBoolean) this).value ? 1 : 0;
-			case OSDType.Integer:
+			case OSInteger:
 				return ((OSDInteger) this).value;
-			case OSDType.Real:
+			case OSReal:
 				var v = ((OSDReal) this).value;
-				if (double.IsNaN(v))
+				if (Double.isNaN(v))
 					return 0;
-				if (v > long.MaxValue)
-					return long.MaxValue;
-				if (v < long.MinValue)
-					return long.MinValue;
-				return (long) Math.Round(v);
-			case OSDType.String:
-				var s = ((OSDString) this).value.AsSpan();
-				if (double.TryParse(s, out var dbl))
-					return (long) Math.Floor(dbl);
+				if (v > Long.MAX_VALUE)
+					return Long.MAX_VALUE;
+				if (v < Long.MIN_VALUE)
+					return Long.MIN_VALUE;
+				return  Math.round(v);
+			case OSString:
+				var s = ((OSDString) this).value;
+				double dbl = Double.parseDouble(s);
+				if (!Double.isNaN(dbl))
+					return (long) Math.floor(dbl);
 				return 0;
-			case OSDType.OSDUTF8:
-				var us = ((OSDUTF8) this).value.ToString().AsSpan();
-				if (double.TryParse(us, out var udbl))
-					return (long) Math.Floor(udbl);
+			case OSOSDUTF8:
+				var us = ((OSDUTF8) this).value.toString();
+				var udbl = Double.parseDouble(us);
+				if (!Double.isNaN(udbl))
+					return (long) Math.floor(udbl);
 				return 0;
-			case OSDType.Date:
-				return Utils.DateTimeToUnixTime(((OSDDate) this).value);
-			case OSDType.Binary: {
+			case OSDate:
+				return ((OSDDate)this).value.getEpochSecond();
+			case OSBinary: {
 				var b = ((OSDBinary) this).value;
-				if (b.Length < 8)
+				if (b.length < 8)
 					return 0;
 				return ((long) b[0] << 56) |
 						((long) b[1] << 48) |
@@ -141,19 +141,19 @@ public class OSD {
 						((long) b[6] << 8) |
 						b[7];
 			}
-			case OSDType.Array: {
+			case OSArray: {
 				var l = ((OSDArray) this).value;
-				if (l.Count < 8)
+				if (l.size() < 8)
 					return 0;
 				return
-						((long) (byte) l[0].AsInteger() << 56) |
-								((long) (byte) l[1].AsInteger() << 48) |
-								((long) (byte) l[2].AsInteger() << 40) |
-								((long) (byte) l[3].AsInteger() << 32) |
-								((long) (byte) l[4].AsInteger() << 24) |
-								((long) (byte) l[5].AsInteger() << 16) |
-								((long) (byte) l[6].AsInteger() << 8) |
-								l[7].AsInteger();
+						((long) (byte) l.get(0).AsInteger() << 56) |
+								((long) (byte) l.get(1).AsInteger() << 48) |
+								((long) (byte) l.get(2).AsInteger() << 40) |
+								((long) (byte) l.get(3).AsInteger() << 32) |
+								((long) (byte) l.get(4).AsInteger() << 24) |
+								((long) (byte) l.get(5).AsInteger() << 16) |
+								((long) (byte) l.get(6).AsInteger() << 8) |
+								l.get(7).AsInteger();
 			}
 			default:
 				return 0;
@@ -225,16 +225,16 @@ public class OSD {
 
 	public UUID AsUUID() {
 		switch (Type) {
-			case OSDType.String:
+			case OSDType.OSString:
 				if (UUID.TryParse(((OSDString) this).value.AsSpan(), out var uuid))
 					return uuid;
 				return UUID.Zero;
-			case OSDType.OSDUTF8:
+			case OSDType.OSOSDUTF8:
 				UUID ouuid;
 				if (UUID.TryParse(((OSDUTF8) this).value.ToString().AsSpan(), out ouuid))
 					return ouuid;
 				return UUID.Zero;
-			case OSDType.UUID:
+			case OSDType.OSUUID:
 				return ((OSDUUID) this).value;
 			default:
 				return new UUID(0, 0);
@@ -243,12 +243,12 @@ public class OSD {
 
 	public Instant AsInstant() {
 		switch (Type) {
-			case OSDType.String:
+			case OSString:
 				return Instant.parse(((OSDString)this).value);
-			case OSDType.OSDUTF8:
+			case OSOSDUTF8:
 				return Instant.parse(((OSDUTF8)this).toString());
-			case OSDType.UUID:
-			case OSDType.Date:
+			case OSUUID:
+			case OSDate:
 				return ((OSDDate) this).value;
 			default:
 				return SimUtils.Epoch;
@@ -311,16 +311,16 @@ public class OSD {
 
 	public Vector2 AsVector2() {
 		switch (Type) {
-			case OSDType.String:
+			case OSDType.OSString:
 				return Vector2.Parse(((OSDString) this).value);
-			case OSDType.OSDUTF8:
-				return Vector2.Parse(((OSDUTF8) this).value.ToString());
-			case OSDType.Array:
+			case OSDType.OSOSDUTF8:
+				return Vector2.Parse(((OSDUTF8) this).value.toString());
+			case OSDType.OSArray:
 				var l = ((OSDArray) this).value;
 				var vector = Vector2.Zero;
-				if (l.Count == 2) {
-					vector.X = (float) l[0].AsReal();
-					vector.Y = (float) l[1].AsReal();
+				if (l.size() == 2) {
+					vector.X = (float) l.get(0).AsReal();
+					vector.Y = (float) l.get(1).AsReal();
 				}
 
 				return vector;
@@ -331,17 +331,17 @@ public class OSD {
 
 	public Vector3 AsVector3() {
 		switch (Type) {
-			case OSDType.String:
-				return Vector3.Parse(((OSDString) this).value.AsSpan());
-			case OSDType.OSDUTF8:
-				return Vector3.Parse(((OSDUTF8) this).value.ToString().AsSpan());
-			case OSDType.Array:
+			case OSDType.OSString:
+				return Vector3.Parse(((OSDString) this).value);
+			case OSDType.OSOSDUTF8:
+				return Vector3.Parse(((OSDUTF8) this).value.toString());
+			case OSDType.OSArray:
 				var l = ((OSDArray) this).value;
-				if (l.Count == 3)
+				if (l.size() == 3)
 					return new Vector3(
-							(float) l[0].AsReal(),
-							(float) l[1].AsReal(),
-							(float) l[2].AsReal());
+							(float) l.get(0).AsReal(),
+							(float) l.get(1).AsReal(),
+							(float) l.get(2).AsReal());
 				return Vector3.Zero;
 			default:
 				return Vector3.Zero;
@@ -350,17 +350,17 @@ public class OSD {
 
 	public Vector3d AsVector3d() {
 		switch (Type) {
-			case OSDType.String:
-				return Vector3d.Parse(((OSDString) this).value.AsSpan());
-			case OSDType.OSDUTF8:
-				return Vector3d.Parse(((OSDUTF8) this).value.ToString().AsSpan());
-			case OSDType.Array:
+			case OSDType.OSString:
+				return Vector3d.Parse(((OSDString) this).value);
+			case OSDType.OSOSDUTF8:
+				return Vector3d.Parse(((OSDUTF8) this).value.toString());
+			case OSDType.OSArray:
 				var l = ((OSDArray) this).value;
 				var vector = Vector3d.Zero;
-				if (l.Count == 3) {
-					vector.X = (float) l[0].AsReal();
-					vector.Y = (float) l[1].AsReal();
-					vector.Z = (float) l[2].AsReal();
+				if (l.size() == 3) {
+					vector.X = (float) l.get(0).AsReal();
+					vector.Y = (float) l.get(1).AsReal();
+					vector.Z = (float) l.get(2).AsReal();
 				}
 
 				return vector;
@@ -371,18 +371,18 @@ public class OSD {
 
 	public Vector4 AsVector4() {
 		switch (Type) {
-			case OSDType.String:
+			case OSDType.OSString:
 				return Vector4.Parse(((OSDString) this).value);
-			case OSDType.OSDUTF8:
-				return Vector4.Parse(((OSDUTF8) this).value.ToString());
-			case OSDType.Array:
+			case OSDType.OSOSDUTF8:
+				return Vector4.Parse(((OSDUTF8) this).value.toString());
+			case OSDType.OSArray:
 				var l = ((OSDArray) this).value;
 				var vector = Vector4.Zero;
-				if (l.Count == 4) {
-					vector.X = (float) l[0].AsReal();
-					vector.Y = (float) l[1].AsReal();
-					vector.Z = (float) l[2].AsReal();
-					vector.W = (float) l[3].AsReal();
+				if (l.size() == 4) {
+					vector.X = (float) l.get(0).AsReal();
+					vector.Y = (float) l.get(1).AsReal();
+					vector.Z = (float) l.get(2).AsReal();
+					vector.W = (float) l.get(3).AsReal();
 				}
 
 				return vector;

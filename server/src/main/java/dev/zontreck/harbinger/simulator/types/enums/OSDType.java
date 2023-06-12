@@ -3,37 +3,37 @@ package dev.zontreck.harbinger.simulator.types.enums;
 
 public enum OSDType {
 	/// <summary></summary>
-	Unknown,
+	OSUnknown,
 
 	/// <summary></summary>
-	Boolean,
+	OSBoolean,
 
 	/// <summary></summary>
-	Integer,
+	OSInteger,
 
 	/// <summary></summary>
-	Real,
+	OSReal,
 
 	/// <summary></summary>
-	String,
+	OSString,
 
 	/// <summary></summary>
-	UUID,
+	OSUUID,
 
 	/// <summary></summary>
-	Date,
+	OSDate,
 
 	/// <summary></summary>
-	URI,
+	OSURI,
 
 	/// <summary></summary>
-	Binary,
+	OSBinary,
 
 	/// <summary></summary>
-	Map,
+	OSMap,
 
 	/// <summary></summary>
-	Array,
-	LLSDxml,
-	OSDUTF8
+	OSArray,
+	OSLLSDxml,
+	OSOSDUTF8
 }

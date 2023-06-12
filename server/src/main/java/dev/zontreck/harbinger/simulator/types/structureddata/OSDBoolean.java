@@ -6,7 +6,7 @@ public class OSDBoolean extends OSD {
 	public final boolean value;
 
 	public OSDBoolean(boolean value) {
-		Type = OSDType.Boolean;
+		Type = OSDType.OSBoolean;
 		this.value = value;
 	}
 

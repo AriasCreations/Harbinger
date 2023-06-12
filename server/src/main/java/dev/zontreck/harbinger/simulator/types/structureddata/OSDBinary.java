@@ -8,7 +8,7 @@ public class OSDBinary extends OSD {
 	public final byte[] value;
 
 	public OSDBinary(byte[] value) {
-		Type = OSDType.Binary;
+		Type = OSDType.OSBinary;
 		if (value != null)
 			this.value = value;
 		else
@@ -17,7 +17,7 @@ public class OSDBinary extends OSD {
 
 
 	public OSDBinary(long value) {
-		Type = OSDType.Binary;
+		Type = OSDType.OSBinary;
 		this.value = new byte[]
 				{
 						(byte) ((value >> 56) & 0xFF),

@@ -7,7 +7,7 @@ public class OSDReal extends OSD {
 	public final double value;
 
 	public OSDReal(double value) {
-		Type = OSDType.Real;
+		Type = OSDType.OSReal;
 		this.value = value;
 	}
 

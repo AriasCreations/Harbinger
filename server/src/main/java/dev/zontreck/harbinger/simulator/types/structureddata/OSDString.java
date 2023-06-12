@@ -12,7 +12,7 @@ public class OSDString extends OSD {
 	public final String value;
 
 	public OSDString(String value) {
-		Type = OSDType.String;
+		Type = OSDType.OSString;
 		// Refuse to hold null pointers
 		if (value != null)
 			this.value = value;
