@@ -25,6 +25,9 @@ public class MathF {
 	public static float Clamp(float A, float B, float C) {
 		return Math.max(B, Math.min(C, A));
 	}
+	public static double Clamp(double A, double B, double C) {
+		return Math.max(B, Math.min(C, A));
+	}
 
 	public static int Clamp(int A, int B, int C) {
 		return Math.max(B, Math.min(C, A));

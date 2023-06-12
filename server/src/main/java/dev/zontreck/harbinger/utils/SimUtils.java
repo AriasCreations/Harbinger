@@ -178,6 +178,9 @@ public class SimUtils {
 	public static boolean IsFinite(float value) {
 		return Float.isFinite(value);
 	}
+	public static boolean IsFinite(double value) {
+		return Double.isFinite(value);
+	}
 
 	public static float Distance(float value1, float value2) {
 		return MathF.Abs(value1 - value2);
