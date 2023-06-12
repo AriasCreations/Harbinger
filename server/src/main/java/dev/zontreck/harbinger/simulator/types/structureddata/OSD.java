@@ -1,7 +1,11 @@
-package dev.zontreck.harbinger.simulator.types;
+package dev.zontreck.harbinger.simulator.types.structureddata;
 
 
+import dev.zontreck.harbinger.simulator.types.Quaternion;
+import dev.zontreck.harbinger.simulator.types.Vector2;
+import dev.zontreck.harbinger.simulator.types.Vector3;
 import dev.zontreck.harbinger.simulator.types.enums.OSDType;
+import dev.zontreck.harbinger.simulator.types.osUTF8;
 import dev.zontreck.harbinger.utils.SimUtils;
 
 import java.net.URI;

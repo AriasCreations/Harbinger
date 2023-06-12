@@ -1,4 +1,4 @@
-package dev.zontreck.harbinger.simulator.types;
+package dev.zontreck.harbinger.simulator.types.structureddata;
 
 import dev.zontreck.harbinger.simulator.llsd.OSDParser;
 import dev.zontreck.harbinger.simulator.types.enums.OSDType;

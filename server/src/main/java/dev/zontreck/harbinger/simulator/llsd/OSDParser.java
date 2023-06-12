@@ -1,6 +1,6 @@
 package dev.zontreck.harbinger.simulator.llsd;
 
-import dev.zontreck.harbinger.simulator.types.OSD;
+import dev.zontreck.harbinger.simulator.types.structureddata.OSD;
 
 import java.nio.charset.StandardCharsets;
 import java.util.stream.Stream;
