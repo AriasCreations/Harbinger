@@ -6,6 +6,7 @@ import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.Random;
 
@@ -16,6 +17,8 @@ public class SimUtils {
 
 	private static final byte ASCIIzero = (byte) '0';
 	private static final byte ASCIIminus = (byte) '-';
+
+	private static final Instant Epoch = Instant.EPOCH;
 
 
 	public static boolean IsBigEndian() {
@@ -348,5 +351,31 @@ public class SimUtils {
 		return rng.nextDouble();
 	}
 
+	public static byte[] IntToBytesBig(int value)
+	{
+		var bytes = new byte[4];
+
+		bytes[0] = (byte)(value >> 24);
+		bytes[1] = (byte)(value >> 16);
+		bytes[2] = (byte)(value >> 8);
+		bytes[3] = (byte)value;
+
+		return bytes;
+	}
+
+	public static byte FloatZeroOneToByte(float val)
+	{
+		if (val <= 0)
+			return 0;
+		if (val >= 1.0f)
+			return (byte)255;
+
+		return (byte)(255 * val);
+	}
+
+	public static byte[] FloatToBytesSafepos(float value, byte[] dest, int pos)
+	{
+		return IntToByteString(Float.floatToIntBits(value));
+	}
 
 }

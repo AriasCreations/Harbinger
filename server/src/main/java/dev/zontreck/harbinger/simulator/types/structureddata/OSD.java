@@ -1,15 +1,13 @@
 package dev.zontreck.harbinger.simulator.types.structureddata;
 
 
-import dev.zontreck.harbinger.simulator.types.Quaternion;
-import dev.zontreck.harbinger.simulator.types.Vector2;
-import dev.zontreck.harbinger.simulator.types.Vector3;
+import dev.zontreck.harbinger.simulator.types.*;
 import dev.zontreck.harbinger.simulator.types.enums.OSDType;
-import dev.zontreck.harbinger.simulator.types.osUTF8;
 import dev.zontreck.harbinger.utils.SimUtils;
 
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
+import java.time.Instant;
 import java.util.Date;
 import java.util.Objects;
 import java.util.UUID;
@@ -32,7 +30,7 @@ public class OSD {
 				return !double.IsNaN(d) && d != 0;
 			case OSDType.String:
 				var s = ((OSDString) this).value;
-				if (string.IsNullOrEmpty(s))
+				if (s.isEmpty())
 					return false;
 				return s != "0" && s.ToLower() != "false";
 			return true;
@@ -243,18 +241,12 @@ public class OSD {
 		}
 	}
 
-	public Date AsDate() {
+	public Instant AsInstant() {
 		switch (Type) {
 			case OSDType.String:
-				Date dt;
-				if (Date.TryParse(((OSDString) this).value, out dt))
-					return dt;
-				return SimUtils.Epoch;
+				return Instant.parse(((OSDString)this).value);
 			case OSDType.OSDUTF8:
-				Date odt;
-				if (Date.TryParse(((OSDUTF8) this).value.ToString(), out odt))
-					return odt;
-				return SimUtils.Epoch;
+				return Instant.parse(((OSDUTF8)this).toString());
 			case OSDType.UUID:
 			case OSDType.Date:
 				return ((OSDDate) this).value;
@@ -550,7 +542,7 @@ public class OSD {
 		return new OSDUUID(value);
 	}
 
-	public static OSD FromDate(Date value) {
+	public static OSD FromInstant(Instant value) {
 		return new OSDDate(value);
 	}
 

@@ -1,9 +1,10 @@
 package dev.zontreck.harbinger.simulator.types.structureddata;
 
 import dev.zontreck.harbinger.simulator.types.enums.OSDType;
+import dev.zontreck.harbinger.utils.DigestUtils;
 import dev.zontreck.harbinger.utils.SimUtils;
 
-public sealed class OSDBinary extends OSD {
+public class OSDBinary extends OSD {
 	public final byte[] value;
 
 	public OSDBinary(byte[] value) {
@@ -11,7 +12,7 @@ public sealed class OSDBinary extends OSD {
 		if (value != null)
 			this.value = value;
 		else
-			this.value = new byte[];
+			this.value = new byte[0];
 	}
 
 
@@ -38,7 +39,7 @@ public sealed class OSDBinary extends OSD {
 
 	@Override
 	public String AsString() {
-		return Convert.ToBase64String(value);
+		return DigestUtils.base64(value);
 	}
 
 	@Override

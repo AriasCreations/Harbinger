@@ -3,7 +3,7 @@ package dev.zontreck.harbinger.simulator.types.structureddata;
 import dev.zontreck.harbinger.simulator.types.enums.OSDType;
 import dev.zontreck.harbinger.utils.SimUtils;
 
-public sealed class OSDReal extends OSD {
+public class OSDReal extends OSD {
 	public final double value;
 
 	public OSDReal(double value) {
@@ -13,7 +13,7 @@ public sealed class OSDReal extends OSD {
 
 	@Override
 	public boolean AsBoolean() {
-		return !double.IsNaN(value) && value != 0d;
+		return !Double.isNaN(value) && value != 0d;
 	}
 
 	@Override
@@ -23,12 +23,12 @@ public sealed class OSDReal extends OSD {
 
 	@Override
 	public int AsInteger() {
-		if (double.IsNaN(value))
+		if (Double.isNaN(value))
 			return 0;
-		if (value > int.MaxValue)
-			return int.MaxValue;
-		if (value < int.MinValue)
-			return int.MinValue;
+		if (value > Integer.MAX_VALUE)
+			return Integer.MAX_VALUE;
+		if (value < Integer.MIN_VALUE)
+			return Integer.MIN_VALUE;
 		return (int) Math.round(value);
 	}
 
@@ -51,12 +51,7 @@ public sealed class OSDReal extends OSD {
 	// "r" ensures the value will correctly round-trip back through Double.TryParse
 	@Override
 	public String AsString() {
-		return value.toString("r", SimUtils.EnUsCulture);
-	}
-
-	@Override
-	public byte[] AsBinary() {
-		return SimUtils.DoubleToBytesBig(value);
+		return String.valueOf(value);
 	}
 
 	@Override

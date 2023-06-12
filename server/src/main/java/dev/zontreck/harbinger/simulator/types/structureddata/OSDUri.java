@@ -5,7 +5,7 @@ import dev.zontreck.harbinger.simulator.types.enums.OSDType;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 
-public sealed class OSDUri extends OSD {
+public class OSDUri extends OSD {
 	public final URI value;
 
 	public OSDUri(URI value) {
@@ -15,13 +15,7 @@ public sealed class OSDUri extends OSD {
 
 	@Override
 	public String AsString() {
-		if (value != null) {
-			if (value.IsAbsoluteUri)
-				return value.AbsoluteUri;
-			return value.toString();
-		}
-
-		return "";
+		return value.toString();
 	}
 
 	@Override

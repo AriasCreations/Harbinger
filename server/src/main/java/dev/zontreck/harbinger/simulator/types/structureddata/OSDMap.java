@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-public sealed class OSDMap extends OSD implements Map<String, OSD> {
+public class OSDMap extends OSD implements Map<String, OSD> {
 	public final Map<String, OSD> dicvalue;
 
 	public OSDMap() {

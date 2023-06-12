@@ -7,6 +7,10 @@ import java.util.UUID;
 public class OSDUUID extends OSD {
 	public final UUID value;
 
+	public static final UUID NULL_ID = new UUID(0,0);
+
+	public static final OSDUUID ZERO = new OSDUUID(NULL_ID);
+
 	public OSDUUID(UUID value) {
 		Type = OSDType.UUID;
 		this.value = value;
@@ -30,11 +34,6 @@ public class OSDUUID extends OSD {
 	@Override
 	public UUID AsUUID() {
 		return value;
-	}
-
-	@Override
-	public byte[] AsBinary() {
-		return value.getBytes();
 	}
 
 	@Override

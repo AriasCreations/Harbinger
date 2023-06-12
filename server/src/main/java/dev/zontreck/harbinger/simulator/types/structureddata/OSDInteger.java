@@ -34,7 +34,7 @@ public class OSDInteger extends OSD {
 
 	@Override
 	public String AsString() {
-		return value.toString();
+		return String.valueOf(value);
 	}
 
 	@Override

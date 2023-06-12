@@ -2,42 +2,35 @@ package dev.zontreck.harbinger.simulator.types.structureddata;
 
 import dev.zontreck.harbinger.simulator.types.enums.OSDType;
 import dev.zontreck.harbinger.utils.SimUtils;
+import dev.zontreck.harbinger.utils.TimeUtils;
 
+import java.time.Instant;
 import java.util.Date;
 
-public sealed class OSDDate extends OSD {
-	public final Date value;
+public class OSDDate extends OSD {
+	public final Instant value;
 
-	public OSDDate(Date value) {
+	public OSDDate(Instant value) {
 		Type = OSDType.Date;
 		this.value = value;
 	}
 
 	@Override
 	public String AsString() {
-		String format;
-		if ( value.setMinutes(); >0)
-		format = "yyyy-MM-ddTHH:mm:ss.ffZ";
-		else
-		format = "yyyy-MM-ddTHH:mm:ssZ";
-		return value.ToUniversalTime().ToString(format);
+		return TimeUtils.makeTimestamp(Date.from(value));
 	}
 
 	@Override
 	public int AsInteger() {
-		return (int) SimUtils.DateTimeToUnixTime(value);
+		return (int)value.getEpochSecond()/1000;
 	}
 
 	@Override
-	public long AsLong() {
-		return SimUtils.DateTimeToUnixTime(value);
+	public long AsLong()
+	{
+		return value.getEpochSecond();
 	}
 
-	@Override
-	public byte[] AsBinary() {
-		var ts = value.ToUniversalTime() - new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-		return SimUtils.DoubleToBytes(ts.TotalSeconds);
-	}
 
 	@Override
 	public OSD Copy() {
@@ -45,7 +38,7 @@ public sealed class OSDDate extends OSD {
 	}
 
 	@Override
-	public Date AsDate() {
+	public Instant AsInstant() {
 		return value;
 	}
 

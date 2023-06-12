@@ -4,10 +4,11 @@ import dev.zontreck.harbinger.simulator.types.enums.OSDType;
 
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
+import java.time.Instant;
 import java.util.Date;
 import java.util.UUID;
 
-public sealed class OSDString extends OSD {
+public class OSDString extends OSD {
 	public final String value;
 
 	public OSDString(String value) {
@@ -29,31 +30,7 @@ public sealed class OSDString extends OSD {
 		if (value.isEmpty())
 			return false;
 
-		return value != "0" && value.ToLower() != "false";
-	}
-
-	@Override
-	public int AsInteger() {
-		double dbl;
-		if (double.TryParse(value, out dbl))
-			return (int) Math.floor(dbl);
-		return 0;
-	}
-
-	@Override
-	public long AsLong() {
-		double dbl;
-		if (double.TryParse(value, out dbl))
-			return (long) Math.Floor(dbl);
-		return 0;
-	}
-
-	@Override
-	public double AsReal() {
-		double dbl;
-		if (double.TryParse(value, out dbl))
-			return dbl;
-		return 0d;
+		return true;
 	}
 
 	@Override
@@ -68,25 +45,17 @@ public sealed class OSDString extends OSD {
 
 	@Override
 	public UUID AsUUID() {
-		if (UUID.TryParse(value.AsSpan(), out var uuid))
-			return uuid;
-		return UUID.Zero;
+		return UUID.fromString(value);
 	}
 
 	@Override
-	public Date AsDate() {
-		Date dt;
-		if (Date.TryParse(value, out dt))
-			return dt;
-		return SimUtils.Epoch;
+	public Instant AsInstant() {
+		return Instant.parse(value);
 	}
 
 	@Override
 	public URI AsUri() {
-		URI uri;
-		if (URI.TryCreate(value, UriKind.RelativeOrAbsolute, out uri))
-			return uri;
-		return null;
+		return URI.create(value);
 	}
 
 	@Override

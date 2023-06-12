@@ -60,4 +60,14 @@ public class MathF {
 	public static float Pow(float a, float b) {
 		return (float) Math.pow(a, b);
 	}
+
+	public static float Floor(float a)
+	{
+		return (float)Math.floor(a);
+	}
+
+	public static double Floor(double a)
+	{
+		return Math.floor(a);
+	}
 }

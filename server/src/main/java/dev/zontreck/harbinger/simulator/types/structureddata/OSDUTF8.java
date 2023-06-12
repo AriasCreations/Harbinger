@@ -4,10 +4,11 @@ import dev.zontreck.harbinger.simulator.types.enums.OSDType;
 import dev.zontreck.harbinger.simulator.types.osUTF8;
 
 import java.net.URI;
+import java.time.Instant;
 import java.util.Date;
 import java.util.UUID;
 
-public sealed class OSDUTF8 extends OSD {
+public class OSDUTF8 extends OSD {
 	public final osUTF8 value;
 
 	public OSDUTF8(osUTF8 value) {
@@ -38,46 +39,23 @@ public sealed class OSDUTF8 extends OSD {
 	}
 
 	@Override
-	public OSD Copy() {
-		return new OSDUTF8(value.Clone());
-	}
-
-	@Override
-
-	public boolean AsBoolean() {
-		if (osUTF8.IsNullOrEmpty(value))
-			return false;
-
-		return !value.Equals('0') && !value.ACSIILowerEquals("false");
-	}
-
-	@Override
 	public int AsInteger() {
-		double dbl;
-		if (Double.TryParse(value.ToString(), out dbl))
-			return (int) Math.Floor(dbl);
-		return 0;
+		return Integer.parseInt(value.toString());
 	}
 
 	@Override
 	public long AsLong() {
-		double dbl;
-		if (double.TryParse(value.ToString(), out dbl))
-			return (long) Math.Floor(dbl);
-		return 0;
+		return Long.parseLong(value.toString());
 	}
 
 	@Override
 	public double AsReal() {
-		double dbl;
-		if (double.TryParse(value.ToString(), out dbl))
-			return dbl;
-		return 0d;
+		return Double.parseDouble(value.toString());
 	}
 
 	@Override
 	public String AsString() {
-		return value.ToString();
+		return value.toString();
 	}
 
 	@Override
@@ -87,26 +65,17 @@ public sealed class OSDUTF8 extends OSD {
 
 	@Override
 	public UUID AsUUID() {
-		UUID uuid;
-		if (UUID.TryParse(value.ToString().AsSpan(), out uuid))
-			return uuid;
-		return new UUID(0, 0);
+		return UUID.fromString(value.toString());
 	}
 
 	@Override
-	public Date AsDate() {
-		Date dt;
-		if (Date.TryParse(value.ToString(), out dt))
-			return dt;
-		return SimUtils.Epoch;
+	public Instant AsInstant() {
+		return Instant.parse(value.toString());
 	}
 
 	@Override
 	public URI AsUri() {
-		URI uri;
-		if (URI.TryCreate(value.ToString(), UriKind.RelativeOrAbsolute, out uri))
-			return uri;
-		return null;
+		return URI.create(value.toString());
 	}
 
 	@Override
