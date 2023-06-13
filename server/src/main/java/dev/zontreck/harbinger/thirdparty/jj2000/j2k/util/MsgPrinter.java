@@ -52,19 +52,17 @@ import java.io.PrintWriter;
  */
 public class MsgPrinter {
 	/**
-	 * The line width to use
-	 */
-	public int lw;
-
-	/**
 	 * Signals that a newline was found
 	 */
-	private static final int IS_NEWLINE = -2;
-
+	private static final int IS_NEWLINE = - 2;
 	/**
 	 * Signals that the end-of-string was reached
 	 */
-	private static final int IS_EOS = -1;
+	private static final int IS_EOS = - 1;
+	/**
+	 * The line width to use
+	 */
+	public int lw;
 
 	/**
 	 * Creates a new message printer with the specified line width and with the
@@ -72,7 +70,7 @@ public class MsgPrinter {
 	 *
 	 * @param linewidth The line width for which to format (in characters)
 	 */
-	public MsgPrinter(final int linewidth) {
+	public MsgPrinter ( final int linewidth ) {
 		this.lw = linewidth;
 	}
 
@@ -81,7 +79,7 @@ public class MsgPrinter {
 	 *
 	 * @return The line width used for formatting
 	 */
-	public int getLineWidth() {
+	public int getLineWidth ( ) {
 		return this.lw;
 	}
 
@@ -91,9 +89,9 @@ public class MsgPrinter {
 	 *
 	 * @param linewidth The new line width to use (in cahracters)
 	 */
-	public void setLineWidth(final int linewidth) {
-		if (1 > linewidth) {
-			throw new IllegalArgumentException();
+	public void setLineWidth ( final int linewidth ) {
+		if ( 1 > linewidth ) {
+			throw new IllegalArgumentException ( );
 		}
 		this.lw = linewidth;
 	}
@@ -110,7 +108,7 @@ public class MsgPrinter {
 	 * @param ind   The indentation for the other lines.
 	 * @param msg   The message to format and print.
 	 */
-	public void print(final PrintWriter out, final int flind, final int ind, final String msg) {
+	public void print ( final PrintWriter out , final int flind , final int ind , final String msg ) {
 		int start, end, pend, efflw, lind, i;
 
 		start = 0;
@@ -118,50 +116,52 @@ public class MsgPrinter {
 		pend = 0;
 		efflw = this.lw - flind;
 		lind = flind;
-		while (IS_EOS != (end = nextLineEnd(msg, pend))) {
-			if (IS_NEWLINE == end) { // Forced line break
-				for (i = 0; i < lind; i++) {
-					out.print(" ");
+		while ( IS_EOS != ( end = nextLineEnd ( msg , pend ) ) ) {
+			if ( IS_NEWLINE == end ) { // Forced line break
+				for ( i = 0; i < lind ; i++ ) {
+					out.print ( " " );
 				}
-				out.println(msg.substring(start, pend));
-				if (this.nextWord(msg, pend) == msg.length()) {
+				out.println ( msg.substring ( start , pend ) );
+				if ( this.nextWord ( msg , pend ) == msg.length ( ) ) {
 					// Traling newline => print it and done
-					out.println("");
+					out.println ( "" );
 					start = pend;
 					break;
 				}
-			} else {
-				if (efflw > end - pend) { // Room left on current line
+			}
+			else {
+				if ( efflw > end - pend ) { // Room left on current line
 					efflw -= end - pend;
 					pend = end;
 					continue;
 				}
 				// Filled-up current line => print it
-				for (i = 0; i < lind; i++) {
-					out.print(" ");
+				for ( i = 0; i < lind ; i++ ) {
+					out.print ( " " );
 				}
-				if (start == pend) { // Word larger than line width
+				if ( start == pend ) { // Word larger than line width
 					// Print anyways
-					out.println(msg.substring(start, end));
+					out.println ( msg.substring ( start , end ) );
 					pend = end;
-				} else {
-					out.println(msg.substring(start, pend));
+				}
+				else {
+					out.println ( msg.substring ( start , pend ) );
 				}
 			}
 			// Initialize for next line
 			lind = ind;
 			efflw = this.lw - ind;
-			start = this.nextWord(msg, pend);
+			start = this.nextWord ( msg , pend );
 			pend = start;
-			if (IS_EOS == start) {
+			if ( IS_EOS == start ) {
 				break; // Did all the string
 			}
 		}
-		if (pend != start) { // Part of a line left => print it
-			for (i = 0; i < lind; i++) {
-				out.print(" ");
+		if ( pend != start ) { // Part of a line left => print it
+			for ( i = 0; i < lind ; i++ ) {
+				out.print ( " " );
 			}
-			out.println(msg.substring(start, pend));
+			out.println ( msg.substring ( start , pend ) );
 		}
 
 	}
@@ -186,21 +186,21 @@ public class MsgPrinter {
 	 * @return The index of the last character in the next word, plus 1,
 	 * IS_NEWLINE, or IS_EOS if there are no more words.
 	 */
-	private int nextLineEnd(final String str, int from) {
-		int len = str.length();
+	private int nextLineEnd ( final String str , int from ) {
+		int len = str.length ( );
 		char c = '\0';
 		// First skip all whitespace, except new line
-		while (from < len && '\n' != (c = str.charAt(from)) && Character.isWhitespace(c)) {
+		while ( from < len && '\n' != ( c = str.charAt ( from ) ) && Character.isWhitespace ( c ) ) {
 			from++;
 		}
-		if ('\n' == c) {
+		if ( '\n' == c ) {
 			return MsgPrinter.IS_NEWLINE;
 		}
-		if (from >= len) {
+		if ( from >= len ) {
 			return MsgPrinter.IS_EOS;
 		}
 		// Now skip word characters
-		while (from < len && !Character.isWhitespace(str.charAt(from))) {
+		while ( from < len && ! Character.isWhitespace ( str.charAt ( from ) ) ) {
 			from++;
 		}
 		return from;
@@ -224,18 +224,20 @@ public class MsgPrinter {
 	 * @return The index of the first character of the next word, or the index
 	 * of the newline plus 1, or IS_EOS.
 	 */
-	private int nextWord(final String str, int from) {
-		int len = str.length();
+	private int nextWord ( final String str , int from ) {
+		int len = str.length ( );
 		char c = '\0';
 		// First skip all whitespace, but new lines
-		while (from < len && '\n' != (c = str.charAt(from)) && Character.isWhitespace(c)) {
+		while ( from < len && '\n' != ( c = str.charAt ( from ) ) && Character.isWhitespace ( c ) ) {
 			from++;
 		}
-		if (from >= len) {
+		if ( from >= len ) {
 			return MsgPrinter.IS_EOS;
-		} else if ('\n' == c) {
+		}
+		else if ( '\n' == c ) {
 			return from + 1;
-		} else {
+		}
+		else {
 			return from;
 		}
 	}

@@ -18,30 +18,30 @@ public class HTTPServerSettings {
 
 	public PresharedKey PSK;
 
-	public HTTPServerSettings() {
+	public HTTPServerSettings ( ) {
 	}
 
-	public HTTPServerSettings(final Entry<List<Entry>> tag) {
-		this.enabled = EntryUtils.getBool(Folder.getEntry(tag, "enable"));
-		this.port = EntryUtils.getInt(Folder.getEntry(tag, "port"));
+	public HTTPServerSettings ( final Entry<List<Entry>> tag ) {
+		this.enabled = EntryUtils.getBool ( Folder.getEntry ( tag , "enable" ) );
+		this.port = EntryUtils.getInt ( Folder.getEntry ( tag , "port" ) );
 
-		if (EntryType.FOLDER == Folder.getEntry(tag, "psk").type)
-			this.PSK = new PresharedKey(Folder.getEntry(tag, "psk"));
+		if ( EntryType.FOLDER == Folder.getEntry ( tag , "psk" ).type )
+			this.PSK = new PresharedKey ( Folder.getEntry ( tag , "psk" ) );
 		else {
 			try {
-				this.PSK = Key.computeSecuredKey("change_me");
-			} catch (final NoSuchAlgorithmException e) {
-				throw new RuntimeException(e);
+				this.PSK = Key.computeSecuredKey ( "change_me" );
+			} catch ( final NoSuchAlgorithmException e ) {
+				throw new RuntimeException ( e );
 			}
 		}
 	}
 
 
-	public Entry<?> save() {
-		final Entry<List<Entry>> tag = Folder.getNew(HTTPServerSettings.TAG_NAME);
-		tag.value.add(EntryUtils.mkBool("enable", this.enabled));
-		tag.value.add(EntryUtils.mkInt("port", this.port));
-		tag.value.add(this.PSK.save());
+	public Entry<?> save ( ) {
+		final Entry<List<Entry>> tag = Folder.getNew ( HTTPServerSettings.TAG_NAME );
+		tag.value.add ( EntryUtils.mkBool ( "enable" , this.enabled ) );
+		tag.value.add ( EntryUtils.mkInt ( "port" , this.port ) );
+		tag.value.add ( this.PSK.save ( ) );
 		return tag;
 	}
 }

@@ -8,7 +8,7 @@
  * Description:             Used to store the coordinates precincts.
  *
  * COPYRIGHT:
- * 
+ *
  * This software module was originally developed by Rapha�l Grosbois and
  * Diego Santa Cruz (Swiss Federal Institute of Technology-EPFL); Joel
  * Askel�f (Ericsson Radio Systems AB); and Bertrand Berthelot, David
@@ -35,7 +35,7 @@
  * using this software module for non JPEG 2000 Standard conforming
  * products. This copyright notice must be included in all copies or
  * derivative works of this software module.
- * 
+ *
  * Copyright (c) 1999/2000 JJ2000 Partners.
  */
 package dev.zontreck.harbinger.thirdparty.jj2000.j2k.codestream;
@@ -43,39 +43,30 @@ package dev.zontreck.harbinger.thirdparty.jj2000.j2k.codestream;
 /**
  * This class is used to store the coordinates of precincts.
  */
-public class PrecCoordInfo extends CoordInfo
-{
+public class PrecCoordInfo extends CoordInfo {
 
-	/** Horizontal upper left coordinate in the reference grid */
+	/**
+	 * Horizontal upper left coordinate in the reference grid
+	 */
 	public int xref;
 
-	/** Vertical upper left coordinate on the reference grid */
+	/**
+	 * Vertical upper left coordinate on the reference grid
+	 */
 	public int yref;
 
 	/**
 	 * Constructor. Creates a PrecCoordInfo object.
-	 * 
-	 * @param ulx
-	 *            Horizontal upper left coordinate in the subband
-	 * 
-	 * @param uly
-	 *            Vertical upper left coordinate in the subband
-	 * 
-	 * @param w
-	 *            Precinct's width
-	 * 
-	 * @param h
-	 *            Precinct's height
-	 * 
-	 * @param xref
-	 *            The horizontal coordinate on the reference grid
-	 * 
-	 * @param yref
-	 *            The vertical coordinate on the reference grid
+	 *
+	 * @param ulx  Horizontal upper left coordinate in the subband
+	 * @param uly  Vertical upper left coordinate in the subband
+	 * @param w    Precinct's width
+	 * @param h    Precinct's height
+	 * @param xref The horizontal coordinate on the reference grid
+	 * @param yref The vertical coordinate on the reference grid
 	 */
-	public PrecCoordInfo(final int ulx, final int uly, final int w, final int h, final int xref, final int yref)
-	{
-		super(ulx, uly, w, h);
+	public PrecCoordInfo ( final int ulx , final int uly , final int w , final int h , final int xref , final int yref ) {
+		super ( ulx , uly , w , h );
 		this.xref = xref;
 		this.yref = yref;
 	}
@@ -83,18 +74,16 @@ public class PrecCoordInfo extends CoordInfo
 	/**
 	 * Empty Constructor. Creates an empty PrecCoordInfo object.
 	 */
-	public PrecCoordInfo()
-	{
+	public PrecCoordInfo ( ) {
 	}
 
 	/**
 	 * Returns precinct's information in a String
-	 * 
+	 *
 	 * @return String with precinct's information
 	 */
 	@Override
-	public String toString()
-	{
-		return super.toString() + ", xref=" + this.xref + ", yref=" + this.yref;
+	public String toString ( ) {
+		return super.toString ( ) + ", xref=" + this.xref + ", yref=" + this.yref;
 	}
 }

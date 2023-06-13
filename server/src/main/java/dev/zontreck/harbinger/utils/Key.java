@@ -13,7 +13,7 @@ public enum Key {
 	 * @param input The key to encode
 	 * @return A hash+salt combo key instance
 	 */
-	public static PresharedKey computeSecuredKey(final String input) throws NoSuchAlgorithmException {
-		return new PresharedKey(input);
+	public static PresharedKey computeSecuredKey ( final String input ) throws NoSuchAlgorithmException {
+		return new PresharedKey ( input );
 	}
 }

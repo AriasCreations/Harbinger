@@ -65,20 +65,20 @@ public enum JJ2KExceptionHandler {
 	 *
 	 * @param e The exception to handle
 	 */
-	public static void handleException(final Throwable e) {
+	public static void handleException ( final Throwable e ) {
 		// Test if there is an special action (not implemented yet)
 
 		// If no special action
 
 		// Print the Exception message and stack to standard error
 		// including this method in the stack.
-		e.fillInStackTrace();
-		e.printStackTrace();
+		e.fillInStackTrace ( );
+		e.printStackTrace ( );
 		// Print an explicative message
-		System.err.println("The Thread is being terminated bacause an " + "Exception (shown above)\n"
-				+ "has been thrown and no special action was " + "defined for this Thread.");
+		System.err.println ( "The Thread is being terminated bacause an " + "Exception (shown above)\n"
+				+ "has been thrown and no special action was " + "defined for this Thread." );
 		// Stop the thread (do not use stop, since it's deprecated in
 		// Java 1.2)
-		throw new ThreadDeath();
+		throw new ThreadDeath ( );
 	}
 }

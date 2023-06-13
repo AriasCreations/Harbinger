@@ -54,7 +54,7 @@ public class NoNextElementException extends RuntimeException {
 	 * Constructs a new <tt>NoNextElementException</tt> exception with no detail
 	 * message.
 	 */
-	public NoNextElementException() {
+	public NoNextElementException ( ) {
 	}
 
 	/**
@@ -63,8 +63,8 @@ public class NoNextElementException extends RuntimeException {
 	 *
 	 * @param s The detail message.
 	 */
-	public NoNextElementException(final String s) {
-		super(s);
+	public NoNextElementException ( final String s ) {
+		super ( s );
 	}
 
 }

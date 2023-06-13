@@ -9,12 +9,12 @@ import dev.zontreck.harbinger.data.types.Server;
 public class HarbingerClientRemovedEvent extends Event {
 	public Server server;
 
-	public HarbingerClientRemovedEvent(final Server s) {
+	public HarbingerClientRemovedEvent ( final Server s ) {
 		this.server = s;
 	}
 
 	@Override
-	public boolean isCancellable() {
+	public boolean isCancellable ( ) {
 		return false;
 	}
 }

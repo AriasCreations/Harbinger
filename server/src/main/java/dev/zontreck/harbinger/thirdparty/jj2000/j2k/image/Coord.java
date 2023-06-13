@@ -10,7 +10,7 @@
  *
  *
  * COPYRIGHT:
- * 
+ *
  * This software module was originally developed by Rapha�l Grosbois and
  * Diego Santa Cruz (Swiss Federal Institute of Technology-EPFL); Joel
  * Askel�f (Ericsson Radio Systems AB); and Bertrand Berthelot, David
@@ -37,7 +37,7 @@
  * using this software module for non JPEG 2000 Standard conforming
  * products. This copyright notice must be included in all copies or
  * derivative works of this software module.
- * 
+ *
  * Copyright (c) 1999/2000 JJ2000 Partners.
  */
 package dev.zontreck.harbinger.thirdparty.jj2000.j2k.image;
@@ -45,32 +45,30 @@ package dev.zontreck.harbinger.thirdparty.jj2000.j2k.image;
 /**
  * This class represents 2-D coordinates.
  */
-public class Coord
-{
-	/** The horizontal coordinate */
+public class Coord {
+	/**
+	 * The horizontal coordinate
+	 */
 	public int x;
 
-	/** The vertical coordinate */
+	/**
+	 * The vertical coordinate
+	 */
 	public int y;
 
 	/**
 	 * Creates a new coordinate object given with the (0,0) coordinates
 	 */
-	public Coord()
-	{
+	public Coord ( ) {
 	}
 
 	/**
 	 * Creates a new coordinate object given the two coordinates.
-	 * 
-	 * @param x
-	 *            The horizontal coordinate.
-	 * 
-	 * @param y
-	 *            The vertical coordinate.
+	 *
+	 * @param x The horizontal coordinate.
+	 * @param y The vertical coordinate.
 	 */
-	public Coord(final int x, final int y)
-	{
+	public Coord ( final int x , final int y ) {
 		this.x = x;
 		this.y = y;
 	}
@@ -78,24 +76,21 @@ public class Coord
 	/**
 	 * Creates a new coordinate object given another Coord object i.e. copy
 	 * constructor
-	 * 
-	 * @param c
-	 *            The Coord object to be copied.
+	 *
+	 * @param c The Coord object to be copied.
 	 */
-	public Coord(final Coord c)
-	{
+	public Coord ( final Coord c ) {
 		x = c.x;
 		y = c.y;
 	}
 
 	/**
 	 * Returns a string representation of the object coordinates
-	 * 
+	 *
 	 * @return The vertical and the horizontal coordinates
 	 */
 	@Override
-	public String toString()
-	{
+	public String toString ( ) {
 		return "(" + this.x + "," + this.y + ")";
 	}
 }

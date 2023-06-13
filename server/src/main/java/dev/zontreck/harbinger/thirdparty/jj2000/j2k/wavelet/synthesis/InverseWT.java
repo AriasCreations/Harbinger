@@ -80,8 +80,8 @@ public abstract class InverseWT extends InvWTAdapter implements BlkImgDataSrc {
 	 * @param src     from where the wavelet coefficinets should be obtained.
 	 * @param decSpec The decoder specifications
 	 */
-	protected InverseWT(final MultiResImgData src, final DecoderSpecs decSpec) {
-		super(src, decSpec);
+	protected InverseWT ( final MultiResImgData src , final DecoderSpecs decSpec ) {
+		super ( src , decSpec );
 	}
 
 	/**
@@ -90,14 +90,14 @@ public abstract class InverseWT extends InvWTAdapter implements BlkImgDataSrc {
 	 * the parameter list is ignored since no special parameters can be
 	 * specified for the inverse wavelet transform yet.
 	 *
-	 * @param src The source of data for the inverse wavelet transform.
-	 * @param decSpec  The parameter list containing parameters applicable to the
-	 *            inverse wavelet transform (other parameters can also be
-	 *            present).
+	 * @param src     The source of data for the inverse wavelet transform.
+	 * @param decSpec The parameter list containing parameters applicable to the
+	 *                inverse wavelet transform (other parameters can also be
+	 *                present).
 	 */
-	public static InverseWT createInstance(final CBlkWTDataSrcDec src, final DecoderSpecs decSpec) {
+	public static InverseWT createInstance ( final CBlkWTDataSrcDec src , final DecoderSpecs decSpec ) {
 
 		// full page wavelet transform
-		return new InvWTFull(src, decSpec);
+		return new InvWTFull ( src , decSpec );
 	}
 }

@@ -10,7 +10,7 @@
  *
  *
  * COPYRIGHT:
- * 
+ *
  * This software module was originally developed by Rapha�l Grosbois and
  * Diego Santa Cruz (Swiss Federal Institute of Technology-EPFL); Joel
  * Askel�f (Ericsson Radio Systems AB); and Bertrand Berthelot, David
@@ -37,7 +37,7 @@
  * using this software module for non JPEG 2000 Standard conforming
  * products. This copyright notice must be included in all copies or
  * derivative works of this software module.
- * 
+ *
  * Copyright (c) 1999/2000 JJ2000 Partners.
  */
 package dev.zontreck.harbinger.thirdparty.jj2000.j2k.wavelet;
@@ -45,20 +45,25 @@ package dev.zontreck.harbinger.thirdparty.jj2000.j2k.wavelet;
 /**
  * This interface defines the identifiers for the different types of filters
  * that are supported.
- * 
+ *
  * <p>
  * The identifier values are the same as those used in the codestream syntax,
  * for the filters that are defined in the standard.
  */
-public interface FilterTypes
-{
+public interface FilterTypes {
 
-	/** W7x9 filter: 0x00 */
+	/**
+	 * W7x9 filter: 0x00
+	 */
 	int W9X7 = 0;
 
-	/** W5x3 filter: 0x01 */
+	/**
+	 * W5x3 filter: 0x01
+	 */
 	int W5X3 = 1;
 
-	/** User-defined filter: -1 */
-	int CUSTOM = -1;
+	/**
+	 * User-defined filter: -1
+	 */
+	int CUSTOM = - 1;
 }

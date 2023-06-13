@@ -6,11 +6,11 @@
  * Class:                   PktInfo
  *
  * Description:             Object containing packet informations.
- * 
+ *
  *
  *
  * COPYRIGHT:
- * 
+ *
  * This software module was originally developed by Rapha�l Grosbois and
  * Diego Santa Cruz (Swiss Federal Institute of Technology-EPFL); Joel
  * Askel�f (Ericsson Radio Systems AB); and Bertrand Berthelot, David
@@ -37,7 +37,7 @@
  * using this software module for non JPEG 2000 Standard conforming
  * products. This copyright notice must be included in all copies or
  * derivative works of this software module.
- * 
+ *
  * Copyright (c) 1999/2000 JJ2000 Partners.
  */
 package dev.zontreck.harbinger.thirdparty.jj2000.j2k.codestream.reader;
@@ -45,22 +45,29 @@ package dev.zontreck.harbinger.thirdparty.jj2000.j2k.codestream.reader;
 /**
  * This class defines an object used to countain informations about a packet to
  * which the current code-block belongs.
- * 
+ *
  * @see CBlkInfo
  */
-public class PktInfo
-{
+public class PktInfo {
 
-	/** Index of the packet */
+	/**
+	 * Index of the packet
+	 */
 	public int packetIdx;
 
-	/** The layer associated with the current code-block in this packet. */
+	/**
+	 * The layer associated with the current code-block in this packet.
+	 */
 	public int layerIdx;
 
-	/** The code-block offset in the codestream (for this packet) */
+	/**
+	 * The code-block offset in the codestream (for this packet)
+	 */
 	public int cbOff;
 
-	/** The length of the code-block in this packet (in bytes) */
+	/**
+	 * The length of the code-block in this packet (in bytes)
+	 */
 	public int cbLength;
 
 	/**
@@ -79,27 +86,22 @@ public class PktInfo
 
 	/**
 	 * Classe's constructor.
-	 * 
-	 * @param lyIdx
-	 *            The layer index for the code-block in this packet
-	 * 
-	 * @param pckIdx
-	 *            The packet index
+	 *
+	 * @param lyIdx  The layer index for the code-block in this packet
+	 * @param pckIdx The packet index
 	 */
-	public PktInfo(final int lyIdx, final int pckIdx)
-	{
+	public PktInfo ( final int lyIdx , final int pckIdx ) {
 		this.layerIdx = lyIdx;
 		this.packetIdx = pckIdx;
 	}
 
 	/**
 	 * Object information in a string.
-	 * 
+	 *
 	 * @return Object information
 	 */
 	@Override
-	public String toString()
-	{
+	public String toString ( ) {
 		return "packet " + this.packetIdx + " (lay:" + this.layerIdx + ", off:" + this.cbOff + ", len:" + this.cbLength + ", numTruncPnts:"
 				+ this.numTruncPnts + ")\n";
 	}

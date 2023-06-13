@@ -43,8 +43,8 @@
  */
 package dev.zontreck.harbinger.thirdparty.jj2000.j2k.entropy.encoder;
 
-import dev.zontreck.harbinger.thirdparty.jj2000.j2k.wavelet.analysis.*;
-import dev.zontreck.harbinger.thirdparty.jj2000.j2k.entropy.*;
+import dev.zontreck.harbinger.thirdparty.jj2000.j2k.entropy.CodedCBlk;
+import dev.zontreck.harbinger.thirdparty.jj2000.j2k.wavelet.analysis.SubbandAn;
 
 /**
  * This class stores coded (compressed) code-blocks with their associated
@@ -52,24 +52,24 @@ import dev.zontreck.harbinger.thirdparty.jj2000.j2k.entropy.*;
  * compressed data of the code-block. It is applicable to the encoder engine
  * only. Some data of the coded-block is stored in the super class, see
  * CodedCBlk.
- * 
+ *
  * <p>
  * The rate-distortion statistics (i.e. R-D slope) is stored for valid points
  * only. The set of valid points is determined by the entropy coder engine
  * itself. Normally they are selected so as to lye in a convex hull, which can
  * be achived by using the 'selectConvexHull' method of this class, but some
  * other strategies might be employed.
- * 
+ *
  * <p>
  * The rate (in bytes) for each truncation point (valid or not) is stored in the
  * 'truncRates' array. The rate of a truncation point is the total number of
  * bytes in 'data' (see super class) that have to be decoded to reach the
  * truncation point.
- * 
+ *
  * <p>
  * The slope (reduction of distortion divided by the increase in rate) at each
  * of the valid truncation points is stored in 'truncSlopes'.
- * 
+ *
  * <p>
  * The index of each valid truncation point is stored in 'truncIdxs'. The index
  * should be interpreted in the following way: a valid truncation point at
@@ -77,28 +77,33 @@ import dev.zontreck.harbinger.thirdparty.jj2000.j2k.entropy.*;
  * 'truncRates[truncIdxs[n]]' and the slope 'truncSlopes[n]'. The arrays
  * 'truncIdxs' and 'truncRates' have at least 'nVldTrunc' elements. The
  * 'truncRates' array has at least 'nTotTrunc' elements.
- * 
+ *
  * <p>
  * In addition the 'isTermPass' array contains a flag for each truncation point
  * (valid and non-valid ones) that tells if the pass is terminated or not. If
  * this variable is null then it means that no pass is terminated, except the
  * last one which always is.
- * 
+ *
  * <p>
  * The compressed data is stored in the 'data' member variable of the super
  * class.
- * 
+ *
  * @see CodedCBlk
  */
-public class CBlkRateDistStats extends CodedCBlk
-{
-	/** The subband to which the code-block belongs */
+public class CBlkRateDistStats extends CodedCBlk {
+	/**
+	 * The subband to which the code-block belongs
+	 */
 	public SubbandAn sb;
 
-	/** The total number of truncation points */
+	/**
+	 * The total number of truncation points
+	 */
 	public int nTotTrunc;
 
-	/** The number of valid truncation points */
+	/**
+	 * The number of valid truncation points
+	 */
 	public int nVldTrunc;
 
 	/**
@@ -106,7 +111,9 @@ public class CBlkRateDistStats extends CodedCBlk
 	 */
 	public int[] truncRates;
 
-	/** The distortion for each truncation point (valid and non-valid ones) */
+	/**
+	 * The distortion for each truncation point (valid and non-valid ones)
+	 */
 	public double[] truncDists;
 
 	/**
@@ -114,7 +121,9 @@ public class CBlkRateDistStats extends CodedCBlk
 	 */
 	public float[] truncSlopes;
 
-	/** The indices of the valid truncation points, in increasing order. */
+	/**
+	 * The indices of the valid truncation points, in increasing order.
+	 */
 	public int[] truncIdxs;
 
 	/**
@@ -123,18 +132,21 @@ public class CBlkRateDistStats extends CodedCBlk
 	 */
 	public boolean[] isTermPass;
 
-	/** The number of ROI coefficients in the code-block */
+	/**
+	 * The number of ROI coefficients in the code-block
+	 */
 	public int nROIcoeff;
 
-	/** Number of ROI coding passes */
+	/**
+	 * Number of ROI coding passes
+	 */
 	public int nROIcp;
 
 	/**
 	 * Creates a new CBlkRateDistStats object without allocating any space for
 	 * 'truncRates', 'truncSlopes', 'truncDists' and 'truncIdxs' or 'data'.
 	 */
-	public CBlkRateDistStats()
-	{
+	public CBlkRateDistStats ( ) {
 	}
 
 	/**
@@ -144,60 +156,44 @@ public class CBlkRateDistStats extends CodedCBlk
 	 * rate (in bytes), the reduction in distortion (from nothing coded) and the
 	 * flag indicating if termination is used, respectively, for each truncation
 	 * point.
-	 * 
+	 *
 	 * <p>
 	 * The valid truncation points are selected by taking them as lying on a
 	 * convex hull. This is done by calling the method selectConvexHull().
-	 * 
+	 *
 	 * <p>
 	 * Note that the arrays 'rates' and 'termp' are copied, not referenced, so
 	 * they can be modified after a call to this constructor.
-	 * 
-	 * @param m
-	 *            The horizontal index of the code-block, within the subband.
-	 * 
-	 * @param n
-	 *            The vertical index of the code-block, within the subband.
-	 * 
-	 * @param skipMSBP
-	 *            The number of skipped most significant bit-planes for this
-	 *            code-block.
-	 * 
-	 * @param data
-	 *            The compressed data. This array is referenced by this object
-	 *            so it should not be modified after.
-	 * 
-	 * @param rates
-	 *            The rates (in bytes) for each truncation point in the
-	 *            compressed data. This array is modified by the method but no
-	 *            reference is kept to it.
-	 * 
-	 * @param dists
-	 *            The reduction in distortion (with respect to no information
-	 *            coded) for each truncation point. This array is modified by
-	 *            the method but no reference is kept to it.
-	 * 
-	 * @param termp
-	 *            An array of boolean flags indicating, for each pass, if a pass
-	 *            is terminated or not (true if terminated). If null then it is
-	 *            assumed that no pass is terminated except the last one which
-	 *            always is.
-	 * 
-	 * @param np
-	 *            The number of truncation points contained in 'rates', 'dist'
-	 *            and 'termp'.
-	 * 
-	 * @param inclast
-	 *            If false the convex hull is constructed as for lossy coding.
-	 *            If true it is constructed as for lossless coding, in which
-	 *            case it is ensured that all bit-planes are sent (i.e. the last
-	 *            truncation point is always included).
+	 *
+	 * @param m        The horizontal index of the code-block, within the subband.
+	 * @param n        The vertical index of the code-block, within the subband.
+	 * @param skipMSBP The number of skipped most significant bit-planes for this
+	 *                 code-block.
+	 * @param data     The compressed data. This array is referenced by this object
+	 *                 so it should not be modified after.
+	 * @param rates    The rates (in bytes) for each truncation point in the
+	 *                 compressed data. This array is modified by the method but no
+	 *                 reference is kept to it.
+	 * @param dists    The reduction in distortion (with respect to no information
+	 *                 coded) for each truncation point. This array is modified by
+	 *                 the method but no reference is kept to it.
+	 * @param termp    An array of boolean flags indicating, for each pass, if a pass
+	 *                 is terminated or not (true if terminated). If null then it is
+	 *                 assumed that no pass is terminated except the last one which
+	 *                 always is.
+	 * @param np       The number of truncation points contained in 'rates', 'dist'
+	 *                 and 'termp'.
+	 * @param inclast  If false the convex hull is constructed as for lossy coding.
+	 *                 If true it is constructed as for lossless coding, in which
+	 *                 case it is ensured that all bit-planes are sent (i.e. the last
+	 *                 truncation point is always included).
 	 */
-	public CBlkRateDistStats(final int m, final int n, final int skipMSBP, final byte[] data, final int[] rates, final double[] dists, final boolean[] termp,
-							 final int np, final boolean inclast)
-	{
-		super(m, n, skipMSBP, data);
-		this.selectConvexHull(rates, dists, termp, np, inclast);
+	public CBlkRateDistStats (
+			final int m , final int n , final int skipMSBP , final byte[] data , final int[] rates , final double[] dists , final boolean[] termp ,
+			final int np , final boolean inclast
+	) {
+		super ( m , n , skipMSBP , data );
+		this.selectConvexHull ( rates , dists , termp , np , inclast );
 	}
 
 	/**
@@ -207,38 +203,28 @@ public class CBlkRateDistStats extends CodedCBlk
 	 * 'nVldTrunc', with the selected truncation points. It will also initialize
 	 * 'truncRates' and 'isTermPass' arrays, as well as 'nTotTrunc', with all
 	 * the truncation points (selected or not).
-	 * 
+	 *
 	 * <p>
 	 * Note that the arrays 'rates' and 'termp' are copied, not referenced, so
 	 * they can be modified after a call to this method.
-	 * 
-	 * @param rates
-	 *            The rates (in bytes) for each truncation point in the
-	 *            compressed data. This array is modified by the method.
-	 * 
-	 * @param dists
-	 *            The reduction in distortion (with respect to no information
-	 *            coded) for each truncation point. This array is modified by
-	 *            the method.
-	 * 
-	 * @param termp
-	 *            An array of boolean flags indicating, for each pass, if a pass
-	 *            is terminated or not (true if terminated). If null then it is
-	 *            assumed that no pass is terminated except the last one which
-	 *            always is.
-	 * 
-	 * @param n
-	 *            The number of truncation points contained in 'rates', 'dist'
-	 *            and 'termp'.
-	 * 
-	 * @param inclast
-	 *            If false the convex hull is constructed as for lossy coding.
-	 *            If true it is constructed as for lossless coding, in which
-	 *            case it is ensured that all bit-planes are sent (i.e. the last
-	 *            truncation point is always included).
+	 *
+	 * @param rates   The rates (in bytes) for each truncation point in the
+	 *                compressed data. This array is modified by the method.
+	 * @param dists   The reduction in distortion (with respect to no information
+	 *                coded) for each truncation point. This array is modified by
+	 *                the method.
+	 * @param termp   An array of boolean flags indicating, for each pass, if a pass
+	 *                is terminated or not (true if terminated). If null then it is
+	 *                assumed that no pass is terminated except the last one which
+	 *                always is.
+	 * @param n       The number of truncation points contained in 'rates', 'dist'
+	 *                and 'termp'.
+	 * @param inclast If false the convex hull is constructed as for lossy coding.
+	 *                If true it is constructed as for lossless coding, in which
+	 *                case it is ensured that all bit-planes are sent (i.e. the last
+	 *                truncation point is always included).
 	 */
-	public void selectConvexHull(final int[] rates, final double[] dists, final boolean[] termp, final int n, final boolean inclast)
-	{
+	public void selectConvexHull ( final int[] rates , final double[] dists , final boolean[] termp , final int n , final boolean inclast ) {
 		int first_pnt; // The first point containing some coded data
 		int p; // last selected point
 		int k; // current point
@@ -254,52 +240,45 @@ public class CBlkRateDistStats extends CodedCBlk
 
 		// Look for first point with some coded info (rate not 0)
 		first_pnt = 0;
-		while (first_pnt < n && 0 >= rates[first_pnt])
-		{
+		while ( first_pnt < n && 0 >= rates[ first_pnt ] ) {
 			first_pnt++;
 		}
 
 		// Select the valid points
 		npnt = n - first_pnt;
 		p_slope = 0.0f; // To keep compiler happy
-		ploop: do
-		{
-			p = -1;
-			for (k = first_pnt; k < n; k++)
-			{
-				if (0 > rates[k])
-				{ // Already invalidated point
+		ploop:
+		do {
+			p = - 1;
+			for ( k = first_pnt; k < n ; k++ ) {
+				if ( 0 > rates[ k ] ) { // Already invalidated point
 					continue;
 				}
 				// Calculate decrease in distortion and rate
-				if (0 <= p)
-				{
-					delta_rate = rates[k] - rates[p];
-					delta_dist = dists[k] - dists[p];
+				if ( 0 <= p ) {
+					delta_rate = rates[ k ] - rates[ p ];
+					delta_dist = dists[ k ] - dists[ p ];
 				}
-				else
-				{ // This is with respect to no info coded
-					delta_rate = rates[k];
-					delta_dist = dists[k];
+				else { // This is with respect to no info coded
+					delta_rate = rates[ k ];
+					delta_dist = dists[ k ];
 				}
 				// If exactly same distortion don't eliminate if the rates are
 				// equal, otherwise it can lead to infinite slope in lossless
 				// coding.
-				if (0.0f > delta_dist || (0.0f == delta_dist && 0 < delta_rate))
-				{
+				if ( 0.0f > delta_dist || ( 0.0f == delta_dist && 0 < delta_rate ) ) {
 					// This point increases distortion => invalidate
-					rates[k] = -rates[k];
+					rates[ k ] = - rates[ k ];
 					npnt--;
 					continue; // Goto next point
 				}
-				k_slope = (float) (delta_dist / delta_rate);
+				k_slope = ( float ) ( delta_dist / delta_rate );
 				// Check that there is a decrease in distortion, slope is not
 				// infinite (i.e. delta_dist is not 0) and slope is
 				// decreasing.
-				if (0 <= p && (0 >= delta_rate || k_slope >= p_slope))
-				{
+				if ( 0 <= p && ( 0 >= delta_rate || k_slope >= p_slope ) ) {
 					// Last point was not good
-					rates[p] = -rates[p]; // Remove p from valid points
+					rates[ p ] = - rates[ p ]; // Remove p from valid points
 					npnt--;
 					continue ploop; // Restart from the first one
 				}
@@ -308,13 +287,12 @@ public class CBlkRateDistStats extends CodedCBlk
 			}
 			// If we get to last point we are done
 			break;
-		} while (true); // We end the loop with the break statement
+		} while ( true ); // We end the loop with the break statement
 
 		// If in lossless mode make sure we don't eliminate any last
 		// bit-planes from being sent.
-		if (inclast && 0 < n && 0 > rates[n - 1])
-		{
-			rates[n - 1] = -rates[n - 1];
+		if ( inclast && 0 < n && 0 > rates[ n - 1 ] ) {
+			rates[ n - 1 ] = - rates[ n - 1 ];
 			// This rate can never be equal to any previous selected rate,
 			// given the selection algorithm above, so no problem arises of
 			// infinite slopes.
@@ -324,41 +302,34 @@ public class CBlkRateDistStats extends CodedCBlk
 		// Initialize the arrays of this object
 		this.nTotTrunc = n;
 		this.nVldTrunc = npnt;
-		this.truncRates = new int[n];
-		this.truncDists = new double[n];
-		this.truncSlopes = new float[npnt];
-		this.truncIdxs = new int[npnt];
-		if (null != termp)
-		{
-			this.isTermPass = new boolean[n];
-			System.arraycopy(termp, 0, this.isTermPass, 0, n);
+		this.truncRates = new int[ n ];
+		this.truncDists = new double[ n ];
+		this.truncSlopes = new float[ npnt ];
+		this.truncIdxs = new int[ npnt ];
+		if ( null != termp ) {
+			this.isTermPass = new boolean[ n ];
+			System.arraycopy ( termp , 0 , this.isTermPass , 0 , n );
 		}
-		else
-		{
+		else {
 			this.isTermPass = null;
 		}
-		System.arraycopy(rates, 0, this.truncRates, 0, n);
-		for (k = first_pnt, p = -1, i = 0; k < n; k++)
-		{
-			if (0 < rates[k])
-			{ // A valid point
-				this.truncDists[k] = dists[k];
-				if (0 > p)
-				{ // Only arrives at first valid point
-					this.truncSlopes[i] = (float) (dists[k] / rates[k]);
+		System.arraycopy ( rates , 0 , this.truncRates , 0 , n );
+		for ( k = first_pnt , p = - 1 , i = 0; k < n ; k++ ) {
+			if ( 0 < rates[ k ] ) { // A valid point
+				this.truncDists[ k ] = dists[ k ];
+				if ( 0 > p ) { // Only arrives at first valid point
+					this.truncSlopes[ i ] = ( float ) ( dists[ k ] / rates[ k ] );
 				}
-				else
-				{
-					this.truncSlopes[i] = (float) ((dists[k] - dists[p]) / (rates[k] - rates[p]));
+				else {
+					this.truncSlopes[ i ] = ( float ) ( ( dists[ k ] - dists[ p ] ) / ( rates[ k ] - rates[ p ] ) );
 				}
-				this.truncIdxs[i] = k;
+				this.truncIdxs[ i ] = k;
 				i++;
 				p = k;
 			}
-			else
-			{
-				this.truncDists[k] = -1;
-				this.truncRates[k] = -this.truncRates[k];
+			else {
+				this.truncDists[ k ] = - 1;
+				this.truncRates[ k ] = - this.truncRates[ k ];
 			}
 		}
 	}
@@ -366,13 +337,12 @@ public class CBlkRateDistStats extends CodedCBlk
 	/**
 	 * Returns the contents of the object in a string. This is used for
 	 * debugging.
-	 * 
+	 *
 	 * @return A string with the contents of the object
 	 */
 	@Override
-	public String toString()
-	{
-		final String str = super.toString() + "\n nVldTrunc=" + this.nVldTrunc + ", nTotTrunc=" + this.nTotTrunc + ", num. ROI coeff="
+	public String toString ( ) {
+		final String str = super.toString ( ) + "\n nVldTrunc=" + this.nVldTrunc + ", nTotTrunc=" + this.nTotTrunc + ", num. ROI coeff="
 				+ this.nROIcoeff + ", num. ROI coding passes=" + this.nROIcp + ", sb=" + this.sb.sbandIdx;
 		// str += "\n\ttruncRates:\n";
 		// for(int i=0; i<truncRates.length; i++) {

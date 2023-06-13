@@ -10,7 +10,7 @@
  *
  *
  * COPYRIGHT:
- * 
+ *
  * This software module was originally developed by Rapha�l Grosbois and
  * Diego Santa Cruz (Swiss Federal Institute of Technology-EPFL); Joel
  * Askel�f (Ericsson Radio Systems AB); and Bertrand Berthelot, David
@@ -37,151 +37,191 @@
  * using this software module for non JPEG 2000 Standard conforming
  * products. This copyright notice must be included in all copies or
  * derivative works of this software module.
- * 
+ *
  * Copyright (c) 1999/2000 JJ2000 Partners.
  */
 package dev.zontreck.harbinger.thirdparty.jj2000.j2k.encoder;
 
-import dev.zontreck.harbinger.thirdparty.jj2000.j2k.quantization.quantizer.*;
-import dev.zontreck.harbinger.thirdparty.jj2000.j2k.image.forwcomptransf.*;
-import dev.zontreck.harbinger.thirdparty.jj2000.j2k.wavelet.analysis.*;
-import dev.zontreck.harbinger.thirdparty.jj2000.j2k.quantization.*;
-import dev.zontreck.harbinger.thirdparty.jj2000.j2k.entropy.*;
-import dev.zontreck.harbinger.thirdparty.jj2000.j2k.util.*;
-import dev.zontreck.harbinger.thirdparty.jj2000.j2k.image.*;
-import dev.zontreck.harbinger.thirdparty.jj2000.j2k.roi.*;
-import dev.zontreck.harbinger.thirdparty.jj2000.j2k.*;
+import dev.zontreck.harbinger.thirdparty.jj2000.j2k.IntegerSpec;
+import dev.zontreck.harbinger.thirdparty.jj2000.j2k.ModuleSpec;
+import dev.zontreck.harbinger.thirdparty.jj2000.j2k.StringSpec;
+import dev.zontreck.harbinger.thirdparty.jj2000.j2k.entropy.CBlkSizeSpec;
+import dev.zontreck.harbinger.thirdparty.jj2000.j2k.entropy.PrecinctSizeSpec;
+import dev.zontreck.harbinger.thirdparty.jj2000.j2k.entropy.ProgressionSpec;
+import dev.zontreck.harbinger.thirdparty.jj2000.j2k.image.BlkImgDataSrc;
+import dev.zontreck.harbinger.thirdparty.jj2000.j2k.image.CompTransfSpec;
+import dev.zontreck.harbinger.thirdparty.jj2000.j2k.image.forwcomptransf.ForwCompTransfSpec;
+import dev.zontreck.harbinger.thirdparty.jj2000.j2k.quantization.GuardBitsSpec;
+import dev.zontreck.harbinger.thirdparty.jj2000.j2k.quantization.QuantStepSizeSpec;
+import dev.zontreck.harbinger.thirdparty.jj2000.j2k.quantization.QuantTypeSpec;
+import dev.zontreck.harbinger.thirdparty.jj2000.j2k.quantization.quantizer.Quantizer;
+import dev.zontreck.harbinger.thirdparty.jj2000.j2k.roi.MaxShiftSpec;
+import dev.zontreck.harbinger.thirdparty.jj2000.j2k.util.ParameterList;
+import dev.zontreck.harbinger.thirdparty.jj2000.j2k.wavelet.analysis.AnWTFilterSpec;
 
 /**
  * This class holds references to each module specifications used in the
  * encoding chain. This avoid big amount of arguments in method calls. A
  * specification contains values of each tile-component for one module. All
  * members must be instance of ModuleSpec class (or its children).
- * 
+ *
  * @see ModuleSpec
  */
-public class EncoderSpecs
-{
+public class EncoderSpecs {
 
-	/** ROI maxshift value specifications */
+	/**
+	 * ROI maxshift value specifications
+	 */
 	public MaxShiftSpec rois;
 
-	/** Quantization type specifications */
+	/**
+	 * Quantization type specifications
+	 */
 	public QuantTypeSpec qts;
 
-	/** Quantization normalized base step size specifications */
+	/**
+	 * Quantization normalized base step size specifications
+	 */
 	public QuantStepSizeSpec qsss;
 
-	/** Number of guard bits specifications */
+	/**
+	 * Number of guard bits specifications
+	 */
 	public GuardBitsSpec gbs;
 
-	/** Analysis wavelet filters specifications */
+	/**
+	 * Analysis wavelet filters specifications
+	 */
 	public AnWTFilterSpec wfs;
 
-	/** Component transformation specifications */
+	/**
+	 * Component transformation specifications
+	 */
 	public CompTransfSpec cts;
 
-	/** Number of decomposition levels specifications */
+	/**
+	 * Number of decomposition levels specifications
+	 */
 	public IntegerSpec dls;
 
-	/** The length calculation specifications */
+	/**
+	 * The length calculation specifications
+	 */
 	public StringSpec lcs;
 
-	/** The termination type specifications */
+	/**
+	 * The termination type specifications
+	 */
 	public StringSpec tts;
 
-	/** Error resilience segment symbol use specifications */
+	/**
+	 * Error resilience segment symbol use specifications
+	 */
 	public StringSpec sss;
 
-	/** Causal stripes specifications */
+	/**
+	 * Causal stripes specifications
+	 */
 	public StringSpec css;
 
-	/** Regular termination specifications */
+	/**
+	 * Regular termination specifications
+	 */
 	public StringSpec rts;
 
-	/** MQ reset specifications */
+	/**
+	 * MQ reset specifications
+	 */
 	public StringSpec mqrs;
 
-	/** By-pass mode specifications */
+	/**
+	 * By-pass mode specifications
+	 */
 	public StringSpec bms;
 
-	/** Precinct partition specifications */
+	/**
+	 * Precinct partition specifications
+	 */
 	public PrecinctSizeSpec pss;
 
-	/** Start of packet (SOP) marker use specification */
+	/**
+	 * Start of packet (SOP) marker use specification
+	 */
 	public StringSpec sops;
 
-	/** End of packet header (EPH) marker use specification */
+	/**
+	 * End of packet header (EPH) marker use specification
+	 */
 	public StringSpec ephs;
 
-	/** Code-blocks sizes specification */
+	/**
+	 * Code-blocks sizes specification
+	 */
 	public CBlkSizeSpec cblks;
 
-	/** Progression/progression changes specification */
+	/**
+	 * Progression/progression changes specification
+	 */
 	public ProgressionSpec pocs;
 
-	/** The number of tiles within the image */
+	/**
+	 * The number of tiles within the image
+	 */
 	public int nTiles;
 
-	/** The number of components within the image */
+	/**
+	 * The number of components within the image
+	 */
 	public int nComp;
 
 	/**
 	 * Initialize all members with the given number of tiles and components and
 	 * the command-line arguments stored in a ParameterList instance
-	 * 
-	 * @param nt
-	 *            Number of tiles
-	 * 
-	 * @param nc
-	 *            Number of components
-	 * 
-	 * @param imgsrc
-	 *            The image source (used to get the image size)
-	 * 
-	 * @param pl
-	 *            The ParameterList instance
+	 *
+	 * @param nt     Number of tiles
+	 * @param nc     Number of components
+	 * @param imgsrc The image source (used to get the image size)
+	 * @param pl     The ParameterList instance
 	 */
-	public EncoderSpecs(final int nt, final int nc, final BlkImgDataSrc imgsrc, final ParameterList pl)
-	{
+	public EncoderSpecs ( final int nt , final int nc , final BlkImgDataSrc imgsrc , final ParameterList pl ) {
 		this.nTiles = nt;
 		this.nComp = nc;
 
 		// ROI
-		this.rois = new MaxShiftSpec(nt, nc, ModuleSpec.SPEC_TYPE_TILE_COMP);
+		this.rois = new MaxShiftSpec ( nt , nc , ModuleSpec.SPEC_TYPE_TILE_COMP );
 
 		// Quantization
-		pl.checkList(Quantizer.OPT_PREFIX, ParameterList.toNameArray(Quantizer.getParameterInfo()));
-		this.qts = new QuantTypeSpec(nt, nc, ModuleSpec.SPEC_TYPE_TILE_COMP, pl);
-		this.qsss = new QuantStepSizeSpec(nt, nc, ModuleSpec.SPEC_TYPE_TILE_COMP, pl);
-		this.gbs = new GuardBitsSpec(nt, nc, ModuleSpec.SPEC_TYPE_TILE_COMP, pl);
+		pl.checkList ( Quantizer.OPT_PREFIX , ParameterList.toNameArray ( Quantizer.getParameterInfo ( ) ) );
+		this.qts = new QuantTypeSpec ( nt , nc , ModuleSpec.SPEC_TYPE_TILE_COMP , pl );
+		this.qsss = new QuantStepSizeSpec ( nt , nc , ModuleSpec.SPEC_TYPE_TILE_COMP , pl );
+		this.gbs = new GuardBitsSpec ( nt , nc , ModuleSpec.SPEC_TYPE_TILE_COMP , pl );
 
 		// Wavelet transform
-		this.wfs = new AnWTFilterSpec(nt, nc, ModuleSpec.SPEC_TYPE_TILE_COMP, this.qts, pl);
-		this.dls = new IntegerSpec(nt, nc, ModuleSpec.SPEC_TYPE_TILE_COMP, pl, "Wlev");
+		this.wfs = new AnWTFilterSpec ( nt , nc , ModuleSpec.SPEC_TYPE_TILE_COMP , this.qts , pl );
+		this.dls = new IntegerSpec ( nt , nc , ModuleSpec.SPEC_TYPE_TILE_COMP , pl , "Wlev" );
 
 		// Component transformation
-		this.cts = new ForwCompTransfSpec(nt, nc, ModuleSpec.SPEC_TYPE_TILE, this.wfs, pl);
+		this.cts = new ForwCompTransfSpec ( nt , nc , ModuleSpec.SPEC_TYPE_TILE , this.wfs , pl );
 
 		// Entropy coder
-		final String[] strLcs = { "near_opt", "lazy_good", "lazy" };
-		this.lcs = new StringSpec(nt, nc, ModuleSpec.SPEC_TYPE_TILE_COMP, "Clen_calc", strLcs, pl);
-		final String[] strTerm = { "near_opt", "easy", "predict", "full" };
-		this.tts = new StringSpec(nt, nc, ModuleSpec.SPEC_TYPE_TILE_COMP, "Cterm_type", strTerm, pl);
-		final String[] strBoolean = { "on", "off" };
-		this.sss = new StringSpec(nt, nc, ModuleSpec.SPEC_TYPE_TILE_COMP, "Cseg_symbol", strBoolean, pl);
-		this.css = new StringSpec(nt, nc, ModuleSpec.SPEC_TYPE_TILE_COMP, "Ccausal", strBoolean, pl);
-		this.rts = new StringSpec(nt, nc, ModuleSpec.SPEC_TYPE_TILE_COMP, "Cterminate", strBoolean, pl);
-		this.mqrs = new StringSpec(nt, nc, ModuleSpec.SPEC_TYPE_TILE_COMP, "CresetMQ", strBoolean, pl);
-		this.bms = new StringSpec(nt, nc, ModuleSpec.SPEC_TYPE_TILE_COMP, "Cbypass", strBoolean, pl);
-		this.cblks = new CBlkSizeSpec(nt, nc, ModuleSpec.SPEC_TYPE_TILE_COMP, pl);
+		final String[] strLcs = { "near_opt" , "lazy_good" , "lazy" };
+		this.lcs = new StringSpec ( nt , nc , ModuleSpec.SPEC_TYPE_TILE_COMP , "Clen_calc" , strLcs , pl );
+		final String[] strTerm = { "near_opt" , "easy" , "predict" , "full" };
+		this.tts = new StringSpec ( nt , nc , ModuleSpec.SPEC_TYPE_TILE_COMP , "Cterm_type" , strTerm , pl );
+		final String[] strBoolean = { "on" , "off" };
+		this.sss = new StringSpec ( nt , nc , ModuleSpec.SPEC_TYPE_TILE_COMP , "Cseg_symbol" , strBoolean , pl );
+		this.css = new StringSpec ( nt , nc , ModuleSpec.SPEC_TYPE_TILE_COMP , "Ccausal" , strBoolean , pl );
+		this.rts = new StringSpec ( nt , nc , ModuleSpec.SPEC_TYPE_TILE_COMP , "Cterminate" , strBoolean , pl );
+		this.mqrs = new StringSpec ( nt , nc , ModuleSpec.SPEC_TYPE_TILE_COMP , "CresetMQ" , strBoolean , pl );
+		this.bms = new StringSpec ( nt , nc , ModuleSpec.SPEC_TYPE_TILE_COMP , "Cbypass" , strBoolean , pl );
+		this.cblks = new CBlkSizeSpec ( nt , nc , ModuleSpec.SPEC_TYPE_TILE_COMP , pl );
 
 		// Precinct partition
-		this.pss = new PrecinctSizeSpec(nt, nc, ModuleSpec.SPEC_TYPE_TILE_COMP, imgsrc, this.dls, pl);
+		this.pss = new PrecinctSizeSpec ( nt , nc , ModuleSpec.SPEC_TYPE_TILE_COMP , imgsrc , this.dls , pl );
 
 		// Codestream
-		this.sops = new StringSpec(nt, nc, ModuleSpec.SPEC_TYPE_TILE, "Psop", strBoolean, pl);
-		this.ephs = new StringSpec(nt, nc, ModuleSpec.SPEC_TYPE_TILE, "Peph", strBoolean, pl);
+		this.sops = new StringSpec ( nt , nc , ModuleSpec.SPEC_TYPE_TILE , "Psop" , strBoolean , pl );
+		this.ephs = new StringSpec ( nt , nc , ModuleSpec.SPEC_TYPE_TILE , "Peph" , strBoolean , pl );
 
 	}
 }

@@ -13,66 +13,54 @@ import dev.zontreck.harbinger.thirdparty.jj2000.j2k.icc.tags.ICCXYZType;
 
 /**
  * This class is a 3 component RestrictedICCProfile
- * 
- * @version 1.0
+ *
  * @author Bruce A Kern
+ * @version 1.0
  */
-public class MatrixBasedRestrictedProfile extends RestrictedICCProfile
-{
-
-	/**
-	 * Factory method which returns a 3 component RestrictedICCProfile
-	 * 
-	 * @param rcurve
-	 *            Red TRC curve
-	 * @param gcurve
-	 *            Green TRC curve
-	 * @param bcurve
-	 *            Blue TRC curve
-	 * @param rcolorant
-	 *            Red colorant
-	 * @param gcolorant
-	 *            Green colorant
-	 * @param bcolorant
-	 *            Blue colorant
-	 * @return the RestrictedICCProfile
-	 */
-	public static RestrictedICCProfile createInstance(final ICCCurveType rcurve, final ICCCurveType gcurve, final ICCCurveType bcurve,
-													  final ICCXYZType rcolorant, final ICCXYZType gcolorant, final ICCXYZType bcolorant)
-	{
-		return new MatrixBasedRestrictedProfile(rcurve, gcurve, bcurve, rcolorant, gcolorant, bcolorant);
-	}
+public class MatrixBasedRestrictedProfile extends RestrictedICCProfile {
 
 	/**
 	 * Construct a 3 component RestrictedICCProfile
-	 * 
-	 * @param rcurve
-	 *            Red TRC curve
-	 * @param gcurve
-	 *            Green TRC curve
-	 * @param bcurve
-	 *            Blue TRC curve
-	 * @param rcolorant
-	 *            Red colorant
-	 * @param gcolorant
-	 *            Green colorant
-	 * @param bcolorant
-	 *            Blue colorant
+	 *
+	 * @param rcurve    Red TRC curve
+	 * @param gcurve    Green TRC curve
+	 * @param bcurve    Blue TRC curve
+	 * @param rcolorant Red colorant
+	 * @param gcolorant Green colorant
+	 * @param bcolorant Blue colorant
 	 */
-	protected MatrixBasedRestrictedProfile(final ICCCurveType rcurve, final ICCCurveType gcurve, final ICCCurveType bcurve,
-										   final ICCXYZType rcolorant, final ICCXYZType gcolorant, final ICCXYZType bcolorant)
-	{
-		super(rcurve, gcurve, bcurve, rcolorant, gcolorant, bcolorant);
+	protected MatrixBasedRestrictedProfile (
+			final ICCCurveType rcurve , final ICCCurveType gcurve , final ICCCurveType bcurve ,
+			final ICCXYZType rcolorant , final ICCXYZType gcolorant , final ICCXYZType bcolorant
+	) {
+		super ( rcurve , gcurve , bcurve , rcolorant , gcolorant , bcolorant );
+	}
+
+	/**
+	 * Factory method which returns a 3 component RestrictedICCProfile
+	 *
+	 * @param rcurve    Red TRC curve
+	 * @param gcurve    Green TRC curve
+	 * @param bcurve    Blue TRC curve
+	 * @param rcolorant Red colorant
+	 * @param gcolorant Green colorant
+	 * @param bcolorant Blue colorant
+	 * @return the RestrictedICCProfile
+	 */
+	public static RestrictedICCProfile createInstance (
+			final ICCCurveType rcurve , final ICCCurveType gcurve , final ICCCurveType bcurve ,
+			final ICCXYZType rcolorant , final ICCXYZType gcolorant , final ICCXYZType bcolorant
+	) {
+		return new MatrixBasedRestrictedProfile ( rcurve , gcurve , bcurve , rcolorant , gcolorant , bcolorant );
 	}
 
 	/**
 	 * Get the type of RestrictedICCProfile for this object
-	 * 
+	 *
 	 * @return kThreeCompInput
 	 */
 	@Override
-	public int getType()
-	{
+	public int getType ( ) {
 		return RestrictedICCProfile.kThreeCompInput;
 	}
 
@@ -80,16 +68,15 @@ public class MatrixBasedRestrictedProfile extends RestrictedICCProfile
 	 * @return String representation of a MatrixBasedRestrictedProfile
 	 */
 	@Override
-	public String toString()
-	{
+	public String toString ( ) {
 
 		final String rep = "[Matrix-Based Input Restricted ICC profile" + RestrictedICCProfile.eol +
-				"trc[RED]:" + RestrictedICCProfile.eol + this.trc[RestrictedICCProfile.RED] + RestrictedICCProfile.eol +
-				"trc[RED]:" + RestrictedICCProfile.eol + this.trc[RestrictedICCProfile.GREEN] + RestrictedICCProfile.eol +
-				"trc[RED]:" + RestrictedICCProfile.eol + this.trc[RestrictedICCProfile.BLUE] + RestrictedICCProfile.eol +
-				"Red colorant:  " + this.colorant[RestrictedICCProfile.RED] + RestrictedICCProfile.eol +
-				"Red colorant:  " + this.colorant[RestrictedICCProfile.GREEN] + RestrictedICCProfile.eol +
-				"Red colorant:  " + this.colorant[RestrictedICCProfile.BLUE] + RestrictedICCProfile.eol +
+				"trc[RED]:" + RestrictedICCProfile.eol + this.trc[ RestrictedICCProfile.RED ] + RestrictedICCProfile.eol +
+				"trc[RED]:" + RestrictedICCProfile.eol + this.trc[ RestrictedICCProfile.GREEN ] + RestrictedICCProfile.eol +
+				"trc[RED]:" + RestrictedICCProfile.eol + this.trc[ RestrictedICCProfile.BLUE ] + RestrictedICCProfile.eol +
+				"Red colorant:  " + this.colorant[ RestrictedICCProfile.RED ] + RestrictedICCProfile.eol +
+				"Red colorant:  " + this.colorant[ RestrictedICCProfile.GREEN ] + RestrictedICCProfile.eol +
+				"Red colorant:  " + this.colorant[ RestrictedICCProfile.BLUE ] + RestrictedICCProfile.eol +
 				"]";
 
 		return rep;

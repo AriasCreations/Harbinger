@@ -8,7 +8,7 @@
  * Description:             Keeps information about a precinct
  *
  * COPYRIGHT:
- * 
+ *
  * This software module was originally developed by Rapha�l Grosbois and
  * Diego Santa Cruz (Swiss Federal Institute of Technology-EPFL); Joel
  * Askel�f (Ericsson Radio Systems AB); and Bertrand Berthelot, David
@@ -35,7 +35,7 @@
  * using this software module for non JPEG 2000 Standard conforming
  * products. This copyright notice must be included in all copies or
  * derivative works of this software module.
- * 
+ *
  * Copyright (c) 1999/2000 JJ2000 Partners.
  */
 package dev.zontreck.harbinger.thirdparty.jj2000.j2k.codestream;
@@ -44,19 +44,26 @@ package dev.zontreck.harbinger.thirdparty.jj2000.j2k.codestream;
  * Class that holds precinct coordinates and references to contained code-blocks
  * in each subband.
  */
-public class PrecInfo
-{
+public class PrecInfo {
 
-	/** Precinct horizontal upper-left coordinate in the reference grid */
+	/**
+	 * Precinct horizontal upper-left coordinate in the reference grid
+	 */
 	public int rgulx;
 
-	/** Precinct vertical upper-left coordinate in the reference grid */
+	/**
+	 * Precinct vertical upper-left coordinate in the reference grid
+	 */
 	public int rguly;
 
-	/** Precinct width reported in the reference grid */
+	/**
+	 * Precinct width reported in the reference grid
+	 */
 	public int rgw;
 
-	/** Precinct height reported in the reference grid */
+	/**
+	 * Precinct height reported in the reference grid
+	 */
 	public int rgh;
 
 	/**
@@ -71,13 +78,19 @@ public class PrecInfo
 	 */
 	public int uly;
 
-	/** Precinct width in the corresponding resolution level */
+	/**
+	 * Precinct width in the corresponding resolution level
+	 */
 	public int w;
 
-	/** Precinct height in the corresponding resolution level */
+	/**
+	 * Precinct height in the corresponding resolution level
+	 */
 	public int h;
 
-	/** Resolution level index */
+	/**
+	 * Resolution level index
+	 */
 	public int r;
 
 	/**
@@ -86,33 +99,25 @@ public class PrecInfo
 	 */
 	public CBlkCoordInfo[][][] cblk;
 
-	/** Number of code-blocks in each subband belonging to this precinct */
+	/**
+	 * Number of code-blocks in each subband belonging to this precinct
+	 */
 	public int[] nblk;
 
 	/**
 	 * Class constructor.
-	 * 
-	 * @param r
-	 *            Resolution level index.
-	 * @param ulx
-	 *            Precinct horizontal offset.
-	 * @param uly
-	 *            Precinct vertical offset.
-	 * @param w
-	 *            Precinct width.
-	 * @param h
-	 *            Precinct height.
-	 * @param rgulx
-	 *            Precinct horizontal offset in the image reference grid.
-	 * @param rguly
-	 *            Precinct horizontal offset in the image reference grid.
-	 * @param rgw
-	 *            Precinct width in the reference grid.
-	 * @param rgh
-	 *            Precinct height in the reference grid.
+	 *
+	 * @param r     Resolution level index.
+	 * @param ulx   Precinct horizontal offset.
+	 * @param uly   Precinct vertical offset.
+	 * @param w     Precinct width.
+	 * @param h     Precinct height.
+	 * @param rgulx Precinct horizontal offset in the image reference grid.
+	 * @param rguly Precinct horizontal offset in the image reference grid.
+	 * @param rgw   Precinct width in the reference grid.
+	 * @param rgh   Precinct height in the reference grid.
 	 */
-	public PrecInfo(final int r, final int ulx, final int uly, final int w, final int h, final int rgulx, final int rguly, final int rgw, final int rgh)
-	{
+	public PrecInfo ( final int r , final int ulx , final int uly , final int w , final int h , final int rgulx , final int rguly , final int rgw , final int rgh ) {
 		this.r = r;
 		this.ulx = ulx;
 		this.uly = uly;
@@ -123,26 +128,23 @@ public class PrecInfo
 		this.rgw = rgw;
 		this.rgh = rgh;
 
-		if (0 == r)
-		{
-			this.cblk = new CBlkCoordInfo[1][][];
-			this.nblk = new int[1];
+		if ( 0 == r ) {
+			this.cblk = new CBlkCoordInfo[ 1 ][][];
+			this.nblk = new int[ 1 ];
 		}
-		else
-		{
-			this.cblk = new CBlkCoordInfo[4][][];
-			this.nblk = new int[4];
+		else {
+			this.cblk = new CBlkCoordInfo[ 4 ][][];
+			this.nblk = new int[ 4 ];
 		}
 	}
 
 	/**
 	 * Returns PrecInfo object information in a String
-	 * 
+	 *
 	 * @return PrecInfo information
 	 */
 	@Override
-	public String toString()
-	{
+	public String toString ( ) {
 		return "ulx=" + this.ulx + ",uly=" + this.uly + ",w=" + this.w + ",h=" + this.h + ",rgulx=" + this.rgulx + ",rguly=" + this.rguly + ",rgw="
 				+ this.rgw + ",rgh=" + this.rgh;
 	}

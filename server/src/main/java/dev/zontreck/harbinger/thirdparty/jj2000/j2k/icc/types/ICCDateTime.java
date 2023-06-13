@@ -8,36 +8,49 @@
 
 package dev.zontreck.harbinger.thirdparty.jj2000.j2k.icc.types;
 
+import dev.zontreck.harbinger.thirdparty.jj2000.j2k.icc.ICCProfile;
+
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import dev.zontreck.harbinger.thirdparty.jj2000.j2k.icc.ICCProfile;
 
 /**
  * Date Time format for tags
- * 
- * @version 1.0
+ *
  * @author Bruce A. Kern
+ * @version 1.0
  */
-public class ICCDateTime
-{
+public class ICCDateTime {
 	public static final int size = 6 * ICCProfile.short_size;
 
-	/** Year datum. */
+	/**
+	 * Year datum.
+	 */
 	public short wYear; // Number of the actual year (i.e. 1994)
-	/** Month datum. */
+	/**
+	 * Month datum.
+	 */
 	public short wMonth; // Number of the month (1-12)
-	/** Day datum. */
+	/**
+	 * Day datum.
+	 */
 	public short wDay; // Number of the day
-	/** Hour datum. */
+	/**
+	 * Hour datum.
+	 */
 	public short wHours; // Number of hours (0-23)
-	/** Minute datum. */
+	/**
+	 * Minute datum.
+	 */
 	public short wMinutes; // Number of minutes (0-59)
-	/** Second datum. */
+	/**
+	 * Second datum.
+	 */
 	public short wSeconds; // Number of seconds (0-59)
 
-	/** Construct an ICCDateTime from parts */
-	public ICCDateTime(final short year, final short month, final short day, final short hour, final short minute, final short second)
-	{
+	/**
+	 * Construct an ICCDateTime from parts
+	 */
+	public ICCDateTime ( final short year , final short month , final short day , final short hour , final short minute , final short second ) {
 		this.wYear = year;
 		this.wMonth = month;
 		this.wDay = day;
@@ -46,23 +59,25 @@ public class ICCDateTime
 		this.wSeconds = second;
 	}
 
-	/** Write an ICCDateTime to a file. */
-	public void write(final RandomAccessFile raf) throws IOException
-	{
-		raf.writeShort(this.wYear);
-		raf.writeShort(this.wMonth);
-		raf.writeShort(this.wDay);
-		raf.writeShort(this.wHours);
-		raf.writeShort(this.wMinutes);
-		raf.writeShort(this.wSeconds);
+	/**
+	 * Write an ICCDateTime to a file.
+	 */
+	public void write ( final RandomAccessFile raf ) throws IOException {
+		raf.writeShort ( this.wYear );
+		raf.writeShort ( this.wMonth );
+		raf.writeShort ( this.wDay );
+		raf.writeShort ( this.wHours );
+		raf.writeShort ( this.wMinutes );
+		raf.writeShort ( this.wSeconds );
 	}
 
-	/** Return a ICCDateTime representation. */
+	/**
+	 * Return a ICCDateTime representation.
+	 */
 	@Override
-	public String toString()
-	{
-		return String.valueOf(this.wYear) + "/" + String.valueOf(this.wMonth) + "/" + String.valueOf(this.wDay) + " "
-				+ String.valueOf(this.wHours) + ":" + String.valueOf(this.wMinutes) + ":" + String.valueOf(this.wSeconds);
+	public String toString ( ) {
+		return String.valueOf ( this.wYear ) + "/" + String.valueOf ( this.wMonth ) + "/" + String.valueOf ( this.wDay ) + " "
+				+ String.valueOf ( this.wHours ) + ":" + String.valueOf ( this.wMinutes ) + ":" + String.valueOf ( this.wSeconds );
 	}
 
 	/* end class ICCDateTime */

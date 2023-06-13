@@ -12,26 +12,25 @@ import dev.zontreck.harbinger.thirdparty.jj2000.j2k.icc.tags.ICCCurveType;
 
 /**
  * An interpolated 8 bit lut
- * 
- * @version 1.0
+ *
  * @author Bruce A.Kern
+ * @version 1.0
  */
-public class LookUpTable8Interp extends LookUpTable8
-{
+public class LookUpTable8Interp extends LookUpTable8 {
 
 	/**
 	 * Construct the lut from the curve data
-	 * 
+	 *
 	 * @oaram curve the data
 	 * @oaram dwNumInput the lut size
 	 * @oaram dwMaxOutput the lut max value
 	 */
-	public LookUpTable8Interp(final ICCCurveType curve, // Pointer to the curve data
-							  final int dwNumInput, // Number of input values in created LUT
-							  final byte dwMaxOutput // Maximum output value of the LUT
-	)
-	{
-		super(curve, dwNumInput, dwMaxOutput);
+	public LookUpTable8Interp (
+			final ICCCurveType curve , // Pointer to the curve data
+			final int dwNumInput , // Number of input values in created LUT
+			final byte dwMaxOutput // Maximum output value of the LUT
+	) {
+		super ( curve , dwNumInput , dwMaxOutput );
 
 		int dwLowIndex, dwHighIndex; // Indices of interpolation points
 		double dfLowIndex, dfHighIndex; // FP indices of interpolation points
@@ -40,26 +39,24 @@ public class LookUpTable8Interp extends LookUpTable8
 		double dfLow, dfHigh; // Interpolation values
 		double dfOut; // Output LUT value
 
-		dfRatio = (double) (curve.count - 1) / (dwNumInput - 1);
+		dfRatio = ( double ) ( curve.count - 1 ) / ( dwNumInput - 1 );
 
-		for (int i = 0; i < dwNumInput; i++)
-		{
+		for ( int i = 0 ; i < dwNumInput ; i++ ) {
 			dfTargetIndex = i * dfRatio;
-			dfLowIndex = Math.floor(dfTargetIndex);
-			dwLowIndex = (int) dfLowIndex;
-			dfHighIndex = Math.ceil(dfTargetIndex);
-			dwHighIndex = (int) dfHighIndex;
+			dfLowIndex = Math.floor ( dfTargetIndex );
+			dwLowIndex = ( int ) dfLowIndex;
+			dfHighIndex = Math.ceil ( dfTargetIndex );
+			dwHighIndex = ( int ) dfHighIndex;
 
-			if (dwLowIndex == dwHighIndex)
-				dfOut = ICCCurveType.CurveToDouble(curve.entry(dwLowIndex));
-			else
-			{
-				dfLow = ICCCurveType.CurveToDouble(curve.entry(dwLowIndex));
-				dfHigh = ICCCurveType.CurveToDouble(curve.entry(dwHighIndex));
-				dfOut = dfLow + (dfHigh - dfLow) * (dfTargetIndex - dfLowIndex);
+			if ( dwLowIndex == dwHighIndex )
+				dfOut = ICCCurveType.CurveToDouble ( curve.entry ( dwLowIndex ) );
+			else {
+				dfLow = ICCCurveType.CurveToDouble ( curve.entry ( dwLowIndex ) );
+				dfHigh = ICCCurveType.CurveToDouble ( curve.entry ( dwHighIndex ) );
+				dfOut = dfLow + ( dfHigh - dfLow ) * ( dfTargetIndex - dfLowIndex );
 			}
 
-			this.lut[i] = (byte) Math.floor(dfOut * dwMaxOutput + 0.5);
+			this.lut[ i ] = ( byte ) Math.floor ( dfOut * dwMaxOutput + 0.5 );
 		}
 	}
 

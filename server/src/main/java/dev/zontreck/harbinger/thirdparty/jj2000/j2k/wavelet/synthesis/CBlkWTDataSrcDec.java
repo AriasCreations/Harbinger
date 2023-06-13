@@ -87,7 +87,7 @@ public interface CBlkWTDataSrcDec extends InvWTData {
 	 * data.
 	 * @see Subband
 	 */
-	int getNomRangeBits(int c);
+	int getNomRangeBits ( int c );
 
 	/**
 	 * Returns the position of the fixed point in the specified component, or
@@ -102,7 +102,7 @@ public interface CBlkWTDataSrcDec extends InvWTData {
 	 * @return The position of the fixed-point, which is the same as the number
 	 * of fractional bits. For floating-point data 0 is returned.
 	 */
-	int getFixedPoint(int c);
+	int getFixedPoint ( int c );
 
 	/**
 	 * Returns the specified code-block in the current tile for the specified
@@ -139,7 +139,7 @@ public interface CBlkWTDataSrcDec extends InvWTData {
 	 * null if all code-blocks for the current tile have been returned.
 	 * @see DataBlk
 	 */
-	DataBlk getCodeBlock(int c, int m, int n, SubbandSyn sb, DataBlk cblk);
+	DataBlk getCodeBlock ( int c , int m , int n , SubbandSyn sb , DataBlk cblk );
 
 	/**
 	 * Returns the specified code-block in the current tile for the specified
@@ -175,5 +175,5 @@ public interface CBlkWTDataSrcDec extends InvWTData {
 	 * null if all code-blocks for the current tile have been returned.
 	 * @see DataBlk
 	 */
-	DataBlk getInternCodeBlock(int c, int m, int n, SubbandSyn sb, DataBlk cblk);
+	DataBlk getInternCodeBlock ( int c , int m , int n , SubbandSyn sb , DataBlk cblk );
 }

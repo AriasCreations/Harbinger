@@ -31,129 +31,130 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 public enum HarbingerServer {
 	;
-	private static final Logger LOGGER = LoggerFactory.getLogger(HarbingerServer.class.getSimpleName());
 	public static final Path PLUGINS;
+	private static final Logger LOGGER = LoggerFactory.getLogger ( HarbingerServer.class.getSimpleName ( ) );
 
 	static {
-		PLUGINS = Path.of("plugins");
+		PLUGINS = Path.of ( "plugins" );
 
-		if (!HarbingerServer.PLUGINS.toFile().exists()) {
-			HarbingerServer.PLUGINS.toFile().mkdir();
+		if ( ! HarbingerServer.PLUGINS.toFile ( ).exists ( ) ) {
+			HarbingerServer.PLUGINS.toFile ( ).mkdir ( );
 		}
 	}
 
-	public static void main(final String[] args) {
+	public static void main ( final String[] args ) {
 
-		final UUID ID = Product.makeProductID(1, 59);
+		final UUID ID = Product.makeProductID ( 1 , 59 );
 
-		HarbingerServer.LOGGER.info("We are Harbinger");
+		HarbingerServer.LOGGER.info ( "We are Harbinger" );
 
 		final ScheduledThreadPoolExecutor exec;
-		DelayedExecutorService.start();
+		DelayedExecutorService.start ( );
 
-		exec = DelayedExecutorService.getExecutor();
-		TaskBus.register();
+		exec = DelayedExecutorService.getExecutor ( );
+		TaskBus.register ( );
 
-		TaskBus.tasks.add(new Task("Register Events") {
+		TaskBus.tasks.add ( new Task ( "Register Events" ) {
 			@Override
-			public void run() {
+			public void run ( ) {
 
-				EventBus.BUS.register(Persist.class);
-				EventBus.BUS.register(Product.class);
-				EventBus.BUS.register(Products.class);
-				EventBus.BUS.register(Servers.class);
-				EventBus.BUS.register(SupportReps.class);
-				EventBus.BUS.register(Server.class);
-				EventBus.BUS.register(Version.class);
-				EventBus.BUS.register(Person.class);
-				EventBus.BUS.register(PermissionLevel.class);
-				EventBus.BUS.register(HTTPEvents.class);
-				EventsRegistry.register(EventBus.BUS);
+				EventBus.BUS.register ( Persist.class );
+				EventBus.BUS.register ( Product.class );
+				EventBus.BUS.register ( Products.class );
+				EventBus.BUS.register ( Servers.class );
+				EventBus.BUS.register ( SupportReps.class );
+				EventBus.BUS.register ( Server.class );
+				EventBus.BUS.register ( Version.class );
+				EventBus.BUS.register ( Person.class );
+				EventBus.BUS.register ( PermissionLevel.class );
+				EventBus.BUS.register ( HTTPEvents.class );
+				EventsRegistry.register ( EventBus.BUS );
 
-				CommandRegistry.register(EventBus.BUS);
-				EventBus.BUS.register(DiscordBot.class);
+				CommandRegistry.register ( EventBus.BUS );
+				EventBus.BUS.register ( DiscordBot.class );
 
-				final Task run = new Task("server-tick", true) {
+				final Task run = new Task ( "server-tick" , true ) {
 					@Override
-					public void run() {
-						EventBus.BUS.post(new ServerTickEvent());
+					public void run ( ) {
+						EventBus.BUS.post ( new ServerTickEvent ( ) );
 					}
 				};
-				DelayedExecutorService.getInstance().scheduleRepeating(run, ServerTickEvent.FREQUENCY);
+				DelayedExecutorService.getInstance ( ).scheduleRepeating ( run , ServerTickEvent.FREQUENCY );
 
 
-				this.setSuccess();
+				this.setSuccess ( );
 			}
-		});
+		} );
 
 		// Start up the server
 		// Read the NBT Files for the database
 		// This is designed to work without mysql
-		if (0 == Folder.size(Persist.MEMORY)) {
-			HarbingerServer.LOGGER.info("No settings exist yet!");
+		if ( 0 == Folder.size ( Persist.MEMORY ) ) {
+			HarbingerServer.LOGGER.info ( "No settings exist yet!" );
 
 		}
 
 
-		TaskBus.tasks.add(new Task("Start HTTP Server") {
+		TaskBus.tasks.add ( new Task ( "Start HTTP Server" ) {
 			@Override
-			public void run() {
-				if (HTTPServer.startServer()) {
-					this.setSuccess();
-				} else this.setFail();
+			public void run ( ) {
+				if ( HTTPServer.startServer ( ) ) {
+					this.setSuccess ( );
+				}
+				else this.setFail ( );
 
 			}
-		});
+		} );
 
-		TaskBus.tasks.add(new Task("Scan plugins") {
+		TaskBus.tasks.add ( new Task ( "Scan plugins" ) {
 			@Override
-			public void run() {
+			public void run ( ) {
 				try {
-					PluginLoader.scan();
-					this.setSuccess();
-				} catch (final Exception E) {
-					this.setFail();
+					PluginLoader.scan ( );
+					this.setSuccess ( );
+				} catch ( final Exception E ) {
+					this.setFail ( );
 				}
 			}
-		});
+		} );
 
-		TaskBus.tasks.add(new Task("Activate plugins") {
+		TaskBus.tasks.add ( new Task ( "Activate plugins" ) {
 			@Override
-			public void run() {
-				PluginLoader.activate();
-				this.setSuccess();
+			public void run ( ) {
+				PluginLoader.activate ( );
+				this.setSuccess ( );
 			}
-		});
+		} );
 
-		TaskBus.tasks.add(new Task("Load Version from Jar") {
+		TaskBus.tasks.add ( new Task ( "Load Version from Jar" ) {
 			@Override
-			public void run() {
-				Persist.HARBINGER_VERSION = getClass().getPackage().getImplementationVersion();
+			public void run ( ) {
+				Persist.HARBINGER_VERSION = getClass ( ).getPackage ( ).getImplementationVersion ( );
 
-				this.setSuccess();
+				this.setSuccess ( );
 			}
-		});
+		} );
 
-		TaskBus.tasks.add(new Task("Startup Completed", true) {
+		TaskBus.tasks.add ( new Task ( "Startup Completed" , true ) {
 			@Override
-			public void run() {
+			public void run ( ) {
 
 				Terminal.PREFIX = "HARBINGER";
-				Terminal.startTerminal();
-				HarbingerServer.LOGGER.info("Server is running");
+				Terminal.startTerminal ( );
+				HarbingerServer.LOGGER.info ( "Server is running" );
 			}
-		});
+		} );
 
-		Servers.registerServerHandler();
+		Servers.registerServerHandler ( );
 
 		try {
-			exec.wait();
-		} catch (final InterruptedException e) {
-			throw new RuntimeException(e);
+			exec.wait ( );
+		} catch ( final InterruptedException e ) {
+			throw new RuntimeException ( e );
 		}
 
-		HarbingerServer.LOGGER.info("Saving...");
+		HarbingerServer.LOGGER.info ( "Saving..." );
 
-		EventBus.BUS.post(new MemoryAlteredEvent());
+		EventBus.BUS.post ( new MemoryAlteredEvent ( ) );
 	}
 }

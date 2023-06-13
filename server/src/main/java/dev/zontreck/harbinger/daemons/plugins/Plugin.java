@@ -5,8 +5,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Retention(RetentionPolicy.CLASS)
-@Target(ElementType.MODULE)
+@Retention (RetentionPolicy.CLASS)
+@Target (ElementType.MODULE)
 public @interface Plugin {
-	String name();
+	String name ( );
 }

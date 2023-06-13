@@ -50,7 +50,7 @@ package dev.zontreck.harbinger.thirdparty.jj2000.j2k.entropy.encoder;
  * target bitrate. The extra layers are added by the rate allocator between the
  * optimized layers, with the difference that they are not optimized (i.e. they
  * have no precise target bitrate).
- * 
+ *
  * <p>
  * The overall target bitrate for the bit stream is always added as the last
  * optimization point without any extra layers after it. If there are some
@@ -60,29 +60,36 @@ package dev.zontreck.harbinger.thirdparty.jj2000.j2k.entropy.encoder;
  * bitrate order of the other optimization points. The rate allocator is
  * responsible for eliminating layers that have target bitrates larger than the
  * overall target bitrate.
- * 
+ *
  * <p>
  * Optimization points can be added with the addOptPoint() method. It takes the
  * target bitrate for the optimized layer and the number of extra layers to add
  * after it.
- * 
+ *
  * <p>
  * Information about the total number of layers, total number of optimization
  * points, target bitrates, etc. can be obtained with the other methods.
  */
-public class LayersInfo
-{
-	/** The initial size for the arrays: 10 */
+public class LayersInfo {
+	/**
+	 * The initial size for the arrays: 10
+	 */
 	private static final int SZ_INIT = 10;
 
-	/** The size increment for the arrays */
+	/**
+	 * The size increment for the arrays
+	 */
 	private static final int SZ_INCR = 5;
 
-	/** The total number of layers */
+	/**
+	 * The total number of layers
+	 */
 	// Starts at 1: overall target bitrate is always an extra optimized layer
 	int totlyrs = 1;
 
-	/** The overall target bitrate, for the whole bit stream */
+	/**
+	 * The overall target bitrate, for the whole bit stream
+	 */
 	float totbrate;
 
 	/**
@@ -91,8 +98,10 @@ public class LayersInfo
 	 */
 	int nopt;
 
-	/** The target bitrate to which specified layers should be optimized. */
-	float[] optbrate = new float[LayersInfo.SZ_INIT];
+	/**
+	 * The target bitrate to which specified layers should be optimized.
+	 */
+	float[] optbrate = new float[ LayersInfo.SZ_INIT ];
 
 	/**
 	 * The number of extra layers to be added after an optimized layer. After
@@ -101,88 +110,76 @@ public class LayersInfo
 	 * optbrate[i] and the next optimized bitrate optbrate[i+1] or, if it does
 	 * not exist, the overall target bitrate.
 	 */
-	int[] extralyrs = new int[LayersInfo.SZ_INIT];
+	int[] extralyrs = new int[ LayersInfo.SZ_INIT ];
 
 	/**
 	 * Creates a new LayersInfo object. The overall target bitrate 'brate' is
 	 * always an extra optimization point, with no extra layers are after it.
 	 * Note that any optimization points that are added with addOptPoint() are
 	 * always added before the overall target bitrate.
-	 * 
-	 * @param brate
-	 *            The overall target bitrate for the bit stream
+	 *
+	 * @param brate The overall target bitrate for the bit stream
 	 */
-	public LayersInfo(final float brate)
-	{
-		if (0 >= brate)
-		{
-			throw new IllegalArgumentException("Overall target bitrate must be a positive number");
+	public LayersInfo ( final float brate ) {
+		if ( 0 >= brate ) {
+			throw new IllegalArgumentException ( "Overall target bitrate must be a positive number" );
 		}
 		this.totbrate = brate;
 	}
 
 	/**
 	 * Returns the overall target bitrate for the entire bit stream.
-	 * 
+	 *
 	 * @return The overall target bitrate
 	 */
-	public float getTotBitrate()
-	{
+	public float getTotBitrate ( ) {
 		return this.totbrate;
 	}
 
 	/**
 	 * Returns the total number of layers, according to the layer specification
 	 * of this object and the overall target bitrate.
-	 * 
+	 *
 	 * @return The total number of layers, according to the layer spec.
 	 */
-	public int getTotNumLayers()
-	{
+	public int getTotNumLayers ( ) {
 		return this.totlyrs;
 	}
 
 	/**
 	 * Returns the number of layers to optimize, or optimization points, as
 	 * specified by this object.
-	 * 
+	 *
 	 * @return The number of optimization points
 	 */
-	public int getNOptPoints()
-	{
+	public int getNOptPoints ( ) {
 		// overall target bitrate is counted as extra
 		return this.nopt + 1;
 	}
 
 	/**
 	 * Returns the target bitrate of the optmimization point 'n'.
-	 * 
-	 * @param n
-	 *            The optimization point index (starts at 0).
-	 * 
+	 *
+	 * @param n The optimization point index (starts at 0).
 	 * @return The target bitrate (in bpp) for the optimization point 'n'.
 	 */
-	public float getTargetBitrate(final int n)
-	{
+	public float getTargetBitrate ( final int n ) {
 		// overall target bitrate is counted as extra
-		return (n < this.nopt) ? this.optbrate[n] : this.totbrate;
+		return ( n < this.nopt ) ? this.optbrate[ n ] : this.totbrate;
 	}
 
 	/**
 	 * Returns the number of extra layers to add after the optimization point
 	 * 'n', but before optimization point 'n+1'. If there is no optimization
 	 * point 'n+1' then they should be added before the overall target bitrate.
-	 * 
-	 * @param n
-	 *            The optimization point index (starts at 0).
-	 * 
+	 *
+	 * @param n The optimization point index (starts at 0).
 	 * @return The number of extra (unoptimized) layers to add after the
-	 *         optimization point 'n'
+	 * optimization point 'n'
 	 */
-	public int getExtraLayers(final int n)
-	{
+	public int getExtraLayers ( final int n ) {
 		// overall target bitrate is counted as extra
-		return (n < this.nopt) ? this.extralyrs[n] : 0;
+		return ( n < this.nopt ) ? this.extralyrs[ n ] : 0;
 	}
 
 	/**
@@ -190,44 +187,36 @@ public class LayersInfo
 	 * 'elyrs' (unoptimized) extra layers after it. The target bitrate 'brate'
 	 * must be larger than the previous optimization point. The arguments are
 	 * checked and IllegalArgumentException is thrown if they are not correct.
-	 * 
-	 * @param brate
-	 *            The target bitrate for the optimized layer.
-	 * 
-	 * @param elyrs
-	 *            The number of extra (unoptimized) layers to add after the
-	 *            optimized layer.
+	 *
+	 * @param brate The target bitrate for the optimized layer.
+	 * @param elyrs The number of extra (unoptimized) layers to add after the
+	 *              optimized layer.
 	 */
-	public void addOptPoint(final float brate, final int elyrs)
-	{
+	public void addOptPoint ( final float brate , final int elyrs ) {
 		// Check validity of arguments
-		if (0 >= brate)
-		{
-			throw new IllegalArgumentException("Target bitrate must be positive");
+		if ( 0 >= brate ) {
+			throw new IllegalArgumentException ( "Target bitrate must be positive" );
 		}
-		if (0 > elyrs)
-		{
-			throw new IllegalArgumentException("The number of extra layers must be 0 or more");
+		if ( 0 > elyrs ) {
+			throw new IllegalArgumentException ( "The number of extra layers must be 0 or more" );
 		}
-		if (0 < nopt && this.optbrate[this.nopt - 1] >= brate)
-		{
-			throw new IllegalArgumentException("New optimization point must have "
-					+ "a target bitrate higher than the preceding one");
+		if ( 0 < nopt && this.optbrate[ this.nopt - 1 ] >= brate ) {
+			throw new IllegalArgumentException ( "New optimization point must have "
+					+ "a target bitrate higher than the preceding one" );
 		}
 		// Check room for new optimization point
-		if (this.optbrate.length == this.nopt)
-		{ // Need more room
+		if ( this.optbrate.length == this.nopt ) { // Need more room
 			final float[] tbr = this.optbrate;
 			final int[] tel = this.extralyrs;
 			// both arrays always have same size
-			this.optbrate = new float[this.optbrate.length + LayersInfo.SZ_INCR];
-			this.extralyrs = new int[this.extralyrs.length + LayersInfo.SZ_INCR];
-			System.arraycopy(tbr, 0, this.optbrate, 0, this.nopt);
-			System.arraycopy(tel, 0, this.extralyrs, 0, this.nopt);
+			this.optbrate = new float[ this.optbrate.length + LayersInfo.SZ_INCR ];
+			this.extralyrs = new int[ this.extralyrs.length + LayersInfo.SZ_INCR ];
+			System.arraycopy ( tbr , 0 , this.optbrate , 0 , this.nopt );
+			System.arraycopy ( tel , 0 , this.extralyrs , 0 , this.nopt );
 		}
 		// Add new optimization point
-		this.optbrate[this.nopt] = brate;
-		this.extralyrs[this.nopt] = elyrs;
+		this.optbrate[ this.nopt ] = brate;
+		this.extralyrs[ this.nopt ] = elyrs;
 		this.nopt++;
 		// Update total number of layers
 		this.totlyrs += 1 + elyrs;

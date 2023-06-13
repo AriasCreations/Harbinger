@@ -56,16 +56,16 @@ public enum MathUtil {
 	 * @param x The value to calculate log2 on.
 	 * @return floor(log ( x)/log(2)), calculated in an exact way.
 	 */
-	public static int log2(final int x) {
+	public static int log2 ( final int x ) {
 		int y, v;
 		// No log of 0 or negative
-		if (0 >= x) {
-			throw new IllegalArgumentException(x + " <= 0");
+		if ( 0 >= x ) {
+			throw new IllegalArgumentException ( x + " <= 0" );
 		}
 		// Calculate log2 (it's actually floor log2)
 		v = x;
-		y = -1;
-		while (0 < v) {
+		y = - 1;
+		while ( 0 < v ) {
 			v >>= 1;
 			y++;
 		}
@@ -79,26 +79,27 @@ public enum MathUtil {
 	 * @param x1 First number
 	 * @param x2 Second number
 	 */
-	public static final int lcm(final int x1, final int x2) {
-		if (0 >= x1 || 0 >= x2) {
-			throw new IllegalArgumentException("Cannot compute the least common multiple of two "
-					+ "numbers if one, at least, is negative.");
+	public static final int lcm ( final int x1 , final int x2 ) {
+		if ( 0 >= x1 || 0 >= x2 ) {
+			throw new IllegalArgumentException ( "Cannot compute the least common multiple of two "
+					+ "numbers if one, at least, is negative." );
 		}
 		final int max;
 		final int min;
-		if (x1 > x2) {
+		if ( x1 > x2 ) {
 			max = x1;
 			min = x2;
-		} else {
+		}
+		else {
 			max = x2;
 			min = x1;
 		}
-		for (int i = 1; i <= min; i++) {
-			if (0 == (max * i) % min) {
+		for ( int i = 1 ; i <= min ; i++ ) {
+			if ( 0 == ( max * i ) % min ) {
 				return i * max;
 			}
 		}
-		throw new Error("Cannot find the least common multiple of numbers " + x1 + " and " + x2);
+		throw new Error ( "Cannot find the least common multiple of numbers " + x1 + " and " + x2 );
 	}
 
 	/**
@@ -107,17 +108,17 @@ public enum MathUtil {
 	 *
 	 * @param x Array containing the numbers.
 	 */
-	public static final int lcm(final int[] x) {
-		if (2 > x.length) {
-			throw new Error("Do not use this method if there are less than two numbers.");
+	public static final int lcm ( final int[] x ) {
+		if ( 2 > x.length ) {
+			throw new Error ( "Do not use this method if there are less than two numbers." );
 		}
-		int tmp = MathUtil.lcm(x[x.length - 1], x[x.length - 2]);
-		for (int i = x.length - 3; 0 <= i; i--) {
-			if (0 >= x[i]) {
-				throw new IllegalArgumentException("Cannot compute the least common multiple of "
-						+ "several numbers where one, at least, is negative.");
+		int tmp = MathUtil.lcm ( x[ x.length - 1 ] , x[ x.length - 2 ] );
+		for ( int i = x.length - 3 ; 0 <= i ; i-- ) {
+			if ( 0 >= x[ i ] ) {
+				throw new IllegalArgumentException ( "Cannot compute the least common multiple of "
+						+ "several numbers where one, at least, is negative." );
 			}
-			tmp = MathUtil.lcm(tmp, x[i]);
+			tmp = MathUtil.lcm ( tmp , x[ i ] );
 		}
 		return tmp;
 	}
@@ -126,28 +127,29 @@ public enum MathUtil {
 	 * Method that calculates the Greatest Common Divisor (GCD) of two positive
 	 * integer numbers.
 	 */
-	public static final int gcd(final int x1, final int x2) {
-		if (0 > x1 || 0 > x2) {
-			throw new IllegalArgumentException("Cannot compute the GCD if one integer is negative.");
+	public static final int gcd ( final int x1 , final int x2 ) {
+		if ( 0 > x1 || 0 > x2 ) {
+			throw new IllegalArgumentException ( "Cannot compute the GCD if one integer is negative." );
 		}
 		int a;
 		final int b;
 		int g;
 		int z;
 
-		if (x1 > x2) {
+		if ( x1 > x2 ) {
 			a = x1;
 			b = x2;
-		} else {
+		}
+		else {
 			a = x2;
 			b = x1;
 		}
 
-		if (0 == b)
+		if ( 0 == b )
 			return 0;
 
 		g = b;
-		while (0 != g) {
+		while ( 0 != g ) {
 			z = a % g;
 			a = g;
 			g = z;
@@ -161,17 +163,17 @@ public enum MathUtil {
 	 *
 	 * @param x Array containing the numbers.
 	 */
-	public static final int gcd(final int[] x) {
-		if (2 > x.length) {
-			throw new Error("Do not use this method if there are less than two numbers.");
+	public static final int gcd ( final int[] x ) {
+		if ( 2 > x.length ) {
+			throw new Error ( "Do not use this method if there are less than two numbers." );
 		}
-		int tmp = MathUtil.gcd(x[x.length - 1], x[x.length - 2]);
-		for (int i = x.length - 3; 0 <= i; i--) {
-			if (0 > x[i]) {
-				throw new IllegalArgumentException("Cannot compute the least common multiple of "
-						+ "several numbers where one, at least, is negative.");
+		int tmp = MathUtil.gcd ( x[ x.length - 1 ] , x[ x.length - 2 ] );
+		for ( int i = x.length - 3 ; 0 <= i ; i-- ) {
+			if ( 0 > x[ i ] ) {
+				throw new IllegalArgumentException ( "Cannot compute the least common multiple of "
+						+ "several numbers where one, at least, is negative." );
 			}
-			tmp = MathUtil.gcd(tmp, x[i]);
+			tmp = MathUtil.gcd ( tmp , x[ i ] );
 		}
 		return tmp;
 	}

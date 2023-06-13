@@ -1,16 +1,16 @@
-/* 
+/*
  * CVS identifier:
- * 
+ *
  * $Id: WTDecompSpec.java,v 1.9 2000/09/05 09:26:06 grosbois Exp $
- * 
+ *
  * Class:                   WTDecompSpec
- * 
+ *
  * Description:             <short description of class>
- * 
- * 
- * 
+ *
+ *
+ *
  * COPYRIGHT:
- * 
+ *
  * This software module was originally developed by Rapha�l Grosbois and
  * Diego Santa Cruz (Swiss Federal Institute of Technology-EPFL); Joel
  * Askel�f (Ericsson Radio Systems AB); and Bertrand Berthelot, David
@@ -37,37 +37,36 @@
  * using this software module for non JPEG 2000 Standard conforming
  * products. This copyright notice must be included in all copies or
  * derivative works of this software module.
- * 
+ *
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * 
- * 
- * 
+ *
+ *
+ *
  */
 
 package dev.zontreck.harbinger.thirdparty.jj2000.j2k.wavelet;
 
-import dev.zontreck.harbinger.thirdparty.jj2000.j2k.*;
+import dev.zontreck.harbinger.thirdparty.jj2000.j2k.NotImplementedError;
 
 /**
  * This class holds the decomposition type to be used in each part of the image;
  * the default one, the component specific ones, the tile default ones and the
  * component-tile specific ones.
- * 
- * <P>
+ *
+ * <p>
  * The decomposition type identifiers values are the same as in the codestream.
- * 
- * <P>
+ *
+ * <p>
  * The hierarchy is:<br>
  * - Tile and component specific decomposition<br>
  * - Tile specific default decomposition<br>
  * - Component main default decomposition<br>
  * - Main default decomposition<br>
- * 
- * <P>
+ *
+ * <p>
  * At the moment tiles are not supported by this class.
  */
-public class WTDecompSpec
-{
+public class WTDecompSpec {
 	/**
 	 * ID for the dyadic wavelet tree decomposition (also called "Mallat" in
 	 * JPEG 2000): 0x00.
@@ -88,13 +87,19 @@ public class WTDecompSpec
 	 */
 	public static final int WT_DECOMP_PACKET = 1;
 
-	/** The identifier for "main default" specified decomposition */
+	/**
+	 * The identifier for "main default" specified decomposition
+	 */
 	public static final byte DEC_SPEC_MAIN_DEF = 0;
 
-	/** The identifier for "component default" specified decomposition */
+	/**
+	 * The identifier for "component default" specified decomposition
+	 */
 	public static final byte DEC_SPEC_COMP_DEF = 1;
 
-	/** The identifier for "tile specific default" specified decomposition */
+	/**
+	 * The identifier for "tile specific default" specified decomposition
+	 */
 	public static final byte DEC_SPEC_TILE_DEF = 2;
 
 	/**
@@ -110,84 +115,72 @@ public class WTDecompSpec
 	// Use byte to save memory (no need for speed here).
 	private final byte[] specValType;
 
-	/** The main default decomposition */
+	/**
+	 * The main default decomposition
+	 */
 	private final int mainDefDecompType;
 
-	/** The main default number of decomposition levels */
+	/**
+	 * The main default number of decomposition levels
+	 */
 	private final int mainDefLevels;
 
-	/** The component main default decomposition, for each component. */
+	/**
+	 * The component main default decomposition, for each component.
+	 */
 	private int[] compMainDefDecompType;
 
-	/** The component main default decomposition levels, for each component */
+	/**
+	 * The component main default decomposition levels, for each component
+	 */
 	private int[] compMainDefLevels;
 
 	/**
 	 * Constructs a new 'WTDecompSpec' for the specified number of components
 	 * and tiles, with the given main default decomposition type and number of
 	 * levels.
-	 * 
-	 * <P>
+	 *
+	 * <p>
 	 * NOTE: The tile specific things are not supported yet
-	 * 
-	 * @param nc
-	 *            The number of components
-	 * 
-	 * @param nt
-	 *            The number of tiles
-	 * 
-	 * @param dec
-	 *            The main default decomposition type
-	 * 
-	 * @param lev
-	 *            The main default number of decomposition levels
-	 * 
-	 * 
+	 *
+	 * @param nc  The number of components
+	 * @param nt  The number of tiles
+	 * @param dec The main default decomposition type
+	 * @param lev The main default number of decomposition levels
 	 */
-	public WTDecompSpec(final int nc, final int dec, final int lev)
-	{
+	public WTDecompSpec ( final int nc , final int dec , final int lev ) {
 		this.mainDefDecompType = dec;
 		this.mainDefLevels = lev;
-		this.specValType = new byte[nc];
+		this.specValType = new byte[ nc ];
 	}
 
 	/**
 	 * Sets the "component main default" decomposition type and number of levels
 	 * for the specified component. Both 'dec' and 'lev' can not be negative at
 	 * the same time.
-	 * 
-	 * @param n
-	 *            The component index
-	 * 
-	 * @param dec
-	 *            The decomposition type. If negative then the main default is
+	 *
+	 * @param n   The component index
+	 * @param dec The decomposition type. If negative then the main default is
 	 *            used.
-	 * 
-	 * @param lev
-	 *            The number of levels. If negative then the main defaul is
+	 * @param lev The number of levels. If negative then the main defaul is
 	 *            used.
-	 * 
-	 * 
 	 */
-	public void setMainCompDefDecompType(final int n, final int dec, final int lev)
-	{
-		if (0 > dec && 0 > lev)
-		{
-			throw new IllegalArgumentException();
+	public void setMainCompDefDecompType ( final int n , final int dec , final int lev ) {
+		if ( 0 > dec && 0 > lev ) {
+			throw new IllegalArgumentException ( );
 		}
 		// Set spec type and decomp
-		this.specValType[n] = WTDecompSpec.DEC_SPEC_COMP_DEF;
-		if (null == compMainDefDecompType)
-		{
-			this.compMainDefDecompType = new int[this.specValType.length];
-			this.compMainDefLevels = new int[this.specValType.length];
+		this.specValType[ n ] = WTDecompSpec.DEC_SPEC_COMP_DEF;
+		if ( null == compMainDefDecompType ) {
+			this.compMainDefDecompType = new int[ this.specValType.length ];
+			this.compMainDefLevels = new int[ this.specValType.length ];
 		}
-		this.compMainDefDecompType[n] = (0 <= dec) ? dec : this.mainDefDecompType;
-		this.compMainDefLevels[n] = (0 <= lev) ? lev : this.mainDefLevels;
+		this.compMainDefDecompType[ n ] = ( 0 <= dec ) ? dec : this.mainDefDecompType;
+		this.compMainDefLevels[ n ] = ( 0 <= lev ) ? lev : this.mainDefLevels;
 		// For the moment disable it since other parts of JJ2000 do not
 		// support this
-		throw new NotImplementedError("Currently, in JJ2000, all components and tiles must have the same "
-				+ "decomposition type and number of levels");
+		throw new NotImplementedError ( "Currently, in JJ2000, all components and tiles must have the same "
+				+ "decomposition type and number of levels" );
 	}
 
 	/**
@@ -195,112 +188,83 @@ public class WTDecompSpec
 	 * component and tile. The specification type is one of:
 	 * 'DEC_SPEC_MAIN_DEF', 'DEC_SPEC_COMP_DEF', 'DEC_SPEC_TILE_DEF',
 	 * 'DEC_SPEC_TILE_COMP'.
-	 * 
-	 * <P>
+	 *
+	 * <p>
 	 * NOTE: The tile specific things are not supported yet
-	 * 
-	 * @param n
-	 *            The component index
-	 * 
-	 * @param t
-	 *            The tile index, in raster scan order.
-	 * 
+	 *
+	 * @param n The component index
+	 * @param t The tile index, in raster scan order.
 	 * @return The specification type for component 'n' and tile 't'.
-	 * 
-	 * 
 	 */
-	public byte getDecSpecType(final int n)
-	{
-		return this.specValType[n];
+	public byte getDecSpecType ( final int n ) {
+		return this.specValType[ n ];
 	}
 
 	/**
 	 * Returns the main default decomposition type.
-	 * 
+	 *
 	 * @return The main default decomposition type.
-	 * 
-	 * 
 	 */
-	public int getMainDefDecompType()
-	{
+	public int getMainDefDecompType ( ) {
 		return this.mainDefDecompType;
 	}
 
 	/**
 	 * Returns the main default decomposition number of levels.
-	 * 
+	 *
 	 * @return The main default decomposition number of levels.
-	 * 
-	 * 
 	 */
-	public int getMainDefLevels()
-	{
+	public int getMainDefLevels ( ) {
 		return this.mainDefLevels;
 	}
 
 	/**
 	 * Returns the decomposition type to be used in component 'n' and tile 't'.
-	 * 
-	 * <P>
+	 *
+	 * <p>
 	 * NOTE: The tile specific things are not supported yet
-	 * 
-	 * @param n
-	 *            The component index.
-	 * 
-	 * @param t
-	 *            The tile index, in raster scan order
-	 * 
+	 *
+	 * @param n The component index.
+	 * @param t The tile index, in raster scan order
 	 * @return The decomposition type to be used.
-	 * 
-	 * 
 	 */
-	public int getDecompType(final int n)
-	{
-		switch (this.specValType[n])
-		{
+	public int getDecompType ( final int n ) {
+		switch ( this.specValType[ n ] ) {
 			case WTDecompSpec.DEC_SPEC_MAIN_DEF:
 				return this.mainDefDecompType;
 			case WTDecompSpec.DEC_SPEC_COMP_DEF:
-				return this.compMainDefDecompType[n];
+				return this.compMainDefDecompType[ n ];
 			case WTDecompSpec.DEC_SPEC_TILE_DEF:
-				throw new NotImplementedError();
+				throw new NotImplementedError ( );
 			case WTDecompSpec.DEC_SPEC_TILE_COMP:
-				throw new NotImplementedError();
+				throw new NotImplementedError ( );
 			default:
-				throw new Error("Internal JJ2000 error");
+				throw new Error ( "Internal JJ2000 error" );
 		}
 	}
 
 	/**
 	 * Returns the decomposition number of levels in component 'n' and tile 't'.
-	 * 
-	 * <P>
+	 *
+	 * <p>
 	 * NOTE: The tile specific things are not supported yet
-	 * 
-	 * @param n
-	 *            The component index.
-	 * 
-	 * @param t
-	 *            The tile index, in raster scan order
-	 * 
+	 *
+	 * @param n The component index.
+	 * @param t The tile index, in raster scan order
 	 * @return The decomposition number of levels.
-	 * 
-	 * 
 	 */
-	public int getLevels(final int n)
-	{
-		switch (this.specValType[n])
-		{
+	public int getLevels ( final int n ) {
+		switch ( this.specValType[ n ] ) {
 			case WTDecompSpec.DEC_SPEC_MAIN_DEF:
 				return this.mainDefLevels;
 			case WTDecompSpec.DEC_SPEC_COMP_DEF:
-				return this.compMainDefLevels[n];
+				return this.compMainDefLevels[ n ];
 			case WTDecompSpec.DEC_SPEC_TILE_DEF:
-				throw new NotImplementedError();
+				throw new NotImplementedError ( );
 			case WTDecompSpec.DEC_SPEC_TILE_COMP:
-				throw new NotImplementedError();
+				throw new NotImplementedError ( );
 			default:
-				throw new Error("Internal JJ2000 error");
+				throw new Error ( "Internal JJ2000 error" );
 		}
 	}
 }

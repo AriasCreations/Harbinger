@@ -7,9 +7,9 @@ public enum ProductsAPIHandlers {
 	;
 
 	@Subscribe
-	public static void onProductsEndpoint(final APIRequestEvent event) {
-		if ("products".equals(event.request_object.getString("type"))) {
-			if ("make".equals(event.request_object.getString("sub_command"))) {
+	public static void onProductsEndpoint ( final APIRequestEvent event ) {
+		if ( "products".equals ( event.request_object.getString ( "type" ) ) ) {
+			if ( "make".equals ( event.request_object.getString ( "sub_command" ) ) ) {
 			}
 		}
 	}

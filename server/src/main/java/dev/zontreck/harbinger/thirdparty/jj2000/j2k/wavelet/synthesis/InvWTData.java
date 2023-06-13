@@ -58,17 +58,17 @@ public interface InvWTData extends MultiResImgData {
 	 * @return The root of the tree structure.
 	 */
 	@Override
-	SubbandSyn getSynSubbandTree(int t, int c);
+	SubbandSyn getSynSubbandTree ( int t , int c );
 
 	/**
 	 * Returns the horizontal code-block partition origin. Allowable values are
 	 * 0 and 1, nothing else.
 	 */
-	int getCbULX();
+	int getCbULX ( );
 
 	/**
 	 * Returns the vertical code-block partition origin Allowable values are 0
 	 * and 1, nothing else.
 	 */
-	int getCbULY();
+	int getCbULY ( );
 }

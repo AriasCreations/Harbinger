@@ -11,53 +11,53 @@ import java.util.List;
 import java.util.Map;
 
 public class Servers {
-	public Map<String, Server> servers = Maps.newHashMap();
+	public Map<String, Server> servers = Maps.newHashMap ( );
 
-	public Entry<List<Entry>> save() {
-		final Entry<List<Entry>> tag = Folder.getNew("servers");
-		for (final Map.Entry<String, Server> entry : this.servers.entrySet()) {
-			tag.value.add(entry.getValue().save());
+	public static Servers deserialize ( final Entry<List<Entry>> lst ) {
+		try {
+
+			final Servers servers = new Servers ( );
+			for ( int i = 0 ; i < lst.value.size ( ) ; i++ ) {
+				final Entry<?> eX = lst.value.get ( i );
+				final Server serv = Server.deserialize ( ( Entry<List<Entry>> ) eX );
+				servers.servers.put ( serv.serverNick , serv );
+			}
+
+			return servers;
+		} catch ( final Exception e ) {
+			return new Servers ( );
+		}
+	}
+
+	public static void registerServerHandler ( ) {
+		final Task watchdog = new Task ( "server_check_watchdog" , true ) {
+			@Override
+			public void run ( ) {
+
+			}
+		};
+
+		DelayedExecutorService.scheduleRepeatingTask ( watchdog , 60 );
+	}
+
+	public Entry<List<Entry>> save ( ) {
+		final Entry<List<Entry>> tag = Folder.getNew ( "servers" );
+		for ( final Map.Entry<String, Server> entry : this.servers.entrySet ( ) ) {
+			tag.value.add ( entry.getValue ( ).save ( ) );
 		}
 
 		return tag;
 	}
 
-	public static Servers deserialize(final Entry<List<Entry>> lst) {
-		try {
-
-			final Servers servers = new Servers();
-			for (int i = 0; i < lst.value.size(); i++) {
-				final Entry<?> eX = lst.value.get(i);
-				final Server serv = Server.deserialize((Entry<List<Entry>>) eX);
-				servers.servers.put(serv.serverNick, serv);
-			}
-
-			return servers;
-		} catch (final Exception e) {
-			return new Servers();
-		}
+	public void add ( final Server server ) {
+		this.servers.put ( server.serverNick , server );
 	}
 
-	public void add(final Server server) {
-		this.servers.put(server.serverNick, server);
+	public void remove ( final String nick ) {
+		this.servers.remove ( nick );
 	}
 
-	public void remove(final String nick) {
-		this.servers.remove(nick);
-	}
-
-	public Server retrieve(final String nick) {
-		return this.servers.get(nick);
-	}
-
-	public static void registerServerHandler() {
-		final Task watchdog = new Task("server_check_watchdog", true) {
-			@Override
-			public void run() {
-
-			}
-		};
-
-		DelayedExecutorService.scheduleRepeatingTask(watchdog, 60);
+	public Server retrieve ( final String nick ) {
+		return this.servers.get ( nick );
 	}
 }

@@ -42,53 +42,48 @@
  */
 package dev.zontreck.harbinger.thirdparty.jj2000.j2k.io;
 
-import java.io.*;
+import java.io.EOFException;
+import java.io.IOException;
 
 /**
  * This abstract class defines the interface to perform random access I/O. It
  * implements the <tt>BinaryDataInput</tt> and <tt>BinaryDataOutput</tt>
  * interfaces so that binary data input/output can be performed.
- * 
+ *
  * <p>
  * This interface supports streams of up to 2 GB in length.
- * 
+ *
  * @see BinaryDataInput
  * @see BinaryDataOutput
  */
-public interface RandomAccessIO extends BinaryDataInput, BinaryDataOutput
-{
+public interface RandomAccessIO extends BinaryDataInput, BinaryDataOutput {
 
 	/**
 	 * Closes the I/O stream. Prior to closing the stream, any buffered data (at
 	 * the bit and byte level) should be written.
-	 * 
-	 * @exception IOException
-	 *                If an I/O error occurred.
+	 *
+	 * @throws IOException If an I/O error occurred.
 	 */
-	void close() throws IOException;
+	void close ( ) throws IOException;
 
 	/**
 	 * Returns the current position in the stream, which is the position from
 	 * where the next byte of data would be read. The first byte in the stream
 	 * is in position <tt>0</tt>.
-	 * 
+	 *
 	 * @return The offset of the current position, in bytes.
-	 * 
-	 * @exception IOException
-	 *                If an I/O error occurred.
+	 * @throws IOException If an I/O error occurred.
 	 */
-	int getPos() throws IOException;
+	int getPos ( ) throws IOException;
 
 	/**
 	 * Returns the current length of the stream, in bytes, taking into account
 	 * any buffering.
-	 * 
+	 *
 	 * @return The length of the stream, in bytes.
-	 * 
-	 * @exception IOException
-	 *                If an I/O error occurred.
+	 * @throws IOException If an I/O error occurred.
 	 */
-	int length() throws IOException;
+	int length ( ) throws IOException;
 
 	/**
 	 * Moves the current position for the next read or write operation to
@@ -97,90 +92,65 @@ public interface RandomAccessIO extends BinaryDataInput, BinaryDataOutput
 	 * the offset beyond the end of the file does not change the file length.
 	 * The file length will change only by writing after the offset has been set
 	 * beyond the end of the file.
-	 * 
-	 * @param off
-	 *            The offset where to move to.
-	 * 
-	 * @exception EOFException
-	 *                If in read-only and seeking beyond EOF.
-	 * 
-	 * @exception IOException
-	 *                If an I/O error occurred.
+	 *
+	 * @param off The offset where to move to.
+	 * @throws EOFException If in read-only and seeking beyond EOF.
+	 * @throws IOException  If an I/O error occurred.
 	 */
-	void seek(int off) throws IOException;
+	void seek ( int off ) throws IOException;
 
 	/**
 	 * Reads a byte of data from the stream. Prior to reading, the stream is
 	 * realigned at the byte level.
-	 * 
+	 *
 	 * @return The byte read, as an int.
-	 * 
-	 * @exception EOFException
-	 *                If the end-of file was reached.
-	 * 
-	 * @exception IOException
-	 *                If an I/O error occurred.
+	 * @throws EOFException If the end-of file was reached.
+	 * @throws IOException  If an I/O error occurred.
 	 */
-	int read() throws IOException;
+	int read ( ) throws IOException;
 
 	/**
 	 * Reads up to len bytes of data from this file into an array of bytes. This
 	 * method reads repeatedly from the stream until all the bytes are read.
 	 * This method blocks until all the bytes are read, the end of the stream is
 	 * detected, or an exception is thrown.
-	 * 
-	 * @param b
-	 *            The buffer into which the data is to be read. It must be long
+	 *
+	 * @param b   The buffer into which the data is to be read. It must be long
 	 *            enough.
-	 * 
-	 * @param off
-	 *            The index in 'b' where to place the first byte read.
-	 * 
-	 * @param len
-	 *            The number of bytes to read.
-	 * 
-	 * @exception EOFException
-	 *                If the end-of file was reached before getting all the
-	 *                necessary data.
-	 * 
-	 * @exception IOException
-	 *                If an I/O error occurred.
+	 * @param off The index in 'b' where to place the first byte read.
+	 * @param len The number of bytes to read.
+	 * @throws EOFException If the end-of file was reached before getting all the
+	 *                      necessary data.
+	 * @throws IOException  If an I/O error occurred.
 	 */
-	void readFully(byte[] b, int off, int len) throws IOException;
+	void readFully ( byte[] b , int off , int len ) throws IOException;
 
 	/**
 	 * Writes a byte to the stream. Prior to writing, the stream is realigned at
 	 * the byte level.
-	 * 
-	 * @param b
-	 *            The byte to write. The lower 8 bits of <tt>b</tt> are written.
-	 * 
-	 * @exception IOException
-	 *                If an I/O error occurred.
+	 *
+	 * @param b The byte to write. The lower 8 bits of <tt>b</tt> are written.
+	 * @throws IOException If an I/O error occurred.
 	 */
-	void write(int b) throws IOException;
+	void write ( int b ) throws IOException;
 
 	/**
 	 * Writes a byte array to the stream. Prior to writing, the stream is realigned at
 	 * the byte level.
-	 * 
+	 *
 	 * @param b The byte array to write. The lower 8 bits of <tt>b</tt> are written.
-	 * 
-	 * @exception IOException
-	 *                If an I/O error occurred.
+	 * @throws IOException If an I/O error occurred.
 	 */
-	void write(byte[] b) throws IOException;
+	void write ( byte[] b ) throws IOException;
 
 	/**
 	 * Writes a byte array to the stream. Prior to writing, the stream is realigned at
 	 * the byte level.
-	 * 
-	 * @param b The byte array to write. The lower 8 bits of <tt>b</tt> are written.
+	 *
+	 * @param b   The byte array to write. The lower 8 bits of <tt>b</tt> are written.
 	 * @param off The offset into the array to write from.
 	 * @param len The number of bytes to write into the stream.
-	 * 
-	 * @exception IOException
-	 *                If an I/O error occurred.
+	 * @throws IOException If an I/O error occurred.
 	 */
-	void write(byte[] b, int off, int len) throws IOException;
+	void write ( byte[] b , int off , int len ) throws IOException;
 }

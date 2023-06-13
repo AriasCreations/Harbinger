@@ -7,19 +7,19 @@ import java.util.List;
 
 public enum URLCallbacks {
 	;
-	private static final List<URLCallback> callbacks = new ArrayList<>();
+	private static final List<URLCallback> callbacks = new ArrayList<> ( );
 
-	public static void add(final URLCallback cb) {
-		URLCallbacks.callbacks.add(cb);
+	public static void add ( final URLCallback cb ) {
+		URLCallbacks.callbacks.add ( cb );
 	}
 
-	public static boolean hasCallback() {
-		return (0 < callbacks.size());
+	public static boolean hasCallback ( ) {
+		return ( 0 < callbacks.size ( ) );
 	}
 
-	public static URLCallback getNext() {
-		final URLCallback cb = URLCallbacks.callbacks.get(0);
-		URLCallbacks.callbacks.remove(0);
+	public static URLCallback getNext ( ) {
+		final URLCallback cb = URLCallbacks.callbacks.get ( 0 );
+		URLCallbacks.callbacks.remove ( 0 );
 
 		return cb;
 	}

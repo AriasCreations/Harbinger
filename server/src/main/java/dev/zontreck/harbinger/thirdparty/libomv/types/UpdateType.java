@@ -1,8 +1,7 @@
 package dev.zontreck.harbinger.thirdparty.libomv.types;
 
 
-public enum UpdateType
-{
+public enum UpdateType {
 	;
 	// None
 	public static final byte None = 0x00;
@@ -17,16 +16,13 @@ public enum UpdateType
 	// Scale prims uniformly, same as selecing ctrl+shift in the
 	// viewer. Used in conjunction with Scale
 	public static final byte Uniform = 0x10;
-
-	public static short setValue(final byte value)
-	{
-		return (short) (value & UpdateType._mask);
-	}
-
-	public static byte getValue(final int value)
-	{
-		return (byte) (value & UpdateType._mask);
-	}
-
 	private static final short _mask = 0x1F;
+
+	public static short setValue ( final byte value ) {
+		return ( short ) ( value & UpdateType._mask );
+	}
+
+	public static byte getValue ( final int value ) {
+		return ( byte ) ( value & UpdateType._mask );
+	}
 }

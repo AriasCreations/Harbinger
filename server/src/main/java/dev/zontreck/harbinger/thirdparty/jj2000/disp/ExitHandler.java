@@ -1,16 +1,16 @@
-/* 
+/*
  * CVS identifier:
- * 
+ *
  * $Id: ExitHandler.java,v 1.6 2000/09/05 09:21:59 grosbois Exp $
- * 
+ *
  * Class:                   ExitHandler
- * 
+ *
  * Description:             Handles exiting from window close event
- * 
- * 
- * 
+ *
+ *
+ *
  * COPYRIGHT:
- * 
+ *
  * This software module was originally developed by Rapha�l Grosbois and
  * Diego Santa Cruz (Swiss Federal Institute of Technology-EPFL); Joel
  * Askel�f (Ericsson Radio Systems AB); and Bertrand Berthelot, David
@@ -37,34 +37,38 @@
  * using this software module for non JPEG 2000 Standard conforming
  * products. This copyright notice must be included in all copies or
  * derivative works of this software module.
- * 
+ *
  * Copyright (c) 1999/2000 JJ2000 Partners.
  */
 package dev.zontreck.harbinger.thirdparty.jj2000.disp;
 
-import dev.zontreck.harbinger.thirdparty.jj2000.j2k.decoder.*;
+import dev.zontreck.harbinger.thirdparty.jj2000.j2k.decoder.Decoder;
 
-import java.awt.event.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
-/** This class implements the WindowHandler for the ImageFrames */
-public class ExitHandler extends WindowAdapter
-{
-	/** The decoder instance */
+/**
+ * This class implements the WindowHandler for the ImageFrames
+ */
+public class ExitHandler extends WindowAdapter {
+	/**
+	 * The decoder instance
+	 */
 	private final Decoder dec;
 
 	/**
 	 * Class constructor. Keep a reference to the decoder to properly exit when
 	 * windowClosing method is called.
 	 */
-	public ExitHandler(final Decoder dec)
-	{
+	public ExitHandler ( final Decoder dec ) {
 		this.dec = dec;
 	}
 
-	/** Close the window and exit the application */
+	/**
+	 * Close the window and exit the application
+	 */
 	@Override
-	public void windowClosing(final WindowEvent evt)
-	{
-		this.dec.exit();
+	public void windowClosing ( final WindowEvent evt ) {
+		this.dec.exit ( );
 	}
 }

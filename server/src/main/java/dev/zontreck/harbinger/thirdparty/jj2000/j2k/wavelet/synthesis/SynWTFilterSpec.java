@@ -60,8 +60,8 @@ public class SynWTFilterSpec extends ModuleSpec {
 	 * @param type the type of the specification module i.e. tile specific,
 	 *             component specific or both.
 	 */
-	public SynWTFilterSpec(final int nt, final int nc, final byte type) {
-		super(nt, nc, type);
+	public SynWTFilterSpec ( final int nt , final int nc , final byte type ) {
+		super ( nt , nc , type );
 	}
 
 	/**
@@ -73,9 +73,9 @@ public class SynWTFilterSpec extends ModuleSpec {
 	 * @return The data type of the filters in this object
 	 * @see dev.zontreck.harbinger.thirdparty.jj2000.j2k.image.DataBlk
 	 */
-	public int getWTDataType(final int t, final int c) {
-		final SynWTFilter[][] an = (SynWTFilter[][]) this.getSpec(t, c);
-		return an[0][0].getDataType();
+	public int getWTDataType ( final int t , final int c ) {
+		final SynWTFilter[][] an = ( SynWTFilter[][] ) this.getSpec ( t , c );
+		return an[ 0 ][ 0 ].getDataType ( );
 	}
 
 	/**
@@ -95,9 +95,9 @@ public class SynWTFilterSpec extends ModuleSpec {
 	 * @return The array of horizontal analysis filters for component 'n' and
 	 * tile 't'.
 	 */
-	public SynWTFilter[] getHFilters(final int t, final int c) {
-		final SynWTFilter[][] an = (SynWTFilter[][]) this.getSpec(t, c);
-		return an[0];
+	public SynWTFilter[] getHFilters ( final int t , final int c ) {
+		final SynWTFilter[][] an = ( SynWTFilter[][] ) this.getSpec ( t , c );
+		return an[ 0 ];
 	}
 
 	/**
@@ -117,35 +117,35 @@ public class SynWTFilterSpec extends ModuleSpec {
 	 * @return The array of horizontal analysis filters for component 'n' and
 	 * tile 't'.
 	 */
-	public SynWTFilter[] getVFilters(final int t, final int c) {
-		final SynWTFilter[][] an = (SynWTFilter[][]) this.getSpec(t, c);
-		return an[1];
+	public SynWTFilter[] getVFilters ( final int t , final int c ) {
+		final SynWTFilter[][] an = ( SynWTFilter[][] ) this.getSpec ( t , c );
+		return an[ 1 ];
 	}
 
 	/**
 	 * Debugging method
 	 */
 	@Override
-	public String toString() {
+	public String toString ( ) {
 		String str = "";
 		SynWTFilter[][] an;
 
 		str += "nTiles=" + this.nTiles + "\nnComp=" + this.nComp + "\n\n";
 
-		for (int t = 0; t < this.nTiles; t++) {
-			for (int c = 0; c < this.nComp; c++) {
-				an = (SynWTFilter[][]) this.getSpec(t, c);
+		for ( int t = 0 ; t < this.nTiles ; t++ ) {
+			for ( int c = 0 ; c < this.nComp ; c++ ) {
+				an = ( SynWTFilter[][] ) this.getSpec ( t , c );
 
 				str += "(t:" + t + ",c:" + c + ")\n";
 
 				// Horizontal filters
 				str += "\tH:";
-				for (int i = 0; i < an[0].length; i++)
-					str += " " + an[0][i];
+				for ( int i = 0 ; i < an[ 0 ].length ; i++ )
+					str += " " + an[ 0 ][ i ];
 				// Horizontal filters
 				str += "\n\tV:";
-				for (int i = 0; i < an[1].length; i++)
-					str += " " + an[1][i];
+				for ( int i = 0 ; i < an[ 1 ].length ; i++ )
+					str += " " + an[ 1 ][ i ];
 				str += "\n";
 			}
 		}
@@ -158,15 +158,15 @@ public class SynWTFilterSpec extends ModuleSpec {
 	 * @param t The index of the tile
 	 * @param c The index of the component
 	 */
-	public boolean isReversible(final int t, final int c) {
+	public boolean isReversible ( final int t , final int c ) {
 		// Note: no need to buffer the result since this method is
 		// normally called once per tile-component.
-		final SynWTFilter[] hfilter = this.getHFilters(t, c);
-		final SynWTFilter[] vfilter = this.getVFilters(t, c);
+		final SynWTFilter[] hfilter = this.getHFilters ( t , c );
+		final SynWTFilter[] vfilter = this.getVFilters ( t , c );
 
 		// As soon as a filter is not reversible, false can be returned
-		for (int i = hfilter.length - 1; 0 <= i; i--)
-			if (!hfilter[i].isReversible() || !vfilter[i].isReversible())
+		for ( int i = hfilter.length - 1 ; 0 <= i ; i-- )
+			if ( ! hfilter[ i ].isReversible ( ) || ! vfilter[ i ].isReversible ( ) )
 				return false;
 		return true;
 	}

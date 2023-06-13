@@ -46,35 +46,37 @@
  */
 package dev.zontreck.harbinger.thirdparty.jj2000.j2k.quantization.dequantizer;
 
-import dev.zontreck.harbinger.thirdparty.jj2000.j2k.wavelet.synthesis.*;
-import dev.zontreck.harbinger.thirdparty.jj2000.j2k.quantization.*;
-import dev.zontreck.harbinger.thirdparty.jj2000.j2k.decoder.*;
-import dev.zontreck.harbinger.thirdparty.jj2000.j2k.image.*;
+import dev.zontreck.harbinger.thirdparty.jj2000.j2k.decoder.DecoderSpecs;
+import dev.zontreck.harbinger.thirdparty.jj2000.j2k.image.DataBlk;
+import dev.zontreck.harbinger.thirdparty.jj2000.j2k.image.DataBlkInt;
+import dev.zontreck.harbinger.thirdparty.jj2000.j2k.quantization.QuantStepSizeSpec;
+import dev.zontreck.harbinger.thirdparty.jj2000.j2k.quantization.QuantTypeSpec;
+import dev.zontreck.harbinger.thirdparty.jj2000.j2k.wavelet.synthesis.SubbandSyn;
 
 /**
  * This class implements a scalar dequantizer with deadzone. The output can be
  * either integer ('int') or floating-point ('float') data. The dequantization
  * step sizes and other parameters are taken from a StdDequantizerParams class,
  * which inherits from DequantizerParams.
- * 
+ *
  * <p>
  * Sign magnitude representation is used (instead of two's complement) for the
  * input data. The most significant bit is used for the sign (0 if positive, 1
  * if negative). Then the magnitude of the quantized coefficient is stored in
  * the next most significat bits. The most significant magnitude bit corresponds
  * to the most significant bit-plane and so on.
- * 
+ *
  * <p>
  * When reversible quantization is used, this class only converts between the
  * sign-magnitude representation and the integer (or eventually fixed-point)
  * output, since there is no true quantization.
- * 
+ *
  * <p>
  * The output data is fixed-point two's complement for 'int' output and
  * floating-point for 'float' output. The type of output and the number number
  * of fractional bits for 'int' output are defined at the constructor. Each
  * component may have a different number of fractional bits.
- * 
+ *
  * <p>
  * The reconstruction levels used by the dequantizer are exactly what is
  * received from the entropy decoder. It is assumed that the entropy decoder
@@ -82,12 +84,15 @@ import dev.zontreck.harbinger.thirdparty.jj2000.j2k.image.*;
  * way the dequantized values will always lie midways in the quantization
  * intervals.
  */
-public class StdDequantizer extends Dequantizer
-{
-	/** The quantizer type spec */
+public class StdDequantizer extends Dequantizer {
+	/**
+	 * The quantizer type spec
+	 */
 	private final QuantTypeSpec qts;
 
-	/** The quantizer step sizes spec */
+	/**
+	 * The quantizer step sizes spec
+	 */
 	private final QuantStepSizeSpec qsss;
 
 	/** The number of guard bits spec */
@@ -102,32 +107,27 @@ public class StdDequantizer extends Dequantizer
 	 */
 	private DataBlkInt inblk;
 
-	/** Type of the current output data */
+	/**
+	 * Type of the current output data
+	 */
 	private int outdtype;
 
 	/**
 	 * Initializes the source of compressed data. And sets the number of range
 	 * bits and fraction bits and receives the parameters for the dequantizer.
-	 * 
-	 * @param src
-	 *            From where to obtain the quantized data.
 	 *
-	 * 
+	 * @param src From where to obtain the quantized data.
+	 * @throws IllegalArgumentException Thrown if 'outdt' is neither TYPE_FLOAT nor TYPE_INT, or
+	 *                                  if 'param' specify reversible quantization and 'outdt' is
+	 *                                  not TYPE_INT or 'fp' has non-zero values, or if 'outdt' is
+	 *                                  TYPE_FLOAT and 'fp' has non-zero values.
 	 * @see Dequantizer#getNomRangeBits
-	 * 
-	 * @exception IllegalArgumentException
-	 *                Thrown if 'outdt' is neither TYPE_FLOAT nor TYPE_INT, or
-	 *                if 'param' specify reversible quantization and 'outdt' is
-	 *                not TYPE_INT or 'fp' has non-zero values, or if 'outdt' is
-	 *                TYPE_FLOAT and 'fp' has non-zero values.
 	 */
-	public StdDequantizer(final CBlkQuantDataSrcDec src, final int[] utrb, final DecoderSpecs decSpec)
-	{
-		super(src, utrb, decSpec);
+	public StdDequantizer ( final CBlkQuantDataSrcDec src , final int[] utrb , final DecoderSpecs decSpec ) {
+		super ( src , utrb , decSpec );
 
-		if (utrb.length != src.getNumComps())
-		{
-			throw new IllegalArgumentException("Invalid rb argument");
+		if ( utrb.length != src.getNumComps ( ) ) {
+			throw new IllegalArgumentException ( "Invalid rb argument" );
 		}
 		qsss = decSpec.qsss;
 		qts = decSpec.qts;
@@ -143,26 +143,23 @@ public class StdDequantizer extends Dequantizer
 	 * and 0 should be returned. Position 0 is the position of the least
 	 * significant bit in the data. If the output data is 'float' then 0 is
 	 * always returned.
-	 * 
+	 *
 	 * <p>
 	 * <u>Note:</u> Fractional bits are no more supported by JJ2000.
-	 * 
-	 * @param c
-	 *            The index of the component.
-	 * 
+	 *
+	 * @param c The index of the component.
 	 * @return The position of the fixed-point, which is the same as the number
-	 *         of fractional bits. For floating-point data 0 is returned.
+	 * of fractional bits. For floating-point data 0 is returned.
 	 */
 	@Override
-	public int getFixedPoint(final int c)
-	{
+	public int getFixedPoint ( final int c ) {
 		return 0;
 	}
 
 	/**
 	 * Returns the specified code-block in the current tile for the specified
 	 * component, as a copy (see below).
-	 * 
+	 *
 	 * <p>
 	 * The returned code-block may be progressive, which is indicated by the
 	 * 'progressive' variable of the returned 'DataBlk' object. If a code-block
@@ -172,49 +169,37 @@ public class StdDequantizer extends Dequantizer
 	 * could have been received. If the code-block is not progressive then later
 	 * calls to this method for the same code-block will return the exact same
 	 * data values.
-	 * 
+	 *
 	 * <p>
 	 * The data returned by this method is always a copy of the internal data of
 	 * this object, if any, and it can be modified "in place" without any
 	 * problems after being returned. The 'offset' of the returned data is 0,
 	 * and the 'scanw' is the same as the code-block width. See the 'DataBlk'
 	 * class.
-	 * 
-	 * @param c
-	 *            The component for which to return the next code-block.
-	 * 
-	 * @param m
-	 *            The vertical index of the code-block to return, in the
-	 *            specified subband.
-	 * 
-	 * @param n
-	 *            The horizontal index of the code-block to return, in the
-	 *            specified subband.
-	 * 
-	 * @param sb
-	 *            The subband in which the code-block to return is.
-	 * 
-	 * @param cblk
-	 *            If non-null this object will be used to return the new
-	 *            code-block. If null a new one will be allocated and returned.
-	 *            If the "data" array of the object is non-null it will be
-	 *            reused, if possible, to return the data.
-	 * 
+	 *
+	 * @param c    The component for which to return the next code-block.
+	 * @param m    The vertical index of the code-block to return, in the
+	 *             specified subband.
+	 * @param n    The horizontal index of the code-block to return, in the
+	 *             specified subband.
+	 * @param sb   The subband in which the code-block to return is.
+	 * @param cblk If non-null this object will be used to return the new
+	 *             code-block. If null a new one will be allocated and returned.
+	 *             If the "data" array of the object is non-null it will be
+	 *             reused, if possible, to return the data.
 	 * @return The next code-block in the current tile for component 'n', or
-	 *         null if all code-blocks for the current tile have been returned.
-	 * 
+	 * null if all code-blocks for the current tile have been returned.
 	 * @see DataBlk
 	 */
 	@Override
-	public final DataBlk getCodeBlock(final int c, final int m, final int n, final SubbandSyn sb, final DataBlk cblk)
-	{
-		return this.getInternCodeBlock(c, m, n, sb, cblk);
+	public final DataBlk getCodeBlock ( final int c , final int m , final int n , final SubbandSyn sb , final DataBlk cblk ) {
+		return this.getInternCodeBlock ( c , m , n , sb , cblk );
 	}
 
 	/**
 	 * Returns the specified code-block in the current tile for the specified
 	 * component (as a reference or copy).
-	 * 
+	 *
 	 * <p>
 	 * The returned code-block may be progressive, which is indicated by the
 	 * 'progressive' variable of the returned 'DataBlk' object. If a code-block
@@ -224,41 +209,29 @@ public class StdDequantizer extends Dequantizer
 	 * could have been received. If the code-block is not progressive then later
 	 * calls to this method for the same code-block will return the exact same
 	 * data values.
-	 * 
+	 *
 	 * <p>
 	 * The data returned by this method can be the data in the internal buffer
 	 * of this object, if any, and thus can not be modified by the caller. The
 	 * 'offset' and 'scanw' of the returned data can be arbitrary. See the
 	 * 'DataBlk' class.
-	 * 
-	 * @param c
-	 *            The component for which to return the next code-block.
-	 * 
-	 * @param m
-	 *            The vertical index of the code-block to return, in the
-	 *            specified subband.
-	 * 
-	 * @param n
-	 *            The horizontal index of the code-block to return, in the
-	 *            specified subband.
-	 * 
-	 * @param sb
-	 *            The subband in which the code-block to return is.
-	 * 
-	 * @param cblk
-	 *            If non-null this object will be used to return the new
-	 *            code-block. If null a new one will be allocated and returned.
-	 *            If the "data" array of the object is non-null it will be
-	 *            reused, if possible, to return the data.
-	 * 
+	 *
+	 * @param c    The component for which to return the next code-block.
+	 * @param m    The vertical index of the code-block to return, in the
+	 *             specified subband.
+	 * @param n    The horizontal index of the code-block to return, in the
+	 *             specified subband.
+	 * @param sb   The subband in which the code-block to return is.
+	 * @param cblk If non-null this object will be used to return the new
+	 *             code-block. If null a new one will be allocated and returned.
+	 *             If the "data" array of the object is non-null it will be
+	 *             reused, if possible, to return the data.
 	 * @return The next code-block in the current tile for component 'n', or
-	 *         null if all code-blocks for the current tile have been returned.
-	 * 
+	 * null if all code-blocks for the current tile have been returned.
 	 * @see DataBlk
 	 */
 	@Override
-	public final DataBlk getInternCodeBlock(final int c, final int m, final int n, final SubbandSyn sb, DataBlk cblk)
-	{
+	public final DataBlk getInternCodeBlock ( final int c , final int m , final int n , final SubbandSyn sb , DataBlk cblk ) {
 		// This method is declared final since getNextCodeBlock() relies on
 		// the actual implementation of this method.
 		int j, jmin, k;
@@ -270,15 +243,14 @@ public class StdDequantizer extends Dequantizer
 		float[] outfarr;
 		final int w;
 		final int h;
-		final boolean reversible = this.qts.isReversible(this.tIdx, c);
-		final boolean derived = this.qts.isDerived(this.tIdx, c);
-		final StdDequantizerParams params = (StdDequantizerParams) this.qsss.getTileCompVal(this.tIdx, c);
+		final boolean reversible = this.qts.isReversible ( this.tIdx , c );
+		final boolean derived = this.qts.isDerived ( this.tIdx , c );
+		final StdDequantizerParams params = ( StdDequantizerParams ) this.qsss.getTileCompVal ( this.tIdx , c );
 
-		this.outdtype = cblk.getDataType();
+		this.outdtype = cblk.getDataType ( );
 
-		if (reversible && DataBlk.TYPE_INT != outdtype)
-		{
-			throw new IllegalArgumentException("Reversible quantizations must use int data");
+		if ( reversible && DataBlk.TYPE_INT != outdtype ) {
+			throw new IllegalArgumentException ( "Reversible quantizations must use int data" );
 		}
 
 		// To get compiler happy
@@ -287,22 +259,21 @@ public class StdDequantizer extends Dequantizer
 		inarr = null;
 
 		// Get source data and initialize output DataBlk object.
-		switch (this.outdtype)
-		{
+		switch ( this.outdtype ) {
 			case DataBlk.TYPE_INT:
 				// With int data we can use the same DataBlk object to get the
 				// data from the source and return the dequantized data, and we
 				// can also work "in place" (i.e. same buffer).
-				cblk = this.src.getCodeBlock(c, m, n, sb, cblk);
+				cblk = this.src.getCodeBlock ( c , m , n , sb , cblk );
 				// Input and output arrays are the same
-				outiarr = (int[]) cblk.getData();
+				outiarr = ( int[] ) cblk.getData ( );
 				break;
 			case DataBlk.TYPE_FLOAT:
 				// With float data we must use a different DataBlk objects to
 				// get
 				// the data from the source and to return the dequantized data.
-				this.inblk = (DataBlkInt) this.src.getInternCodeBlock(c, m, n, sb, this.inblk);
-				inarr = this.inblk.getDataInt();
+				this.inblk = ( DataBlkInt ) this.src.getInternCodeBlock ( c , m , n , sb , this.inblk );
+				inarr = this.inblk.getDataInt ( );
 				// Copy the attributes of the CodeBlock object
 				cblk.ulx = this.inblk.ulx;
 				cblk.uly = this.inblk.uly;
@@ -312,15 +283,14 @@ public class StdDequantizer extends Dequantizer
 				cblk.scanw = cblk.w;
 				cblk.progressive = this.inblk.progressive;
 				// Get output data array and check its size
-				outfarr = (float[]) cblk.getData();
-				if (null == outfarr || outfarr.length < cblk.w * cblk.h)
-				{
-					outfarr = new float[cblk.w * cblk.h];
-					cblk.setData(outfarr);
+				outfarr = ( float[] ) cblk.getData ( );
+				if ( null == outfarr || outfarr.length < cblk.w * cblk.h ) {
+					outfarr = new float[ cblk.w * cblk.h ];
+					cblk.setData ( outfarr );
 				}
 				break;
 			default:
-				throw new IllegalArgumentException("unhandled data block type " + this.outdtype + " in dequantization");
+				throw new IllegalArgumentException ( "unhandled data block type " + this.outdtype + " in dequantization" );
 		}
 
 		magBits = sb.magbits;
@@ -328,47 +298,40 @@ public class StdDequantizer extends Dequantizer
 		// Calculate quantization step and number of magnitude bits
 		// depending on reversibility and derivedness and perform
 		// inverse quantization
-		if (reversible)
-		{
+		if ( reversible ) {
 			shiftBits = 31 - magBits;
 			// For int data Inverse quantization happens "in-place". The input
 			// array has an offset of 0 and scan width equal to the code-block
 			// width.
-			for (j = outiarr.length - 1; 0 <= j; j--)
-			{
-				temp = outiarr[j]; // input array is same as output one
-				outiarr[j] = (0 <= temp) ? (temp >> shiftBits) : -((temp & 0x7FFFFFFF) >> shiftBits);
+			for ( j = outiarr.length - 1; 0 <= j ; j-- ) {
+				temp = outiarr[ j ]; // input array is same as output one
+				outiarr[ j ] = ( 0 <= temp ) ? ( temp >> shiftBits ) : - ( ( temp & 0x7FFFFFFF ) >> shiftBits );
 			}
 		}
-		else
-		{
+		else {
 			// Not reversible
-			if (derived)
-			{
+			if ( derived ) {
 				// Max resolution level
-				final int mrl = this.src.getSynSubbandTree(this.getTileIdx(), c).resLvl;
-				step = params.nStep[0][0] * (1L << (this.rb[c] + sb.anGainExp + mrl - sb.level));
+				final int mrl = this.src.getSynSubbandTree ( this.getTileIdx ( ) , c ).resLvl;
+				step = params.nStep[ 0 ][ 0 ] * ( 1L << ( this.rb[ c ] + sb.anGainExp + mrl - sb.level ) );
 			}
-			else
-			{
-				step = params.nStep[sb.resLvl][sb.sbandIdx] * (1L << (this.rb[c] + sb.anGainExp));
+			else {
+				step = params.nStep[ sb.resLvl ][ sb.sbandIdx ] * ( 1L << ( this.rb[ c ] + sb.anGainExp ) );
 			}
 			shiftBits = 31 - magBits;
 
 			// Adjust step to the number of shiftBits
-			step /= (1 << shiftBits);
+			step /= ( 1 << shiftBits );
 
-			switch (this.outdtype)
-			{
+			switch ( this.outdtype ) {
 				case DataBlk.TYPE_INT:
 					// For int data Inverse quantization happens "in-place". The
 					// input array has an offset of 0 and scan width equal to
 					// the
 					// code-block width.
-					for (j = outiarr.length - 1; 0 <= j; j--)
-					{
-						temp = outiarr[j]; // input array is same as output one
-						outiarr[j] = (int) (((0 <= temp) ? temp : -(temp & 0x7FFFFFFF)) * step);
+					for ( j = outiarr.length - 1; 0 <= j ; j-- ) {
+						temp = outiarr[ j ]; // input array is same as output one
+						outiarr[ j ] = ( int ) ( ( ( 0 <= temp ) ? temp : - ( temp & 0x7FFFFFFF ) ) * step );
 					}
 					break;
 				case DataBlk.TYPE_FLOAT:
@@ -376,19 +339,17 @@ public class StdDequantizer extends Dequantizer
 					// "in-place".
 					w = cblk.w;
 					h = cblk.h;
-					for (j = w * h - 1, k = this.inblk.offset + (h - 1) * this.inblk.scanw + w - 1, jmin = w * (h - 1); 0 <= j; jmin -= w)
-					{
-						for (; j >= jmin; k--, j--)
-						{
-							temp = inarr[k];
-							outfarr[j] = ((0 <= temp) ? temp : -(temp & 0x7FFFFFFF)) * step;
+					for ( j = w * h - 1 , k = this.inblk.offset + ( h - 1 ) * this.inblk.scanw + w - 1 , jmin = w * ( h - 1 ); 0 <= j ; jmin -= w ) {
+						for ( ; j >= jmin ; k-- , j-- ) {
+							temp = inarr[ k ];
+							outfarr[ j ] = ( ( 0 <= temp ) ? temp : - ( temp & 0x7FFFFFFF ) ) * step;
 						}
 						// Jump to beggining of previous line in input
 						k -= this.inblk.scanw - w;
 					}
 					break;
 				default:
-					throw new IllegalArgumentException("unhandled data block type " + this.outdtype + " in dequantization");
+					throw new IllegalArgumentException ( "unhandled data block type " + this.outdtype + " in dequantization" );
 			}
 		}
 		// Return the output code-block

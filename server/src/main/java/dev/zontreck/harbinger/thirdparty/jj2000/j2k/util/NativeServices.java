@@ -90,37 +90,47 @@ public final class NativeServices {
 	 * will be 'dev.zontreck.harbinger.thirdparty.jj2000.dll'.
 	 */
 	public static final String SHLIB_NAME = "jj2000";
-
+	/**
+	 * Library load state ID indicating that no attept to load the library has
+	 * been done yet.
+	 */
+	private static final int LIB_STATE_NOT_LOADED = 0;
+	/**
+	 * Library load state ID indicating that the library was successfully
+	 * loaded.
+	 */
+	private static final int LIB_STATE_LOADED = 1;
+	/**
+	 * Library load state ID indicating that an attempt to load the library was
+	 * done and that it could not be found.
+	 */
+	private static final int LIB_STATE_NOT_FOUND = 2;
 	/**
 	 * The state of the library loading
 	 */
 	private static int libState;
 
 	/**
-	 * Library load state ID indicating that no attept to load the library has
-	 * been done yet.
-	 */
-	private static final int LIB_STATE_NOT_LOADED = 0;
-
-	/**
-	 * Library load state ID indicating that the library was successfully
-	 * loaded.
-	 */
-	private static final int LIB_STATE_LOADED = 1;
-
-	/**
-	 * Library load state ID indicating that an attempt to load the library was
-	 * done and that it could not be found.
-	 */
-	private static final int LIB_STATE_NOT_FOUND = 2;
-
-	/**
 	 * Private and only constructor, so that no class instance might be created.
 	 * Since all methods are static creating a class instance is useless. If
 	 * called it throws an 'IllegalArgumentException'.
 	 */
-	private NativeServices() {
-		throw new IllegalArgumentException("Class can not be instantiated");
+	private NativeServices ( ) {
+		throw new IllegalArgumentException ( "Class can not be instantiated" );
+	}
+
+	/**
+	 * Returns the current concurrency level. See 'setThreadConcurrency' for
+	 * details on the meaning of concurrency
+	 *
+	 * @return The current concurrency level
+	 * @see #setThreadConcurrency
+	 */
+	public static int getThreadConcurrency ( ) {
+		// Check that the library is loaded
+		NativeServices.checkLibrary ( );
+		// Return concurrency from native method
+		return NativeServices.getThreadConcurrencyN ( );
 	}
 
 	/**
@@ -154,34 +164,14 @@ public final class NativeServices {
 	 * @throws UnsatisfiedLinkError     If the shared native library implementing the
 	 *                                  functionality could not be loaded.
 	 */
-	public static void setThreadConcurrency(final int n) {
+	public static void setThreadConcurrency ( final int n ) {
 		// Check that the library is loaded
-		NativeServices.checkLibrary();
+		NativeServices.checkLibrary ( );
 		// Check argument
-		if (0 > n)
-			throw new IllegalArgumentException();
+		if ( 0 > n )
+			throw new IllegalArgumentException ( );
 		// Set concurrency with native method
-		NativeServices.setThreadConcurrencyN(n);
-	}
-
-	/**
-	 * Calls the POSIX threads 'pthread_setconcurrency', or equivalent, function
-	 * with 'level' as the argument.
-	 */
-	private static native void setThreadConcurrencyN(int level);
-
-	/**
-	 * Returns the current concurrency level. See 'setThreadConcurrency' for
-	 * details on the meaning of concurrency
-	 *
-	 * @return The current concurrency level
-	 * @see #setThreadConcurrency
-	 */
-	public static int getThreadConcurrency() {
-		// Check that the library is loaded
-		NativeServices.checkLibrary();
-		// Return concurrency from native method
-		return NativeServices.getThreadConcurrencyN();
+		NativeServices.setThreadConcurrencyN ( n );
 	}
 
 	/**
@@ -190,7 +180,13 @@ public final class NativeServices {
 	 *
 	 * @return The current concurrency level.
 	 */
-	private static native int getThreadConcurrencyN();
+	private static native int getThreadConcurrencyN ( );
+
+	/**
+	 * Calls the POSIX threads 'pthread_setconcurrency', or equivalent, function
+	 * with 'level' as the argument.
+	 */
+	private static native void setThreadConcurrencyN ( int level );
 
 	/**
 	 * Loads the shared library implementing the native methods of this class
@@ -202,14 +198,14 @@ public final class NativeServices {
 	 * @return True if the libary could be loaded or is already loaded. False if
 	 * the library can not be found and loaded.
 	 */
-	public static boolean loadLibrary() {
+	public static boolean loadLibrary ( ) {
 		// If already loaded return true without doing anything
-		if (LIB_STATE_LOADED == libState)
+		if ( LIB_STATE_LOADED == libState )
 			return true;
 		// Try to load the library
 		try {
-			System.loadLibrary(NativeServices.SHLIB_NAME);
-		} catch (final UnsatisfiedLinkError e) {
+			System.loadLibrary ( NativeServices.SHLIB_NAME );
+		} catch ( final UnsatisfiedLinkError e ) {
 			// Library was not found
 			NativeServices.libState = NativeServices.LIB_STATE_NOT_FOUND;
 			return false;
@@ -227,18 +223,18 @@ public final class NativeServices {
 	 *
 	 * @throws UnsatisfiedLinkError If the library SHLIB_NAME can not be found.
 	 */
-	private static void checkLibrary() {
-		switch (NativeServices.libState) {
+	private static void checkLibrary ( ) {
+		switch ( NativeServices.libState ) {
 			case NativeServices.LIB_STATE_LOADED: // Already loaded, nothing to do
 				return;
 			case NativeServices.LIB_STATE_NOT_LOADED: // Not yet loaded => load now
 				// If load successful break, otherwise continue to the
 				// LIB_STATE_NOT_LOADED state
-				if (NativeServices.loadLibrary())
+				if ( NativeServices.loadLibrary ( ) )
 					break;
 			case NativeServices.LIB_STATE_NOT_FOUND: // Could not be found, throw exception
 			default:
-				throw new UnsatisfiedLinkError("NativeServices: native shared library could not be loaded");
+				throw new UnsatisfiedLinkError ( "NativeServices: native shared library could not be loaded" );
 		}
 	}
 }

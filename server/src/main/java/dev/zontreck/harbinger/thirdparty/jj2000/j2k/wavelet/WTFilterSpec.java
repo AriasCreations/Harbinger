@@ -1,16 +1,16 @@
-/* 
+/*
  * CVS identifier:
- * 
+ *
  * $Id: WTFilterSpec.java,v 1.10 2000/09/05 09:26:08 grosbois Exp $
- * 
+ *
  * Class:                   WTFilterSpec
- * 
+ *
  * Description:             Generic class for storing wavelet filter specs
- * 
- * 
- * 
+ *
+ *
+ *
  * COPYRIGHT:
- * 
+ *
  * This software module was originally developed by Rapha�l Grosbois and
  * Diego Santa Cruz (Swiss Federal Institute of Technology-EPFL); Joel
  * Askel�f (Ericsson Radio Systems AB); and Bertrand Berthelot, David
@@ -37,11 +37,11 @@
  * using this software module for non JPEG 2000 Standard conforming
  * products. This copyright notice must be included in all copies or
  * derivative works of this software module.
- * 
+ *
  * Copyright (c) 1999/2000 JJ2000 Partners.
- * 
- * 
- * 
+ *
+ *
+ *
  */
 
 package dev.zontreck.harbinger.thirdparty.jj2000.j2k.wavelet;
@@ -50,37 +50,43 @@ package dev.zontreck.harbinger.thirdparty.jj2000.j2k.wavelet;
  * This is the generic class from which the ones that hold the analysis or
  * synthesis filters to be used in each part of the image derive. See
  * AnWTFilterSpec and SynWTFilterSpec.
- * 
- * <P>
+ *
+ * <p>
  * The filters to use are defined by a hierarchy. The hierarchy is:
- * 
- * <P>
+ *
+ * <p>
  * - Tile and component specific filters<br>
  * - Tile specific default filters<br>
  * - Component main default filters<br>
  * - Main default filters<br>
- * 
- * <P>
+ *
+ * <p>
  * At the moment tiles are not supported by this class.
- * 
+ *
  * @see dev.zontreck.harbinger.thirdparty.jj2000.j2k.wavelet.analysis.AnWTFilterSpec
- * 
  * @see dev.zontreck.harbinger.thirdparty.jj2000.j2k.wavelet.synthesis.SynWTFilterSpec
  */
 
-public abstract class WTFilterSpec
-{
+public abstract class WTFilterSpec {
 
-	/** The identifier for "main default" specified filters */
+	/**
+	 * The identifier for "main default" specified filters
+	 */
 	public static final byte FILTER_SPEC_MAIN_DEF = 0;
 
-	/** The identifier for "component default" specified filters */
+	/**
+	 * The identifier for "component default" specified filters
+	 */
 	public static final byte FILTER_SPEC_COMP_DEF = 1;
 
-	/** The identifier for "tile specific default" specified filters */
+	/**
+	 * The identifier for "tile specific default" specified filters
+	 */
 	public static final byte FILTER_SPEC_TILE_DEF = 2;
 
-	/** The identifier for "tile and component specific" specified filters */
+	/**
+	 * The identifier for "tile and component specific" specified filters
+	 */
 	public static final byte FILTER_SPEC_TILE_COMP = 3;
 
 	/**
@@ -95,51 +101,39 @@ public abstract class WTFilterSpec
 	 * Constructs a 'WTFilterSpec' object, initializing all the components and
 	 * tiles to the 'FILTER_SPEC_MAIN_DEF' spec type, for the specified number
 	 * of components and tiles.
-	 * 
-	 * <P>
+	 *
+	 * <p>
 	 * NOTE: The tile specific things are not supported yet
-	 * 
-	 * @param nc
-	 *            The number of components
-	 * 
-	 * 
+	 *
+	 * @param nc The number of components
 	 */
-	protected WTFilterSpec(final int nc)
-	{
-		this.specValType = new byte[nc];
+	protected WTFilterSpec ( final int nc ) {
+		this.specValType = new byte[ nc ];
 	}
 
 	/**
 	 * Returns the data type used by the filters in this object, as defined in
 	 * the 'DataBlk' interface.
-	 * 
+	 *
 	 * @return The data type of the filters in this object
-	 * 
 	 * @see dev.zontreck.harbinger.thirdparty.jj2000.j2k.image.DataBlk
-	 * 
-	 * 
 	 */
-	public abstract int getWTDataType();
+	public abstract int getWTDataType ( );
 
 	/**
 	 * Returns the type of specification for the filters in the specified
 	 * component and tile. The specification type is one of:
 	 * 'FILTER_SPEC_MAIN_DEF', 'FILTER_SPEC_COMP_DEF', 'FILTER_SPEC_TILE_DEF',
 	 * 'FILTER_SPEC_TILE_COMP'.
-	 * 
-	 * <P>
+	 *
+	 * <p>
 	 * NOTE: The tile specific things are not supported yet
-	 * 
-	 * @param n
-	 *            The component index
-	 * 
+	 *
+	 * @param n The component index
 	 * @return The specification type for component 'n' and tile 't'.
-	 * 
-	 * 
 	 */
-	public byte getKerSpecType(final int n)
-	{
-		return this.specValType[n];
+	public byte getKerSpecType ( final int n ) {
+		return this.specValType[ n ];
 	}
 
 }

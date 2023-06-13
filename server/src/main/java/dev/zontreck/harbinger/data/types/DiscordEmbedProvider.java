@@ -8,24 +8,24 @@ public class DiscordEmbedProvider implements IJsonSerializable {
 	public String url;
 
 
+	public DiscordEmbedProvider ( ) {
+	}
+
+	public DiscordEmbedProvider ( final JSONObject obj ) {
+		this.name = obj.getString ( "name" );
+		this.url = obj.getString ( "url" );
+	}
+
 	@Override
-	public JSONObject serialize() throws DiscordEmbedLimitsException {
-		final JSONObject obj = new JSONObject();
+	public JSONObject serialize ( ) throws DiscordEmbedLimitsException {
+		final JSONObject obj = new JSONObject ( );
 
-		if (!this.name.isEmpty())
-			obj.put("name", this.name);
+		if ( ! this.name.isEmpty ( ) )
+			obj.put ( "name" , this.name );
 
-		if (!this.url.isEmpty())
-			obj.put("url", this.url);
+		if ( ! this.url.isEmpty ( ) )
+			obj.put ( "url" , this.url );
 
 		return obj;
-	}
-
-	public DiscordEmbedProvider() {
-	}
-
-	public DiscordEmbedProvider(final JSONObject obj) {
-		this.name = obj.getString("name");
-		this.url = obj.getString("url");
 	}
 }

@@ -45,55 +45,53 @@ package dev.zontreck.harbinger.thirdparty.jj2000.j2k.entropy;
 /**
  * This is the generic class to store coded (compressed) code-block. It stores
  * the compressed data as well as the necessary side-information.
- * 
+ *
  * <p>
  * This class is normally not used. Instead the EncRDCBlk, EncLyrdCBlk and the
  * DecLyrdCBlk subclasses are used.
- * 
+ *
  * @see dev.zontreck.harbinger.thirdparty.jj2000.j2k.entropy.encoder.CBlkRateDistStats
  * @see dev.zontreck.harbinger.thirdparty.jj2000.j2k.entropy.decoder.DecLyrdCBlk
  */
-public class CodedCBlk
-{
-	/** The horizontal index of the code-block, within the subband. */
+public class CodedCBlk {
+	/**
+	 * The horizontal index of the code-block, within the subband.
+	 */
 	public int n;
 
-	/** The vertical index of the code-block, within the subband. */
+	/**
+	 * The vertical index of the code-block, within the subband.
+	 */
 	public int m;
 
-	/** The number of skipped most significant bit-planes. */
+	/**
+	 * The number of skipped most significant bit-planes.
+	 */
 	public int skipMSBP;
 
-	/** The compressed data */
+	/**
+	 * The compressed data
+	 */
 	public byte[] data;
 
 	/**
 	 * Creates a new CodedCBlk object wit the default values and without
 	 * allocating any space for its members.
 	 */
-	public CodedCBlk()
-	{
+	public CodedCBlk ( ) {
 	}
 
 	/**
 	 * Creates a new CodedCBlk object with the specified values.
-	 * 
-	 * @param m
-	 *            The horizontal index of the code-block, within the subband.
-	 * 
-	 * @param n
-	 *            The vertical index of the code-block, within the subband.
-	 * 
-	 * @param skipMSBP
-	 *            The number of skipped most significant bit-planes for this
-	 *            code-block.
-	 * 
-	 * @param data
-	 *            The compressed data. This array is referenced by this object
-	 *            so it should not be modified after.
+	 *
+	 * @param m        The horizontal index of the code-block, within the subband.
+	 * @param n        The vertical index of the code-block, within the subband.
+	 * @param skipMSBP The number of skipped most significant bit-planes for this
+	 *                 code-block.
+	 * @param data     The compressed data. This array is referenced by this object
+	 *                 so it should not be modified after.
 	 */
-	public CodedCBlk(final int m, final int n, final int skipMSBP, final byte[] data)
-	{
+	public CodedCBlk ( final int m , final int n , final int skipMSBP , final byte[] data ) {
 		this.m = m;
 		this.n = n;
 		this.skipMSBP = skipMSBP;
@@ -104,13 +102,12 @@ public class CodedCBlk
 	 * Returns the contents of the object in a string. The string contains the
 	 * following data: 'm', 'n', 'skipMSBP' and 'data.length. This is used for
 	 * debugging.
-	 * 
+	 *
 	 * @return A string with the contents of the object
 	 */
 	@Override
-	public String toString()
-	{
+	public String toString ( ) {
 		return "m=" + this.m + ", n=" + this.n + ", skipMSBP=" + this.skipMSBP + ", data.length="
-				+ ((null != data) ? String.valueOf(this.data.length) : "(null)");
+				+ ( ( null != data ) ? String.valueOf ( this.data.length ) : "(null)" );
 	}
 }

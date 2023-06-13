@@ -17,22 +17,22 @@ public enum SetPresharedKeyCommand {
 
 
 	@Subscribe
-	public static void onSetPSK(final CommandEvent event) {
-		if (event.command.equals(SetPresharedKeyCommand.SETPSK)) {
-			event.setCancelled(true);
+	public static void onSetPSK ( final CommandEvent event ) {
+		if ( event.command.equals ( SetPresharedKeyCommand.SETPSK ) ) {
+			event.setCancelled ( true );
 
-			ConsolePrompt.console.printf("What should the new PSK be? ");
-			final char[] pwd = ConsolePrompt.console.readPassword();
-			final String psk = new String(pwd);
+			ConsolePrompt.console.printf ( "What should the new PSK be? " );
+			final char[] pwd = ConsolePrompt.console.readPassword ( );
+			final String psk = new String ( pwd );
 
-			Terminal.startTerminal();
+			Terminal.startTerminal ( );
 
 			try {
-				Persist.serverSettings.PSK = Key.computeSecuredKey(psk);
-			} catch (final NoSuchAlgorithmException e) {
-				ConsolePrompt.console.printf("Error while setting PSK: " + e.getMessage());
+				Persist.serverSettings.PSK = Key.computeSecuredKey ( psk );
+			} catch ( final NoSuchAlgorithmException e ) {
+				ConsolePrompt.console.printf ( "Error while setting PSK: " + e.getMessage ( ) );
 			}
-			EventBus.BUS.post(new MemoryAlteredEvent());
+			EventBus.BUS.post ( new MemoryAlteredEvent ( ) );
 		}
 	}
 }

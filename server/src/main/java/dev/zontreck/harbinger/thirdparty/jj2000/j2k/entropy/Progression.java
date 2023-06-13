@@ -43,7 +43,7 @@
  */
 package dev.zontreck.harbinger.thirdparty.jj2000.j2k.entropy;
 
-import dev.zontreck.harbinger.thirdparty.jj2000.j2k.codestream.*;
+import dev.zontreck.harbinger.thirdparty.jj2000.j2k.codestream.ProgressionType;
 
 /**
  * This class holds one of the different progression orders defined in the bit
@@ -51,57 +51,54 @@ import dev.zontreck.harbinger.thirdparty.jj2000.j2k.codestream.*;
  * interface. A Progression object is totally defined by its component start and
  * end, resolution level start and end and layer start and end indexes. If no
  * progression order change is defined, there is only Progression instance.
- * 
+ *
  * @see ProgressionType
- * 
  */
-public class Progression implements ProgressionType
-{
-	/** Progression type as defined in ProgressionType interface */
+public class Progression implements ProgressionType {
+	/**
+	 * Progression type as defined in ProgressionType interface
+	 */
 	public int type;
 
-	/** Component index for the start of a progression */
+	/**
+	 * Component index for the start of a progression
+	 */
 	public int cs;
 
-	/** Component index for the end of a progression. */
+	/**
+	 * Component index for the end of a progression.
+	 */
 	public int ce;
 
-	/** Resolution index for the start of a progression */
+	/**
+	 * Resolution index for the start of a progression
+	 */
 	public int rs;
 
-	/** Resolution index for the end of a progression. */
+	/**
+	 * Resolution index for the end of a progression.
+	 */
 	public int re;
 
-	/** The index of the last layer. */
+	/**
+	 * The index of the last layer.
+	 */
 	public int lye;
 
 	/**
 	 * Constructor.
-	 * 
+	 * <p>
 	 * Builds a new Progression object with specified type and bounds of
 	 * progression.
-	 * 
-	 * @param type
-	 *            The progression type
-	 * 
-	 * @param cs
-	 *            The component index start
-	 * 
-	 * @param ce
-	 *            The component index end
-	 * 
-	 * @param rs
-	 *            The resolution level index start
-	 * 
-	 * @param re
-	 *            The resolution level index end
-	 * 
-	 * @param lye
-	 *            The layer index end
-	 * 
+	 *
+	 * @param type The progression type
+	 * @param cs   The component index start
+	 * @param ce   The component index end
+	 * @param rs   The resolution level index start
+	 * @param re   The resolution level index end
+	 * @param lye  The layer index end
 	 */
-	public Progression(final int type, final int cs, final int ce, final int rs, final int re, final int lye)
-	{
+	public Progression ( final int type , final int cs , final int ce , final int rs , final int re , final int lye ) {
 		this.type = type;
 		this.cs = cs;
 		this.ce = ce;
@@ -111,11 +108,9 @@ public class Progression implements ProgressionType
 	}
 
 	@Override
-	public String toString()
-	{
+	public String toString ( ) {
 		String str = "type= ";
-		switch (this.type)
-		{
+		switch ( this.type ) {
 			case ProgressionType.LY_RES_COMP_POS_PROG:
 				str += "layer, ";
 				break;
@@ -132,7 +127,7 @@ public class Progression implements ProgressionType
 				str += "pos-comp, ";
 				break;
 			default:
-				throw new Error("Unknown progression type");
+				throw new Error ( "Unknown progression type" );
 		}
 		str += "comp.: " + this.cs + "-" + this.ce + ", ";
 		str += "res.: " + this.rs + "-" + this.re + ", ";

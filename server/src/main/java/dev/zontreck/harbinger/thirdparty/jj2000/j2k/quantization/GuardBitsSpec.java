@@ -62,8 +62,8 @@ public class GuardBitsSpec extends ModuleSpec {
 	 * @param type the type of the specification module i.e. tile specific,
 	 *             component specific or both.
 	 */
-	public GuardBitsSpec(final int nt, final int nc, final byte type) {
-		super(nt, nc, type);
+	public GuardBitsSpec ( final int nt , final int nc , final byte type ) {
+		super ( nt , nc , type );
 	}
 
 	/**
@@ -76,16 +76,16 @@ public class GuardBitsSpec extends ModuleSpec {
 	 *             component specific or both.
 	 * @param pl   The ParameterList
 	 */
-	public GuardBitsSpec(final int nt, final int nc, final byte type, final ParameterList pl) {
-		super(nt, nc, type);
+	public GuardBitsSpec ( final int nt , final int nc , final byte type , final ParameterList pl ) {
+		super ( nt , nc , type );
 
-		final String param = pl.getParameter("Qguard_bits");
-		if (null == param) {
-			throw new IllegalArgumentException("Qguard_bits option not specified");
+		final String param = pl.getParameter ( "Qguard_bits" );
+		if ( null == param ) {
+			throw new IllegalArgumentException ( "Qguard_bits option not specified" );
 		}
 
 		// Parse argument
-		final StringTokenizer stk = new StringTokenizer(param);
+		final StringTokenizer stk = new StringTokenizer ( param );
 		String word; // current word
 		byte curSpecType = ModuleSpec.SPEC_DEF; // Specification type of the
 		// current parameter
@@ -93,50 +93,56 @@ public class GuardBitsSpec extends ModuleSpec {
 		boolean[] compSpec = null; // Components concerned by the specification
 		Integer value; // value of the guard bits
 
-		while (stk.hasMoreTokens()) {
-			word = stk.nextToken().toLowerCase();
+		while ( stk.hasMoreTokens ( ) ) {
+			word = stk.nextToken ( ).toLowerCase ( );
 
-			switch (word.charAt(0)) {
+			switch ( word.charAt ( 0 ) ) {
 				case 't': // Tiles specification
-					tileSpec = ModuleSpec.parseIdx(word, this.nTiles);
-					if (SPEC_COMP_DEF == curSpecType)
+					tileSpec = ModuleSpec.parseIdx ( word , this.nTiles );
+					if ( ModuleSpec.SPEC_COMP_DEF == curSpecType )
 						curSpecType = ModuleSpec.SPEC_TILE_COMP;
-					else curSpecType = ModuleSpec.SPEC_TILE_DEF;
+					else
+						curSpecType = ModuleSpec.SPEC_TILE_DEF;
 					break;
 				case 'c': // Components specification
-					compSpec = ModuleSpec.parseIdx(word, this.nComp);
-					if (SPEC_TILE_DEF == curSpecType)
+					compSpec = ModuleSpec.parseIdx ( word , this.nComp );
+					if ( ModuleSpec.SPEC_TILE_DEF == curSpecType )
 						curSpecType = ModuleSpec.SPEC_TILE_COMP;
-					else curSpecType = ModuleSpec.SPEC_COMP_DEF;
+					else
+						curSpecType = ModuleSpec.SPEC_COMP_DEF;
 					break;
 				default: // Step size value
 					try {
-						value = Integer.valueOf(word);
-					} catch (final NumberFormatException e) {
-						throw new IllegalArgumentException("Bad parameter for -Qguard_bits option: " + word);
+						value = Integer.valueOf ( word );
+					} catch (
+							final NumberFormatException e ) {
+						throw new IllegalArgumentException ( "Bad parameter for -Qguard_bits option: " + word );
 					}
 
-					if (0.0f >= value.floatValue()) {
-						throw new IllegalArgumentException("Guard bits value must be positive : " + value);
+					if ( 0.0f >= value.floatValue ( ) ) {
+						throw new IllegalArgumentException ( "Guard bits value must be positive : " + value );
 					}
 
-					if (SPEC_DEF == curSpecType) {
-						this.setDefault(value);
-					} else if (SPEC_TILE_DEF == curSpecType) {
-						for (int i = tileSpec.length - 1; 0 <= i; i--)
-							if (tileSpec[i]) {
-								this.setTileDef(i, value);
+					if ( ModuleSpec.SPEC_DEF == curSpecType ) {
+						this.setDefault ( value );
+					}
+					else if ( ModuleSpec.SPEC_TILE_DEF == curSpecType ) {
+						for ( int i = tileSpec.length - 1 ; 0 <= i ; i-- )
+							if ( tileSpec[ i ] ) {
+								this.setTileDef ( i , value );
 							}
-					} else if (SPEC_COMP_DEF == curSpecType) {
-						for (int i = compSpec.length - 1; 0 <= i; i--)
-							if (compSpec[i]) {
-								this.setCompDef(i, value);
+					}
+					else if ( ModuleSpec.SPEC_COMP_DEF == curSpecType ) {
+						for ( int i = compSpec.length - 1 ; 0 <= i ; i-- )
+							if ( compSpec[ i ] ) {
+								this.setCompDef ( i , value );
 							}
-					} else {
-						for (int i = tileSpec.length - 1; 0 <= i; i--) {
-							for (int j = compSpec.length - 1; 0 <= j; j--) {
-								if (tileSpec[i] && compSpec[j]) {
-									this.setTileCompVal(i, j, value);
+					}
+					else {
+						for ( int i = tileSpec.length - 1 ; 0 <= i ; i-- ) {
+							for ( int j = compSpec.length - 1 ; 0 <= j ; j-- ) {
+								if ( tileSpec[ i ] && compSpec[ j ] ) {
+									this.setTileCompVal ( i , j , value );
 								}
 							}
 						}
@@ -151,11 +157,11 @@ public class GuardBitsSpec extends ModuleSpec {
 		}
 
 		// Check that default value has been specified
-		if (null == getDefault()) {
+		if ( null == getDefault ( ) ) {
 			int ndefspec = 0;
-			for (int t = nt - 1; 0 <= t; t--) {
-				for (int c = nc - 1; 0 <= c; c--) {
-					if (SPEC_DEF == specValType[t][c]) {
+			for ( int t = nt - 1 ; 0 <= t ; t-- ) {
+				for ( int c = nc - 1 ; 0 <= c ; c-- ) {
+					if ( ModuleSpec.SPEC_DEF == specValType[ t ][ c ] ) {
 						ndefspec++;
 					}
 				}
@@ -163,33 +169,34 @@ public class GuardBitsSpec extends ModuleSpec {
 
 			// If some tile-component have received no specification, it takes
 			// the default value defined in ParameterList
-			if (0 != ndefspec) {
-				this.setDefault(Integer.valueOf(pl.getDefaultParameterList().getParameter("Qguard_bits")));
-			} else {
+			if ( 0 != ndefspec ) {
+				this.setDefault ( Integer.valueOf ( pl.getDefaultParameterList ( ).getParameter ( "Qguard_bits" ) ) );
+			}
+			else {
 				// All tile-component have been specified, takes the first
 				// tile-component value as default.
-				this.setDefault(this.getTileCompVal(0, 0));
-				switch (this.specValType[0][0]) {
+				this.setDefault ( this.getTileCompVal ( 0 , 0 ) );
+				switch ( this.specValType[ 0 ][ 0 ] ) {
 					case ModuleSpec.SPEC_TILE_DEF:
-						for (int c = nc - 1; 0 <= c; c--) {
-							if (SPEC_TILE_DEF == specValType[0][c])
-								this.specValType[0][c] = ModuleSpec.SPEC_DEF;
+						for ( int c = nc - 1 ; 0 <= c ; c-- ) {
+							if ( ModuleSpec.SPEC_TILE_DEF == specValType[ 0 ][ c ] )
+								this.specValType[ 0 ][ c ] = ModuleSpec.SPEC_DEF;
 						}
-						this.tileDef[0] = null;
+						this.tileDef[ 0 ] = null;
 						break;
 					case ModuleSpec.SPEC_COMP_DEF:
-						for (int t = nt - 1; 0 <= t; t--) {
-							if (SPEC_COMP_DEF == specValType[t][0])
-								this.specValType[t][0] = ModuleSpec.SPEC_DEF;
+						for ( int t = nt - 1 ; 0 <= t ; t-- ) {
+							if ( ModuleSpec.SPEC_COMP_DEF == specValType[ t ][ 0 ] )
+								this.specValType[ t ][ 0 ] = ModuleSpec.SPEC_DEF;
 						}
-						this.compDef[0] = null;
+						this.compDef[ 0 ] = null;
 						break;
 					case ModuleSpec.SPEC_TILE_COMP:
-						this.specValType[0][0] = ModuleSpec.SPEC_DEF;
-						this.tileCompVal.put("t0c0", null);
+						this.specValType[ 0 ][ 0 ] = ModuleSpec.SPEC_DEF;
+						this.tileCompVal.put ( "t0c0" , null );
 						break;
 					default:
-						throw new IllegalArgumentException("unhandled spec tile type " + this.specValType[0][0] + " in quantization");
+						throw new IllegalArgumentException ( "unhandled spec tile type " + this.specValType[ 0 ][ 0 ] + " in quantization" );
 				}
 			}
 		}

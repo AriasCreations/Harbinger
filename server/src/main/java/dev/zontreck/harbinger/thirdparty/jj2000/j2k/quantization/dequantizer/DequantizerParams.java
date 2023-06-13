@@ -59,6 +59,6 @@ public abstract class DequantizerParams {
 	 * @return The type of the dequantizer for which the parameters are.
 	 * @see Dequantizer
 	 */
-	public abstract int getDequantizerType();
+	public abstract int getDequantizerType ( );
 
 }

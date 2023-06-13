@@ -10,7 +10,7 @@
  *
  *
  * COPYRIGHT:
- * 
+ *
  * This software module was originally developed by Rapha�l Grosbois and
  * Diego Santa Cruz (Swiss Federal Institute of Technology-EPFL); Joel
  * Askel�f (Ericsson Radio Systems AB); and Bertrand Berthelot, David
@@ -37,7 +37,7 @@
  * using this software module for non JPEG 2000 Standard conforming
  * products. This copyright notice must be included in all copies or
  * derivative works of this software module.
- * 
+ *
  * Copyright (c) 1999/2000 JJ2000 Partners.
  */
 package dev.zontreck.harbinger.thirdparty.jj2000.j2k.image;
@@ -45,107 +45,84 @@ package dev.zontreck.harbinger.thirdparty.jj2000.j2k.image;
 /**
  * This is an implementation of the <tt>DataBlk</tt> interface for 32 bit
  * floating point data (float).
- * 
+ *
  * <p>
  * The methods in this class are declared final, so that they can be inlined by
  * inlining compilers.
- * 
+ *
  * @see DataBlk
  */
-public class DataBlkFloat extends DataBlk
-{
-	/** The array where the data is stored */
+public class DataBlkFloat extends DataBlk {
+	/**
+	 * The array where the data is stored
+	 */
 	public float[] data;
 
 	/**
 	 * Creates a DataBlkFloat with 0 dimensions and no data array (i.e. data is
 	 * null).
 	 */
-	public DataBlkFloat()
-	{
+	public DataBlkFloat ( ) {
 	}
 
 	/**
 	 * Creates a DataBlkFloat with the specified dimensions and position. The
 	 * data array is initialized to an array of size w*h.
-	 * 
-	 * @param ulx
-	 *            The horizontal coordinate of the upper-left corner of the
+	 *
+	 * @param ulx The horizontal coordinate of the upper-left corner of the
 	 *            block
-	 * 
-	 * @param uly
-	 *            The vertical coordinate of the upper-left corner of the block
-	 * 
-	 * @param w
-	 *            The width of the block (in pixels)
-	 * 
-	 * @param h
-	 *            The height of the block (in pixels)
+	 * @param uly The vertical coordinate of the upper-left corner of the block
+	 * @param w   The width of the block (in pixels)
+	 * @param h   The height of the block (in pixels)
 	 */
-	public DataBlkFloat(final int ulx, final int uly, final int w, final int h)
-	{
+	public DataBlkFloat ( final int ulx , final int uly , final int w , final int h ) {
 		this.ulx = ulx;
 		this.uly = uly;
 		this.w = w;
 		this.h = h;
 		this.offset = 0;
 		this.scanw = w;
-		this.data = new float[w * h];
+		this.data = new float[ w * h ];
 	}
 
 	/**
 	 * Copy constructor. Creates a DataBlkFloat which is the copy of the
 	 * DataBlkFloat given as paramter.
-	 * 
-	 * @param src
-	 *            the object to be copied.
+	 *
+	 * @param src the object to be copied.
 	 */
-	public DataBlkFloat(final DataBlkFloat src)
-	{
+	public DataBlkFloat ( final DataBlkFloat src ) {
 		ulx = src.ulx;
 		uly = src.uly;
 		w = src.w;
 		h = src.h;
 		offset = 0;
 		scanw = w;
-		data = new float[w * h];
-		for (int i = 0; i < h; i++)
-			System.arraycopy(src.data, i * src.scanw, data, i * scanw, w);
+		data = new float[ w * h ];
+		for ( int i = 0 ; i < h ; i++ )
+			System.arraycopy ( src.data , i * src.scanw , data , i * scanw , w );
 	}
 
 	/**
 	 * Returns the identifier of this data type, <tt>TYPE_FLOAT</tt>, as defined
 	 * in <tt>DataBlk</tt>.
-	 * 
+	 *
 	 * @return The type of data stored. Always <tt>DataBlk.TYPE_FLOAT</tt>
-	 * 
 	 * @see DataBlk#TYPE_FLOAT
 	 */
 	@Override
-	public final int getDataType()
-	{
+	public final int getDataType ( ) {
 		return DataBlk.TYPE_FLOAT;
 	}
 
 	/**
 	 * Returns the array containing the data, or null if there is no data array.
 	 * The returned array is a float array.
-	 * 
+	 *
 	 * @return The array of data (a float[]) or null if there is no data.
 	 */
 	@Override
-	public final Object getData()
-	{
-		return this.data;
-	}
-
-	/**
-	 * Returns the array containing the data, or null if there is no data array.
-	 * 
-	 * @return The array of data or null if there is no data.
-	 */
-	public final float[] getDataFloat()
-	{
+	public final Object getData ( ) {
 		return this.data;
 	}
 
@@ -153,25 +130,30 @@ public class DataBlkFloat extends DataBlk
 	 * Sets the data array to the specified one. The provided array must be a
 	 * float array, otherwise a ClassCastException is thrown. The size of the
 	 * array is not checked for consistency with the block's dimensions.
-	 * 
-	 * @param arr
-	 *            The data array to use. Must be a float array.
+	 *
+	 * @param arr The data array to use. Must be a float array.
 	 */
 	@Override
-	public final void setData(final Object arr)
-	{
-		this.data = (float[]) arr;
+	public final void setData ( final Object arr ) {
+		this.data = ( float[] ) arr;
+	}
+
+	/**
+	 * Returns the array containing the data, or null if there is no data array.
+	 *
+	 * @return The array of data or null if there is no data.
+	 */
+	public final float[] getDataFloat ( ) {
+		return this.data;
 	}
 
 	/**
 	 * Sets the data array to the specified one. The size of the array is not
 	 * checked for consistency with the block's dimensions.
-	 * 
-	 * @param arr
-	 *            The data array to use.
+	 *
+	 * @param arr The data array to use.
 	 */
-	public final void setDataFloat(final float[] arr)
-	{
+	public final void setDataFloat ( final float[] arr ) {
 		this.data = arr;
 	}
 
@@ -179,11 +161,9 @@ public class DataBlkFloat extends DataBlk
 	 * Returns a string of informations about the DataBlkFloat.
 	 */
 	@Override
-	public String toString()
-	{
-		String str = super.toString();
-		if (null != data)
-		{
+	public String toString ( ) {
+		String str = super.toString ( );
+		if ( null != data ) {
 			str += ",data=" + this.data.length + " bytes";
 		}
 		return str;

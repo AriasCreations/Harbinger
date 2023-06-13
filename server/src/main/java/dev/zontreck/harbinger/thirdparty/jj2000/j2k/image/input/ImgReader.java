@@ -1,17 +1,17 @@
 /**
  * CVS identifier:
- *
+ * <p>
  * $Id: ImgReader.java,v 1.10 2002/07/25 15:07:44 grosbois Exp $
- *
+ * <p>
  * Class:                   ImgReader
- *
+ * <p>
  * Description:             Generic interface for image readers (from
- *                          file or other resource)
- *
- *
- *
+ * file or other resource)
+ * <p>
+ * <p>
+ * <p>
  * COPYRIGHT:
- * 
+ * <p>
  * This software module was originally developed by Rapha�l Grosbois and
  * Diego Santa Cruz (Swiss Federal Institute of Technology-EPFL); Joel
  * Askel�f (Ericsson Radio Systems AB); and Bertrand Berthelot, David
@@ -38,29 +38,31 @@
  * using this software module for non JPEG 2000 Standard conforming
  * products. This copyright notice must be included in all copies or
  * derivative works of this software module.
- * 
+ * <p>
  * Copyright (c) 1999/2000 JJ2000 Partners.
  */
 package dev.zontreck.harbinger.thirdparty.jj2000.j2k.image.input;
 
-import dev.zontreck.harbinger.thirdparty.jj2000.j2k.image.*;
-import dev.zontreck.harbinger.thirdparty.jj2000.j2k.*;
-import java.io.*;
+import dev.zontreck.harbinger.thirdparty.jj2000.j2k.NoNextElementException;
+import dev.zontreck.harbinger.thirdparty.jj2000.j2k.image.BlkImgDataSrc;
+import dev.zontreck.harbinger.thirdparty.jj2000.j2k.image.Coord;
+
+import java.io.IOException;
 
 /**
  * This is the generic interface to be implemented by all image file (or other
  * resource) readers for different image file formats.
- * 
+ *
  * <p>
  * An ImgReader behaves as an ImgData object. Whenever image data is requested
  * through the getInternCompData() or getCompData() methods, the image data will
  * be read (if it is not buffered) and returned. Implementing classes should not
  * buffer large amounts of data, so as to reduce memory usage.
- * 
+ *
  * <p>
  * This class sets the image origin to (0,0). All default implementations of the
  * methods assume this.
- * 
+ *
  * <p>
  * This class provides default implementations of many methods. These default
  * implementations assume that there is no tiling (i.e., the only tile is the
@@ -68,37 +70,40 @@ import java.io.*;
  * there is no component subsampling (all components are the same size), but
  * they can be overloaded by the implementating class if need be.
  */
-public abstract class ImgReader implements BlkImgDataSrc
-{
+public abstract class ImgReader implements BlkImgDataSrc {
 
-	/** The width of the image */
+	/**
+	 * The width of the image
+	 */
 	protected int w;
 
-	/** The height of the image */
+	/**
+	 * The height of the image
+	 */
 	protected int h;
 
-	/** The number of components in the image */
+	/**
+	 * The number of components in the image
+	 */
 	protected int nc;
 
 	/**
 	 * Closes the underlying file or network connection from where the image
 	 * data is being read.
-	 * 
-	 * @exception IOException
-	 *                If an I/O error occurs.
+	 *
+	 * @throws IOException If an I/O error occurs.
 	 */
-	public abstract void close() throws IOException;
+	public abstract void close ( ) throws IOException;
 
 	/**
 	 * Returns the width of the current tile in pixels, assuming there is
 	 * no-tiling. Since no-tiling is assumed this is the same as the width of
 	 * the image. The value of <tt>w</tt> is returned.
-	 * 
+	 *
 	 * @return The total image width in pixels.
 	 */
 	@Override
-	public int getTileWidth()
-	{
+	public int getTileWidth ( ) {
 		return this.w;
 	}
 
@@ -106,26 +111,27 @@ public abstract class ImgReader implements BlkImgDataSrc
 	 * Returns the overall height of the current tile in pixels, assuming there
 	 * is no-tiling. Since no-tiling is assumed this is the same as the width of
 	 * the image. The value of <tt>h</tt> is returned.
-	 * 
+	 *
 	 * @return The total image height in pixels.
 	 */
 	@Override
-	public int getTileHeight()
-	{
+	public int getTileHeight ( ) {
 		return this.h;
 	}
 
-	/** Returns the nominal tiles width */
+	/**
+	 * Returns the nominal tiles width
+	 */
 	@Override
-	public int getNomTileWidth()
-	{
+	public int getNomTileWidth ( ) {
 		return this.w;
 	}
 
-	/** Returns the nominal tiles height */
+	/**
+	 * Returns the nominal tiles height
+	 */
 	@Override
-	public int getNomTileHeight()
-	{
+	public int getNomTileHeight ( ) {
 		return this.h;
 	}
 
@@ -133,12 +139,11 @@ public abstract class ImgReader implements BlkImgDataSrc
 	 * Returns the overall width of the image in pixels. This is the image's
 	 * width without accounting for any component subsampling or tiling. The
 	 * value of <tt>w</tt> is returned.
-	 * 
+	 *
 	 * @return The total image's width in pixels.
 	 */
 	@Override
-	public int getImgWidth()
-	{
+	public int getImgWidth ( ) {
 		return this.w;
 	}
 
@@ -146,24 +151,22 @@ public abstract class ImgReader implements BlkImgDataSrc
 	 * Returns the overall height of the image in pixels. This is the image's
 	 * height without accounting for any component subsampling or tiling. The
 	 * value of <tt>h</tt> is returned.
-	 * 
+	 *
 	 * @return The total image's height in pixels.
 	 */
 	@Override
-	public int getImgHeight()
-	{
+	public int getImgHeight ( ) {
 		return this.h;
 	}
 
 	/**
 	 * Returns the number of components in the image. The value of <tt>nc</tt>
 	 * is returned.
-	 * 
+	 *
 	 * @return The number of components in the image.
 	 */
 	@Override
-	public int getNumComps()
-	{
+	public int getNumComps ( ) {
 		return this.nc;
 	}
 
@@ -172,17 +175,13 @@ public abstract class ImgReader implements BlkImgDataSrc
 	 * the specified component. This is, approximately, the ratio of dimensions
 	 * between the reference grid and the component itself, see the 'ImgData'
 	 * interface desription for details.
-	 * 
-	 * @param c
-	 *            The index of the component (between 0 and C-1)
-	 * 
+	 *
+	 * @param c The index of the component (between 0 and C-1)
 	 * @return The horizontal subsampling factor of component 'c'
-	 * 
 	 * @see dev.zontreck.harbinger.thirdparty.jj2000.j2k.image.ImgData
 	 */
 	@Override
-	public int getCompSubsX(final int c)
-	{
+	public int getCompSubsX ( final int c ) {
 		return 1;
 	}
 
@@ -191,17 +190,13 @@ public abstract class ImgReader implements BlkImgDataSrc
 	 * the specified component. This is, approximately, the ratio of dimensions
 	 * between the reference grid and the component itself, see the 'ImgData'
 	 * interface desription for details.
-	 * 
-	 * @param c
-	 *            The index of the component (between 0 and C-1)
-	 * 
+	 *
+	 * @param c The index of the component (between 0 and C-1)
 	 * @return The vertical subsampling factor of component 'c'
-	 * 
 	 * @see dev.zontreck.harbinger.thirdparty.jj2000.j2k.image.ImgData
 	 */
 	@Override
-	public int getCompSubsY(final int c)
-	{
+	public int getCompSubsY ( final int c ) {
 		return 1;
 	}
 
@@ -209,22 +204,16 @@ public abstract class ImgReader implements BlkImgDataSrc
 	 * Returns the width in pixels of the specified tile-component. This default
 	 * implementation assumes no tiling and no component subsampling (i.e., all
 	 * components, or components, have the same dimensions in pixels).
-	 * 
-	 * @param t
-	 *            Tile index
-	 * 
-	 * @param c
-	 *            The index of the component, from 0 to C-1.
-	 * 
+	 *
+	 * @param t Tile index
+	 * @param c The index of the component, from 0 to C-1.
 	 * @return The width in pixels of component <tt>c</tt> in tile<tt>t</tt>.
 	 */
 	@Override
-	public int getTileCompWidth(final int t, final int c)
-	{
-		if (0 != t)
-		{
-			throw new Error("Asking a tile-component width for a tile index"
-					+ " greater than 0 whereas there is only one tile");
+	public int getTileCompWidth ( final int t , final int c ) {
+		if ( 0 != t ) {
+			throw new Error ( "Asking a tile-component width for a tile index"
+					+ " greater than 0 whereas there is only one tile" );
 		}
 		return this.w;
 	}
@@ -234,22 +223,16 @@ public abstract class ImgReader implements BlkImgDataSrc
 	 * default implementation assumes no tiling and no component subsampling
 	 * (i.e., all components, or components, have the same dimensions in
 	 * pixels).
-	 * 
-	 * @param t
-	 *            The tile index
-	 * 
-	 * @param c
-	 *            The index of the component, from 0 to C-1.
-	 * 
+	 *
+	 * @param t The tile index
+	 * @param c The index of the component, from 0 to C-1.
 	 * @return The height in pixels of component <tt>c</tt> in tile <tt>t</tt>.
 	 */
 	@Override
-	public int getTileCompHeight(final int t, final int c)
-	{
-		if (0 != t)
-		{
-			throw new Error("Asking a tile-component width for a tile index"
-					+ " greater than 0 whereas there is only one tile");
+	public int getTileCompHeight ( final int t , final int c ) {
+		if ( 0 != t ) {
+			throw new Error ( "Asking a tile-component width for a tile index"
+					+ " greater than 0 whereas there is only one tile" );
 		}
 		return this.h;
 	}
@@ -258,15 +241,12 @@ public abstract class ImgReader implements BlkImgDataSrc
 	 * Returns the width in pixels of the specified component in the overall
 	 * image. This default implementation assumes no component, or component,
 	 * subsampling (i.e. all components have the same dimensions in pixels).
-	 * 
-	 * @param c
-	 *            The index of the component, from 0 to C-1.
-	 * 
+	 *
+	 * @param c The index of the component, from 0 to C-1.
 	 * @return The width in pixels of component <tt>c</tt> in the overall image.
 	 */
 	@Override
-	public int getCompImgWidth(final int c)
-	{
+	public int getCompImgWidth ( final int c ) {
 		return this.w;
 	}
 
@@ -274,16 +254,13 @@ public abstract class ImgReader implements BlkImgDataSrc
 	 * Returns the height in pixels of the specified component in the overall
 	 * image. This default implementation assumes no component, or component,
 	 * subsampling (i.e. all components have the same dimensions in pixels).
-	 * 
-	 * @param c
-	 *            The index of the component, from 0 to C-1.
-	 * 
+	 *
+	 * @param c The index of the component, from 0 to C-1.
 	 * @return The height in pixels of component <tt>c</tt> in the overall
-	 *         image.
+	 * image.
 	 */
 	@Override
-	public int getCompImgHeight(final int c)
-	{
+	public int getCompImgHeight ( final int c ) {
 		return this.h;
 	}
 
@@ -292,21 +269,15 @@ public abstract class ImgReader implements BlkImgDataSrc
 	 * IllegalArgumentException is thrown if the coordinates do not correspond
 	 * to a valid tile. This default implementation assumes no tiling so the
 	 * only valid arguments are x=0, y=0.
-	 * 
-	 * @param x
-	 *            The horizontal coordinate of the tile.
-	 * 
-	 * @param y
-	 *            The vertical coordinate of the new tile.
-	 * 
+	 *
+	 * @param x The horizontal coordinate of the tile.
+	 * @param y The vertical coordinate of the new tile.
 	 * @return The new tile index
 	 */
 	@Override
-	public int setTile(final int x, final int y)
-	{
-		if (0 != x || 0 != y)
-		{
-			throw new IllegalArgumentException();
+	public int setTile ( final int x , final int y ) {
+		if ( 0 != x || 0 != y ) {
+			throw new IllegalArgumentException ( );
 		}
 		return 0;
 	}
@@ -316,113 +287,103 @@ public abstract class ImgReader implements BlkImgDataSrc
 	 * columns). A NoNextElementException is thrown if the current tile is the
 	 * last one (i.e. there is no next tile). This default implementation
 	 * assumes no tiling, so NoNextElementException() is always thrown.
-	 * 
+	 *
 	 * @return The new tile index
 	 */
 	@Override
-	public int nextTile()
-	{
-		throw new NoNextElementException();
+	public int nextTile ( ) {
+		throw new NoNextElementException ( );
 	}
 
 	/**
 	 * Returns the coordinates of the current tile. This default implementation
 	 * assumes no-tiling, so (0,0) is returned.
-	 * 
-	 * @param co
-	 *            If not null this object is used to return the information. If
-	 *            null a new one is created and returned.
-	 * 
+	 *
+	 * @param co If not null this object is used to return the information. If
+	 *           null a new one is created and returned.
 	 * @return The current tile's coordinates.
 	 */
 	@Override
-	public Coord getTile(final Coord co)
-	{
-		if (null != co)
-		{
+	public Coord getTile ( final Coord co ) {
+		if ( null != co ) {
 			co.x = 0;
 			co.y = 0;
 			return co;
 		}
-		return new Coord(0, 0);
+		return new Coord ( 0 , 0 );
 	}
 
 	/**
 	 * Returns the index of the current tile, relative to a standard scan-line
 	 * order. This default implementations assumes no tiling, so 0 is always
 	 * returned.
-	 * 
+	 *
 	 * @return The current tile's index (starts at 0).
 	 */
 	@Override
-	public int getTileIdx()
-	{
+	public int getTileIdx ( ) {
 		return 0;
 	}
 
 	/**
 	 * Returns the horizontal coordinate of the upper-left corner of the
 	 * specified component in the current tile.
-	 * 
-	 * @param c
-	 *            The component index.
+	 *
+	 * @param c The component index.
 	 */
 	@Override
-	public int getCompULX(final int c)
-	{
+	public int getCompULX ( final int c ) {
 		return 0;
 	}
 
 	/**
 	 * Returns the vertical coordinate of the upper-left corner of the specified
 	 * component in the current tile.
-	 * 
-	 * @param c
-	 *            The component index.
+	 *
+	 * @param c The component index.
 	 */
 	@Override
-	public int getCompULY(final int c)
-	{
+	public int getCompULY ( final int c ) {
 		return 0;
 	}
 
-	/** Returns the horizontal tile partition offset in the reference grid */
+	/**
+	 * Returns the horizontal tile partition offset in the reference grid
+	 */
 	@Override
-	public int getTilePartULX()
-	{
+	public int getTilePartULX ( ) {
 		return 0;
 	}
 
-	/** Returns the vertical tile partition offset in the reference grid */
+	/**
+	 * Returns the vertical tile partition offset in the reference grid
+	 */
 	@Override
-	public int getTilePartULY()
-	{
+	public int getTilePartULY ( ) {
 		return 0;
 	}
 
 	/**
 	 * Returns the horizontal coordinate of the image origin, the top-left
 	 * corner, in the canvas system, on the reference grid.
-	 * 
+	 *
 	 * @return The horizontal coordinate of the image origin in the canvas
-	 *         system, on the reference grid.
+	 * system, on the reference grid.
 	 */
 	@Override
-	public int getImgULX()
-	{
+	public int getImgULX ( ) {
 		return 0;
 	}
 
 	/**
 	 * Returns the vertical coordinate of the image origin, the top-left corner,
 	 * in the canvas system, on the reference grid.
-	 * 
+	 *
 	 * @return The vertical coordinate of the image origin in the canvas system,
-	 *         on the reference grid.
+	 * on the reference grid.
 	 */
 	@Override
-	public int getImgULY()
-	{
+	public int getImgULY ( ) {
 		return 0;
 	}
 
@@ -430,47 +391,40 @@ public abstract class ImgReader implements BlkImgDataSrc
 	 * Returns the number of tiles in the horizontal and vertical directions.
 	 * This default implementation assumes no tiling, so (1,1) is always
 	 * returned.
-	 * 
-	 * @param co
-	 *            If not null this object is used to return the information. If
-	 *            null a new one is created and returned.
-	 * 
+	 *
+	 * @param co If not null this object is used to return the information. If
+	 *           null a new one is created and returned.
 	 * @return The number of tiles in the horizontal (Coord.x) and vertical
-	 *         (Coord.y) directions.
+	 * (Coord.y) directions.
 	 */
 	@Override
-	public Coord getNumTiles(final Coord co)
-	{
-		if (null != co)
-		{
+	public Coord getNumTiles ( final Coord co ) {
+		if ( null != co ) {
 			co.x = 1;
 			co.y = 1;
 			return co;
 		}
-		return new Coord(1, 1);
+		return new Coord ( 1 , 1 );
 	}
 
 	/**
 	 * Returns the total number of tiles in the image. This default
 	 * implementation assumes no tiling, so 1 is always returned.
-	 * 
+	 *
 	 * @return The total number of tiles in the image.
 	 */
 	@Override
-	public int getNumTiles()
-	{
+	public int getNumTiles ( ) {
 		return 1;
 	}
 
 	/**
 	 * Returns true if the data read was originally signed in the specified
 	 * component, false if not.
-	 * 
-	 * @param c
-	 *            The index of the component, from 0 to C-1.
-	 * 
+	 *
+	 * @param c The index of the component, from 0 to C-1.
 	 * @return true if the data was originally signed, false if not.
 	 */
-	public abstract boolean isOrigSigned(int c);
+	public abstract boolean isOrigSigned ( int c );
 
 }

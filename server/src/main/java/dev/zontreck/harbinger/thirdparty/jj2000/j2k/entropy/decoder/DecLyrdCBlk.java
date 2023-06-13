@@ -43,7 +43,7 @@
  */
 package dev.zontreck.harbinger.thirdparty.jj2000.j2k.entropy.decoder;
 
-import dev.zontreck.harbinger.thirdparty.jj2000.j2k.entropy.*;
+import dev.zontreck.harbinger.thirdparty.jj2000.j2k.entropy.CodedCBlk;
 
 /**
  * This class stores coded (compressed) code-blocks that are organized in
@@ -51,28 +51,35 @@ import dev.zontreck.harbinger.thirdparty.jj2000.j2k.entropy.*;
  * or a subset of all the layers that make up the whole compressed code-block.
  * It is applicable to the decoder engine only. Some data of the coded-block is
  * stored in the super class, see CodedCBlk.
- * 
+ *
  * <p>
  * A code-block may have its progressive attribute set (i.e. the 'prog' flag is
  * true). If a code-block is progressive then it means that more data for it may
  * be obtained for an improved quality. If the progressive flag is false then no
  * more data is available from the source for this code-block.
- * 
+ *
  * @see CodedCBlk
  */
-public class DecLyrdCBlk extends CodedCBlk
-{
+public class DecLyrdCBlk extends CodedCBlk {
 
-	/** The horizontal coordinate of the upper-left corner of the code-block */
+	/**
+	 * The horizontal coordinate of the upper-left corner of the code-block
+	 */
 	public int ulx;
 
-	/** The vertical coordinate of the upper left corner of the code-block */
+	/**
+	 * The vertical coordinate of the upper left corner of the code-block
+	 */
 	public int uly;
 
-	/** The width of the code-block */
+	/**
+	 * The width of the code-block
+	 */
 	public int w;
 
-	/** The height of the code-block */
+	/**
+	 * The height of the code-block
+	 */
 	public int h;
 
 	/**
@@ -81,13 +88,19 @@ public class DecLyrdCBlk extends CodedCBlk
 	 */
 	public int dl;
 
-	/** The progressive flag, false by default (see above). */
+	/**
+	 * The progressive flag, false by default (see above).
+	 */
 	public boolean prog;
 
-	/** The number of layers in the coded data. */
+	/**
+	 * The number of layers in the coded data.
+	 */
 	public int nl;
 
-	/** The index of the first truncation point returned */
+	/**
+	 * The index of the first truncation point returned
+	 */
 	public int ftpIdx;
 
 	/**
@@ -109,20 +122,18 @@ public class DecLyrdCBlk extends CodedCBlk
 
 	/**
 	 * Object information in a string
-	 * 
+	 *
 	 * @return Information in a string
 	 */
 	@Override
-	public String toString()
-	{
+	public String toString ( ) {
 		String str = "Coded code-block (" + this.m + "," + this.n + "): " + this.skipMSBP + " MSB skipped, " + this.dl + " bytes, "
 				+ this.nTrunc + " truncation points, " + this.nl + " layers, progressive=" + this.prog + ", ulx=" + this.ulx
 				+ ", uly=" + this.uly + ", w=" + this.w + ", h=" + this.h + ", ftpIdx=" + this.ftpIdx;
-		if (null != tsLengths)
-		{
+		if ( null != tsLengths ) {
 			str += " {";
-			for (int i = 0; i < this.tsLengths.length; i++)
-				str += " " + this.tsLengths[i];
+			for ( int i = 0 ; i < this.tsLengths.length ; i++ )
+				str += " " + this.tsLengths[ i ];
 			str += " }";
 		}
 		return str;

@@ -10,7 +10,7 @@
  *
  *
  * COPYRIGHT:
- * 
+ *
  * This software module was originally developed by Rapha�l Grosbois and
  * Diego Santa Cruz (Swiss Federal Institute of Technology-EPFL); Joel
  * Askel�f (Ericsson Radio Systems AB); and Bertrand Berthelot, David
@@ -37,51 +37,38 @@
  * using this software module for non JPEG 2000 Standard conforming
  * products. This copyright notice must be included in all copies or
  * derivative works of this software module.
- * 
+ *
  * Copyright (c) 1999/2000 JJ2000 Partners.
  */
 package dev.zontreck.harbinger.thirdparty.jj2000.j2k.encoder;
 
-import dev.zontreck.harbinger.thirdparty.jj2000.j2k.util.*;
+import dev.zontreck.harbinger.thirdparty.jj2000.j2k.util.FacilityManager;
+import dev.zontreck.harbinger.thirdparty.jj2000.j2k.util.ParameterList;
+import dev.zontreck.harbinger.thirdparty.jj2000.j2k.util.StringFormatException;
 
-import java.util.*;
 import java.io.*;
+import java.util.Iterator;
 
 /**
  * This class runs JJ2000's encoder from the command line interface. It parses
  * command-line arguments to fill a ParameterList object which will be provided
  * to an Encoder object.
  */
-public class CmdLnEncoder
-{
-	/** The parameter list (arguments) */
+public class CmdLnEncoder {
+	/**
+	 * The parameter list (arguments)
+	 */
 	private final ParameterList pl;
 
-	/** The default parameter list (arguments) */
+	/**
+	 * The default parameter list (arguments)
+	 */
 	private final ParameterList defpl;
 
-	/** The current encoder object */
-	private Encoder enc;
-
 	/**
-	 * The starting point of the program. It creates a CmdLnEncoder object,
-	 * initializes it, and performs coding.
-	 * 
-	 * @param argv
-	 *            The command line arguments
+	 * The current encoder object
 	 */
-	public static void main(final String[] argv)
-	{
-		if (0 == argv.length)
-		{
-			FacilityManager.getMsgLogger().println(
-					"CmdLnEncoder: JJ2000's JPEG 2000 Encoder\n" + "    use dev.zontreck.harbinger.thirdparty.jj2000.j2k.encoder.CmdLnEncoder -u "
-							+ "to get help\n", 0, 0);
-			System.exit(1);
-		}
-
-		new CmdLnEncoder(argv);
-	}
+	private Encoder enc;
 
 	/**
 	 * Instantiates a command line encoder object, with the 'argv' command line
@@ -89,123 +76,110 @@ public class CmdLnEncoder
 	 * list is empty an IllegalArgumentException is thrown. If an error occurs
 	 * while parsing the arguments error messages are written to stderr and the
 	 * run exit code is set to non-zero, see getExitCode()
-	 * 
-	 * @exception IllegalArgumentException
-	 *                If 'argv' is empty
-	 * 
+	 *
+	 * @throws IllegalArgumentException If 'argv' is empty
 	 * @see Encoder#getExitCode
 	 */
-	public CmdLnEncoder(final String[] argv)
-	{
+	public CmdLnEncoder ( final String[] argv ) {
 		// Initialize default parameters
-		this.defpl = new ParameterList();
-		final String[][] param = ImgEncoder.getAllParameters();
+		this.defpl = new ParameterList ( );
+		final String[][] param = ImgEncoder.getAllParameters ( );
 
-		for (int i = param.length - 1; 0 <= i; i--)
-		{
-			if (null != param[i][3])
-			{
-				this.defpl.put(param[i][0], param[i][3]);
+		for ( int i = param.length - 1 ; 0 <= i ; i-- ) {
+			if ( null != param[ i ][ 3 ] ) {
+				this.defpl.put ( param[ i ][ 0 ] , param[ i ][ 3 ] );
 			}
 		}
 
 		// Create parameter list using defaults
-		this.pl = new ParameterList(this.defpl);
+		this.pl = new ParameterList ( this.defpl );
 
-		if (0 == argv.length)
-		{
-			throw new IllegalArgumentException("No arguments!");
+		if ( 0 == argv.length ) {
+			throw new IllegalArgumentException ( "No arguments!" );
 		}
 
 		// Parse arguments from argv
-		try
-		{
-			this.pl.parseArgs(argv);
-		}
-		catch (final StringFormatException e)
-		{
-			System.err.println("An error occurred while parsing the " + "arguments:\n" + e.getMessage());
+		try {
+			this.pl.parseArgs ( argv );
+		} catch ( final StringFormatException e ) {
+			System.err.println ( "An error occurred while parsing the " + "arguments:\n" + e.getMessage ( ) );
 			return;
 		}
 
 		// Parse the arguments from some file?
-		if (null != pl.getParameter("pfile"))
-		{
+		if ( null != pl.getParameter ( "pfile" ) ) {
 			// Load parameters from file
-			final ParameterList tmpPl = new ParameterList();
+			final ParameterList tmpPl = new ParameterList ( );
 			InputStream is;
-			try
-			{
-				is = new FileInputStream(this.pl.getParameter("pfile"));
-				is = new BufferedInputStream(is);
-				tmpPl.load(is);
-			}
-			catch (final FileNotFoundException e)
-			{
-				System.err.println("Could not load the argument file " + this.pl.getParameter("pfile"));
+			try {
+				is = new FileInputStream ( this.pl.getParameter ( "pfile" ) );
+				is = new BufferedInputStream ( is );
+				tmpPl.load ( is );
+			} catch ( final FileNotFoundException e ) {
+				System.err.println ( "Could not load the argument file " + this.pl.getParameter ( "pfile" ) );
+				return;
+			} catch ( final IOException e ) {
+				System.err.println ( "An error occurred while reading from the " + "argument file "
+						+ this.pl.getParameter ( "pfile" ) );
 				return;
 			}
-			catch (final IOException e)
-			{
-				System.err.println("An error occurred while reading from the " + "argument file "
-						+ this.pl.getParameter("pfile"));
-				return;
+			try {
+				is.close ( );
+			} catch ( final IOException e ) {
+				System.out.println ( "[WARNING] Could not close the argument file" + " after reading" );
 			}
-			try
-			{
-				is.close();
-			}
-			catch (final IOException e)
-			{
-				System.out.println("[WARNING] Could not close the argument file" + " after reading");
-			}
-			Iterator<Object> iterator = tmpPl.keySet().iterator();
+			Iterator<Object> iterator = tmpPl.keySet ( ).iterator ( );
 			String str;
 
-			while (iterator.hasNext())
-			{
-				str = (String) iterator.next();
-				if (null == pl.get(str))
-				{
-					this.pl.put(str, tmpPl.getProperty(str));
+			while ( iterator.hasNext ( ) ) {
+				str = ( String ) iterator.next ( );
+				if ( null == pl.getProperty ( str ) ) {
+					this.pl.put ( str , tmpPl.getProperty ( str ) );
 				}
 			}
 		}
 
 		// **** Check parameters ****
-		try
-		{
-			this.pl.checkList(Encoder.vprfxs, ParameterList.toNameArray(param));
-		}
-		catch (final IllegalArgumentException e)
-		{
-			System.err.println(e.getMessage());
+		try {
+			this.pl.checkList ( Encoder.vprfxs , ParameterList.toNameArray ( param ) );
+		} catch ( final IllegalArgumentException e ) {
+			System.err.println ( e.getMessage ( ) );
 			return;
 		}
 
 		// Instantiate encoder
-		this.enc = new Encoder(this.pl);
-		if (0 != enc.getExitCode())
-		{ 
+		this.enc = new Encoder ( this.pl );
+		if ( 0 != enc.getExitCode ( ) ) {
 			// An error occurred
-			System.exit(this.enc.getExitCode());
+			System.exit ( this.enc.getExitCode ( ) );
 		}
 		// Run the encoder
-		try
-		{
-			this.enc.run();
-		}
-		catch (final Throwable e)
-		{
-			e.printStackTrace();
-		}
-		finally
-		{
-			if (0 != enc.getExitCode())
-			{
+		try {
+			this.enc.run ( );
+		} catch ( final Throwable e ) {
+			e.printStackTrace ( );
+		} finally {
+			if ( 0 != enc.getExitCode ( ) ) {
 				// An error occurred
-				System.exit(this.enc.getExitCode());
+				System.exit ( this.enc.getExitCode ( ) );
 			}
 		}
+	}
+
+	/**
+	 * The starting point of the program. It creates a CmdLnEncoder object,
+	 * initializes it, and performs coding.
+	 *
+	 * @param argv The command line arguments
+	 */
+	public static void main ( final String[] argv ) {
+		if ( 0 == argv.length ) {
+			FacilityManager.getMsgLogger ( ).println (
+					"CmdLnEncoder: JJ2000's JPEG 2000 Encoder\n" + "    use dev.zontreck.harbinger.thirdparty.jj2000.j2k.encoder.CmdLnEncoder -u "
+							+ "to get help\n" , 0 , 0 );
+			System.exit ( 1 );
+		}
+
+		new CmdLnEncoder ( argv );
 	}
 }

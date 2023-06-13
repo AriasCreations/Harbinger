@@ -1,8 +1,8 @@
-/* 
+/*
  * CVS identifier:
- * 
+ *
  * $Id: BitToByteOutput.java,v 1.16 2001/10/17 16:56:59 grosbois Exp $
- * 
+ *
  * Class:                   BitToByteOutput
  *
  * Description:             Adapter to perform bit based output on a byte
@@ -50,26 +50,23 @@ package dev.zontreck.harbinger.thirdparty.jj2000.j2k.entropy.encoder;
  * coding bypass' mode of the entropy coder. This class also delays the output
  * of a trailing 0xFF, since they are synthetized be the decoder.
  */
-class BitToByteOutput
-{
+class BitToByteOutput {
 	/**
-	 * Whether or not predictable termination is requested. This value is
-	 * important when the last byte before termination is an 0xFF
+	 * The alternating sequence of 0's and 1's used for byte padding
 	 */
-	private boolean isPredTerm;
-
-	/** The alternating sequence of 0's and 1's used for byte padding */
 	static final int PAD_SEQ = 0x2A;
-
-	/** Flag that indicates if an FF has been delayed */
+	/**
+	 * Flag that indicates if an FF has been delayed
+	 */
 	boolean delFF;
-
-	/** The byte based output */
+	/**
+	 * The byte based output
+	 */
 	ByteOutputBuffer out;
-
-	/** The bit buffer */
+	/**
+	 * The bit buffer
+	 */
 	int bbuf;
-
 	/**
 	 * The position of the next bit to put in the bit buffer. When it is 7 the
 	 * bit buffer 'bbuf' is empty. The value should always be between 7 and 0
@@ -77,59 +74,54 @@ class BitToByteOutput
 	 * the byte output).
 	 */
 	int bpos = 7;
-
-	/** The number of written bytes (excluding the bit buffer) */
+	/**
+	 * The number of written bytes (excluding the bit buffer)
+	 */
 	int nb;
+	/**
+	 * Whether or not predictable termination is requested. This value is
+	 * important when the last byte before termination is an 0xFF
+	 */
+	private boolean isPredTerm;
 
 	/**
 	 * Instantiates a new 'BitToByteOutput' object that uses 'out' as the
 	 * underlying byte based output.
-	 * 
-	 * @param out
-	 *            The underlying byte based output
+	 *
+	 * @param out The underlying byte based output
 	 */
-	BitToByteOutput(final ByteOutputBuffer out)
-	{
+	BitToByteOutput ( final ByteOutputBuffer out ) {
 		this.out = out;
 	}
 
 	/**
 	 * Writes to the bit stream the symbols contained in the 'symbuf' buffer.
 	 * The least significant bit of each element in 'symbuf'is written.
-	 * 
-	 * @param symbuf
-	 *            The symbols to write
-	 * 
-	 * @param nsym
-	 *            The number of symbols in symbuf
+	 *
+	 * @param symbuf The symbols to write
+	 * @param nsym   The number of symbols in symbuf
 	 */
-	final void writeBits(final int[] symbuf, final int nsym)
-	{
+	final void writeBits ( final int[] symbuf , final int nsym ) {
 		int i;
 		int bbuf, bpos;
 		bbuf = this.bbuf;
 		bpos = this.bpos;
 		// Write symbol by symbol to bit buffer
-		for (i = 0; i < nsym; i++)
-		{
-			bbuf |= (symbuf[i] & 0x01) << (bpos);
+		for ( i = 0; i < nsym ; i++ ) {
+			bbuf |= ( symbuf[ i ] & 0x01 ) << ( bpos );
 			bpos--;
-			if (0 > bpos)
-			{ // Bit buffer is full, write it
-				if (0xFF != bbuf)
-				{ // No bit-stuffing needed
-					if (this.delFF)
-					{ // Output delayed 0xFF if any
-						this.out.write(0xFF);
+			if ( 0 > bpos ) { // Bit buffer is full, write it
+				if ( 0xFF != bbuf ) { // No bit-stuffing needed
+					if ( this.delFF ) { // Output delayed 0xFF if any
+						this.out.write ( 0xFF );
 						this.nb++;
 						this.delFF = false;
 					}
-					this.out.write(bbuf);
+					this.out.write ( bbuf );
 					this.nb++;
 					bpos = 7;
 				}
-				else
-				{ // We need to do bit stuffing on next byte
+				else { // We need to do bit stuffing on next byte
 					this.delFF = true;
 					bpos = 6; // One less bit in next byte
 				}
@@ -143,30 +135,25 @@ class BitToByteOutput
 	/**
 	 * Write a bit to the output. The least significant bit of 'bit' is written
 	 * to the output.
-	 * 
+	 *
 	 * @param bit
 	 */
-	final void writeBit(final int bit)
-	{
-		this.bbuf |= (bit & 0x01) << (this.bpos);
+	final void writeBit ( final int bit ) {
+		this.bbuf |= ( bit & 0x01 ) << ( this.bpos );
 		this.bpos--;
-		if (0 > bpos)
-		{
-			if (0xFF != bbuf)
-			{ // No bit-stuffing needed
-				if (this.delFF)
-				{ // Output delayed 0xFF if any
-					this.out.write(0xFF);
+		if ( 0 > bpos ) {
+			if ( 0xFF != bbuf ) { // No bit-stuffing needed
+				if ( this.delFF ) { // Output delayed 0xFF if any
+					this.out.write ( 0xFF );
 					this.nb++;
 					this.delFF = false;
 				}
 				// Output the bit buffer
-				this.out.write(this.bbuf);
+				this.out.write ( this.bbuf );
 				this.nb++;
 				this.bpos = 7;
 			}
-			else
-			{ // We need to do bit stuffing on next byte
+			else { // We need to do bit stuffing on next byte
 				this.delFF = true;
 				this.bpos = 6; // One less bit in next byte
 			}
@@ -178,45 +165,39 @@ class BitToByteOutput
 	 * Writes the contents of the bit buffer and byte aligns the output by
 	 * filling bits with an alternating sequence of 0's and 1's.
 	 */
-	void flush()
-	{
-		if (this.delFF)
-		{ // There was a bit stuffing
-			if (6 != bpos)
-			{ // Bit buffer is not empty
+	void flush ( ) {
+		if ( this.delFF ) { // There was a bit stuffing
+			if ( 6 != bpos ) { // Bit buffer is not empty
 				// Output delayed 0xFF
-				this.out.write(0xFF);
+				this.out.write ( 0xFF );
 				this.nb++;
 				this.delFF = false;
 				// Pad to byte boundary with an alternating sequence of 0's
 				// and 1's.
-				this.bbuf |= (BitToByteOutput.PAD_SEQ >>> (6 - this.bpos));
+				this.bbuf |= ( BitToByteOutput.PAD_SEQ >>> ( 6 - this.bpos ) );
 				// Output the bit buffer
-				this.out.write(this.bbuf);
+				this.out.write ( this.bbuf );
 				this.nb++;
 				this.bpos = 7;
 				this.bbuf = 0;
 			}
-			else if (this.isPredTerm)
-			{
-				this.out.write(0xFF);
+			else if ( this.isPredTerm ) {
+				this.out.write ( 0xFF );
 				this.nb++;
-				this.out.write(0x2A);
+				this.out.write ( 0x2A );
 				this.nb++;
 				this.bpos = 7;
 				this.bbuf = 0;
 				this.delFF = false;
 			}
 		}
-		else
-		{ // There was no bit stuffing
-			if (7 != bpos)
-			{ // Bit buffer is not empty
+		else { // There was no bit stuffing
+			if ( 7 != bpos ) { // Bit buffer is not empty
 				// Pad to byte boundary with an alternating sequence of 0's and
 				// 1's.
-				this.bbuf |= (BitToByteOutput.PAD_SEQ >>> (6 - this.bpos));
+				this.bbuf |= ( BitToByteOutput.PAD_SEQ >>> ( 6 - this.bpos ) );
 				// Output the bit buffer (bbuf can not be 0xFF)
-				this.out.write(this.bbuf);
+				this.out.write ( this.bbuf );
 				this.nb++;
 				this.bpos = 7;
 				this.bbuf = 0;
@@ -227,14 +208,13 @@ class BitToByteOutput
 	/**
 	 * Terminates the bit stream by calling 'flush()' and then 'reset()'.
 	 * Finally, it returns the number of bytes effectively written.
-	 * 
+	 *
 	 * @return The number of bytes effectively written.
 	 */
-	public int terminate()
-	{
-		this.flush();
+	public int terminate ( ) {
+		this.flush ( );
 		final int savedNb = this.nb;
-		this.reset();
+		this.reset ( );
 		return savedNb;
 	}
 
@@ -243,8 +223,7 @@ class BitToByteOutput
 	 * underlying byte output, and resets the byte count. The underlying byte
 	 * output is NOT reset.
 	 */
-	void reset()
-	{
+	void reset ( ) {
 		this.delFF = false;
 		this.bpos = 7;
 		this.bbuf = 0;
@@ -255,31 +234,27 @@ class BitToByteOutput
 	 * Returns the length, in bytes, of the output bit stream as written by this
 	 * object. If the output bit stream does not have an integer number of bytes
 	 * in length then it is rounded to the next integer.
-	 * 
+	 *
 	 * @return The length, in bytes, of the output bit stream.
 	 */
-	int length()
-	{
-		if (this.delFF)
-		{
+	int length ( ) {
+		if ( this.delFF ) {
 			// If bit buffer is empty we just need 'nb' bytes. If not we need
 			// the delayed FF and the padded bit buffer.
 			return this.nb + 2;
 		}
 		// If the bit buffer is empty, we just need 'nb' bytes. If not, we
 		// add length of the padded bit buffer
-		return this.nb + ((7 == bpos) ? 0 : 1);
+		return this.nb + ( ( 7 == bpos ) ? 0 : 1 );
 	}
 
 	/**
 	 * Set the flag according to whether or not the predictable termination is
 	 * requested.
-	 * 
-	 * @param isPredTerm
-	 *            Whether or not predictable termination is requested.
+	 *
+	 * @param isPredTerm Whether or not predictable termination is requested.
 	 */
-	void setPredTerm(final boolean isPredTerm)
-	{
+	void setPredTerm ( final boolean isPredTerm ) {
 		this.isPredTerm = isPredTerm;
 	}
 }

@@ -85,8 +85,10 @@ public abstract class SynWTFilterInt extends SynWTFilter {
 	 *                 in the outSig array.
 	 * @see SynWTFilter#synthetize_lpf
 	 */
-	public abstract void synthetize_lpf(int[] lowSig, int lowOff, int lowLen, int lowStep, int[] highSig, int highOff,
-										int highLen, int highStep, int[] outSig, int outOff, int outStep);
+	public abstract void synthetize_lpf (
+			int[] lowSig , int lowOff , int lowLen , int lowStep , int[] highSig , int highOff ,
+			int highLen , int highStep , int[] outSig , int outOff , int outStep
+	);
 
 	/**
 	 * The general version of the synthetize_lpf() method, it just calls the
@@ -115,11 +117,14 @@ public abstract class SynWTFilterInt extends SynWTFilter {
 	 *                 in the outSig array.
 	 */
 	@Override
-	public void synthetize_lpf(final Object lowSig, final int lowOff, final int lowLen, final int lowStep, final Object highSig, final int highOff,
-							   final int highLen, final int highStep, final Object outSig, final int outOff, final int outStep) {
+	public void synthetize_lpf (
+			final Object lowSig , final int lowOff , final int lowLen , final int lowStep , final Object highSig , final int highOff ,
+			final int highLen , final int highStep , final Object outSig , final int outOff , final int outStep
+	) {
 
-		this.synthetize_lpf((int[]) lowSig, lowOff, lowLen, lowStep, (int[]) highSig, highOff, highLen, highStep,
-				(int[]) outSig, outOff, outStep);
+		this.synthetize_lpf ( ( int[] ) lowSig , lowOff , lowLen , lowStep , ( int[] ) highSig , highOff , highLen , highStep ,
+				( int[] ) outSig , outOff , outStep
+		);
 	}
 
 	/**
@@ -147,8 +152,10 @@ public abstract class SynWTFilterInt extends SynWTFilter {
 	 *                 in the outSig array.
 	 * @see SynWTFilter#synthetize_hpf
 	 */
-	public abstract void synthetize_hpf(int[] lowSig, int lowOff, int lowLen, int lowStep, int[] highSig, int highOff,
-										int highLen, int highStep, int[] outSig, int outOff, int outStep);
+	public abstract void synthetize_hpf (
+			int[] lowSig , int lowOff , int lowLen , int lowStep , int[] highSig , int highOff ,
+			int highLen , int highStep , int[] outSig , int outOff , int outStep
+	);
 
 	/**
 	 * The general version of the synthetize_hpf() method, it just calls the
@@ -177,11 +184,14 @@ public abstract class SynWTFilterInt extends SynWTFilter {
 	 *                 in the outSig array.
 	 */
 	@Override
-	public void synthetize_hpf(final Object lowSig, final int lowOff, final int lowLen, final int lowStep, final Object highSig, final int highOff,
-							   final int highLen, final int highStep, final Object outSig, final int outOff, final int outStep) {
+	public void synthetize_hpf (
+			final Object lowSig , final int lowOff , final int lowLen , final int lowStep , final Object highSig , final int highOff ,
+			final int highLen , final int highStep , final Object outSig , final int outOff , final int outStep
+	) {
 
-		this.synthetize_hpf((int[]) lowSig, lowOff, lowLen, lowStep, (int[]) highSig, highOff, highLen, highStep,
-				(int[]) outSig, outOff, outStep);
+		this.synthetize_hpf ( ( int[] ) lowSig , lowOff , lowLen , lowStep , ( int[] ) highSig , highOff , highLen , highStep ,
+				( int[] ) outSig , outOff , outStep
+		);
 	}
 
 	/**
@@ -192,7 +202,7 @@ public abstract class SynWTFilterInt extends SynWTFilter {
 	 * @see dev.zontreck.harbinger.thirdparty.jj2000.j2k.image.DataBlk
 	 */
 	@Override
-	public int getDataType() {
+	public int getDataType ( ) {
 		return DataBlk.TYPE_INT;
 	}
 }

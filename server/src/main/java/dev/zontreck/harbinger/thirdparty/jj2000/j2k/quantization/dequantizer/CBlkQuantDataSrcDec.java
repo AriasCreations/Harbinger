@@ -1,8 +1,8 @@
-/* 
+/*
  * CVS identifier:
- * 
+ *
  * $Id: CBlkQuantDataSrcDec.java,v 1.9 2001/09/14 08:58:36 grosbois Exp $
- * 
+ *
  * Class:                   CBlkQuantDataSrcDec
  *
  * Description:             Interface that defines a source of
@@ -44,21 +44,23 @@
  */
 package dev.zontreck.harbinger.thirdparty.jj2000.j2k.quantization.dequantizer;
 
-import dev.zontreck.harbinger.thirdparty.jj2000.j2k.wavelet.synthesis.*;
-import dev.zontreck.harbinger.thirdparty.jj2000.j2k.entropy.decoder.*;
-import dev.zontreck.harbinger.thirdparty.jj2000.j2k.image.*;
+import dev.zontreck.harbinger.thirdparty.jj2000.j2k.entropy.decoder.EntropyDecoder;
+import dev.zontreck.harbinger.thirdparty.jj2000.j2k.image.DataBlk;
+import dev.zontreck.harbinger.thirdparty.jj2000.j2k.wavelet.synthesis.CBlkWTDataSrcDec;
+import dev.zontreck.harbinger.thirdparty.jj2000.j2k.wavelet.synthesis.InvWTData;
+import dev.zontreck.harbinger.thirdparty.jj2000.j2k.wavelet.synthesis.SubbandSyn;
 
 /**
  * This interface defines a source of quantized wavelet coefficients and methods
  * to transfer them in a code-block by code-block basis, fro the decoder side.
  * In each call to 'getCodeBlock()' or 'getInternCodeBlock()' a new code-block
  * is returned.
- * 
- * <P>
+ *
+ * <p>
  * This class is the source of data for the dequantizer. See the 'Dequantizer'
  * class.
- * 
- * <P>
+ *
+ * <p>
  * Code-block data is returned in sign-magnitude representation, instead of the
  * normal two's complement one. Only integral types are used. The sign magnitude
  * representation is more adequate for entropy coding. In sign magnitude
@@ -68,19 +70,18 @@ import dev.zontreck.harbinger.thirdparty.jj2000.j2k.image.*;
  * contain a fractional value of the quantized coefficient. The number 'M' of
  * magnitude bits is communicated in the 'magbits' member variable of the
  * 'CBlkWTData'.
- * 
+ *
  * @see InvWTData
  * @see CBlkWTDataSrcDec
  * @see Dequantizer
  * @see EntropyDecoder
  */
-public interface CBlkQuantDataSrcDec extends InvWTData
-{
+public interface CBlkQuantDataSrcDec extends InvWTData {
 
 	/**
 	 * Returns the specified code-block in the current tile for the specified
 	 * component, as a copy (see below).
-	 * 
+	 *
 	 * <p>
 	 * The returned code-block may be progressive, which is indicated by the
 	 * 'progressive' variable of the returned 'DataBlk' object. If a code-block
@@ -90,50 +91,39 @@ public interface CBlkQuantDataSrcDec extends InvWTData
 	 * could have been received. If the code-block is not progressive then later
 	 * calls to this method for the same code-block will return the exact same
 	 * data values.
-	 * 
+	 *
 	 * <p>
 	 * The data returned by this method is always a copy of the internal data of
 	 * this object, if any, and it can be modified "in place" without any
 	 * problems after being returned. The 'offset' of the returned data is 0,
 	 * and the 'scanw' is the same as the code-block width. See the 'DataBlk'
 	 * class.
-	 * 
+	 *
 	 * <p>
 	 * The 'ulx' and 'uly' members of the returned 'DataBlk' object contain the
 	 * coordinates of the top-left corner of the block, with respect to the
 	 * tile, not the subband.
-	 * 
-	 * @param c
-	 *            The component for which to return the next code-block.
-	 * 
-	 * @param m
-	 *            The vertical index of the code-block to return, in the
-	 *            specified subband.
-	 * 
-	 * @param n
-	 *            The horizontal index of the code-block to return, in the
-	 *            specified subband.
-	 * 
-	 * @param sb
-	 *            The subband in which the code-block to return is.
-	 * 
-	 * @param cblk
-	 *            If non-null this object will be used to return the new
-	 *            code-block. If null a new one will be allocated and returned.
-	 *            If the "data" array of the object is non-null it will be
-	 *            reused, if possible, to return the data.
-	 * 
+	 *
+	 * @param c    The component for which to return the next code-block.
+	 * @param m    The vertical index of the code-block to return, in the
+	 *             specified subband.
+	 * @param n    The horizontal index of the code-block to return, in the
+	 *             specified subband.
+	 * @param sb   The subband in which the code-block to return is.
+	 * @param cblk If non-null this object will be used to return the new
+	 *             code-block. If null a new one will be allocated and returned.
+	 *             If the "data" array of the object is non-null it will be
+	 *             reused, if possible, to return the data.
 	 * @return The next code-block in the current tile for component 'n', or
-	 *         null if all code-blocks for the current tile have been returned.
-	 * 
+	 * null if all code-blocks for the current tile have been returned.
 	 * @see DataBlk
 	 */
-	DataBlk getCodeBlock(int c, int m, int n, SubbandSyn sb, DataBlk cblk);
+	DataBlk getCodeBlock ( int c , int m , int n , SubbandSyn sb , DataBlk cblk );
 
 	/**
 	 * Returns the specified code-block in the current tile for the specified
 	 * component (as a reference or copy).
-	 * 
+	 *
 	 * <p>
 	 * The returned code-block may be progressive, which is indicated by the
 	 * 'progressive' variable of the returned 'DataBlk' object. If a code-block
@@ -143,42 +133,31 @@ public interface CBlkQuantDataSrcDec extends InvWTData
 	 * could have been received. If the code-block is not progressive then later
 	 * calls to this method for the same code-block will return the exact same
 	 * data values.
-	 * 
+	 *
 	 * <p>
 	 * The data returned by this method can be the data in the internal buffer
 	 * of this object, if any, and thus can not be modified by the caller. The
 	 * 'offset' and 'scanw' of the returned data can be arbitrary. See the
 	 * 'DataBlk' class.
-	 * 
+	 *
 	 * <p>
 	 * The 'ulx' and 'uly' members of the returned 'DataBlk' object contain the
 	 * coordinates of the top-left corner of the block, with respect to the
 	 * tile, not the subband.
-	 * 
-	 * @param c
-	 *            The component for which to return the next code-block.
-	 * 
-	 * @param m
-	 *            The vertical index of the code-block to return, in the
-	 *            specified subband.
-	 * 
-	 * @param n
-	 *            The horizontal index of the code-block to return, in the
-	 *            specified subband.
-	 * 
-	 * @param sb
-	 *            The subband in which the code-block to return is.
-	 * 
-	 * @param cblk
-	 *            If non-null this object will be used to return the new
-	 *            code-block. If null a new one will be allocated and returned.
-	 *            If the "data" array of the object is non-null it will be
-	 *            reused, if possible, to return the data.
-	 * 
+	 *
+	 * @param c    The component for which to return the next code-block.
+	 * @param m    The vertical index of the code-block to return, in the
+	 *             specified subband.
+	 * @param n    The horizontal index of the code-block to return, in the
+	 *             specified subband.
+	 * @param sb   The subband in which the code-block to return is.
+	 * @param cblk If non-null this object will be used to return the new
+	 *             code-block. If null a new one will be allocated and returned.
+	 *             If the "data" array of the object is non-null it will be
+	 *             reused, if possible, to return the data.
 	 * @return The next code-block in the current tile for component 'n', or
-	 *         null if all code-blocks for the current tile have been returned.
-	 * 
+	 * null if all code-blocks for the current tile have been returned.
 	 * @see DataBlk
 	 */
-	DataBlk getInternCodeBlock(int c, int m, int n, SubbandSyn sb, DataBlk cblk);
+	DataBlk getInternCodeBlock ( int c , int m , int n , SubbandSyn sb , DataBlk cblk );
 }

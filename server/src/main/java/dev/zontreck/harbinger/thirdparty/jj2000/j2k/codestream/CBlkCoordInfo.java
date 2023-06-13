@@ -10,7 +10,7 @@
  *
  *
  * COPYRIGHT:
- * 
+ *
  * This software module was originally developed by Rapha�l Grosbois and
  * Diego Santa Cruz (Swiss Federal Institute of Technology-EPFL); Joel
  * Askel�f (Ericsson Radio Systems AB); and Bertrand Berthelot, David
@@ -37,53 +37,48 @@
  * using this software module for non JPEG 2000 Standard conforming
  * products. This copyright notice must be included in all copies or
  * derivative works of this software module.
- * 
+ *
  * Copyright (c) 1999/2000 JJ2000 Partners.
  */
 package dev.zontreck.harbinger.thirdparty.jj2000.j2k.codestream;
 
-import dev.zontreck.harbinger.thirdparty.jj2000.j2k.image.*;
+import dev.zontreck.harbinger.thirdparty.jj2000.j2k.image.Coord;
 
 /**
  * This class is used to store the coordinates of code-blocks.
  */
-public class CBlkCoordInfo extends CoordInfo
-{
+public class CBlkCoordInfo extends CoordInfo {
 
-	/** The code-block horizontal and vertical indexes */
+	/**
+	 * The code-block horizontal and vertical indexes
+	 */
 	public Coord idx;
 
 	/**
 	 * Constructor. Creates a CBlkCoordInfo object.
 	 */
-	public CBlkCoordInfo()
-	{
-		idx = new Coord();
+	public CBlkCoordInfo ( ) {
+		idx = new Coord ( );
 	}
 
 	/**
 	 * Constructor. Creates a CBlkCoordInfo object width specified code-block
 	 * vertical and horizontal indexes.
-	 * 
-	 * @param m
-	 *            Code-block vertical index.
-	 * 
-	 * @param n
-	 *            Code-block horizontal index.
+	 *
+	 * @param m Code-block vertical index.
+	 * @param n Code-block horizontal index.
 	 */
-	public CBlkCoordInfo(final int m, final int n)
-	{
-		idx = new Coord(n, m);
+	public CBlkCoordInfo ( final int m , final int n ) {
+		idx = new Coord ( n , m );
 	}
 
 	/**
 	 * Returns code-block's information in a String
-	 * 
+	 *
 	 * @return String with code-block's information
 	 */
 	@Override
-	public String toString()
-	{
-		return super.toString() + ",idx=" + this.idx;
+	public String toString ( ) {
+		return super.toString ( ) + ",idx=" + this.idx;
 	}
 }

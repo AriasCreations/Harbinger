@@ -1,7 +1,7 @@
 /*
  * CVS Identifier:
  *
- * $Id: ImgDataConverter.java,v 1.13 2001/02/27 19:16:03 grosbois Exp $ 
+ * $Id: ImgDataConverter.java,v 1.13 2001/02/27 19:16:03 grosbois Exp $
  *
  * Interface:           ImgDataConverter
  *
@@ -11,7 +11,7 @@
  *
  *
  * COPYRIGHT:
- * 
+ *
  * This software module was originally developed by Rapha�l Grosbois and
  * Diego Santa Cruz (Swiss Federal Institute of Technology-EPFL); Joel
  * Askel�f (Ericsson Radio Systems AB); and Bertrand Berthelot, David
@@ -38,7 +38,7 @@
  * using this software module for non JPEG 2000 Standard conforming
  * products. This copyright notice must be included in all copies or
  * derivative works of this software module.
- * 
+ *
  * Copyright (c) 1999/2000 JJ2000 Partners.
  */
 package dev.zontreck.harbinger.thirdparty.jj2000.j2k.image;
@@ -53,38 +53,34 @@ package dev.zontreck.harbinger.thirdparty.jj2000.j2k.image;
  * 'ImgDataAdapter' class that is the superclass of this one, so they don't need
  * to be reimplemented by subclasses.
  */
-public class ImgDataConverter extends ImgDataAdapter implements BlkImgDataSrc
-{
+public class ImgDataConverter extends ImgDataAdapter implements BlkImgDataSrc {
 
+	/**
+	 * The source of image data
+	 */
+	private final BlkImgDataSrc src;
 	/**
 	 * The block used to request data from the source in the case that a
 	 * conversion seems necessary. It can be either int or float at
 	 * initialization time. It will be checked (and corrected if necessary) by
 	 * the source whenever necessary
 	 */
-	private DataBlk srcBlk = new DataBlkInt();
-
-	/** The source of image data */
-	private final BlkImgDataSrc src;
-
-	/** The number of fraction bits in the casted ints */
+	private DataBlk srcBlk = new DataBlkInt ( );
+	/**
+	 * The number of fraction bits in the casted ints
+	 */
 	private int fp;
 
 	/**
 	 * Constructs a new ImgDataConverter object that operates on the specified
 	 * source of image data.
-	 * 
-	 * @param imgSrc
-	 *            The source from where to get the data to be transformed
-	 * 
-	 * @param fp
-	 *            The number of fraction bits in the casted ints
-	 * 
+	 *
+	 * @param imgSrc The source from where to get the data to be transformed
+	 * @param fp     The number of fraction bits in the casted ints
 	 * @see BlkImgDataSrc
 	 */
-	public ImgDataConverter(final BlkImgDataSrc imgSrc, final int fp)
-	{
-		super(imgSrc);
+	public ImgDataConverter ( final BlkImgDataSrc imgSrc , final int fp ) {
+		super ( imgSrc );
 		this.src = imgSrc;
 		this.fp = fp;
 	}
@@ -92,15 +88,12 @@ public class ImgDataConverter extends ImgDataAdapter implements BlkImgDataSrc
 	/**
 	 * Constructs a new ImgDataConverter object that operates on the specified
 	 * source of image data.
-	 * 
-	 * @param imgSrc
-	 *            The source from where to get the data to be transformed
-	 * 
+	 *
+	 * @param imgSrc The source from where to get the data to be transformed
 	 * @see BlkImgDataSrc
 	 */
-	public ImgDataConverter(final BlkImgDataSrc imgSrc)
-	{
-		super(imgSrc);
+	public ImgDataConverter ( final BlkImgDataSrc imgSrc ) {
+		super ( imgSrc );
 		this.src = imgSrc;
 		this.fp = 0;
 	}
@@ -112,16 +105,13 @@ public class ImgDataConverter extends ImgDataAdapter implements BlkImgDataSrc
 	 * for fixed-point values with 2 fractional bits, 2 is returned. For
 	 * floating-point data this value does not apply and 0 should be returned.
 	 * Position 0 is the position of the least significant bit in the data.
-	 * 
-	 * @param c
-	 *            The index of the component.
-	 * 
+	 *
+	 * @param c The index of the component.
 	 * @return The position of the fixed-point, which is the same as the number
-	 *         of fractional bits.
+	 * of fractional bits.
 	 */
 	@Override
-	public int getFixedPoint(final int c)
-	{
+	public int getFixedPoint ( final int c ) {
 		return this.fp;
 	}
 
@@ -131,46 +121,41 @@ public class ImgDataConverter extends ImgDataAdapter implements BlkImgDataSrc
 	 * 'transfer type' specified in the block given as argument. The data is
 	 * returned, as a copy of the internal data, therefore the returned data can
 	 * be modified "in place".
-	 * 
-	 * <P>
+	 *
+	 * <p>
 	 * The rectangular area to return is specified by the 'ulx', 'uly', 'w' and
 	 * 'h' members of the 'blk' argument, relative to the current tile. These
 	 * members are not modified by this method. The 'offset' of the returned
 	 * data is 0, and the 'scanw' is the same as the block's width. See the
 	 * 'DataBlk' class.
-	 * 
-	 * <P>
+	 *
+	 * <p>
 	 * This method, in general, is less efficient than the 'getInternCompData()'
 	 * method since, in general, it copies the data. However if the array of
 	 * returned data is to be modified by the caller then this method is
 	 * preferable.
-	 * 
-	 * <P>
+	 *
+	 * <p>
 	 * If the data array in 'blk' is 'null', then a new one is created. If the
 	 * data array is not 'null' then it is reused, and it must be large enough
 	 * to contain the block's data. Otherwise an 'ArrayStoreException' or an
 	 * 'IndexOutOfBoundsException' is thrown by the Java system.
-	 * 
-	 * <P>
+	 *
+	 * <p>
 	 * The returned data may have its 'progressive' attribute set. In this case
 	 * the returned data is only an approximation of the "final" data.
-	 * 
-	 * @param blk
-	 *            Its coordinates and dimensions specify the area to return,
+	 *
+	 * @param blk Its coordinates and dimensions specify the area to return,
 	 *            relative to the current tile. If it contains a non-null data
 	 *            array, then it must be large enough. If it contains a null
 	 *            data array a new one is created. Some fields in this object
 	 *            are modified to return the data.
-	 * 
-	 * @param c
-	 *            The index of the component from which to get the data.
-	 * 
+	 * @param c   The index of the component from which to get the data.
 	 * @see #getInternCompData
 	 */
 	@Override
-	public DataBlk getCompData(final DataBlk blk, final int c)
-	{
-		return this.getData(blk, c, false);
+	public DataBlk getCompData ( final DataBlk blk , final int c ) {
+		return this.getData ( blk , c , false );
 	}
 
 	/**
@@ -179,24 +164,24 @@ public class ImgDataConverter extends ImgDataAdapter implements BlkImgDataSrc
 	 * 'transfer type' defined in the block given as argument. The data is
 	 * returned, as a reference to the internal data, if any, instead of as a
 	 * copy, therefore the returned data should not be modified.
-	 * 
-	 * <P>
+	 *
+	 * <p>
 	 * The rectangular area to return is specified by the 'ulx', 'uly', 'w' and
 	 * 'h' members of the 'blk' argument, relative to the current tile. These
 	 * members are not modified by this method. The 'offset' and 'scanw' of the
 	 * returned data can be arbitrary. See the 'DataBlk' class.
-	 * 
-	 * <P>
+	 *
+	 * <p>
 	 * If source data and expected data (blk) are using the same type, block
 	 * returned without any modification. If not appropriate cast is used.
-	 * 
-	 * <P>
+	 *
+	 * <p>
 	 * This method, in general, is more efficient than the 'getCompData()'
 	 * method since it may not copy the data. However if the array of returned
 	 * data is to be modified by the caller then the other method is probably
 	 * preferable.
-	 * 
-	 * <P>
+	 *
+	 * <p>
 	 * If the data array in <tt>blk</tt> is <tt>null</tt>, then a new one is
 	 * created if necessary. The implementation of this interface may choose to
 	 * return the same array or a new one, depending on what is more efficient.
@@ -204,63 +189,46 @@ public class ImgDataConverter extends ImgDataAdapter implements BlkImgDataSrc
 	 * not be considered to contain the returned data, a new array may have been
 	 * created. Instead, get the array from <tt>blk</tt> after the method has
 	 * returned.
-	 * 
-	 * <P>
+	 *
+	 * <p>
 	 * The returned data may have its 'progressive' attribute set. In this case
 	 * the returned data is only an approximation of the "final" data.
-	 * 
-	 * @param blk
-	 *            Its coordinates and dimensions specify the area to return,
+	 *
+	 * @param blk Its coordinates and dimensions specify the area to return,
 	 *            relative to the current tile. Some fields in this object are
 	 *            modified to return the data.
-	 * 
-	 * @param c
-	 *            The index of the component from which to get the data.
-	 * 
+	 * @param c   The index of the component from which to get the data.
 	 * @return The requested DataBlk
-	 * 
 	 * @see #getCompData
 	 */
 	@Override
-	public final DataBlk getInternCompData(final DataBlk blk, final int c)
-	{
-		return this.getData(blk, c, true);
+	public final DataBlk getInternCompData ( final DataBlk blk , final int c ) {
+		return this.getData ( blk , c , true );
 	}
 
 	/**
 	 * Implements the 'getInternCompData()' and the 'getCompData()' methods. The
 	 * 'intern' flag signals which of the two methods should run as.
-	 * 
-	 * @param blk
-	 *            The data block to get.
-	 * 
-	 * @param c
-	 *            The index of the component from which to get the data.
-	 * 
-	 * @param intern
-	 *            If true behave as 'getInternCompData(). Otherwise behave as
-	 *            'getCompData()'
-	 * 
+	 *
+	 * @param blk    The data block to get.
+	 * @param c      The index of the component from which to get the data.
+	 * @param intern If true behave as 'getInternCompData(). Otherwise behave as
+	 *               'getCompData()'
 	 * @return The requested data block
-	 * 
 	 * @see #getInternCompData
-	 * 
 	 * @see #getCompData
 	 */
-	private DataBlk getData(final DataBlk blk, final int c, final boolean intern)
-	{
+	private DataBlk getData ( final DataBlk blk , final int c , final boolean intern ) {
 		final DataBlk reqBlk; // Reference to block used in request to source
 
 		// Keep request data type
-		final int otype = blk.getDataType();
+		final int otype = blk.getDataType ( );
 
-		if (otype == this.srcBlk.getDataType())
-		{
+		if ( otype == this.srcBlk.getDataType ( ) ) {
 			// Probably requested type is same as source type
 			reqBlk = blk;
 		}
-		else
-		{
+		else {
 			// Probably requested type is not the same as source type
 			reqBlk = this.srcBlk;
 			// We need to copy requested coordinates and size
@@ -271,23 +239,20 @@ public class ImgDataConverter extends ImgDataAdapter implements BlkImgDataSrc
 		}
 
 		// Get source data block
-		if (intern)
-		{
+		if ( intern ) {
 			// We can use the intern variant
-			this.srcBlk = this.src.getInternCompData(reqBlk, c);
+			this.srcBlk = this.src.getInternCompData ( reqBlk , c );
 		}
-		else
-		{
+		else {
 			// Do not use the intern variant. Note that this is not optimal
 			// since if we are going to convert below then we could have used
 			// the intern variant. But there is currently no way to know if we
 			// will need to do conversion or not before getting the data.
-			this.srcBlk = this.src.getCompData(reqBlk, c);
+			this.srcBlk = this.src.getCompData ( reqBlk , c );
 		}
 
 		// Check if casting is needed
-		if (this.srcBlk.getDataType() == otype)
-		{
+		if ( this.srcBlk.getDataType ( ) == otype ) {
 			return this.srcBlk;
 		}
 
@@ -297,48 +262,40 @@ public class ImgDataConverter extends ImgDataAdapter implements BlkImgDataSrc
 		final int w = this.srcBlk.w;
 		final int h = this.srcBlk.h;
 
-		switch (otype)
-		{
+		switch ( otype ) {
 			case DataBlk.TYPE_FLOAT: // Cast INT -> FLOAT
 
 				float[] farr;
 				final int[] srcIArr;
 
 				// Get data array from resulting blk
-				farr = (float[]) blk.getData();
-				if (null == farr || farr.length < w * h)
-				{
-					farr = new float[w * h];
-					blk.setData(farr);
+				farr = ( float[] ) blk.getData ( );
+				if ( null == farr || farr.length < w * h ) {
+					farr = new float[ w * h ];
+					blk.setData ( farr );
 				}
 
 				blk.scanw = this.srcBlk.w;
 				blk.offset = 0;
 				blk.progressive = this.srcBlk.progressive;
-				srcIArr = (int[]) this.srcBlk.getData();
+				srcIArr = ( int[] ) this.srcBlk.getData ( );
 
 				// Cast data from source to blk
-				this.fp = this.src.getFixedPoint(c);
-				if (0 != fp)
-				{
-					mult = 1.0f / (1 << this.fp);
-					for (i = h - 1, k = w * h - 1, kSrc = this.srcBlk.offset + (h - 1) * this.srcBlk.scanw + w - 1; 0 <= i; i--)
-					{
-						for (kmin = k - w; k > kmin; k--, kSrc--)
-						{
-							farr[k] = ((srcIArr[kSrc] * mult));
+				this.fp = this.src.getFixedPoint ( c );
+				if ( 0 != fp ) {
+					mult = 1.0f / ( 1 << this.fp );
+					for ( i = h - 1 , k = w * h - 1 , kSrc = this.srcBlk.offset + ( h - 1 ) * this.srcBlk.scanw + w - 1; 0 <= i ; i-- ) {
+						for ( kmin = k - w; k > kmin ; k-- , kSrc-- ) {
+							farr[ k ] = ( ( srcIArr[ kSrc ] * mult ) );
 						}
 						// Jump to geggining of next line in source
 						kSrc -= this.srcBlk.scanw - w;
 					}
 				}
-				else
-				{
-					for (i = h - 1, k = w * h - 1, kSrc = this.srcBlk.offset + (h - 1) * this.srcBlk.scanw + w - 1; 0 <= i; i--)
-					{
-						for (kmin = k - w; k > kmin; k--, kSrc--)
-						{
-							farr[k] = srcIArr[kSrc];
+				else {
+					for ( i = h - 1 , k = w * h - 1 , kSrc = this.srcBlk.offset + ( h - 1 ) * this.srcBlk.scanw + w - 1; 0 <= i ; i-- ) {
+						for ( kmin = k - w; k > kmin ; k-- , kSrc-- ) {
+							farr[ k ] = srcIArr[ kSrc ];
 						}
 						// Jump to geggining of next line in source
 						kSrc -= this.srcBlk.scanw - w;
@@ -351,51 +308,40 @@ public class ImgDataConverter extends ImgDataAdapter implements BlkImgDataSrc
 				final float[] srcFArr;
 
 				// Get data array from resulting blk
-				iarr = (int[]) blk.getData();
-				if (null == iarr || iarr.length < w * h)
-				{
-					iarr = new int[w * h];
-					blk.setData(iarr);
+				iarr = ( int[] ) blk.getData ( );
+				if ( null == iarr || iarr.length < w * h ) {
+					iarr = new int[ w * h ];
+					blk.setData ( iarr );
 				}
 				blk.scanw = this.srcBlk.w;
 				blk.offset = 0;
 				blk.progressive = this.srcBlk.progressive;
-				srcFArr = (float[]) this.srcBlk.getData();
+				srcFArr = ( float[] ) this.srcBlk.getData ( );
 
 				// Cast data from source to blk
-				if (0 != fp)
-				{
+				if ( 0 != fp ) {
 					mult = 1 << this.fp;
-					for (i = h - 1, k = w * h - 1, kSrc = this.srcBlk.offset + (h - 1) * this.srcBlk.scanw + w - 1; 0 <= i; i--)
-					{
-						for (kmin = k - w; k > kmin; k--, kSrc--)
-						{
-							if (0.0f < srcFArr[kSrc])
-							{
-								iarr[k] = (int) (srcFArr[kSrc] * mult + 0.5f);
+					for ( i = h - 1 , k = w * h - 1 , kSrc = this.srcBlk.offset + ( h - 1 ) * this.srcBlk.scanw + w - 1; 0 <= i ; i-- ) {
+						for ( kmin = k - w; k > kmin ; k-- , kSrc-- ) {
+							if ( 0.0f < srcFArr[ kSrc ] ) {
+								iarr[ k ] = ( int ) ( srcFArr[ kSrc ] * mult + 0.5f );
 							}
-							else
-							{
-								iarr[k] = (int) (srcFArr[kSrc] * mult - 0.5f);
+							else {
+								iarr[ k ] = ( int ) ( srcFArr[ kSrc ] * mult - 0.5f );
 							}
 						}
 						// Jump to geggining of next line in source
 						kSrc -= this.srcBlk.scanw - w;
 					}
 				}
-				else
-				{
-					for (i = h - 1, k = w * h - 1, kSrc = this.srcBlk.offset + (h - 1) * this.srcBlk.scanw + w - 1; 0 <= i; i--)
-					{
-						for (kmin = k - w; k > kmin; k--, kSrc--)
-						{
-							if (0.0f < srcFArr[kSrc])
-							{
-								iarr[k] = (int) (srcFArr[kSrc] + 0.5f);
+				else {
+					for ( i = h - 1 , k = w * h - 1 , kSrc = this.srcBlk.offset + ( h - 1 ) * this.srcBlk.scanw + w - 1; 0 <= i ; i-- ) {
+						for ( kmin = k - w; k > kmin ; k-- , kSrc-- ) {
+							if ( 0.0f < srcFArr[ kSrc ] ) {
+								iarr[ k ] = ( int ) ( srcFArr[ kSrc ] + 0.5f );
 							}
-							else
-							{
-								iarr[k] = (int) (srcFArr[kSrc] - 0.5f);
+							else {
+								iarr[ k ] = ( int ) ( srcFArr[ kSrc ] - 0.5f );
 							}
 						}
 						// Jump to geggining of next line in source
@@ -404,7 +350,7 @@ public class ImgDataConverter extends ImgDataAdapter implements BlkImgDataSrc
 				}
 				break; // End cast FLOAT -> INT
 			default:
-				throw new IllegalArgumentException("Only integer and float data are supported by JJ2000");
+				throw new IllegalArgumentException ( "Only integer and float data are supported by JJ2000" );
 		}
 		return blk;
 	}

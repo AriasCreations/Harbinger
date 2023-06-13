@@ -42,31 +42,34 @@
  */
 package dev.zontreck.harbinger.thirdparty.jj2000.j2k.quantization.dequantizer;
 
-import dev.zontreck.harbinger.thirdparty.jj2000.j2k.image.invcomptransf.*;
-import dev.zontreck.harbinger.thirdparty.jj2000.j2k.wavelet.synthesis.*;
-import dev.zontreck.harbinger.thirdparty.jj2000.j2k.decoder.*;
-import dev.zontreck.harbinger.thirdparty.jj2000.j2k.wavelet.*;
-import dev.zontreck.harbinger.thirdparty.jj2000.j2k.image.*;
+import dev.zontreck.harbinger.thirdparty.jj2000.j2k.decoder.DecoderSpecs;
+import dev.zontreck.harbinger.thirdparty.jj2000.j2k.image.CompTransfSpec;
+import dev.zontreck.harbinger.thirdparty.jj2000.j2k.image.invcomptransf.InvCompTransf;
+import dev.zontreck.harbinger.thirdparty.jj2000.j2k.wavelet.Subband;
+import dev.zontreck.harbinger.thirdparty.jj2000.j2k.wavelet.synthesis.CBlkWTDataSrcDec;
+import dev.zontreck.harbinger.thirdparty.jj2000.j2k.wavelet.synthesis.MultiResImgDataAdapter;
+import dev.zontreck.harbinger.thirdparty.jj2000.j2k.wavelet.synthesis.SubbandSyn;
+import dev.zontreck.harbinger.thirdparty.jj2000.j2k.wavelet.synthesis.SynWTFilterSpec;
 
 /**
  * This is the abstract class from which all dequantizers must inherit. This
  * class has the concept of a current tile and all operations are performed on
  * the current tile.
- * 
+ *
  * <p>
  * This class provides default implemenations for most of the methods (wherever
  * it makes sense), under the assumption that the image and component
  * dimensions, and the tiles, are not modifed by the dequantizer. If that is not
  * the case for a particular implementation then the methods should be
  * overriden.
- * 
+ *
  * <p>
  * Sign magnitude representation is used (instead of two's complement) for the
  * input data. The most significant bit is used for the sign (0 if positive, 1
  * if negative). Then the magnitude of the quantized coefficient is stored in
  * the next most significat bits. The most significant magnitude bit corresponds
  * to the most significant bit-plane and so on.
- * 
+ *
  * <p>
  * The output data is either in floating-point, or in fixed-point two's
  * complement. In case of floating-point data the the value returned by
@@ -75,10 +78,11 @@ import dev.zontreck.harbinger.thirdparty.jj2000.j2k.image.*;
  * and all operations must be performed accordingly. Each component may have a
  * different number of fractional bits.
  */
-public abstract class Dequantizer extends MultiResImgDataAdapter implements CBlkWTDataSrcDec
-{
+public abstract class Dequantizer extends MultiResImgDataAdapter implements CBlkWTDataSrcDec {
 
-	/** The prefix for dequantizer options: 'Q' */
+	/**
+	 * The prefix for dequantizer options: 'Q'
+	 */
 	public static final char OPT_PREFIX = 'Q';
 
 	/**
@@ -86,121 +90,42 @@ public abstract class Dequantizer extends MultiResImgDataAdapter implements CBlk
 	 * start with 'Q'
 	 */
 	private static final String[][] pinfo = null;
-
+	/**
+	 * The inverse component transformation specifications
+	 */
+	private final CompTransfSpec cts;
+	/**
+	 * Reference to the wavelet filter specifications
+	 */
+	private final SynWTFilterSpec wfs;
 	/**
 	 * The entropy decoder from where to get the quantized data (the source).
 	 */
 	protected CBlkQuantDataSrcDec src;
-
-	/** The "range bits" for each transformed component */
+	/**
+	 * The "range bits" for each transformed component
+	 */
 	protected int[] rb;
-
-	/** The "range bits" for each un-transformed component */
+	/**
+	 * The "range bits" for each un-transformed component
+	 */
 	protected int[] utrb;
-
-	/** The inverse component transformation specifications */
-	private final CompTransfSpec cts;
-
-	/** Reference to the wavelet filter specifications */
-	private final SynWTFilterSpec wfs;
 
 	/**
 	 * Initializes the source of compressed data.
-	 * 
-	 * @param src
-	 *            From where to obtain the quantized data.
 	 *
+	 * @param src From where to obtain the quantized data.
 	 * @see #getNomRangeBits
 	 */
-	protected Dequantizer(final CBlkQuantDataSrcDec src, final int[] utrb, final DecoderSpecs decSpec)
-	{
-		super(src);
-		if (utrb.length != src.getNumComps())
-		{
-			throw new IllegalArgumentException();
+	protected Dequantizer ( final CBlkQuantDataSrcDec src , final int[] utrb , final DecoderSpecs decSpec ) {
+		super ( src );
+		if ( utrb.length != src.getNumComps ( ) ) {
+			throw new IllegalArgumentException ( );
 		}
 		this.src = src;
 		this.utrb = utrb;
 		cts = decSpec.cts;
 		wfs = decSpec.wfs;
-	}
-
-	/**
-	 * Returns the number of bits, referred to as the "range bits",
-	 * corresponding to the nominal range of the data in the specified
-	 * component.
-	 * 
-	 * <p>
-	 * The returned value corresponds to the nominal dynamic range of the
-	 * reconstructed image data, not of the wavelet coefficients themselves.
-	 * This is because different subbands have different gains and thus
-	 * different nominal ranges. To have an idea of the nominal range in each
-	 * subband the subband analysis gain value from the subband tree structure,
-	 * returned by the getSynSubbandTree() method, can be used. See the Subband
-	 * class for more details.
-	 * 
-	 * <p>
-	 * If this number is <i>b</b> then for unsigned data the nominal range is
-	 * between 0 and 2^b-1, and for signed data it is between -2^(b-1) and
-	 * 2^(b-1)-1.
-	 * 
-	 * @param c
-	 *            The index of the component
-	 * 
-	 * @return The number of bits corresponding to the nominal range of the
-	 *         data.
-	 * 
-	 * @see Subband
-	 */
-	@Override
-	public int getNomRangeBits(final int c)
-	{
-		return this.rb[c];
-	}
-
-	/**
-	 * Returns the subband tree, for the specified tile-component. This method
-	 * returns the root element of the subband tree structure, see Subband and
-	 * SubbandSyn. The tree comprises all the available resolution levels.
-	 * 
-	 * <p>
-	 * The number of magnitude bits ('magBits' member variable) for each subband
-	 * may have not been not initialized (it depends on the actual dequantizer
-	 * and its implementation). However, they are not necessary for the
-	 * subsequent steps in the decoder chain.
-	 * 
-	 * @param t
-	 *            The index of the tile, from 0 to T-1.
-	 * 
-	 * @param c
-	 *            The index of the component, from 0 to C-1.
-	 * 
-	 * @return The root of the tree structure.
-	 */
-	@Override
-	public SubbandSyn getSynSubbandTree(final int t, final int c)
-	{
-		return this.src.getSynSubbandTree(t, c);
-	}
-
-	/**
-	 * Returns the horizontal code-block partition origin. Allowable values are
-	 * 0 and 1, nothing else.
-	 */
-	@Override
-	public int getCbULX()
-	{
-		return this.src.getCbULX();
-	}
-
-	/**
-	 * Returns the vertical code-block partition origin. Allowable values are 0
-	 * and 1, nothing else.
-	 */
-	@Override
-	public int getCbULY()
-	{
-		return this.src.getCbULY();
 	}
 
 	/**
@@ -212,78 +137,134 @@ public abstract class Dequantizer extends MultiResImgDataAdapter implements CBlk
 	 * 'null', in which case it is assumed that there is no synopsis or
 	 * description of the option, respectively. Null may be returned if no
 	 * options are supported.
-	 * 
+	 *
 	 * @return the options name, their synopsis and their explanation, or null
-	 *         if no options are supported.
+	 * if no options are supported.
 	 */
-	public static String[][] getParameterInfo()
-	{
+	public static String[][] getParameterInfo ( ) {
 		return Dequantizer.pinfo;
+	}
+
+	/**
+	 * Returns the number of bits, referred to as the "range bits",
+	 * corresponding to the nominal range of the data in the specified
+	 * component.
+	 *
+	 * <p>
+	 * The returned value corresponds to the nominal dynamic range of the
+	 * reconstructed image data, not of the wavelet coefficients themselves.
+	 * This is because different subbands have different gains and thus
+	 * different nominal ranges. To have an idea of the nominal range in each
+	 * subband the subband analysis gain value from the subband tree structure,
+	 * returned by the getSynSubbandTree() method, can be used. See the Subband
+	 * class for more details.
+	 *
+	 * <p>
+	 * If this number is <i>b</b> then for unsigned data the nominal range is
+	 * between 0 and 2^b-1, and for signed data it is between -2^(b-1) and
+	 * 2^(b-1)-1.
+	 *
+	 * @param c The index of the component
+	 * @return The number of bits corresponding to the nominal range of the
+	 * data.
+	 * @see Subband
+	 */
+	@Override
+	public int getNomRangeBits ( final int c ) {
+		return this.rb[ c ];
+	}
+
+	/**
+	 * Returns the subband tree, for the specified tile-component. This method
+	 * returns the root element of the subband tree structure, see Subband and
+	 * SubbandSyn. The tree comprises all the available resolution levels.
+	 *
+	 * <p>
+	 * The number of magnitude bits ('magBits' member variable) for each subband
+	 * may have not been not initialized (it depends on the actual dequantizer
+	 * and its implementation). However, they are not necessary for the
+	 * subsequent steps in the decoder chain.
+	 *
+	 * @param t The index of the tile, from 0 to T-1.
+	 * @param c The index of the component, from 0 to C-1.
+	 * @return The root of the tree structure.
+	 */
+	@Override
+	public SubbandSyn getSynSubbandTree ( final int t , final int c ) {
+		return this.src.getSynSubbandTree ( t , c );
+	}
+
+	/**
+	 * Returns the horizontal code-block partition origin. Allowable values are
+	 * 0 and 1, nothing else.
+	 */
+	@Override
+	public int getCbULX ( ) {
+		return this.src.getCbULX ( );
+	}
+
+	/**
+	 * Returns the vertical code-block partition origin. Allowable values are 0
+	 * and 1, nothing else.
+	 */
+	@Override
+	public int getCbULY ( ) {
+		return this.src.getCbULY ( );
 	}
 
 	/**
 	 * Changes the current tile, given the new indexes. An
 	 * IllegalArgumentException is thrown if the indexes do not correspond to a
 	 * valid tile.
-	 * 
+	 *
 	 * <p>
 	 * This default implementation changes the tile in the source and
 	 * re-initializes properly component transformation variables..
-	 * 
-	 * @param x
-	 *            The horizontal index of the tile.
-	 * 
-	 * @param y
-	 *            The vertical index of the new tile.
-	 * 
+	 *
+	 * @param x The horizontal index of the tile.
+	 * @param y The vertical index of the new tile.
 	 * @return The new tile index
 	 */
 	@Override
-	public int setTile(final int x, final int y)
-	{
-		this.tIdx = this.src.setTile(x, y);
+	public int setTile ( final int x , final int y ) {
+		this.tIdx = this.src.setTile ( x , y );
 
 		// initializations
 		int cttype = 0;
-		if (InvCompTransf.NONE == ((Integer) cts.getTileDef(tIdx)).intValue())
+		if ( InvCompTransf.NONE == ( ( Integer ) cts.getTileDef ( tIdx ) ).intValue ( ) )
 			cttype = InvCompTransf.NONE;
-		else
-		{
-			final int nc = 3 < src.getNumComps() ? 3 : this.src.getNumComps();
+		else {
+			final int nc = 3 < src.getNumComps ( ) ? 3 : this.src.getNumComps ( );
 			int rev = 0;
-			for (int c = 0; c < nc; c++)
-				rev += (this.wfs.isReversible(this.tIdx, c) ? 1 : 0);
-			if (3 == rev)
-			{
+			for ( int c = 0 ; c < nc ; c++ )
+				rev += ( this.wfs.isReversible ( this.tIdx , c ) ? 1 : 0 );
+			if ( 3 == rev ) {
 				// All WT are reversible
 				cttype = InvCompTransf.INV_RCT;
 			}
-			else if (0 == rev)
-			{
+			else if ( 0 == rev ) {
 				// All WT irreversible
 				cttype = InvCompTransf.INV_ICT;
 			}
-			else
-			{
+			else {
 				// Error
-				throw new IllegalArgumentException("Wavelet transformation and component transformation"
-						+ " not coherent in tile" + this.tIdx);
+				throw new IllegalArgumentException ( "Wavelet transformation and component transformation"
+						+ " not coherent in tile" + this.tIdx );
 			}
 		}
 
-		switch (cttype)
-		{
+		switch ( cttype ) {
 			case InvCompTransf.NONE:
 				this.rb = this.utrb;
 				break;
 			case InvCompTransf.INV_RCT:
-				this.rb = InvCompTransf.calcMixedBitDepths(this.utrb, InvCompTransf.INV_RCT, null);
+				this.rb = InvCompTransf.calcMixedBitDepths ( this.utrb , InvCompTransf.INV_RCT , null );
 				break;
 			case InvCompTransf.INV_ICT:
-				this.rb = InvCompTransf.calcMixedBitDepths(this.utrb, InvCompTransf.INV_ICT, null);
+				this.rb = InvCompTransf.calcMixedBitDepths ( this.utrb , InvCompTransf.INV_ICT , null );
 				break;
 			default:
-				throw new IllegalArgumentException("Non JPEG 2000 part I component transformation for tile: " + this.tIdx);
+				throw new IllegalArgumentException ( "Non JPEG 2000 part I component transformation for tile: " + this.tIdx );
 		}
 		return this.tIdx;
 	}
@@ -292,33 +273,31 @@ public abstract class Dequantizer extends MultiResImgDataAdapter implements CBlk
 	 * Advances to the next tile, in standard scan-line order (by rows then
 	 * columns). An NoNextElementException is thrown if the current tile is the
 	 * last one (i.e. there is no next tile).
-	 * 
+	 *
 	 * <p>
 	 * This default implementation just advances to the next tile in the source
 	 * and re-initializes properly component transformation variables.
-	 * 
+	 *
 	 * @return The new tile index
 	 */
 	@Override
-	public int nextTile()
-	{
-		this.tIdx = this.src.nextTile();
+	public int nextTile ( ) {
+		this.tIdx = this.src.nextTile ( );
 
 		// initializations
-		final int cttype = ((Integer) this.cts.getTileDef(this.tIdx)).intValue();
-		switch (cttype)
-		{
+		final int cttype = ( ( Integer ) this.cts.getTileDef ( this.tIdx ) ).intValue ( );
+		switch ( cttype ) {
 			case InvCompTransf.NONE:
 				this.rb = this.utrb;
 				break;
 			case InvCompTransf.INV_RCT:
-				this.rb = InvCompTransf.calcMixedBitDepths(this.utrb, InvCompTransf.INV_RCT, null);
+				this.rb = InvCompTransf.calcMixedBitDepths ( this.utrb , InvCompTransf.INV_RCT , null );
 				break;
 			case InvCompTransf.INV_ICT:
-				this.rb = InvCompTransf.calcMixedBitDepths(this.utrb, InvCompTransf.INV_ICT, null);
+				this.rb = InvCompTransf.calcMixedBitDepths ( this.utrb , InvCompTransf.INV_ICT , null );
 				break;
 			default:
-				throw new IllegalArgumentException("Non JPEG 2000 part I component transformation for tile: " + this.tIdx);
+				throw new IllegalArgumentException ( "Non JPEG 2000 part I component transformation for tile: " + this.tIdx );
 		}
 		return this.tIdx;
 	}

@@ -12,7 +12,7 @@
  *
  *
  * COPYRIGHT:
- * 
+ *
  * This software module was originally developed by Rapha�l Grosbois and
  * Diego Santa Cruz (Swiss Federal Institute of Technology-EPFL); Joel
  * Askel�f (Ericsson Radio Systems AB); and Bertrand Berthelot, David
@@ -39,39 +39,35 @@
  * using this software module for non JPEG 2000 Standard conforming
  * products. This copyright notice must be included in all copies or
  * derivative works of this software module.
- * 
+ *
  * Copyright (c) 1999/2000 JJ2000 Partners.
  */
 package dev.zontreck.harbinger.thirdparty.jj2000.j2k.codestream;
 
-import java.io.*;
+import java.io.IOException;
 
 /**
  * This exception is thrown whenever an illegal value is read from a bit stream.
  * The cause can be either a corrupted bit stream, or a a bit stream which is
  * illegal.
  */
-public class CorruptedCodestreamException extends IOException
-{
+public class CorruptedCodestreamException extends IOException {
 	private static final long serialVersionUID = 1L;
 
 	/**
 	 * Constructs a new <tt>CorruptedCodestreamException</tt> exception with no
 	 * detail message.
 	 */
-	public CorruptedCodestreamException()
-	{
+	public CorruptedCodestreamException ( ) {
 	}
 
 	/**
 	 * Constructs a new <tt>CorruptedCodestreamException</tt> exception with the
 	 * specified detail message.
-	 * 
-	 * @param s
-	 *            The detail message.
+	 *
+	 * @param s The detail message.
 	 */
-	public CorruptedCodestreamException(final String s)
-	{
-		super(s);
+	public CorruptedCodestreamException ( final String s ) {
+		super ( s );
 	}
 }

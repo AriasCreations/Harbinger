@@ -44,15 +44,14 @@ package dev.zontreck.harbinger.thirdparty.jj2000.j2k.fileformat;
 
 /**
  * This class contains all the markers used in the JPEG 2000 Part I file format
- * 
+ *
  * @see dev.zontreck.harbinger.thirdparty.jj2000.j2k.fileformat.writer.FileFormatWriter
- * 
  * @see dev.zontreck.harbinger.thirdparty.jj2000.j2k.fileformat.reader.FileFormatReader
- * 
  */
-public interface FileFormatBoxes
-{
-	/** Main boxes */
+public interface FileFormatBoxes {
+	/**
+	 * Main boxes
+	 */
 
 	int JP2_SIGNATURE_BOX = 0x6a502020;
 
@@ -70,7 +69,9 @@ public interface FileFormatBoxes
 
 	int UUID_INFO_BOX = 0x75696e66;
 
-	/** JP2 Header boxes */
+	/**
+	 * JP2 Header boxes
+	 */
 	int IMAGE_HEADER_BOX = 0x69686472;
 
 	int BITS_PER_COMPONENT_BOX = 0x62706363;
@@ -91,13 +92,17 @@ public interface FileFormatBoxes
 
 	/** End of JP2 Header boxes */
 
-	/** UUID Info Boxes */
+	/**
+	 * UUID Info Boxes
+	 */
 	int UUID_LIST_BOX = 0x75637374;
 
 	int URL_BOX = 0x75726c20;
 	/** end of UUID Info boxes */
 
-	/** Image Header Box Fields */
+	/**
+	 * Image Header Box Fields
+	 */
 	int IMB_VERS = 0x0100;
 
 	byte IMB_C = 7;
@@ -107,7 +112,9 @@ public interface FileFormatBoxes
 	byte IMB_IPR = 0;
 	/** end of Image Header Box Fields */
 
-	/** Colour Specification Box Fields */
+	/**
+	 * Colour Specification Box Fields
+	 */
 	byte CSB_METH = 1;
 
 	byte CSB_PREC = 0;
@@ -121,6 +128,8 @@ public interface FileFormatBoxes
 	int CSB_ENUM_YCC = 18;
 	/** en of Colour Specification Box Fields */
 
-	/** File Type Fields */
+	/**
+	 * File Type Fields
+	 */
 	int FT_BR = 0x6a703220;
 }

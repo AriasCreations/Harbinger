@@ -25,14 +25,12 @@ import java.nio.charset.StandardCharsets;
  * the structure which is common among tags of all types.
  * <p>
  * It also contains the definitions of the various tag types.
- * 
- * 
- * @see dev.zontreck.harbinger.thirdparty.jj2000.j2k.icc.tags.ICCTagTable
- * @version 1.0
+ *
  * @author Bruce A. Kern
+ * @version 1.0
+ * @see dev.zontreck.harbinger.thirdparty.jj2000.j2k.icc.tags.ICCTagTable
  */
-public abstract class ICCTag
-{
+public abstract class ICCTag {
 
 	// Tag Signature Strings
 	private static final String sdwCprtSignature = "cprt";
@@ -51,20 +49,20 @@ public abstract class ICCTag
 	private static final String sdwDmddSignature = "dmdd";
 
 	// Tag Signatures
-	private static final int kdwCprtSignature = ICCProfile.getInt(ICCTag.sdwCprtSignature.getBytes(StandardCharsets.UTF_8), 0);
-	private static final int kdwDescSignature = ICCProfile.getInt(ICCTag.sdwDescSignature.getBytes(StandardCharsets.UTF_8), 0);
-	private static final int kdwWtPtSignature = ICCProfile.getInt(ICCTag.sdwWtPtSignature.getBytes(StandardCharsets.UTF_8), 0);
-	private static final int kdwBkPtSignature = ICCProfile.getInt(ICCTag.sdwBkPtSignature.getBytes(StandardCharsets.UTF_8), 0);
-	private static final int kdwRXYZSignature = ICCProfile.getInt(ICCTag.sdwRXYZSignature.getBytes(StandardCharsets.UTF_8), 0);
-	private static final int kdwGXYZSignature = ICCProfile.getInt(ICCTag.sdwGXYZSignature.getBytes(StandardCharsets.UTF_8), 0);
-	private static final int kdwBXYZSignature = ICCProfile.getInt(ICCTag.sdwBXYZSignature.getBytes(StandardCharsets.UTF_8), 0);
-	private static final int kdwKXYZSignature = ICCProfile.getInt(ICCTag.sdwKXYZSignature.getBytes(StandardCharsets.UTF_8), 0);
-	private static final int kdwRTRCSignature = ICCProfile.getInt(ICCTag.sdwRTRCSignature.getBytes(StandardCharsets.UTF_8), 0);
-	private static final int kdwGTRCSignature = ICCProfile.getInt(ICCTag.sdwGTRCSignature.getBytes(StandardCharsets.UTF_8), 0);
-	private static final int kdwBTRCSignature = ICCProfile.getInt(ICCTag.sdwBTRCSignature.getBytes(StandardCharsets.UTF_8), 0);
-	private static final int kdwKTRCSignature = ICCProfile.getInt(ICCTag.sdwKTRCSignature.getBytes(StandardCharsets.UTF_8), 0);
-	private static final int kdwDmndSignature = ICCProfile.getInt(ICCTag.sdwDmndSignature.getBytes(StandardCharsets.UTF_8), 0);
-	private static final int kdwDmddSignature = ICCProfile.getInt(ICCTag.sdwDmddSignature.getBytes(StandardCharsets.UTF_8), 0);
+	private static final int kdwCprtSignature = ICCProfile.getInt ( ICCTag.sdwCprtSignature.getBytes ( StandardCharsets.UTF_8 ) , 0 );
+	private static final int kdwDescSignature = ICCProfile.getInt ( ICCTag.sdwDescSignature.getBytes ( StandardCharsets.UTF_8 ) , 0 );
+	private static final int kdwWtPtSignature = ICCProfile.getInt ( ICCTag.sdwWtPtSignature.getBytes ( StandardCharsets.UTF_8 ) , 0 );
+	private static final int kdwBkPtSignature = ICCProfile.getInt ( ICCTag.sdwBkPtSignature.getBytes ( StandardCharsets.UTF_8 ) , 0 );
+	private static final int kdwRXYZSignature = ICCProfile.getInt ( ICCTag.sdwRXYZSignature.getBytes ( StandardCharsets.UTF_8 ) , 0 );
+	private static final int kdwGXYZSignature = ICCProfile.getInt ( ICCTag.sdwGXYZSignature.getBytes ( StandardCharsets.UTF_8 ) , 0 );
+	private static final int kdwBXYZSignature = ICCProfile.getInt ( ICCTag.sdwBXYZSignature.getBytes ( StandardCharsets.UTF_8 ) , 0 );
+	private static final int kdwKXYZSignature = ICCProfile.getInt ( ICCTag.sdwKXYZSignature.getBytes ( StandardCharsets.UTF_8 ) , 0 );
+	private static final int kdwRTRCSignature = ICCProfile.getInt ( ICCTag.sdwRTRCSignature.getBytes ( StandardCharsets.UTF_8 ) , 0 );
+	private static final int kdwGTRCSignature = ICCProfile.getInt ( ICCTag.sdwGTRCSignature.getBytes ( StandardCharsets.UTF_8 ) , 0 );
+	private static final int kdwBTRCSignature = ICCProfile.getInt ( ICCTag.sdwBTRCSignature.getBytes ( StandardCharsets.UTF_8 ) , 0 );
+	private static final int kdwKTRCSignature = ICCProfile.getInt ( ICCTag.sdwKTRCSignature.getBytes ( StandardCharsets.UTF_8 ) , 0 );
+	private static final int kdwDmndSignature = ICCProfile.getInt ( ICCTag.sdwDmndSignature.getBytes ( StandardCharsets.UTF_8 ) , 0 );
+	private static final int kdwDmddSignature = ICCProfile.getInt ( ICCTag.sdwDmddSignature.getBytes ( StandardCharsets.UTF_8 ) , 0 );
 
 	// Tag Type Strings
 	private static final String sdwTextDescType = "desc";
@@ -75,45 +73,69 @@ public abstract class ICCTag
 	private static final String sdwXYZTypeReverse = " ZYX";
 
 	// Tag Types
-	private static final int kdwTextDescType = ICCProfile.getInt(ICCTag.sdwTextDescType.getBytes(StandardCharsets.UTF_8), 0);
-	private static final int kdwTextType = ICCProfile.getInt(ICCTag.sdwTextType.getBytes(StandardCharsets.UTF_8), 0);
-	private static final int kdwCurveType = ICCProfile.getInt(ICCTag.sdwCurveType.getBytes(StandardCharsets.UTF_8), 0);
-	private static final int kdwCurveTypeReverse = ICCProfile.getInt(ICCTag.sdwCurveTypeReverse.getBytes(StandardCharsets.UTF_8), 0);
-	private static final int kdwXYZType = ICCProfile.getInt(ICCTag.sdwXYZType.getBytes(StandardCharsets.UTF_8), 0);
-	private static final int kdwXYZTypeReverse = ICCProfile.getInt(ICCTag.sdwXYZTypeReverse.getBytes(StandardCharsets.UTF_8), 0);
+	private static final int kdwTextDescType = ICCProfile.getInt ( ICCTag.sdwTextDescType.getBytes ( StandardCharsets.UTF_8 ) , 0 );
+	private static final int kdwTextType = ICCProfile.getInt ( ICCTag.sdwTextType.getBytes ( StandardCharsets.UTF_8 ) , 0 );
+	private static final int kdwCurveType = ICCProfile.getInt ( ICCTag.sdwCurveType.getBytes ( StandardCharsets.UTF_8 ) , 0 );
+	private static final int kdwCurveTypeReverse = ICCProfile.getInt ( ICCTag.sdwCurveTypeReverse.getBytes ( StandardCharsets.UTF_8 ) , 0 );
+	private static final int kdwXYZType = ICCProfile.getInt ( ICCTag.sdwXYZType.getBytes ( StandardCharsets.UTF_8 ) , 0 );
+	private static final int kdwXYZTypeReverse = ICCProfile.getInt ( ICCTag.sdwXYZTypeReverse.getBytes ( StandardCharsets.UTF_8 ) , 0 );
 
-	/** Tag id */
+	/**
+	 * Tag id
+	 */
 	public final int signature; // Tag signature
-	/** Tag type */
+	/**
+	 * Tag type
+	 */
 	public final int type;
-	/** Tag data */
+	/**
+	 * Tag data
+	 */
 	public final byte[] data; // Tag type
-	/** offset to tag data in the array */
+	/**
+	 * offset to tag data in the array
+	 */
 	public final int offset;
-	/** size of the tag data in the array */
+	/**
+	 * size of the tag data in the array
+	 */
 	public final int count;
 
 	/**
+	 * Ued by subclass initialization to store the state common to all tags
+	 *
+	 * @param signature tag being created
+	 * @param data      byte array containg embedded tag data
+	 * @param offset    to tag data in the array
+	 * @param count     size of tag data in bytes
+	 */
+	protected ICCTag ( final int signature , final byte[] data , final int offset , final int count ) {
+		this.signature = signature;
+		this.data = data;
+		this.offset = offset;
+		this.count = count;
+		type = ICCProfile.getInt ( data , offset );
+	}
+
+	/**
 	 * Create a string representation of the tag type
-	 * 
-	 * @param type
-	 *            input
+	 *
+	 * @param type input
 	 * @return String representation of the type
 	 */
-	public static String typeString(final int type)
-	{
+	public static String typeString ( final int type ) {
 
-		if (type == ICCTag.kdwTextDescType)
+		if ( type == ICCTag.kdwTextDescType )
 			return ICCTag.sdwTextDescType;
-		else if (type == ICCTag.kdwTextType)
+		else if ( type == ICCTag.kdwTextType )
 			return ICCTag.sdwTextDescType;
-		else if (type == ICCTag.kdwCurveType)
+		else if ( type == ICCTag.kdwCurveType )
 			return ICCTag.sdwCurveType;
-		else if (type == ICCTag.kdwCurveTypeReverse)
+		else if ( type == ICCTag.kdwCurveTypeReverse )
 			return ICCTag.sdwCurveTypeReverse;
-		else if (type == ICCTag.kdwXYZType)
+		else if ( type == ICCTag.kdwXYZType )
 			return ICCTag.sdwXYZType;
-		else if (type == ICCTag.kdwXYZTypeReverse)
+		else if ( type == ICCTag.kdwXYZTypeReverse )
 			return ICCTag.sdwXYZTypeReverse;
 		else
 			return "bad tag type";
@@ -121,40 +143,38 @@ public abstract class ICCTag
 
 	/**
 	 * Create a string representation of the signature
-	 * 
-	 * @param signature
-	 *            input
+	 *
+	 * @param signature input
 	 * @return String representation of the signature
 	 */
-	public static String signatureString(final int signature)
-	{
-		if (signature == ICCTag.kdwCprtSignature)
+	public static String signatureString ( final int signature ) {
+		if ( signature == ICCTag.kdwCprtSignature )
 			return ICCTag.sdwCprtSignature;
-		else if (signature == ICCTag.kdwDescSignature)
+		else if ( signature == ICCTag.kdwDescSignature )
 			return ICCTag.sdwDescSignature;
-		else if (signature == ICCTag.kdwWtPtSignature)
+		else if ( signature == ICCTag.kdwWtPtSignature )
 			return ICCTag.sdwWtPtSignature;
-		else if (signature == ICCTag.kdwBkPtSignature)
+		else if ( signature == ICCTag.kdwBkPtSignature )
 			return ICCTag.sdwBkPtSignature;
-		else if (signature == ICCTag.kdwRXYZSignature)
+		else if ( signature == ICCTag.kdwRXYZSignature )
 			return ICCTag.sdwRXYZSignature;
-		else if (signature == ICCTag.kdwGXYZSignature)
+		else if ( signature == ICCTag.kdwGXYZSignature )
 			return ICCTag.sdwGXYZSignature;
-		else if (signature == ICCTag.kdwBXYZSignature)
+		else if ( signature == ICCTag.kdwBXYZSignature )
 			return ICCTag.sdwBXYZSignature;
-		else if (signature == ICCTag.kdwKXYZSignature)
+		else if ( signature == ICCTag.kdwKXYZSignature )
 			return ICCTag.sdwKXYZSignature;
-		else if (signature == ICCTag.kdwRTRCSignature)
+		else if ( signature == ICCTag.kdwRTRCSignature )
 			return ICCTag.sdwRTRCSignature;
-		else if (signature == ICCTag.kdwGTRCSignature)
+		else if ( signature == ICCTag.kdwGTRCSignature )
 			return ICCTag.sdwGTRCSignature;
-		else if (signature == ICCTag.kdwBTRCSignature)
+		else if ( signature == ICCTag.kdwBTRCSignature )
 			return ICCTag.sdwBTRCSignature;
-		else if (signature == ICCTag.kdwKTRCSignature)
+		else if ( signature == ICCTag.kdwKTRCSignature )
 			return ICCTag.sdwKTRCSignature;
-		else if (signature == ICCTag.kdwDmndSignature)
+		else if ( signature == ICCTag.kdwDmndSignature )
 			return ICCTag.sdwDmndSignature;
-		else if (signature == ICCTag.kdwDmddSignature)
+		else if ( signature == ICCTag.kdwDmddSignature )
 			return ICCTag.sdwDmddSignature;
 		else
 			return "bad tag signature";
@@ -162,63 +182,36 @@ public abstract class ICCTag
 
 	/**
 	 * Factory method for creating a tag of a specific type.
-	 * 
-	 * @param signature
-	 *            tag to create
-	 * @param data
-	 *            byte array containg embedded tag data
-	 * @param offset
-	 *            to tag data in the array
-	 * @param count
-	 *            size of tag data in bytes
+	 *
+	 * @param signature tag to create
+	 * @param data      byte array containg embedded tag data
+	 * @param offset    to tag data in the array
+	 * @param count     size of tag data in bytes
 	 * @return specified ICCTag
 	 */
-	public static ICCTag createInstance(final int signature, final byte[] data, final int offset, final int count)
-	{
+	public static ICCTag createInstance ( final int signature , final byte[] data , final int offset , final int count ) {
 
-		final int type = ICCProfile.getInt(data, offset);
+		final int type = ICCProfile.getInt ( data , offset );
 
-		if (type == ICCTag.kdwTextDescType)
-			return new ICCTextDescriptionType(signature, data, offset, count);
-		else if (type == ICCTag.kdwTextType)
-			return new ICCTextType(signature, data, offset, count);
-		else if (type == ICCTag.kdwXYZType)
-			return new ICCXYZType(signature, data, offset, count);
-		else if (type == ICCTag.kdwXYZTypeReverse)
-			return new ICCXYZTypeReverse(signature, data, offset, count);
-		else if (type == ICCTag.kdwCurveType)
-			return new ICCCurveType(signature, data, offset, count);
-		else if (type == ICCTag.kdwCurveTypeReverse)
-			return new ICCCurveTypeReverse(signature, data, offset, count);
+		if ( type == ICCTag.kdwTextDescType )
+			return new ICCTextDescriptionType ( signature , data , offset , count );
+		else if ( type == ICCTag.kdwTextType )
+			return new ICCTextType ( signature , data , offset , count );
+		else if ( type == ICCTag.kdwXYZType )
+			return new ICCXYZType ( signature , data , offset , count );
+		else if ( type == ICCTag.kdwXYZTypeReverse )
+			return new ICCXYZTypeReverse ( signature , data , offset , count );
+		else if ( type == ICCTag.kdwCurveType )
+			return new ICCCurveType ( signature , data , offset , count );
+		else if ( type == ICCTag.kdwCurveTypeReverse )
+			return new ICCCurveTypeReverse ( signature , data , offset , count );
 		else
-			throw new IllegalArgumentException("bad tag type");
-	}
-
-	/**
-	 * Ued by subclass initialization to store the state common to all tags
-	 * 
-	 * @param signature
-	 *            tag being created
-	 * @param data
-	 *            byte array containg embedded tag data
-	 * @param offset
-	 *            to tag data in the array
-	 * @param count
-	 *            size of tag data in bytes
-	 */
-	protected ICCTag(final int signature, final byte[] data, final int offset, final int count)
-	{
-		this.signature = signature;
-		this.data = data;
-		this.offset = offset;
-		this.count = count;
-		type = ICCProfile.getInt(data, offset);
+			throw new IllegalArgumentException ( "bad tag type" );
 	}
 
 	@Override
-	public String toString()
-	{
-		return ICCTag.signatureString(this.signature) + ":" + ICCTag.typeString(this.type);
+	public String toString ( ) {
+		return ICCTag.signatureString ( this.signature ) + ":" + ICCTag.typeString ( this.type );
 	}
 	/* end class ICCTag */
 }

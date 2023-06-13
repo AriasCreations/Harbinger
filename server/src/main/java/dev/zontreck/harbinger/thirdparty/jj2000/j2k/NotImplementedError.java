@@ -70,8 +70,8 @@ public class NotImplementedError extends Error {
 	 * <p>
 	 * <I>The called method has not been implemented yet. Sorry!</I>
 	 */
-	public NotImplementedError() {
-		super("The called method has not been implemented yet. Sorry!");
+	public NotImplementedError ( ) {
+		super ( "The called method has not been implemented yet. Sorry!" );
 	}
 
 	/**
@@ -80,7 +80,7 @@ public class NotImplementedError extends Error {
 	 *
 	 * @param m The detail message to use
 	 */
-	public NotImplementedError(final String m) {
-		super(m);
+	public NotImplementedError ( final String m ) {
+		super ( m );
 	}
 }

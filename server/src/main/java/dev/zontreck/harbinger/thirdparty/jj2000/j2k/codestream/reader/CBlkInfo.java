@@ -10,7 +10,7 @@
  *
  *
  * COPYRIGHT:
- * 
+ *
  * This software module was originally developed by Rapha�l Grosbois and
  * Diego Santa Cruz (Swiss Federal Institute of Technology-EPFL); Joel
  * Askel�f (Ericsson Radio Systems AB); and Bertrand Berthelot, David
@@ -37,7 +37,7 @@
  * using this software module for non JPEG 2000 Standard conforming
  * products. This copyright notice must be included in all copies or
  * derivative works of this software module.
- * 
+ *
  * Copyright (c) 1999/2000 JJ2000 Partners.
  */
 package dev.zontreck.harbinger.thirdparty.jj2000.j2k.codestream.reader;
@@ -46,19 +46,26 @@ package dev.zontreck.harbinger.thirdparty.jj2000.j2k.codestream.reader;
  * This class contains location of code-blocks' piece of codewords (there is one
  * piece per layer) and some other information.
  */
-public class CBlkInfo
-{
+public class CBlkInfo {
 
-	/** Upper-left x-coordinate of the code-block (relative to the tile) */
+	/**
+	 * Upper-left x-coordinate of the code-block (relative to the tile)
+	 */
 	public int ulx;
 
-	/** Upper-left y-coordinate of the code-block (relative to the tile) */
+	/**
+	 * Upper-left y-coordinate of the code-block (relative to the tile)
+	 */
 	public int uly;
 
-	/** Width of the code-block */
+	/**
+	 * Width of the code-block
+	 */
 	public int w;
 
-	/** Height of the code-block */
+	/**
+	 * Height of the code-block
+	 */
 	public int h;
 
 	/**
@@ -67,16 +74,24 @@ public class CBlkInfo
 	 */
 	public int msbSkipped;
 
-	/** Length of each piece of code-block's codewords */
+	/**
+	 * Length of each piece of code-block's codewords
+	 */
 	public int[] len;
 
-	/** Offset of each piece of code-block's codewords in the file */
+	/**
+	 * Offset of each piece of code-block's codewords in the file
+	 */
 	public int[] off;
 
-	/** The number of truncation point for each layer */
+	/**
+	 * The number of truncation point for each layer
+	 */
 	public int[] ntp;
 
-	/** The cumulative number of truncation points */
+	/**
+	 * The cumulative number of truncation points
+	 */
 	public int ctp;
 
 	/**
@@ -85,85 +100,68 @@ public class CBlkInfo
 	 */
 	public int[][] segLen;
 
-	/** Index of the packet where each layer has been found */
+	/**
+	 * Index of the packet where each layer has been found
+	 */
 	public int[] pktIdx;
 
 	/**
 	 * Constructs a new instance with specified number of layers and code-block
 	 * coordinates. The number corresponds to the maximum piece of codeword for
 	 * one code-block.
-	 * 
-	 * @param ulx
-	 *            The uper-left x-coordinate
-	 * 
-	 * @param uly
-	 *            The uper-left y-coordinate
-	 * 
-	 * @param w
-	 *            Width of the code-block
-	 * 
-	 * @param h
-	 *            Height of the code-block
-	 * 
-	 * @param nl
-	 *            The number of layers
+	 *
+	 * @param ulx The uper-left x-coordinate
+	 * @param uly The uper-left y-coordinate
+	 * @param w   Width of the code-block
+	 * @param h   Height of the code-block
+	 * @param nl  The number of layers
 	 */
-	public CBlkInfo(final int ulx, final int uly, final int w, final int h, final int nl)
-	{
+	public CBlkInfo ( final int ulx , final int uly , final int w , final int h , final int nl ) {
 		this.ulx = ulx;
 		this.uly = uly;
 		this.w = w;
 		this.h = h;
-		this.off = new int[nl];
-		this.len = new int[nl];
-		this.ntp = new int[nl];
-		this.segLen = new int[nl][];
-		this.pktIdx = new int[nl];
-		for (int i = nl - 1; 0 <= i; i--)
-		{
-			this.pktIdx[i] = -1;
+		this.off = new int[ nl ];
+		this.len = new int[ nl ];
+		this.ntp = new int[ nl ];
+		this.segLen = new int[ nl ][];
+		this.pktIdx = new int[ nl ];
+		for ( int i = nl - 1 ; 0 <= i ; i-- ) {
+			this.pktIdx[ i ] = - 1;
 		}
 	}
 
 	/**
 	 * Adds the number of new truncation for specified layer.
-	 * 
-	 * @param l
-	 *            layer index
-	 * 
-	 * @param newtp
-	 *            Number of new truncation points
+	 *
+	 * @param l     layer index
+	 * @param newtp Number of new truncation points
 	 */
-	public void addNTP(final int l, final int newtp)
-	{
-		this.ntp[l] = newtp;
+	public void addNTP ( final int l , final int newtp ) {
+		this.ntp[ l ] = newtp;
 		this.ctp = 0;
-		for (int lIdx = 0; lIdx <= l; lIdx++)
-		{
-			this.ctp += this.ntp[lIdx];
+		for ( int lIdx = 0 ; lIdx <= l ; lIdx++ ) {
+			this.ctp += this.ntp[ lIdx ];
 		}
 	}
 
 	/**
 	 * Object information in a string.
-	 * 
+	 *
 	 * @return Object information
 	 */
 	@Override
-	public String toString()
-	{
+	public String toString ( ) {
 		String string = "(ulx,uly,w,h)= (" + this.ulx + "," + this.uly + "," + this.w + "," + this.h;
 		string += ") " + this.msbSkipped + " MSB bit(s) skipped\n";
-		if (null != len)
-			for (int i = 0; i < this.len.length; i++)
-			{
-				string += "\tl:" + i + ", start:" + this.off[i] + ", len:" + this.len[i] + ", ntp:" + this.ntp[i] + ", pktIdx="
-						+ this.pktIdx[i];
-				if (null != segLen && null != segLen[i])
-				{
+		if ( null != len )
+			for ( int i = 0 ; i < this.len.length ; i++ ) {
+				string += "\tl:" + i + ", start:" + this.off[ i ] + ", len:" + this.len[ i ] + ", ntp:" + this.ntp[ i ] + ", pktIdx="
+						+ this.pktIdx[ i ];
+				if ( null != segLen && null != segLen[ i ] ) {
 					string += " { ";
-					for (int j = 0; j < this.segLen[i].length; j++)
-						string += this.segLen[i][j] + " ";
+					for ( int j = 0 ; j < this.segLen[ i ].length ; j++ )
+						string += this.segLen[ i ][ j ] + " ";
 					string += "}";
 				}
 				string += "\n";

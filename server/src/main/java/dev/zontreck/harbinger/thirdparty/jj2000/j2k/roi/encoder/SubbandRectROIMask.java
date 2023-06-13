@@ -87,85 +87,89 @@ public class SubbandRectROIMask extends SubbandROIMask {
 	 * @param lrys The lower right y coordinates of the ROIs
 	 * @param nr   Number of ROIs that affect this tile
 	 */
-	public SubbandRectROIMask(final Subband sb, final int[] ulxs, final int[] ulys, final int[] lrxs, final int[] lrys, final int nr) {
-		super(sb.ulx, sb.uly, sb.w, sb.h);
+	public SubbandRectROIMask ( final Subband sb , final int[] ulxs , final int[] ulys , final int[] lrxs , final int[] lrys , final int nr ) {
+		super ( sb.ulx , sb.uly , sb.w , sb.h );
 		this.ulxs = ulxs;
 		this.ulys = ulys;
 		this.lrxs = lrxs;
 		this.lrys = lrys;
 		int r;
 
-		if (sb.isNode) {
+		if ( sb.isNode ) {
 			this.isNode = true;
 			// determine odd/even - high/low filters
 			final int horEvenLow = sb.ulcx % 2;
 			final int verEvenLow = sb.ulcy % 2;
 
 			// Get filter support lengths
-			final WaveletFilter hFilter = sb.getHorWFilter();
-			final WaveletFilter vFilter = sb.getVerWFilter();
-			final int hlnSup = hFilter.getSynLowNegSupport();
-			final int hhnSup = hFilter.getSynHighNegSupport();
-			final int hlpSup = hFilter.getSynLowPosSupport();
-			final int hhpSup = hFilter.getSynHighPosSupport();
-			final int vlnSup = vFilter.getSynLowNegSupport();
-			final int vhnSup = vFilter.getSynHighNegSupport();
-			final int vlpSup = vFilter.getSynLowPosSupport();
-			final int vhpSup = vFilter.getSynHighPosSupport();
+			final WaveletFilter hFilter = sb.getHorWFilter ( );
+			final WaveletFilter vFilter = sb.getVerWFilter ( );
+			final int hlnSup = hFilter.getSynLowNegSupport ( );
+			final int hhnSup = hFilter.getSynHighNegSupport ( );
+			final int hlpSup = hFilter.getSynLowPosSupport ( );
+			final int hhpSup = hFilter.getSynHighPosSupport ( );
+			final int vlnSup = vFilter.getSynLowNegSupport ( );
+			final int vhnSup = vFilter.getSynHighNegSupport ( );
+			final int vlpSup = vFilter.getSynLowPosSupport ( );
+			final int vhpSup = vFilter.getSynHighPosSupport ( );
 
 			// Generate arrays for children
 			int x, y;
-			final int[] lulxs = new int[nr];
-			final int[] lulys = new int[nr];
-			final int[] llrxs = new int[nr];
-			final int[] llrys = new int[nr];
-			final int[] hulxs = new int[nr];
-			final int[] hulys = new int[nr];
-			final int[] hlrxs = new int[nr];
-			final int[] hlrys = new int[nr];
-			for (r = nr - 1; 0 <= r; r--) { // For all ROI calculate ...
+			final int[] lulxs = new int[ nr ];
+			final int[] lulys = new int[ nr ];
+			final int[] llrxs = new int[ nr ];
+			final int[] llrys = new int[ nr ];
+			final int[] hulxs = new int[ nr ];
+			final int[] hulys = new int[ nr ];
+			final int[] hlrxs = new int[ nr ];
+			final int[] hlrys = new int[ nr ];
+			for ( r = nr - 1; 0 <= r ; r-- ) { // For all ROI calculate ...
 				// Upper left x for all children
-				x = ulxs[r];
-				if (0 == horEvenLow) {
-					lulxs[r] = (x + 1 - hlnSup) / 2;
-					hulxs[r] = (x - hhnSup) / 2;
-				} else {
-					lulxs[r] = (x - hlnSup) / 2;
-					hulxs[r] = (x + 1 - hhnSup) / 2;
+				x = ulxs[ r ];
+				if ( 0 == horEvenLow ) {
+					lulxs[ r ] = ( x + 1 - hlnSup ) / 2;
+					hulxs[ r ] = ( x - hhnSup ) / 2;
+				}
+				else {
+					lulxs[ r ] = ( x - hlnSup ) / 2;
+					hulxs[ r ] = ( x + 1 - hhnSup ) / 2;
 				}
 				// Upper left y for all children
-				y = ulys[r];
-				if (0 == verEvenLow) {
-					lulys[r] = (y + 1 - vlnSup) / 2;
-					hulys[r] = (y - vhnSup) / 2;
-				} else {
-					lulys[r] = (y - vlnSup) / 2;
-					hulys[r] = (y + 1 - vhnSup) / 2;
+				y = ulys[ r ];
+				if ( 0 == verEvenLow ) {
+					lulys[ r ] = ( y + 1 - vlnSup ) / 2;
+					hulys[ r ] = ( y - vhnSup ) / 2;
+				}
+				else {
+					lulys[ r ] = ( y - vlnSup ) / 2;
+					hulys[ r ] = ( y + 1 - vhnSup ) / 2;
 				}
 				// lower right x for all children
-				x = lrxs[r];
-				if (0 == horEvenLow) {
-					llrxs[r] = (x + hlpSup) / 2;
-					hlrxs[r] = (x - 1 + hhpSup) / 2;
-				} else {
-					llrxs[r] = (x - 1 + hlpSup) / 2;
-					hlrxs[r] = (x + hhpSup) / 2;
+				x = lrxs[ r ];
+				if ( 0 == horEvenLow ) {
+					llrxs[ r ] = ( x + hlpSup ) / 2;
+					hlrxs[ r ] = ( x - 1 + hhpSup ) / 2;
+				}
+				else {
+					llrxs[ r ] = ( x - 1 + hlpSup ) / 2;
+					hlrxs[ r ] = ( x + hhpSup ) / 2;
 				}
 				// lower right y for all children
-				y = lrys[r];
-				if (0 == verEvenLow) {
-					llrys[r] = (y + vlpSup) / 2;
-					hlrys[r] = (y - 1 + vhpSup) / 2;
-				} else {
-					llrys[r] = (y - 1 + vlpSup) / 2;
-					hlrys[r] = (y + vhpSup) / 2;
+				y = lrys[ r ];
+				if ( 0 == verEvenLow ) {
+					llrys[ r ] = ( y + vlpSup ) / 2;
+					hlrys[ r ] = ( y - 1 + vhpSup ) / 2;
+				}
+				else {
+					llrys[ r ] = ( y - 1 + vlpSup ) / 2;
+					hlrys[ r ] = ( y + vhpSup ) / 2;
 				}
 			}
 			// Create children
-			this.hh = new SubbandRectROIMask(sb.getHH(), hulxs, hulys, hlrxs, hlrys, nr);
-			this.lh = new SubbandRectROIMask(sb.getLH(), lulxs, hulys, llrxs, hlrys, nr);
-			this.hl = new SubbandRectROIMask(sb.getHL(), hulxs, lulys, hlrxs, llrys, nr);
-			this.ll = new SubbandRectROIMask(sb.getLL(), lulxs, lulys, llrxs, llrys, nr);
+			this.hh = new SubbandRectROIMask ( sb.getHH ( ) , hulxs , hulys , hlrxs , hlrys , nr );
+			this.lh = new SubbandRectROIMask ( sb.getLH ( ) , lulxs , hulys , llrxs , hlrys , nr );
+			this.hl = new SubbandRectROIMask ( sb.getHL ( ) , hulxs , lulys , hlrxs , llrys , nr );
+			this.ll = new SubbandRectROIMask ( sb.getLL ( ) , lulxs , lulys , llrxs , llrys , nr );
 		}
 	}
 }

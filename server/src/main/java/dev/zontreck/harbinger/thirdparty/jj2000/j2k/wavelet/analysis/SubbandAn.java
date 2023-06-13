@@ -109,7 +109,7 @@ public class SubbandAn extends Subband {
 	 * The L2-norm of the synthesis basis waveform of this subband, applicable
 	 * to "leafs" only. By default it is -1 (i.e. not calculated yet).
 	 */
-	public float l2Norm = -1.0f;
+	public float l2Norm = - 1.0f;
 
 	/**
 	 * The contribution to the MSE or WMSE error that would result in the image
@@ -126,7 +126,7 @@ public class SubbandAn extends Subband {
 	 * Creates a SubbandAn element with all the default values. The dimensions
 	 * are (0,0) and the upper left corner is (0,0).
 	 */
-	public SubbandAn() {
+	public SubbandAn ( ) {
 	}
 
 	/**
@@ -154,14 +154,14 @@ public class SubbandAn extends Subband {
 	 *                 level, starting at resolution level 0.
 	 * @param vfilters The vertical wavelet analysis filters for each resolution
 	 *                 level, starting at resolution level 0.
-	 * @see Subband#Subband(int, int, int, int, int,
-	 * WaveletFilter[], WaveletFilter[])
+	 * @see Subband#Subband(int , int , int , int , int ,
+	 * WaveletFilter[] , WaveletFilter[])
 	 * @see dev.zontreck.harbinger.thirdparty.jj2000.j2k.quantization.quantizer.Quantizer
 	 */
-	public SubbandAn(final int w, final int h, final int ulcx, final int ulcy, final int lvls, final WaveletFilter[] hfilters, final WaveletFilter[] vfilters) {
-		super(w, h, ulcx, ulcy, lvls, hfilters, vfilters);
+	public SubbandAn ( final int w , final int h , final int ulcx , final int ulcy , final int lvls , final WaveletFilter[] hfilters , final WaveletFilter[] vfilters ) {
+		super ( w , h , ulcx , ulcy , lvls , hfilters , vfilters );
 		// Caculate the L2-norms
-		this.calcL2Norms();
+		this.calcL2Norms ( );
 	}
 
 	/**
@@ -172,7 +172,7 @@ public class SubbandAn extends Subband {
 	 * @return The parent subband, or null for the root one.
 	 */
 	@Override
-	public Subband getParent() {
+	public Subband getParent ( ) {
 		return this.parent;
 	}
 
@@ -182,7 +182,7 @@ public class SubbandAn extends Subband {
 	 * @return The LL child subband, or null if there are no childs.
 	 */
 	@Override
-	public Subband getLL() {
+	public Subband getLL ( ) {
 		return this.subb_LL;
 	}
 
@@ -192,7 +192,7 @@ public class SubbandAn extends Subband {
 	 * @return The HL child subband, or null if there are no childs.
 	 */
 	@Override
-	public Subband getHL() {
+	public Subband getHL ( ) {
 		return this.subb_HL;
 	}
 
@@ -202,7 +202,7 @@ public class SubbandAn extends Subband {
 	 * @return The LH child subband, or null if there are no childs.
 	 */
 	@Override
-	public Subband getLH() {
+	public Subband getLH ( ) {
 		return this.subb_LH;
 	}
 
@@ -212,7 +212,7 @@ public class SubbandAn extends Subband {
 	 * @return The HH child subband, or null if there are no childs.
 	 */
 	@Override
-	public Subband getHH() {
+	public Subband getHH ( ) {
 		return this.subb_HH;
 	}
 
@@ -233,22 +233,22 @@ public class SubbandAn extends Subband {
 	 * @see Subband#initChilds
 	 */
 	@Override
-	protected Subband split(final WaveletFilter hfilter, final WaveletFilter vfilter) {
+	protected Subband split ( final WaveletFilter hfilter , final WaveletFilter vfilter ) {
 		// Test that this is a node
-		if (this.isNode) {
-			throw new IllegalArgumentException();
+		if ( this.isNode ) {
+			throw new IllegalArgumentException ( );
 		}
 
 		// Modify this element into a node and set the filters
 		this.isNode = true;
-		hFilter = (AnWTFilter) hfilter;
-		vFilter = (AnWTFilter) vfilter;
+		hFilter = ( AnWTFilter ) hfilter;
+		vFilter = ( AnWTFilter ) vfilter;
 
 		// Create childs
-		this.subb_LL = new SubbandAn();
-		this.subb_LH = new SubbandAn();
-		this.subb_HL = new SubbandAn();
-		this.subb_HH = new SubbandAn();
+		this.subb_LL = new SubbandAn ( );
+		this.subb_LH = new SubbandAn ( );
+		this.subb_HL = new SubbandAn ( );
+		this.subb_HH = new SubbandAn ( );
 
 		// Assign parent
 		this.subb_LL.parent = this;
@@ -257,7 +257,7 @@ public class SubbandAn extends Subband {
 		this.subb_HH.parent = this;
 
 		// Initialize childs
-		this.initChilds();
+		this.initChilds ( );
 
 		// Return reference to LL subband
 		return this.subb_LL;
@@ -281,45 +281,51 @@ public class SubbandAn extends Subband {
 	 * @param wfs An size 2 array where the line and column waveforms will be
 	 *            returned.
 	 */
-	private void calcBasisWaveForms(final float[][] wfs) {
-		if (0 > l2Norm) {
+	private void calcBasisWaveForms ( final float[][] wfs ) {
+		if ( 0 > l2Norm ) {
 			// We are not finished with this element yet
-			if (this.isNode) {
+			if ( this.isNode ) {
 				// We are on a node => search on childs
-				if (0.0f > subb_LL.l2Norm) {
-					this.subb_LL.calcBasisWaveForms(wfs);
-					wfs[0] = this.hFilter.getLPSynWaveForm(wfs[0], null);
-					wfs[1] = this.vFilter.getLPSynWaveForm(wfs[1], null);
-				} else if (0.0f > subb_HL.l2Norm) {
-					this.subb_HL.calcBasisWaveForms(wfs);
-					wfs[0] = this.hFilter.getHPSynWaveForm(wfs[0], null);
-					wfs[1] = this.vFilter.getLPSynWaveForm(wfs[1], null);
-				} else if (0.0f > subb_LH.l2Norm) {
-					this.subb_LH.calcBasisWaveForms(wfs);
-					wfs[0] = this.hFilter.getLPSynWaveForm(wfs[0], null);
-					wfs[1] = this.vFilter.getHPSynWaveForm(wfs[1], null);
-				} else if (0.0f > subb_HH.l2Norm) {
-					this.subb_HH.calcBasisWaveForms(wfs);
-					wfs[0] = this.hFilter.getHPSynWaveForm(wfs[0], null);
-					wfs[1] = this.vFilter.getHPSynWaveForm(wfs[1], null);
-				} else {
+				if ( 0.0f > subb_LL.l2Norm ) {
+					this.subb_LL.calcBasisWaveForms ( wfs );
+					wfs[ 0 ] = this.hFilter.getLPSynWaveForm ( wfs[ 0 ] , null );
+					wfs[ 1 ] = this.vFilter.getLPSynWaveForm ( wfs[ 1 ] , null );
+				}
+				else if ( 0.0f > subb_HL.l2Norm ) {
+					this.subb_HL.calcBasisWaveForms ( wfs );
+					wfs[ 0 ] = this.hFilter.getHPSynWaveForm ( wfs[ 0 ] , null );
+					wfs[ 1 ] = this.vFilter.getLPSynWaveForm ( wfs[ 1 ] , null );
+				}
+				else if ( 0.0f > subb_LH.l2Norm ) {
+					this.subb_LH.calcBasisWaveForms ( wfs );
+					wfs[ 0 ] = this.hFilter.getLPSynWaveForm ( wfs[ 0 ] , null );
+					wfs[ 1 ] = this.vFilter.getHPSynWaveForm ( wfs[ 1 ] , null );
+				}
+				else if ( 0.0f > subb_HH.l2Norm ) {
+					this.subb_HH.calcBasisWaveForms ( wfs );
+					wfs[ 0 ] = this.hFilter.getHPSynWaveForm ( wfs[ 0 ] , null );
+					wfs[ 1 ] = this.vFilter.getHPSynWaveForm ( wfs[ 1 ] , null );
+				}
+				else {
 					// There is an error! If all childs have non-negative
 					// l2norm, then this node should have non-negative l2norm
-					throw new Error("You have found a bug in JJ2000!");
+					throw new Error ( "You have found a bug in JJ2000!" );
 				}
-			} else {
+			}
+			else {
 				// This is a leaf, just use diracs (null is equivalent to
 				// dirac)
-				wfs[0] = new float[1];
-				wfs[0][0] = 1.0f;
-				wfs[1] = new float[1];
-				wfs[1][0] = 1.0f;
+				wfs[ 0 ] = new float[ 1 ];
+				wfs[ 0 ][ 0 ] = 1.0f;
+				wfs[ 1 ] = new float[ 1 ];
+				wfs[ 1 ][ 0 ] = 1.0f;
 			}
 
-		} else {
+		}
+		else {
 			// This is an error! The calcBasisWaveForms() method is
 			// never called on an element with non-negative l2norm
-			throw new Error("You have found a bug in JJ2000!");
+			throw new Error ( "You have found a bug in JJ2000!" );
 		}
 	}
 
@@ -336,36 +342,42 @@ public class SubbandAn extends Subband {
 	 *
 	 * @param l2n The L2-norm to assign.
 	 */
-	private void assignL2Norm(final float l2n) {
-		if (0 > l2Norm) {
+	private void assignL2Norm ( final float l2n ) {
+		if ( 0 > l2Norm ) {
 			// We are not finished with this element yet
-			if (this.isNode) {
+			if ( this.isNode ) {
 				// We are on a node => search on childs
-				if (0.0f > subb_LL.l2Norm) {
-					this.subb_LL.assignL2Norm(l2n);
-				} else if (0.0f > subb_HL.l2Norm) {
-					this.subb_HL.assignL2Norm(l2n);
-				} else if (0.0f > subb_LH.l2Norm) {
-					this.subb_LH.assignL2Norm(l2n);
-				} else if (0.0f > subb_HH.l2Norm) {
-					this.subb_HH.assignL2Norm(l2n);
+				if ( 0.0f > subb_LL.l2Norm ) {
+					this.subb_LL.assignL2Norm ( l2n );
+				}
+				else if ( 0.0f > subb_HL.l2Norm ) {
+					this.subb_HL.assignL2Norm ( l2n );
+				}
+				else if ( 0.0f > subb_LH.l2Norm ) {
+					this.subb_LH.assignL2Norm ( l2n );
+				}
+				else if ( 0.0f > subb_HH.l2Norm ) {
+					this.subb_HH.assignL2Norm ( l2n );
 					// If child now is done, we are done
-					if (0.0f <= subb_HH.l2Norm) {
+					if ( 0.0f <= subb_HH.l2Norm ) {
 						this.l2Norm = 0.0f; // We are on a node, any non-neg value OK
 					}
-				} else {
+				}
+				else {
 					// There is an error! If all childs have non-negative
 					// l2norm, then this node should have non-negative l2norm
-					throw new Error("You have found a bug in JJ2000!");
+					throw new Error ( "You have found a bug in JJ2000!" );
 				}
-			} else {
+			}
+			else {
 				// This is a leaf, assign the L2-norm
 				this.l2Norm = l2n;
 			}
-		} else {
+		}
+		else {
 			// This is an error! The assignL2Norm() method is never
 			// called on an element with non-negative l2norm
-			throw new Error("You have found a bug in JJ2000!");
+			throw new Error ( "You have found a bug in JJ2000!" );
 		}
 	}
 
@@ -373,34 +385,34 @@ public class SubbandAn extends Subband {
 	 * Calculates the L2-norm of the sythesis waveforms of every leaf in the
 	 * tree. This method should only be called on the root element.
 	 */
-	private void calcL2Norms() {
+	private void calcL2Norms ( ) {
 		int i;
-		final float[][] wfs = new float[2][];
+		final float[][] wfs = new float[ 2 ][];
 		double acc;
 		float l2n;
 
 		// While we are not done on the root element, compute basis
 		// functions and assign L2-norm
-		while (0.0f > l2Norm) {
-			this.calcBasisWaveForms(wfs);
+		while ( 0.0f > l2Norm ) {
+			this.calcBasisWaveForms ( wfs );
 			// Compute line L2-norm, which is the product of the line
 			// and column L2-norms
 			acc = 0.0;
-			for (i = wfs[0].length - 1; 0 <= i; i--) {
-				acc += wfs[0][i] * wfs[0][i];
+			for ( i = wfs[ 0 ].length - 1; 0 <= i ; i-- ) {
+				acc += wfs[ 0 ][ i ] * wfs[ 0 ][ i ];
 			}
-			l2n = (float) Math.sqrt(acc);
+			l2n = ( float ) Math.sqrt ( acc );
 			// Compute column L2-norm
 			acc = 0.0;
-			for (i = wfs[1].length - 1; 0 <= i; i--) {
-				acc += wfs[1][i] * wfs[1][i];
+			for ( i = wfs[ 1 ].length - 1; 0 <= i ; i-- ) {
+				acc += wfs[ 1 ][ i ] * wfs[ 1 ][ i ];
 			}
-			l2n *= (float) Math.sqrt(acc);
+			l2n *= ( float ) Math.sqrt ( acc );
 			// Release waveforms
-			wfs[0] = null;
-			wfs[1] = null;
+			wfs[ 0 ] = null;
+			wfs[ 1 ] = null;
 			// Assign the value
-			this.assignL2Norm(l2n);
+			this.assignL2Norm ( l2n );
 		}
 	}
 
@@ -411,7 +423,7 @@ public class SubbandAn extends Subband {
 	 * @return The horizontal wavelet filter
 	 */
 	@Override
-	public WaveletFilter getHorWFilter() {
+	public WaveletFilter getHorWFilter ( ) {
 		return this.hFilter;
 	}
 
@@ -422,7 +434,7 @@ public class SubbandAn extends Subband {
 	 * @return The vertical wavelet filter
 	 */
 	@Override
-	public WaveletFilter getVerWFilter() {
+	public WaveletFilter getVerWFilter ( ) {
 		return this.hFilter;
 	}
 }

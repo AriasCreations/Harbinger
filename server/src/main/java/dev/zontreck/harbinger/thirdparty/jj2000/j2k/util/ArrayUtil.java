@@ -68,29 +68,30 @@ public enum ArrayUtil {
 	 * @param arr The array to set.
 	 * @param val The value to set the array to.
 	 */
-	public static void intArraySet(final int[] arr, final int val) {
+	public static void intArraySet ( final int[] arr , final int val ) {
 		int i;
 		int len;
 		final int len2;
 
 		len = arr.length;
 		// Set array to 'val' in an optimized way
-		if (MAX_EL_COPYING > len) {
+		if ( MAX_EL_COPYING > len ) {
 			// Not worth doing optimized way
-			for (i = len - 1; 0 <= i; i--) { // Set elements
-				arr[i] = val;
+			for ( i = len - 1; 0 <= i ; i-- ) { // Set elements
+				arr[ i ] = val;
 			}
-		} else { // Do in optimized way
+		}
+		else { // Do in optimized way
 			len2 = len >> 1;
-			for (i = 0; INIT_EL_COPYING > i; i++) { // Set first elements
-				arr[i] = val;
+			for ( i = 0; INIT_EL_COPYING > i ; i++ ) { // Set first elements
+				arr[ i ] = val;
 			}
-			for (; i <= len2; i <<= 1) {
+			for ( ; i <= len2 ; i <<= 1 ) {
 				// Copy values doubling size each time
-				System.arraycopy(arr, 0, arr, i, i);
+				System.arraycopy ( arr , 0 , arr , i , i );
 			}
-			if (i < len) { // Copy values to end
-				System.arraycopy(arr, 0, arr, i, len - i);
+			if ( i < len ) { // Copy values to end
+				System.arraycopy ( arr , 0 , arr , i , len - i );
 			}
 		}
 	}
@@ -105,29 +106,30 @@ public enum ArrayUtil {
 	 * @param arr The array to set.
 	 * @param val The value to set the array to.
 	 */
-	public static void byteArraySet(final byte[] arr, final byte val) {
+	public static void byteArraySet ( final byte[] arr , final byte val ) {
 		int i;
 		int len;
 		final int len2;
 
 		len = arr.length;
 		// Set array to 'val' in an optimized way
-		if (MAX_EL_COPYING > len) {
+		if ( MAX_EL_COPYING > len ) {
 			// Not worth doing optimized way
-			for (i = len - 1; 0 <= i; i--) { // Set elements
-				arr[i] = val;
+			for ( i = len - 1; 0 <= i ; i-- ) { // Set elements
+				arr[ i ] = val;
 			}
-		} else { // Do in optimized way
+		}
+		else { // Do in optimized way
 			len2 = len >> 1;
-			for (i = 0; INIT_EL_COPYING > i; i++) { // Set first elements
-				arr[i] = val;
+			for ( i = 0; INIT_EL_COPYING > i ; i++ ) { // Set first elements
+				arr[ i ] = val;
 			}
-			for (; i <= len2; i <<= 1) {
+			for ( ; i <= len2 ; i <<= 1 ) {
 				// Copy values doubling size each time
-				System.arraycopy(arr, 0, arr, i, i);
+				System.arraycopy ( arr , 0 , arr , i , i );
 			}
-			if (i < len) { // Copy values to end
-				System.arraycopy(arr, 0, arr, i, len - i);
+			if ( i < len ) { // Copy values to end
+				System.arraycopy ( arr , 0 , arr , i , len - i );
 			}
 		}
 	}

@@ -62,12 +62,12 @@ public class SynWTFilterFloatLift9x7 extends SynWTFilterFloat {
 	/**
 	 * The value of the first lifting step coefficient
 	 */
-	public static final float ALPHA = -1.586134342f;
+	public static final float ALPHA = - 1.586134342f;
 
 	/**
 	 * The value of the second lifting step coefficient
 	 */
-	public static final float BETA = -0.05298011854f;
+	public static final float BETA = - 0.05298011854f;
 
 	/**
 	 * The value of the third lifting step coefficient
@@ -132,8 +132,10 @@ public class SynWTFilterFloatLift9x7 extends SynWTFilterFloat {
 	 * @see SynWTFilter#synthetize_lpf
 	 */
 	@Override
-	public void synthetize_lpf(final float[] lowSig, final int lowOff, final int lowLen, final int lowStep, final float[] highSig, final int highOff,
-							   final int highLen, final int highStep, final float[] outSig, final int outOff, final int outStep) {
+	public void synthetize_lpf (
+			final float[] lowSig , final int lowOff , final int lowLen , final int lowStep , final float[] highSig , final int highOff ,
+			final int highLen , final int highStep , final float[] outSig , final int outOff , final int outStep
+	) {
 
 		int i;
 		final int outLen = lowLen + highLen; // Length of the output signal
@@ -148,10 +150,11 @@ public class SynWTFilterFloatLift9x7 extends SynWTFilterFloat {
 		ik = outOff;
 
 		// Handle tail boundary effect. Use symmetric extension
-		if (1 < outLen) {
-			outSig[ik] = lowSig[lk] / SynWTFilterFloatLift9x7.KL - 2 * SynWTFilterFloatLift9x7.DELTA * highSig[hk] / SynWTFilterFloatLift9x7.KH;
-		} else {
-			outSig[ik] = lowSig[lk];
+		if ( 1 < outLen ) {
+			outSig[ ik ] = lowSig[ lk ] / SynWTFilterFloatLift9x7.KL - 2 * SynWTFilterFloatLift9x7.DELTA * highSig[ hk ] / SynWTFilterFloatLift9x7.KH;
+		}
+		else {
+			outSig[ ik ] = lowSig[ lk ];
 		}
 
 		lk += lowStep;
@@ -159,14 +162,14 @@ public class SynWTFilterFloatLift9x7 extends SynWTFilterFloat {
 		ik += iStep;
 
 		// Apply lifting step to each "inner" sample
-		for (i = 2; i < outLen - 1; i += 2, ik += iStep, lk += lowStep, hk += highStep) {
-			outSig[ik] = lowSig[lk] / SynWTFilterFloatLift9x7.KL - SynWTFilterFloatLift9x7.DELTA * (highSig[hk - highStep] + highSig[hk]) / SynWTFilterFloatLift9x7.KH;
+		for ( i = 2; i < outLen - 1 ; i += 2 , ik += iStep , lk += lowStep , hk += highStep ) {
+			outSig[ ik ] = lowSig[ lk ] / SynWTFilterFloatLift9x7.KL - SynWTFilterFloatLift9x7.DELTA * ( highSig[ hk - highStep ] + highSig[ hk ] ) / SynWTFilterFloatLift9x7.KH;
 		}
 
 		// Handle head boundary effect if input signal has odd length
-		if (1 == outLen % 2) {
-			if (2 < outLen) {
-				outSig[ik] = lowSig[lk] / SynWTFilterFloatLift9x7.KL - 2 * SynWTFilterFloatLift9x7.DELTA * highSig[hk - highStep] / SynWTFilterFloatLift9x7.KH;
+		if ( 1 == outLen % 2 ) {
+			if ( 2 < outLen ) {
+				outSig[ ik ] = lowSig[ lk ] / SynWTFilterFloatLift9x7.KL - 2 * SynWTFilterFloatLift9x7.DELTA * highSig[ hk - highStep ] / SynWTFilterFloatLift9x7.KH;
 			}
 		}
 
@@ -178,13 +181,13 @@ public class SynWTFilterFloatLift9x7 extends SynWTFilterFloat {
 		ik = outOff + outStep;
 
 		// Apply lifting step to each "inner" sample
-		for (i = 1; i < outLen - 1; i += 2, ik += iStep, hk += highStep, lk += lowStep) {
-			outSig[ik] = highSig[hk] / SynWTFilterFloatLift9x7.KH - SynWTFilterFloatLift9x7.GAMMA * (outSig[ik - outStep] + outSig[ik + outStep]);
+		for ( i = 1; i < outLen - 1 ; i += 2 , ik += iStep , hk += highStep , lk += lowStep ) {
+			outSig[ ik ] = highSig[ hk ] / SynWTFilterFloatLift9x7.KH - SynWTFilterFloatLift9x7.GAMMA * ( outSig[ ik - outStep ] + outSig[ ik + outStep ] );
 		}
 
 		// Handle head boundary effect if output signal has even length
-		if (0 == outLen % 2) {
-			outSig[ik] = highSig[hk] / SynWTFilterFloatLift9x7.KH - 2 * SynWTFilterFloatLift9x7.GAMMA * outSig[ik - outStep];
+		if ( 0 == outLen % 2 ) {
+			outSig[ ik ] = highSig[ hk ] / SynWTFilterFloatLift9x7.KH - 2 * SynWTFilterFloatLift9x7.GAMMA * outSig[ ik - outStep ];
 		}
 
 		// Generate even samples (inverse low-pass filter)
@@ -194,19 +197,19 @@ public class SynWTFilterFloatLift9x7 extends SynWTFilterFloat {
 
 		// Handle tail boundary effect
 		// If access the overlap then perform the lifting step.
-		if (1 < outLen) {
-			outSig[ik] -= 2 * SynWTFilterFloatLift9x7.BETA * outSig[ik + outStep];
+		if ( 1 < outLen ) {
+			outSig[ ik ] -= 2 * SynWTFilterFloatLift9x7.BETA * outSig[ ik + outStep ];
 		}
 		ik += iStep;
 
 		// Apply lifting step to each "inner" sample
-		for (i = 2; i < outLen - 1; i += 2, ik += iStep) {
-			outSig[ik] -= SynWTFilterFloatLift9x7.BETA * (outSig[ik - outStep] + outSig[ik + outStep]);
+		for ( i = 2; i < outLen - 1 ; i += 2 , ik += iStep ) {
+			outSig[ ik ] -= SynWTFilterFloatLift9x7.BETA * ( outSig[ ik - outStep ] + outSig[ ik + outStep ] );
 		}
 
 		// Handle head boundary effect if input signal has odd length
-		if (1 == outLen % 2 && 2 < outLen) {
-			outSig[ik] -= 2 * SynWTFilterFloatLift9x7.BETA * outSig[ik - outStep];
+		if ( 1 == outLen % 2 && 2 < outLen ) {
+			outSig[ ik ] -= 2 * SynWTFilterFloatLift9x7.BETA * outSig[ ik - outStep ];
 		}
 
 		// Generate odd samples (inverse high pass-filter)
@@ -215,13 +218,13 @@ public class SynWTFilterFloatLift9x7 extends SynWTFilterFloat {
 		ik = outOff + outStep;
 
 		// Apply first lifting step to each "inner" sample
-		for (i = 1; i < outLen - 1; i += 2, ik += iStep) {
-			outSig[ik] -= SynWTFilterFloatLift9x7.ALPHA * (outSig[ik - outStep] + outSig[ik + outStep]);
+		for ( i = 1; i < outLen - 1 ; i += 2 , ik += iStep ) {
+			outSig[ ik ] -= SynWTFilterFloatLift9x7.ALPHA * ( outSig[ ik - outStep ] + outSig[ ik + outStep ] );
 		}
 
 		// Handle head boundary effect if input signal has even length
-		if (0 == outLen % 2) {
-			outSig[ik] -= 2 * SynWTFilterFloatLift9x7.ALPHA * outSig[ik - outStep];
+		if ( 0 == outLen % 2 ) {
+			outSig[ ik ] -= 2 * SynWTFilterFloatLift9x7.ALPHA * outSig[ ik - outStep ];
 		}
 	}
 
@@ -268,8 +271,10 @@ public class SynWTFilterFloatLift9x7 extends SynWTFilterFloat {
 	 * @see SynWTFilter#synthetize_hpf
 	 */
 	@Override
-	public void synthetize_hpf(final float[] lowSig, final int lowOff, final int lowLen, final int lowStep, final float[] highSig, final int highOff,
-							   final int highLen, final int highStep, final float[] outSig, final int outOff, final int outStep) {
+	public void synthetize_hpf (
+			final float[] lowSig , final int lowOff , final int lowLen , final int lowStep , final float[] highSig , final int highOff ,
+			final int highLen , final int highStep , final float[] outSig , final int outOff , final int outStep
+	) {
 
 		int i;
 		final int outLen = lowLen + highLen; // Length of the output signal
@@ -282,22 +287,23 @@ public class SynWTFilterFloatLift9x7 extends SynWTFilterFloat {
 		lk = lowOff;
 		hk = highOff;
 
-		if (1 != outLen) {
+		if ( 1 != outLen ) {
 			final int outLen2 = outLen >> 1;
 			// "Inverse normalize" each sample
-			for (i = 0; i < outLen2; i++) {
-				lowSig[lk] /= SynWTFilterFloatLift9x7.KL;
-				highSig[hk] /= SynWTFilterFloatLift9x7.KH;
+			for ( i = 0; i < outLen2 ; i++ ) {
+				lowSig[ lk ] /= SynWTFilterFloatLift9x7.KL;
+				highSig[ hk ] /= SynWTFilterFloatLift9x7.KH;
 				lk += lowStep;
 				hk += highStep;
 			}
 			// "Inverse normalise" last high pass coefficient
-			if (1 == outLen % 2) {
-				highSig[hk] /= SynWTFilterFloatLift9x7.KH;
+			if ( 1 == outLen % 2 ) {
+				highSig[ hk ] /= SynWTFilterFloatLift9x7.KH;
 			}
-		} else {
+		}
+		else {
 			// Normalize for Nyquist gain
-			highSig[highOff] /= 2;
+			highSig[ highOff ] /= 2;
 		}
 
 		// Generate intermediate low frequency subband
@@ -308,16 +314,16 @@ public class SynWTFilterFloatLift9x7 extends SynWTFilterFloat {
 		ik = outOff + outStep;
 
 		// Apply lifting step to each "inner" sample
-		for (i = 1; i < outLen - 1; i += 2) {
-			outSig[ik] = lowSig[lk] - SynWTFilterFloatLift9x7.DELTA * (highSig[hk] + highSig[hk + highStep]);
+		for ( i = 1; i < outLen - 1 ; i += 2 ) {
+			outSig[ ik ] = lowSig[ lk ] - SynWTFilterFloatLift9x7.DELTA * ( highSig[ hk ] + highSig[ hk + highStep ] );
 			ik += iStep;
 			lk += lowStep;
 			hk += highStep;
 		}
 
-		if (0 == outLen % 2 && 1 < outLen) {
+		if ( 0 == outLen % 2 && 1 < outLen ) {
 			// Use symmetric extension
-			outSig[ik] = lowSig[lk] - 2 * SynWTFilterFloatLift9x7.DELTA * highSig[hk];
+			outSig[ ik ] = lowSig[ lk ] - 2 * SynWTFilterFloatLift9x7.DELTA * highSig[ hk ];
 		}
 
 		// Generate intermediate high frequency subband
@@ -326,26 +332,27 @@ public class SynWTFilterFloatLift9x7 extends SynWTFilterFloat {
 		hk = highOff;
 		ik = outOff;
 
-		if (1 < outLen) {
-			outSig[ik] = highSig[hk] - 2 * SynWTFilterFloatLift9x7.GAMMA * outSig[ik + outStep];
-		} else {
-			outSig[ik] = highSig[hk];
+		if ( 1 < outLen ) {
+			outSig[ ik ] = highSig[ hk ] - 2 * SynWTFilterFloatLift9x7.GAMMA * outSig[ ik + outStep ];
+		}
+		else {
+			outSig[ ik ] = highSig[ hk ];
 		}
 
 		ik += iStep;
 		hk += highStep;
 
 		// Apply lifting step to each "inner" sample
-		for (i = 2; i < outLen - 1; i += 2) {
-			outSig[ik] = highSig[hk] - SynWTFilterFloatLift9x7.GAMMA * (outSig[ik - outStep] + outSig[ik + outStep]);
+		for ( i = 2; i < outLen - 1 ; i += 2 ) {
+			outSig[ ik ] = highSig[ hk ] - SynWTFilterFloatLift9x7.GAMMA * ( outSig[ ik - outStep ] + outSig[ ik + outStep ] );
 			ik += iStep;
 			hk += highStep;
 		}
 
 		// Handle head boundary effect if output signal has even length
-		if (1 == outLen % 2 && 1 < outLen) {
+		if ( 1 == outLen % 2 && 1 < outLen ) {
 			// Use symmetric extension
-			outSig[ik] = highSig[hk] - 2 * SynWTFilterFloatLift9x7.GAMMA * outSig[ik - outStep];
+			outSig[ ik ] = highSig[ hk ] - 2 * SynWTFilterFloatLift9x7.GAMMA * outSig[ ik - outStep ];
 		}
 
 		// Generate even samples (inverse low-pass filter)
@@ -354,14 +361,14 @@ public class SynWTFilterFloatLift9x7 extends SynWTFilterFloat {
 		ik = outOff + outStep;
 
 		// Apply lifting step to each "inner" sample
-		for (i = 1; i < outLen - 1; i += 2) {
-			outSig[ik] -= SynWTFilterFloatLift9x7.BETA * (outSig[ik - outStep] + outSig[ik + outStep]);
+		for ( i = 1; i < outLen - 1 ; i += 2 ) {
+			outSig[ ik ] -= SynWTFilterFloatLift9x7.BETA * ( outSig[ ik - outStep ] + outSig[ ik + outStep ] );
 			ik += iStep;
 		}
 
-		if (0 == outLen % 2 && 1 < outLen) {
+		if ( 0 == outLen % 2 && 1 < outLen ) {
 			// symmetric extension.
-			outSig[ik] -= 2 * SynWTFilterFloatLift9x7.BETA * outSig[ik - outStep];
+			outSig[ ik ] -= 2 * SynWTFilterFloatLift9x7.BETA * outSig[ ik - outStep ];
 		}
 
 		// Generate odd samples (inverse high pass-filter)
@@ -369,22 +376,22 @@ public class SynWTFilterFloatLift9x7 extends SynWTFilterFloat {
 		// Initialize counters
 		ik = outOff;
 
-		if (1 < outLen) {
+		if ( 1 < outLen ) {
 			// symmetric extension.
-			outSig[ik] -= 2 * SynWTFilterFloatLift9x7.ALPHA * outSig[ik + outStep];
+			outSig[ ik ] -= 2 * SynWTFilterFloatLift9x7.ALPHA * outSig[ ik + outStep ];
 		}
 		ik += iStep;
 
 		// Apply first lifting step to each "inner" sample
-		for (i = 2; i < outLen - 1; i += 2) {
-			outSig[ik] -= SynWTFilterFloatLift9x7.ALPHA * (outSig[ik - outStep] + outSig[ik + outStep]);
+		for ( i = 2; i < outLen - 1 ; i += 2 ) {
+			outSig[ ik ] -= SynWTFilterFloatLift9x7.ALPHA * ( outSig[ ik - outStep ] + outSig[ ik + outStep ] );
 			ik += iStep;
 		}
 
 		// Handle head boundary effect if input signal has even length
-		if ((1 == outLen % 2) && (1 < outLen)) {
+		if ( ( 1 == outLen % 2 ) && ( 1 < outLen ) ) {
 			// Use symmetric extension
-			outSig[ik] -= 2 * SynWTFilterFloatLift9x7.ALPHA * outSig[ik - outStep];
+			outSig[ ik ] -= 2 * SynWTFilterFloatLift9x7.ALPHA * outSig[ ik - outStep ];
 		}
 	}
 
@@ -395,7 +402,7 @@ public class SynWTFilterFloatLift9x7 extends SynWTFilterFloat {
 	 * @return 2
 	 */
 	@Override
-	public int getAnLowNegSupport() {
+	public int getAnLowNegSupport ( ) {
 		return 4;
 	}
 
@@ -407,7 +414,7 @@ public class SynWTFilterFloatLift9x7 extends SynWTFilterFloat {
 	 * positive direction
 	 */
 	@Override
-	public int getAnLowPosSupport() {
+	public int getAnLowPosSupport ( ) {
 		return 4;
 	}
 
@@ -419,7 +426,7 @@ public class SynWTFilterFloatLift9x7 extends SynWTFilterFloat {
 	 * negative direction
 	 */
 	@Override
-	public int getAnHighNegSupport() {
+	public int getAnHighNegSupport ( ) {
 		return 3;
 	}
 
@@ -431,7 +438,7 @@ public class SynWTFilterFloatLift9x7 extends SynWTFilterFloat {
 	 * positive direction
 	 */
 	@Override
-	public int getAnHighPosSupport() {
+	public int getAnHighPosSupport ( ) {
 		return 3;
 	}
 
@@ -446,7 +453,7 @@ public class SynWTFilterFloatLift9x7 extends SynWTFilterFloat {
 	 * negative direction
 	 */
 	@Override
-	public int getSynLowNegSupport() {
+	public int getSynLowNegSupport ( ) {
 		return 3;
 	}
 
@@ -461,7 +468,7 @@ public class SynWTFilterFloatLift9x7 extends SynWTFilterFloat {
 	 * positive direction
 	 */
 	@Override
-	public int getSynLowPosSupport() {
+	public int getSynLowPosSupport ( ) {
 		return 3;
 	}
 
@@ -476,7 +483,7 @@ public class SynWTFilterFloatLift9x7 extends SynWTFilterFloat {
 	 * negative direction
 	 */
 	@Override
-	public int getSynHighNegSupport() {
+	public int getSynHighNegSupport ( ) {
 		return 4;
 	}
 
@@ -491,7 +498,7 @@ public class SynWTFilterFloatLift9x7 extends SynWTFilterFloat {
 	 * positive direction
 	 */
 	@Override
-	public int getSynHighPosSupport() {
+	public int getSynHighPosSupport ( ) {
 		return 4;
 	}
 
@@ -502,7 +509,7 @@ public class SynWTFilterFloatLift9x7 extends SynWTFilterFloat {
 	 * @return WT_FILTER_INT_LIFT.
 	 */
 	@Override
-	public int getImplType() {
+	public int getImplType ( ) {
 		return WaveletFilter.WT_FILTER_FLOAT_LIFT;
 	}
 
@@ -514,7 +521,7 @@ public class SynWTFilterFloatLift9x7 extends SynWTFilterFloat {
 	 * rounding is performed.
 	 */
 	@Override
-	public boolean isReversible() {
+	public boolean isReversible ( ) {
 		return false;
 	}
 
@@ -543,14 +550,14 @@ public class SynWTFilterFloatLift9x7 extends SynWTFilterFloat {
 	 * is applied in the analyze() method.
 	 */
 	@Override
-	public boolean isSameAsFullWT(final int tailOvrlp, final int headOvrlp, final int inLen) {
+	public boolean isSameAsFullWT ( final int tailOvrlp , final int headOvrlp , final int inLen ) {
 
 		// If the input signal has even length.
-		if (0 == inLen % 2) {
-			return (2 <= tailOvrlp && 1 <= headOvrlp);
+		if ( 0 == inLen % 2 ) {
+			return ( 2 <= tailOvrlp && 1 <= headOvrlp );
 		}
 		// Else if the input signal has odd length.
-		return (2 <= tailOvrlp && 2 <= headOvrlp);
+		return ( 2 <= tailOvrlp && 2 <= headOvrlp );
 	}
 
 	/**
@@ -559,7 +566,7 @@ public class SynWTFilterFloatLift9x7 extends SynWTFilterFloat {
 	 * @return wavelet filter type.
 	 */
 	@Override
-	public String toString() {
+	public String toString ( ) {
 		return "w9x7 (lifting)";
 	}
 }

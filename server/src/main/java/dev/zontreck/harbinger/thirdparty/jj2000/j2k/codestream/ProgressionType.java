@@ -11,7 +11,7 @@
  *
  *
  * COPYRIGHT:
- * 
+ *
  * This software module was originally developed by Rapha�l Grosbois and
  * Diego Santa Cruz (Swiss Federal Institute of Technology-EPFL); Joel
  * Askel�f (Ericsson Radio Systems AB); and Bertrand Berthelot, David
@@ -38,7 +38,7 @@
  * using this software module for non JPEG 2000 Standard conforming
  * products. This copyright notice must be included in all copies or
  * derivative works of this software module.
- * 
+ *
  * Copyright (c) 1999/2000 JJ2000 Partners.
  */
 package dev.zontreck.harbinger.thirdparty.jj2000.j2k.codestream;
@@ -46,21 +46,20 @@ package dev.zontreck.harbinger.thirdparty.jj2000.j2k.codestream;
 /**
  * This interface defines the identifiers for the different codestream profiles
  * and progression types.
- * 
+ *
  * <p>
  * Each progressive type has a different number: 'LY_RES_COMP_POS_PROG',
  * 'RES_LY_COMP_POS_PROG', 'RES_POS_COMP_LY_PROG', 'POS_COMP_RES_LY_PROG' or
  * 'COMP_POS_RES_LY_PROG'. These are the same identifiers are used in the
  * codestream syntax.
- * 
+ *
  * <p>
  * This interface defines the constants only. In order to use the constants in
  * any other class you can either use the fully qualified name (e.g.,
  * <tt>ProgressionType.LY_RES_COMP_POS_PROG</tt>) or declare this interface in
  * the implements clause of the class and then access the identifier directly.
  */
-public interface ProgressionType
-{
+public interface ProgressionType {
 
 	/**
 	 * The codestream is Layer/Resolution/Component/Position progressive : 0

@@ -83,22 +83,22 @@ public abstract class ForwardWT extends ImgDataAdapter implements ForwWT, CBlkWT
 	 */
 	private static final String[][] pinfo = {
 			{
-					"Wlev",
-					"<number of decomposition levels>",
+					"Wlev" ,
+					"<number of decomposition levels>" ,
 					"Specifies the number of wavelet decomposition levels to apply to "
 							+ "the image. If 0 no wavelet transform is performed. All components "
-							+ "and all tiles have the same number of decomposition levels.", "5"},
+							+ "and all tiles have the same number of decomposition levels." , "5" } ,
 			{
-					"Wwt",
-					"[full]",
+					"Wwt" ,
+					"[full]" ,
 					"Specifies the wavelet transform to be used. Possible value is: "
-							+ "'full' (full page). The value 'full' performs a normal DWT.", "full"},
+							+ "'full' (full page). The value 'full' performs a normal DWT." , "full" } ,
 			{
-					"Wcboff",
-					"<x y>",
+					"Wcboff" ,
+					"<x y>" ,
 					"Code-blocks partition offset in the reference grid. Allowed for <x> and <y> are 0 and 1.\n"
 							+ "Note: This option is defined in JPEG 2000 part 2 and may not"
-							+ " be supported by all JPEG 2000 decoders.", "0 0"}};
+							+ " be supported by all JPEG 2000 decoders." , "0 0" } };
 
 	/**
 	 * Initializes this object for the specified number of tiles 'nt' and
@@ -106,8 +106,8 @@ public abstract class ForwardWT extends ImgDataAdapter implements ForwWT, CBlkWT
 	 *
 	 * @param src The source of ImgData
 	 */
-	protected ForwardWT(final ImgData src) {
-		super(src);
+	protected ForwardWT ( final ImgData src ) {
+		super ( src );
 	}
 
 	/**
@@ -123,7 +123,7 @@ public abstract class ForwardWT extends ImgDataAdapter implements ForwWT, CBlkWT
 	 * @return the options name, their synopsis and their explanation, or null
 	 * if no options are supported.
 	 */
-	public static String[][] getParameterInfo() {
+	public static String[][] getParameterInfo ( ) {
 		return ForwardWT.pinfo;
 	}
 
@@ -139,49 +139,50 @@ public abstract class ForwardWT extends ImgDataAdapter implements ForwWT, CBlkWT
 	 * @throws IllegalArgumentException If mandatory parameters are missing or if invalid values
 	 *                                  are given.
 	 */
-	public static ForwardWT createInstance(final BlkImgDataSrc src, final ParameterList pl, final EncoderSpecs encSpec) {
+	public static ForwardWT createInstance ( final BlkImgDataSrc src , final ParameterList pl , final EncoderSpecs encSpec ) {
 //		int deflev = ((Integer) encSpec.dls.getDefault()).intValue();
 
 		// Check parameters
-		pl.checkList(ForwardWT.OPT_PREFIX, ParameterList.toNameArray(ForwardWT.pinfo));
+		pl.checkList ( ForwardWT.OPT_PREFIX , ParameterList.toNameArray ( ForwardWT.pinfo ) );
 
 		// Code-block partition origin
 		String str = "";
-		if (null == pl.getParameter("Wcboff")) {
-			throw new Error("You must specify an argument to the '-Wcboff' option. See usage with the '-u' option");
+		if ( null == pl.getParameter ( "Wcboff" ) ) {
+			throw new Error ( "You must specify an argument to the '-Wcboff' option. See usage with the '-u' option" );
 		}
-		final StringTokenizer stk = new StringTokenizer(pl.getParameter("Wcboff"));
-		if (2 != stk.countTokens()) {
-			throw new IllegalArgumentException("'-Wcboff' option needs two arguments. See usage with "
-					+ "the '-u' option.");
+		final StringTokenizer stk = new StringTokenizer ( pl.getParameter ( "Wcboff" ) );
+		if ( 2 != stk.countTokens ( ) ) {
+			throw new IllegalArgumentException ( "'-Wcboff' option needs two arguments. See usage with "
+					+ "the '-u' option." );
 		}
 		int cb0x = 0;
-		str = stk.nextToken();
+		str = stk.nextToken ( );
 		try {
-			cb0x = (Integer.valueOf(str)).intValue();
-		} catch (final NumberFormatException e) {
-			throw new IllegalArgumentException("Bad first parameter for the '-Wcboff' option: " + str);
+			cb0x = ( Integer.valueOf ( str ) ).intValue ( );
+		} catch ( final NumberFormatException e ) {
+			throw new IllegalArgumentException ( "Bad first parameter for the '-Wcboff' option: " + str );
 		}
-		if (0 > cb0x || 1 < cb0x) {
-			throw new IllegalArgumentException("Invalid horizontal code-block partition origin.");
+		if ( 0 > cb0x || 1 < cb0x ) {
+			throw new IllegalArgumentException ( "Invalid horizontal code-block partition origin." );
 		}
 		int cb0y = 0;
-		str = stk.nextToken();
+		str = stk.nextToken ( );
 		try {
-			cb0y = (Integer.valueOf(str)).intValue();
-		} catch (final NumberFormatException e) {
-			throw new IllegalArgumentException("Bad second parameter for the '-Wcboff' option: " + str);
+			cb0y = ( Integer.valueOf ( str ) ).intValue ( );
+		} catch ( final NumberFormatException e ) {
+			throw new IllegalArgumentException ( "Bad second parameter for the '-Wcboff' option: " + str );
 		}
-		if (0 > cb0y || 1 < cb0y) {
-			throw new IllegalArgumentException("Invalid vertical code-block partition origin.");
+		if ( 0 > cb0y || 1 < cb0y ) {
+			throw new IllegalArgumentException ( "Invalid vertical code-block partition origin." );
 		}
-		if (0 != cb0x || 0 != cb0y) {
-			FacilityManager.getMsgLogger().printmsg(
-					MsgLogger.WARNING,
+		if ( 0 != cb0x || 0 != cb0y ) {
+			FacilityManager.getMsgLogger ( ).printmsg (
+					MsgLogger.WARNING ,
 					"Code-blocks partition origin is different from (0,0). This is defined in JPEG 2000"
-							+ " part 2 and may be not supported by all JPEG 2000 decoders.");
+							+ " part 2 and may be not supported by all JPEG 2000 decoders."
+			);
 		}
 
-		return new ForwWTFull(src, encSpec, cb0x, cb0y);
+		return new ForwWTFull ( src , encSpec , cb0x , cb0y );
 	}
 }

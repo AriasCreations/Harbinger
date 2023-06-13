@@ -43,34 +43,38 @@
  */
 package dev.zontreck.harbinger.thirdparty.jj2000.j2k.entropy.encoder;
 
-import dev.zontreck.harbinger.thirdparty.jj2000.j2k.codestream.writer.*;
-import dev.zontreck.harbinger.thirdparty.jj2000.j2k.codestream.*;
-import dev.zontreck.harbinger.thirdparty.jj2000.j2k.entropy.*;
-import dev.zontreck.harbinger.thirdparty.jj2000.j2k.encoder.*;
-import dev.zontreck.harbinger.thirdparty.jj2000.j2k.image.*;
-import dev.zontreck.harbinger.thirdparty.jj2000.j2k.util.*;
-import dev.zontreck.harbinger.thirdparty.jj2000.j2k.*;
+import dev.zontreck.harbinger.thirdparty.jj2000.j2k.ModuleSpec;
+import dev.zontreck.harbinger.thirdparty.jj2000.j2k.codestream.ProgressionType;
+import dev.zontreck.harbinger.thirdparty.jj2000.j2k.codestream.writer.CodestreamWriter;
+import dev.zontreck.harbinger.thirdparty.jj2000.j2k.codestream.writer.HeaderEncoder;
+import dev.zontreck.harbinger.thirdparty.jj2000.j2k.encoder.EncoderSpecs;
+import dev.zontreck.harbinger.thirdparty.jj2000.j2k.entropy.ProgressionSpec;
+import dev.zontreck.harbinger.thirdparty.jj2000.j2k.image.ImgDataAdapter;
+import dev.zontreck.harbinger.thirdparty.jj2000.j2k.util.ParameterList;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.StreamTokenizer;
+import java.io.StringReader;
 
 /**
  * This is the abstract class from which post-compression rate allocators which
  * generate layers should inherit. The source of data is a 'CodedCBlkDataSrcEnc'
  * which delivers entropy coded blocks with rate-distortion statistics.
- * 
+ *
  * <p>
  * The post compression rate allocator implementation should create the layers,
  * according to a rate allocation policy, and send the packets to a
  * CodestreamWriter. Since the rate allocator sends the packets to the bit
  * stream then it should output the packets to the bit stream in the order
  * imposed by the bit stream profiles.
- * 
+ *
  * @see CodedCBlkDataSrcEnc
  * @see dev.zontreck.harbinger.thirdparty.jj2000.j2k.codestream.writer.CodestreamWriter
  */
-public abstract class PostCompRateAllocator extends ImgDataAdapter
-{
-	/** The prefix for rate allocation options: 'A' */
+public abstract class PostCompRateAllocator extends ImgDataAdapter {
+	/**
+	 * The prefix for rate allocation options: 'A'
+	 */
 	public static final char OPT_PREFIX = 'A';
 
 	/**
@@ -79,10 +83,10 @@ public abstract class PostCompRateAllocator extends ImgDataAdapter
 	 */
 	private static final String[][] pinfo = {
 			{
-					"Aptype",
+					"Aptype" ,
 					"[<tile idx>] res|layer|res-pos|pos-comp|comp-pos [res_start comp_start layer_end res_end "
 							+ "comp_end prog] [[res_start comp_start ly_end res_end comp_end prog] ...] ["
-							+ "[<tile-component idx>] ...]",
+							+ "[<tile-component idx>] ...]" ,
 					"Specifies which type of progression should be used when generating "
 							+ "the codestream. The 'res' value generates a resolution "
 							+ "progressive codestream with the number of layers specified by "
@@ -100,10 +104,10 @@ public abstract class PostCompRateAllocator extends ImgDataAdapter
 							+ "included, 'comp_end' is index (from 0) of the first component not "
 							+ "included and 'prog' is the progression type to be used "
 							+ "for the rest of the tile/image. Several progression order changes "
-							+ "can be specified, one after the other.", null },
+							+ "can be specified, one after the other." , null } ,
 			{
-					"Alayers",
-					"[<rate> [+<layers>] [<rate [+<layers>] [...]] | sl]",
+					"Alayers" ,
+					"[<rate> [+<layers>] [<rate [+<layers>] [...]] | sl]" ,
 					"Explicitly specifies the codestream layer formation parameters. "
 							+ "The <rate> parameter specifies the bitrate to which the first "
 							+ "layer should be optimized. The <layers> parameter, if present, "
@@ -123,83 +127,46 @@ public abstract class PostCompRateAllocator extends ImgDataAdapter
 							+ "If the 'sl' (i.e. 'single layer') argument is specified, the "
 							+ "generated codestream will"
 							+ " only contain one layer (with a bit rate specified thanks to the"
-							+ " '-rate' or 'nbytes' options).", "0.015 +20 2.0 +10" } };
+							+ " '-rate' or 'nbytes' options)." , "0.015 +20 2.0 +10" } };
 
-	/** The source of entropy coded data */
+	/**
+	 * The source of entropy coded data
+	 */
 	protected CodedCBlkDataSrcEnc src;
 
-	/** The source of entropy coded data */
+	/**
+	 * The source of entropy coded data
+	 */
 	protected EncoderSpecs encSpec;
 
-	/** The number of layers. */
+	/**
+	 * The number of layers.
+	 */
 	protected int numLayers;
 
-	/** The bit-stream writer */
+	/**
+	 * The bit-stream writer
+	 */
 	CodestreamWriter bsWriter;
 
-	/** The header encoder */
+	/**
+	 * The header encoder
+	 */
 	HeaderEncoder headEnc;
 
 	/**
 	 * Initializes the source of entropy coded data.
-	 * 
-	 * @param src
-	 *            The source of entropy coded data.
 	 *
-	 * 
-	 * @param bw
-	 *            The packet bit stream writer.
-	 * 
+	 * @param src The source of entropy coded data.
+	 * @param bw  The packet bit stream writer.
 	 * @see ProgressionType
 	 */
-	protected PostCompRateAllocator(final CodedCBlkDataSrcEnc src, final int nl, final CodestreamWriter bw, final EncoderSpecs encSpec)
-	{
-		super(src);
+	protected PostCompRateAllocator ( final CodedCBlkDataSrcEnc src , final int nl , final CodestreamWriter bw , final EncoderSpecs encSpec ) {
+		super ( src );
 		this.src = src;
 		this.encSpec = encSpec;
 		this.numLayers = nl;
 		this.bsWriter = bw;
-	}
-
-	/**
-	 * Keep a reference to the header encoder.
-	 * 
-	 * @param headEnc
-	 *            The header encoder
-	 */
-	public void setHeaderEncoder(final HeaderEncoder headEnc)
-	{
-		this.headEnc = headEnc;
-	}
-
-	/**
-	 * Initializes the rate allocation points, taking into account header
-	 * overhead and such. This method must be called after the header has been
-	 * simulated but before calling the runAndWrite() one. The header must be
-	 * rewritten after a call to this method since the number of layers may
-	 * change.
-	 *
-	 * 
-	 * @see #runAndWrite
-	 */
-	public abstract void initialize() throws IOException;
-
-	/**
-	 * Runs the rate allocation algorithm and writes the data to the bit stream.
-	 * This must be called after the initialize() method.
-	 * 
-	 * @see #initialize
-	 */
-	public abstract void runAndWrite() throws IOException;
-
-	/**
-	 * Returns the number of layers that are actually generated.
-	 * 
-	 * @return The number of layers generated.
-	 */
-	public int getNumLayers()
-	{
-		return this.numLayers;
 	}
 
 	/**
@@ -211,12 +178,11 @@ public abstract class PostCompRateAllocator extends ImgDataAdapter
 	 * The synopsis or description may be 'null', in which case it is assumed
 	 * that there is no synopsis or description of the option, respectively.
 	 * Null may be returned if no options are supported.
-	 * 
+	 *
 	 * @return the options name, their synopsis and their explanation, or null
-	 *         if no options are supported.
+	 * if no options are supported.
 	 */
-	public static String[][] getParameterInfo()
-	{
+	public static String[][] getParameterInfo ( ) {
 		return PostCompRateAllocator.pinfo;
 	}
 
@@ -225,161 +191,162 @@ public abstract class PostCompRateAllocator extends ImgDataAdapter
 	 * allocation parameters in the parameter list 'pl', having 'src' as the
 	 * source of entropy coded data, 'rate' as the target bitrate and 'bw' as
 	 * the bit stream writer object.
-	 * 
-	 * @param src
-	 *            The source of entropy coded data.
-	 * 
-	 * @param pl
-	 *            The parameter lis (or options).
-	 * 
-	 * @param rate
-	 *            The target bitrate for the rate allocation
-	 * 
-	 * @param bw
-	 *            The bit stream writer object, where the bit stream data will
-	 *            be written.
+	 *
+	 * @param src  The source of entropy coded data.
+	 * @param pl   The parameter lis (or options).
+	 * @param rate The target bitrate for the rate allocation
+	 * @param bw   The bit stream writer object, where the bit stream data will
+	 *             be written.
 	 */
-	public static PostCompRateAllocator createInstance(final CodedCBlkDataSrcEnc src, final ParameterList pl, final float rate,
-													   final CodestreamWriter bw, final EncoderSpecs encSpec)
-	{
+	public static PostCompRateAllocator createInstance (
+			final CodedCBlkDataSrcEnc src , final ParameterList pl , final float rate ,
+			final CodestreamWriter bw , final EncoderSpecs encSpec
+	) {
 		// Check parameters
-		pl.checkList(PostCompRateAllocator.OPT_PREFIX, ParameterList.toNameArray(PostCompRateAllocator.pinfo));
+		pl.checkList ( PostCompRateAllocator.OPT_PREFIX , ParameterList.toNameArray ( PostCompRateAllocator.pinfo ) );
 
 		// Construct the layer specification from the 'Alayers' option
-		final LayersInfo lyrs = PostCompRateAllocator.parseAlayers(pl.getParameter("Alayers"), rate);
+		final LayersInfo lyrs = PostCompRateAllocator.parseAlayers ( pl.getParameter ( "Alayers" ) , rate );
 
 		final int nTiles = encSpec.nTiles;
 		final int nComp = encSpec.nComp;
-		final int numLayers = lyrs.getTotNumLayers();
+		final int numLayers = lyrs.getTotNumLayers ( );
 
 		// Parse the progressive type
-		encSpec.pocs = new ProgressionSpec(nTiles, nComp, numLayers, encSpec.dls, ModuleSpec.SPEC_TYPE_TILE_COMP, pl);
+		encSpec.pocs = new ProgressionSpec ( nTiles , nComp , numLayers , encSpec.dls , ModuleSpec.SPEC_TYPE_TILE_COMP , pl );
 
-		return new EBCOTRateAllocator(src, lyrs, bw, encSpec, pl);
+		return new EBCOTRateAllocator ( src , lyrs , bw , encSpec , pl );
 	}
 
 	/**
 	 * Convenience method that parses the 'Alayers' option.
-	 * 
-	 * @param params
-	 *            The parameters of the 'Alayers' option
-	 * 
-	 * @param rate
-	 *            The overall target bitrate
-	 * 
+	 *
+	 * @param params The parameters of the 'Alayers' option
+	 * @param rate   The overall target bitrate
 	 * @return The layer specification.
 	 */
-	private static LayersInfo parseAlayers(final String params, final float rate)
-	{
+	private static LayersInfo parseAlayers ( final String params , final float rate ) {
 		final LayersInfo lyrs;
 		final StreamTokenizer stok;
 		boolean islayer, ratepending;
 		float r;
 
-		lyrs = new LayersInfo(rate);
-		stok = new StreamTokenizer(new StringReader(params));
-		stok.eolIsSignificant(false);
+		lyrs = new LayersInfo ( rate );
+		stok = new StreamTokenizer ( new StringReader ( params ) );
+		stok.eolIsSignificant ( false );
 
-		try
-		{
-			stok.nextToken();
-		}
-		catch (final IOException e)
-		{
-			throw new Error("An IOException has occurred where it should never occur");
+		try {
+			stok.nextToken ( );
+		} catch ( final IOException e ) {
+			throw new Error ( "An IOException has occurred where it should never occur" );
 		}
 		ratepending = false;
 		islayer = false;
 		r = 0; // to keep compiler happy
-		while (StreamTokenizer.TT_EOF != stok.ttype)
-		{
-			switch (stok.ttype)
-			{
+		while ( StreamTokenizer.TT_EOF != stok.ttype ) {
+			switch ( stok.ttype ) {
 				case StreamTokenizer.TT_NUMBER:
-					if (islayer)
-					{ // layer parameter
-						try
-						{
-							lyrs.addOptPoint(r, (int) stok.nval);
-						}
-						catch (final
-						IllegalArgumentException e)
-						{
-							throw new IllegalArgumentException("Error in 'Alayers' option: " + e.getMessage());
+					if ( islayer ) { // layer parameter
+						try {
+							lyrs.addOptPoint ( r , ( int ) stok.nval );
+						} catch (
+								final
+								IllegalArgumentException e ) {
+							throw new IllegalArgumentException ( "Error in 'Alayers' option: " + e.getMessage ( ) );
 						}
 						ratepending = false;
 						islayer = false;
 					}
-					else
-					{ // rate parameter
-						if (ratepending)
-						{ // Add pending rate parameter
-							try
-							{
-								lyrs.addOptPoint(r, 0);
-							}
-							catch (final
-							IllegalArgumentException e)
-							{
-								throw new IllegalArgumentException("Error in 'Alayers' option: " + e.getMessage());
+					else { // rate parameter
+						if ( ratepending ) { // Add pending rate parameter
+							try {
+								lyrs.addOptPoint ( r , 0 );
+							} catch (
+									final
+									IllegalArgumentException e ) {
+								throw new IllegalArgumentException ( "Error in 'Alayers' option: " + e.getMessage ( ) );
 							}
 						}
 						// Now store new rate parameter
-						r = (float) stok.nval;
+						r = ( float ) stok.nval;
 						ratepending = true;
 					}
 					break;
 				case '+':
-					if (!ratepending || islayer)
-					{
-						throw new IllegalArgumentException("Layer parameter without previous rate parameter "
-								+ "in 'Alayers' option");
+					if ( ! ratepending || islayer ) {
+						throw new IllegalArgumentException ( "Layer parameter without previous rate parameter "
+								+ "in 'Alayers' option" );
 					}
 					islayer = true; // Next number is layer parameter
 					break;
 				case StreamTokenizer.TT_WORD:
-					try
-					{
-						stok.nextToken();
+					try {
+						stok.nextToken ( );
+					} catch ( final IOException e ) {
+						throw new Error ( "An IOException has occurred where it should never occur" );
 					}
-					catch (final IOException e)
-					{
-						throw new Error("An IOException has occurred where it should never occur");
-					}
-					if (StreamTokenizer.TT_EOF != stok.ttype)
-					{
-						throw new IllegalArgumentException("'sl' argument of '-Alayers' option must be "
-								+ "used alone.");
+					if ( StreamTokenizer.TT_EOF != stok.ttype ) {
+						throw new IllegalArgumentException ( "'sl' argument of '-Alayers' option must be "
+								+ "used alone." );
 					}
 					break;
 				default:
-					throw new IllegalArgumentException("Error parsing 'Alayers' option");
+					throw new IllegalArgumentException ( "Error parsing 'Alayers' option" );
 			}
-			try
-			{
-				stok.nextToken();
-			}
-			catch (final IOException e)
-			{
-				throw new Error("An IOException has occurred where it should never occur");
+			try {
+				stok.nextToken ( );
+			} catch ( final IOException e ) {
+				throw new Error ( "An IOException has occurred where it should never occur" );
 			}
 		}
-		if (islayer)
-		{
-			throw new IllegalArgumentException("Error parsing 'Alayers' option");
+		if ( islayer ) {
+			throw new IllegalArgumentException ( "Error parsing 'Alayers' option" );
 		}
-		if (ratepending)
-		{
-			try
-			{
-				lyrs.addOptPoint(r, 0);
-			}
-			catch (final IllegalArgumentException e)
-			{
-				throw new IllegalArgumentException("Error in 'Alayers' option: " + e.getMessage());
+		if ( ratepending ) {
+			try {
+				lyrs.addOptPoint ( r , 0 );
+			} catch ( final IllegalArgumentException e ) {
+				throw new IllegalArgumentException ( "Error in 'Alayers' option: " + e.getMessage ( ) );
 			}
 		}
 		return lyrs;
+	}
+
+	/**
+	 * Keep a reference to the header encoder.
+	 *
+	 * @param headEnc The header encoder
+	 */
+	public void setHeaderEncoder ( final HeaderEncoder headEnc ) {
+		this.headEnc = headEnc;
+	}
+
+	/**
+	 * Initializes the rate allocation points, taking into account header
+	 * overhead and such. This method must be called after the header has been
+	 * simulated but before calling the runAndWrite() one. The header must be
+	 * rewritten after a call to this method since the number of layers may
+	 * change.
+	 *
+	 * @see #runAndWrite
+	 */
+	public abstract void initialize ( ) throws IOException;
+
+	/**
+	 * Runs the rate allocation algorithm and writes the data to the bit stream.
+	 * This must be called after the initialize() method.
+	 *
+	 * @see #initialize
+	 */
+	public abstract void runAndWrite ( ) throws IOException;
+
+	/**
+	 * Returns the number of layers that are actually generated.
+	 *
+	 * @return The number of layers generated.
+	 */
+	public int getNumLayers ( ) {
+		return this.numLayers;
 	}
 
 }

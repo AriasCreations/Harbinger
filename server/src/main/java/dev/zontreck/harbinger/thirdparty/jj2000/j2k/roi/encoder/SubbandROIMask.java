@@ -51,49 +51,41 @@ package dev.zontreck.harbinger.thirdparty.jj2000.j2k.roi.encoder;
 public abstract class SubbandROIMask {
 
 	/**
-	 * The subband masks of the child LL
-	 */
-	protected SubbandROIMask ll;
-
-	/**
-	 * The subband masks of the child LH
-	 */
-	protected SubbandROIMask lh;
-
-	/**
-	 * The subband masks of the child HL
-	 */
-	protected SubbandROIMask hl;
-
-	/**
-	 * The subband masks of the child HH
-	 */
-	protected SubbandROIMask hh;
-
-	/**
-	 * Flag indicating whether this subband mask is a node or not
-	 */
-	protected boolean isNode;
-
-	/**
 	 * Horizontal uper-left coordinate of the subband mask
 	 */
 	public int ulx;
-
 	/**
 	 * Vertical uper-left coordinate of the subband mask
 	 */
 	public int uly;
-
 	/**
 	 * Width of the subband mask
 	 */
 	public int w;
-
 	/**
 	 * Height of the subband mask
 	 */
 	public int h;
+	/**
+	 * The subband masks of the child LL
+	 */
+	protected SubbandROIMask ll;
+	/**
+	 * The subband masks of the child LH
+	 */
+	protected SubbandROIMask lh;
+	/**
+	 * The subband masks of the child HL
+	 */
+	protected SubbandROIMask hl;
+	/**
+	 * The subband masks of the child HH
+	 */
+	protected SubbandROIMask hh;
+	/**
+	 * Flag indicating whether this subband mask is a node or not
+	 */
+	protected boolean isNode;
 
 	/**
 	 * The constructor of the SubbandROIMask takes the dimensions of the subband
@@ -104,7 +96,7 @@ public abstract class SubbandROIMask {
 	 * @param w   The width of corresponding subband
 	 * @param h   The height of corresponding subband
 	 */
-	protected SubbandROIMask(final int ulx, final int uly, final int w, final int h) {
+	protected SubbandROIMask ( final int ulx , final int uly , final int w , final int h ) {
 		this.ulx = ulx;
 		this.uly = uly;
 		this.w = w;
@@ -120,33 +112,36 @@ public abstract class SubbandROIMask {
 	 * @param x horizontal coordinate of the specified point.
 	 * @param y horizontal coordinate of the specified point.
 	 */
-	public SubbandROIMask getSubbandRectROIMask(final int x, final int y) {
+	public SubbandROIMask getSubbandRectROIMask ( final int x , final int y ) {
 		SubbandROIMask cur, hhs;
 
 		// Check that we are inside this subband
-		if (x < this.ulx || y < this.uly || x >= this.ulx + this.w || y >= this.uly + this.h) {
-			throw new IllegalArgumentException();
+		if ( x < this.ulx || y < this.uly || x >= this.ulx + this.w || y >= this.uly + this.h ) {
+			throw new IllegalArgumentException ( );
 		}
 
 		cur = this;
-		while (cur.isNode) {
+		while ( cur.isNode ) {
 			hhs = cur.hh;
 			// While we are still at a node -> continue
-			if (x < hhs.ulx) {
+			if ( x < hhs.ulx ) {
 				// Is the result of horizontal low-pass
-				if (y < hhs.uly) {
+				if ( y < hhs.uly ) {
 					// Vertical low-pass
 					cur = cur.ll;
-				} else {
+				}
+				else {
 					// Vertical high-pass
 					cur = cur.lh;
 				}
-			} else {
+			}
+			else {
 				// Is the result of horizontal high-pass
-				if (y < hhs.uly) {
+				if ( y < hhs.uly ) {
 					// Vertical low-pass
 					cur = cur.hl;
-				} else {
+				}
+				else {
 					// Vertical high-pass
 					cur = cur.hh;
 				}

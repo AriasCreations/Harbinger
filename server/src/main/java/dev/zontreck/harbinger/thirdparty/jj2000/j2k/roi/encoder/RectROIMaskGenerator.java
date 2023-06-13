@@ -67,53 +67,48 @@ import dev.zontreck.harbinger.thirdparty.jj2000.j2k.wavelet.Subband;
  */
 public class RectROIMaskGenerator extends ROIMaskGenerator {
 	/**
+	 * Number of ROIs
+	 */
+	private final int[] nrROIs;
+	/**
+	 * The tree of subbandmask. One for each component
+	 */
+	private final SubbandRectROIMask[] sMasks;
+	/**
 	 * The upper left xs of the ROIs
 	 */
 	private int[] ulxs;
-
 	/**
 	 * The upper left ys of the ROIs
 	 */
 	private int[] ulys;
-
 	/**
 	 * The lower right xs of the ROIs
 	 */
 	private int[] lrxs;
-
 	/**
 	 * The lower right ys of the ROIs
 	 */
 	private int[] lrys;
 
 	/**
-	 * Number of ROIs
-	 */
-	private final int[] nrROIs;
-
-	/**
-	 * The tree of subbandmask. One for each component
-	 */
-	private final SubbandRectROIMask[] sMasks;
-
-	/**
 	 * The constructor of the mask generator. The constructor is called with the
 	 * ROI data. This data is stored in arrays that are used to generate the
 	 * SubbandRectROIMask trees for each component.
 	 *
-	 * @param ROIs     The ROI info.
-	 * @param nrc      number of components.
+	 * @param ROIs The ROI info.
+	 * @param nrc  number of components.
 	 */
-	public RectROIMaskGenerator(final ROI[] ROIs, final int nrc) {
-		super(ROIs, nrc);
+	public RectROIMaskGenerator ( final ROI[] ROIs , final int nrc ) {
+		super ( ROIs , nrc );
 		final int nr = ROIs.length;
 		int r;
-		this.nrROIs = new int[nrc];
-		this.sMasks = new SubbandRectROIMask[nrc];
+		this.nrROIs = new int[ nrc ];
+		this.sMasks = new SubbandRectROIMask[ nrc ];
 
 		// Count number of ROIs per component
-		for (r = nr - 1; 0 <= r; r--) {
-			this.nrROIs[ROIs[r].comp]++;
+		for ( r = nr - 1; 0 <= r ; r-- ) {
+			this.nrROIs[ ROIs[ r ].comp ]++;
 		}
 	}
 
@@ -133,12 +128,12 @@ public class RectROIMaskGenerator extends ROIMaskGenerator {
 	 * @return Whether or not a mask was needed for this tile
 	 */
 	@Override
-	public boolean getROIMask(final DataBlkInt db, final Subband sb, final int magbits, final int c) {
+	public boolean getROIMask ( final DataBlkInt db , final Subband sb , final int magbits , final int c ) {
 		int x = db.ulx;
 		int y = db.uly;
 		final int w = db.w;
 		final int h = db.h;
-		final int[] mask = db.getDataInt();
+		final int[] mask = db.getDataInt ( );
 		int i, j, k, r, maxk, maxj;
 		int ulx = 0, uly = 0, lrx = 0, lry = 0;
 		int wrap;
@@ -151,17 +146,17 @@ public class RectROIMaskGenerator extends ROIMaskGenerator {
 
 		// If the ROI bounds have not been calculated for this tile and
 		// component, do so now.
-		if (!this.tileMaskMade[c]) {
-			this.makeMask(sb, magbits, c);
-			this.tileMaskMade[c] = true;
+		if ( ! this.tileMaskMade[ c ] ) {
+			this.makeMask ( sb , magbits , c );
+			this.tileMaskMade[ c ] = true;
 		}
 
-		if (!this.roiInTile) {
+		if ( ! this.roiInTile ) {
 			return false;
 		}
 
 		// Find relevant subband mask and get ROI bounds
-		srm = (SubbandRectROIMask) this.sMasks[c].getSubbandRectROIMask(x, y);
+		srm = ( SubbandRectROIMask ) this.sMasks[ c ].getSubbandRectROIMask ( x , y );
 		culxs = srm.ulxs;
 		culys = srm.ulys;
 		clrxs = srm.lrxs;
@@ -172,44 +167,48 @@ public class RectROIMaskGenerator extends ROIMaskGenerator {
 		// as the distance from the lower right corner of the block
 		x -= srm.ulx;
 		y -= srm.uly;
-		for (r = maxROI; 0 <= r; r--) {
-			ulx = culxs[r] - x;
-			if (0 > ulx) {
+		for ( r = maxROI; 0 <= r ; r-- ) {
+			ulx = culxs[ r ] - x;
+			if ( 0 > ulx ) {
 				ulx = 0;
-			} else if (ulx >= w) {
+			}
+			else if ( ulx >= w ) {
 				ulx = w;
 			}
 
-			uly = culys[r] - y;
-			if (0 > uly) {
+			uly = culys[ r ] - y;
+			if ( 0 > uly ) {
 				uly = 0;
-			} else if (uly >= h) {
+			}
+			else if ( uly >= h ) {
 				uly = h;
 			}
 
-			lrx = clrxs[r] - x;
-			if (0 > lrx) {
-				lrx = -1;
-			} else if (lrx >= w) {
+			lrx = clrxs[ r ] - x;
+			if ( 0 > lrx ) {
+				lrx = - 1;
+			}
+			else if ( lrx >= w ) {
 				lrx = w - 1;
 			}
 
-			lry = clrys[r] - y;
-			if (0 > lry) {
-				lry = -1;
-			} else if (lry >= h) {
+			lry = clrys[ r ] - y;
+			if ( 0 > lry ) {
+				lry = - 1;
+			}
+			else if ( lry >= h ) {
 				lry = h - 1;
 			}
 
 			// Add the masks of the ROI
 			i = w * lry + lrx;
-			maxj = (lrx - ulx);
+			maxj = ( lrx - ulx );
 			wrap = w - maxj - 1;
 			maxk = lry - uly;
 
-			for (k = maxk; 0 <= k; k--) {
-				for (j = maxj; 0 <= j; j--, i--)
-					mask[i] = magbits;
+			for ( k = maxk; 0 <= k ; k-- ) {
+				for ( j = maxj; 0 <= j ; j-- , i-- )
+					mask[ i ] = magbits;
 				i -= wrap;
 			}
 		}
@@ -220,8 +219,8 @@ public class RectROIMaskGenerator extends ROIMaskGenerator {
 	 * This function returns the relevant data of the mask generator
 	 */
 	@Override
-	public String toString() {
-		return ("Fast rectangular ROI mask generator");
+	public String toString ( ) {
+		return ( "Fast rectangular ROI mask generator" );
 	}
 
 	/**
@@ -233,8 +232,8 @@ public class RectROIMaskGenerator extends ROIMaskGenerator {
 	 * @param n  component number
 	 */
 	@Override
-	public void makeMask(final Subband sb, final int magbits, final int n) {
-		int nr = this.nrROIs[n];
+	public void makeMask ( final Subband sb , final int magbits , final int n ) {
+		int nr = this.nrROIs[ n ];
 		int r;
 		int ulx, uly, lrx, lry;
 		final int tileulx = sb.ulcx;
@@ -243,21 +242,21 @@ public class RectROIMaskGenerator extends ROIMaskGenerator {
 		final int tileh = sb.h;
 		final ROI[] ROIs = this.rois; // local copy
 
-		this.ulxs = new int[nr];
-		this.ulys = new int[nr];
-		this.lrxs = new int[nr];
-		this.lrys = new int[nr];
+		this.ulxs = new int[ nr ];
+		this.ulys = new int[ nr ];
+		this.lrxs = new int[ nr ];
+		this.lrys = new int[ nr ];
 
 		nr = 0;
 
-		for (r = ROIs.length - 1; 0 <= r; r--) {
-			if (ROIs[r].comp == n) {
-				ulx = ROIs[r].ulx;
-				uly = ROIs[r].uly;
-				lrx = ROIs[r].w + ulx - 1;
-				lry = ROIs[r].h + uly - 1;
+		for ( r = ROIs.length - 1; 0 <= r ; r-- ) {
+			if ( ROIs[ r ].comp == n ) {
+				ulx = ROIs[ r ].ulx;
+				uly = ROIs[ r ].uly;
+				lrx = ROIs[ r ].w + ulx - 1;
+				lry = ROIs[ r ].h + uly - 1;
 
-				if (ulx > (tileulx + tilew - 1) || uly > (tileuly + tileh - 1) || lrx < tileulx || lry < tileuly) // no
+				if ( ulx > ( tileulx + tilew - 1 ) || uly > ( tileuly + tileh - 1 ) || lrx < tileulx || lry < tileuly ) // no
 					// part
 					// of
 					// ROI
@@ -271,19 +270,19 @@ public class RectROIMaskGenerator extends ROIMaskGenerator {
 				uly -= tileuly;
 				lry -= tileuly;
 
-				ulx = (0 > ulx) ? 0 : ulx;
-				uly = (0 > uly) ? 0 : uly;
-				lrx = (lrx > (tilew - 1)) ? tilew - 1 : lrx;
-				lry = (lry > (tileh - 1)) ? tileh - 1 : lry;
+				ulx = ( 0 > ulx ) ? 0 : ulx;
+				uly = ( 0 > uly ) ? 0 : uly;
+				lrx = ( lrx > ( tilew - 1 ) ) ? tilew - 1 : lrx;
+				lry = ( lry > ( tileh - 1 ) ) ? tileh - 1 : lry;
 
-				this.ulxs[nr] = ulx;
-				this.ulys[nr] = uly;
-				this.lrxs[nr] = lrx;
-				this.lrys[nr] = lry;
+				this.ulxs[ nr ] = ulx;
+				this.ulys[ nr ] = uly;
+				this.lrxs[ nr ] = lrx;
+				this.lrys[ nr ] = lry;
 				nr++;
 			}
 		}
 		this.roiInTile = 0 != nr;
-		this.sMasks[n] = new SubbandRectROIMask(sb, this.ulxs, this.ulys, this.lrxs, this.lrys, nr);
+		this.sMasks[ n ] = new SubbandRectROIMask ( sb , this.ulxs , this.ulys , this.lrxs , this.lrys , nr );
 	}
 }

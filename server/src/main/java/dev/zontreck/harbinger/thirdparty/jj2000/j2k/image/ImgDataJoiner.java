@@ -10,7 +10,7 @@
  *
  *
  * COPYRIGHT:
- * 
+ *
  * This software module was originally developed by Rapha�l Grosbois and
  * Diego Santa Cruz (Swiss Federal Institute of Technology-EPFL); Joel
  * Askel�f (Ericsson Radio Systems AB); and Bertrand Berthelot, David
@@ -37,12 +37,12 @@
  * using this software module for non JPEG 2000 Standard conforming
  * products. This copyright notice must be included in all copies or
  * derivative works of this software module.
- * 
+ *
  * Copyright (c) 1999/2000 JJ2000 Partners.
  */
 package dev.zontreck.harbinger.thirdparty.jj2000.j2k.image;
 
-import dev.zontreck.harbinger.thirdparty.jj2000.j2k.*;
+import dev.zontreck.harbinger.thirdparty.jj2000.j2k.NoNextElementException;
 
 /**
  * This class implements the ImgData interface and allows to obtain data from
@@ -50,36 +50,45 @@ import dev.zontreck.harbinger.thirdparty.jj2000.j2k.*;
  * component index. The typical use of this class is when the encoder needs
  * different components (Red, Green, Blue, alpha, ...) from different input
  * files (i.e. from different ImgReader objects).
- * 
+ *
  * <p>
  * All input ImgData must not be tiled (i.e. must have only 1 tile) and the
  * image origin must be the canvas origin. The different inputs can have
  * different dimensions though (this will lead to different subsampling factors
  * for each component).
- * 
+ *
  * <p>
  * The input ImgData and component index list must be defined when constructing
  * this class and can not be modified later.
- * 
+ *
  * @see ImgData
  * @see dev.zontreck.harbinger.thirdparty.jj2000.j2k.image.input.ImgReader
  */
-public class ImgDataJoiner implements BlkImgDataSrc
-{
+public class ImgDataJoiner implements BlkImgDataSrc {
 
-	/** The width of the image */
+	/**
+	 * The width of the image
+	 */
 	private final int w;
 
-	/** The height of the image */
+	/**
+	 * The height of the image
+	 */
 	private final int h;
 
-	/** The number of components in the image */
+	/**
+	 * The number of components in the image
+	 */
 	private final int nc;
 
-	/** The list of input ImgData */
+	/**
+	 * The list of input ImgData
+	 */
 	private final BlkImgDataSrc[] imageData;
 
-	/** The component index associated with each ImgData */
+	/**
+	 * The component index associated with each ImgData
+	 */
 	private final int[] compIdx;
 
 	/**
@@ -96,54 +105,48 @@ public class ImgDataJoiner implements BlkImgDataSrc
 	/**
 	 * Class constructor. Each input BlkImgDataSrc and its component index must
 	 * appear in the order wanted for the output components.<br>
-	 * 
+	 *
 	 * <u>Example:</u> Reading R,G,B components from 3 PGM files.<br>
 	 * <tt>
 	 * BlkImgDataSrc[] idList = <br>
-	 *   {<br>
-	 *   new ImgReaderPGM(new BEBufferedRandomAccessFile("R.pgm", "r")),<br>
-	 *   new ImgReaderPGM(new BEBufferedRandomAccessFile("G.pgm", "r")),<br>
-	 *   new ImgReaderPGM(new BEBufferedRandomAccessFile("B.pgm", "r"))<br>
-	 *   };<br>
+	 * {<br>
+	 * new ImgReaderPGM(new BEBufferedRandomAccessFile("R.pgm", "r")),<br>
+	 * new ImgReaderPGM(new BEBufferedRandomAccessFile("G.pgm", "r")),<br>
+	 * new ImgReaderPGM(new BEBufferedRandomAccessFile("B.pgm", "r"))<br>
+	 * };<br>
 	 * int[] compIdx = {0,0,0};<br>
 	 * ImgDataJoiner idj = new ImgDataJoiner(idList, compIdx);
 	 * </tt>
-	 * 
+	 *
 	 * <p>
 	 * Of course, the 2 arrays must have the same length (This length is the
 	 * number of output components). The image width and height are definded to
 	 * be the maximum values of all the input ImgData.
-	 * 
-	 * @param imD
-	 *            The list of input BlkImgDataSrc in an array.
-	 * 
-	 * @param cIdx
-	 *            The component index associated with each ImgData.
+	 *
+	 * @param imD  The list of input BlkImgDataSrc in an array.
+	 * @param cIdx The component index associated with each ImgData.
 	 */
-	public ImgDataJoiner(final BlkImgDataSrc[] imD, final int[] cIdx)
-	{
+	public ImgDataJoiner ( final BlkImgDataSrc[] imD , final int[] cIdx ) {
 		int i;
 		int maxW, maxH;
 
 		// Initializes
 		this.imageData = imD;
 		this.compIdx = cIdx;
-		if (this.imageData.length != this.compIdx.length)
-			throw new IllegalArgumentException("imD and cIdx must have the same length");
+		if ( this.imageData.length != this.compIdx.length )
+			throw new IllegalArgumentException ( "imD and cIdx must have the same length" );
 
 		this.nc = imD.length;
 
-		this.subsX = new int[this.nc];
-		this.subsY = new int[this.nc];
+		this.subsX = new int[ this.nc ];
+		this.subsY = new int[ this.nc ];
 
 		// Check that no source is tiled and that the image origin is at the
 		// canvas origin.
-		for (i = 0; i < this.nc; i++)
-		{
-			if (1 != imD[i].getNumTiles() || 0 != imD[i].getCompULX(cIdx[i]) || 0 != imD[i].getCompULY(cIdx[i]))
-			{
-				throw new IllegalArgumentException("All input components must, not use tiles and must have "
-						+ "the origin at the canvas origin");
+		for ( i = 0; i < this.nc ; i++ ) {
+			if ( 1 != imD[ i ].getNumTiles ( ) || 0 != imD[ i ].getCompULX ( cIdx[ i ] ) || 0 != imD[ i ].getCompULY ( cIdx[ i ] ) ) {
+				throw new IllegalArgumentException ( "All input components must, not use tiles and must have "
+						+ "the origin at the canvas origin" );
 			}
 		}
 
@@ -160,12 +163,11 @@ public class ImgDataJoiner implements BlkImgDataSrc
 		// Look for max width and height.
 		maxW = 0;
 		maxH = 0;
-		for (i = 0; i < this.nc; i++)
-		{
-			if (imD[i].getCompImgWidth(cIdx[i]) > maxW)
-				maxW = imD[i].getCompImgWidth(cIdx[i]);
-			if (imD[i].getCompImgHeight(cIdx[i]) > maxH)
-				maxH = imD[i].getCompImgHeight(cIdx[i]);
+		for ( i = 0; i < this.nc ; i++ ) {
+			if ( imD[ i ].getCompImgWidth ( cIdx[ i ] ) > maxW )
+				maxW = imD[ i ].getCompImgWidth ( cIdx[ i ] );
+			if ( imD[ i ].getCompImgHeight ( cIdx[ i ] ) > maxH )
+				maxH = imD[ i ].getCompImgHeight ( cIdx[ i ] );
 		}
 		// Set the image width and height as the maximum ones
 		this.w = maxW;
@@ -173,16 +175,14 @@ public class ImgDataJoiner implements BlkImgDataSrc
 
 		// Now get the sumsampling factors and check the subsampling factors,
 		// just to see if above hypothesis were correct.
-		for (i = 0; i < this.nc; i++)
-		{
+		for ( i = 0; i < this.nc ; i++ ) {
 			// This calculation only holds if the subsampling factor is less
 			// than the component width
-			this.subsX[i] = (maxW + imD[i].getCompImgWidth(cIdx[i]) - 1) / imD[i].getCompImgWidth(cIdx[i]);
-			this.subsY[i] = (maxH + imD[i].getCompImgHeight(cIdx[i]) - 1) / imD[i].getCompImgHeight(cIdx[i]);
-			if ((maxW + this.subsX[i] - 1) / this.subsX[i] != imD[i].getCompImgWidth(cIdx[i])
-					|| (maxH + this.subsY[i] - 1) / this.subsY[i] != imD[i].getCompImgHeight(cIdx[i]))
-			{
-				throw new Error("Can not compute component subsampling factors: strange subsampling.");
+			this.subsX[ i ] = ( maxW + imD[ i ].getCompImgWidth ( cIdx[ i ] ) - 1 ) / imD[ i ].getCompImgWidth ( cIdx[ i ] );
+			this.subsY[ i ] = ( maxH + imD[ i ].getCompImgHeight ( cIdx[ i ] ) - 1 ) / imD[ i ].getCompImgHeight ( cIdx[ i ] );
+			if ( ( maxW + this.subsX[ i ] - 1 ) / this.subsX[ i ] != imD[ i ].getCompImgWidth ( cIdx[ i ] )
+					|| ( maxH + this.subsY[ i ] - 1 ) / this.subsY[ i ] != imD[ i ].getCompImgHeight ( cIdx[ i ] ) ) {
+				throw new Error ( "Can not compute component subsampling factors: strange subsampling." );
 			}
 		}
 	}
@@ -190,73 +190,70 @@ public class ImgDataJoiner implements BlkImgDataSrc
 	/**
 	 * Returns the overall width of the current tile in pixels. This is the
 	 * tile's width without accounting for any component subsampling.
-	 * 
+	 *
 	 * @return The total current tile's width in pixels.
 	 */
 	@Override
-	public int getTileWidth()
-	{
+	public int getTileWidth ( ) {
 		return this.w;
 	}
 
 	/**
 	 * Returns the overall height of the current tile in pixels. This is the
 	 * tile's height without accounting for any component subsampling.
-	 * 
+	 *
 	 * @return The total current tile's height in pixels.
 	 */
 	@Override
-	public int getTileHeight()
-	{
+	public int getTileHeight ( ) {
 		return this.h;
 	}
 
-	/** Returns the nominal tiles width */
+	/**
+	 * Returns the nominal tiles width
+	 */
 	@Override
-	public int getNomTileWidth()
-	{
+	public int getNomTileWidth ( ) {
 		return this.w;
 	}
 
-	/** Returns the nominal tiles height */
+	/**
+	 * Returns the nominal tiles height
+	 */
 	@Override
-	public int getNomTileHeight()
-	{
+	public int getNomTileHeight ( ) {
 		return this.h;
 	}
 
 	/**
 	 * Returns the overall width of the image in pixels. This is the image's
 	 * width without accounting for any component subsampling or tiling.
-	 * 
+	 *
 	 * @return The total image's width in pixels.
 	 */
 	@Override
-	public int getImgWidth()
-	{
+	public int getImgWidth ( ) {
 		return this.w;
 	}
 
 	/**
 	 * Returns the overall height of the image in pixels. This is the image's
 	 * height without accounting for any component subsampling or tiling.
-	 * 
+	 *
 	 * @return The total image's height in pixels.
 	 */
 	@Override
-	public int getImgHeight()
-	{
+	public int getImgHeight ( ) {
 		return this.h;
 	}
 
 	/**
 	 * Returns the number of components in the image.
-	 * 
+	 *
 	 * @return The number of components in the image.
 	 */
 	@Override
-	public int getNumComps()
-	{
+	public int getNumComps ( ) {
 		return this.nc;
 	}
 
@@ -265,18 +262,14 @@ public class ImgDataJoiner implements BlkImgDataSrc
 	 * the specified component. This is, approximately, the ratio of dimensions
 	 * between the reference grid and the component itself, see the 'ImgData'
 	 * interface desription for details.
-	 * 
-	 * @param c
-	 *            The index of the component (between 0 and N-1)
-	 * 
+	 *
+	 * @param c The index of the component (between 0 and N-1)
 	 * @return The horizontal subsampling factor of component 'c'
-	 * 
 	 * @see ImgData
 	 */
 	@Override
-	public int getCompSubsX(final int c)
-	{
-		return this.subsX[c];
+	public int getCompSubsX ( final int c ) {
+		return this.subsX[ c ];
 	}
 
 	/**
@@ -284,85 +277,63 @@ public class ImgDataJoiner implements BlkImgDataSrc
 	 * the specified component. This is, approximately, the ratio of dimensions
 	 * between the reference grid and the component itself, see the 'ImgData'
 	 * interface desription for details.
-	 * 
-	 * @param c
-	 *            The index of the component (between 0 and N-1)
-	 * 
+	 *
+	 * @param c The index of the component (between 0 and N-1)
 	 * @return The vertical subsampling factor of component 'c'
-	 * 
 	 * @see ImgData
 	 */
 	@Override
-	public int getCompSubsY(final int c)
-	{
-		return this.subsY[c];
+	public int getCompSubsY ( final int c ) {
+		return this.subsY[ c ];
 	}
 
 	/**
 	 * Returns the width in pixels of the specified tile-component
-	 * 
-	 * @param t
-	 *            Tile index
-	 * 
-	 * @param c
-	 *            The index of the component, from 0 to N-1.
-	 * 
+	 *
+	 * @param t Tile index
+	 * @param c The index of the component, from 0 to N-1.
 	 * @return The width in pixels of component <tt>c</tt> in tile<tt>t</tt>.
 	 */
 	@Override
-	public int getTileCompWidth(final int t, final int c)
-	{
-		return this.imageData[c].getTileCompWidth(t, this.compIdx[c]);
+	public int getTileCompWidth ( final int t , final int c ) {
+		return this.imageData[ c ].getTileCompWidth ( t , this.compIdx[ c ] );
 	}
 
 	/**
 	 * Returns the height in pixels of the specified tile-component.
-	 * 
-	 * @param t
-	 *            The tile index.
-	 * 
-	 * @param c
-	 *            The index of the component, from 0 to N-1.
-	 * 
+	 *
+	 * @param t The tile index.
+	 * @param c The index of the component, from 0 to N-1.
 	 * @return The height in pixels of component <tt>c</tt> in the current tile.
 	 */
 	@Override
-	public int getTileCompHeight(final int t, final int c)
-	{
-		return this.imageData[c].getTileCompHeight(t, this.compIdx[c]);
+	public int getTileCompHeight ( final int t , final int c ) {
+		return this.imageData[ c ].getTileCompHeight ( t , this.compIdx[ c ] );
 	}
 
 	/**
 	 * Returns the width in pixels of the specified component in the overall
 	 * image.
-	 * 
-	 * @param c
-	 *            The index of the component, from 0 to N-1.
-	 * 
+	 *
+	 * @param c The index of the component, from 0 to N-1.
 	 * @return The width in pixels of component <tt>c</tt> in the overall image.
 	 */
 	@Override
-	public int getCompImgWidth(final int c)
-	{
-		return this.imageData[c].getCompImgWidth(this.compIdx[c]);
+	public int getCompImgWidth ( final int c ) {
+		return this.imageData[ c ].getCompImgWidth ( this.compIdx[ c ] );
 	}
 
 	/**
 	 * Returns the height in pixels of the specified component in the overall
 	 * image.
-	 * 
-	 * @param n
-	 *            The index of the component, from 0 to N-1.
-	 * 
+	 *
+	 * @param n The index of the component, from 0 to N-1.
 	 * @return The height in pixels of component <tt>n</tt> in the overall
-	 *         image.
-	 * 
-	 * 
+	 * image.
 	 */
 	@Override
-	public int getCompImgHeight(final int n)
-	{
-		return this.imageData[n].getCompImgHeight(this.compIdx[n]);
+	public int getCompImgHeight ( final int n ) {
+		return this.imageData[ n ].getCompImgHeight ( this.compIdx[ n ] );
 	}
 
 	/**
@@ -371,18 +342,15 @@ public class ImgDataJoiner implements BlkImgDataSrc
 	 * component. If this number is <i>b</b> then for unsigned data the nominal
 	 * range is between 0 and 2^b-1, and for signed data it is between -2^(b-1)
 	 * and 2^(b-1)-1. For floating point data this value is not applicable.
-	 * 
-	 * @param c
-	 *            The index of the component.
-	 * 
+	 *
+	 * @param c The index of the component.
 	 * @return The number of bits corresponding to the nominal range of the
-	 *         data. Fro floating-point data this value is not applicable and
-	 *         the return value is undefined.
+	 * data. Fro floating-point data this value is not applicable and
+	 * the return value is undefined.
 	 */
 	@Override
-	public int getNomRangeBits(final int c)
-	{
-		return this.imageData[c].getNomRangeBits(this.compIdx[c]);
+	public int getNomRangeBits ( final int c ) {
+		return this.imageData[ c ].getNomRangeBits ( this.compIdx[ c ] );
 	}
 
 	/**
@@ -392,17 +360,14 @@ public class ImgDataJoiner implements BlkImgDataSrc
 	 * for fixed-point values with 2 fractional bits, 2 is returned. For
 	 * floating-point data this value does not apply and 0 should be returned.
 	 * Position 0 is the position of the least significant bit in the data.
-	 * 
-	 * @param c
-	 *            The index of the component.
-	 * 
+	 *
+	 * @param c The index of the component.
 	 * @return The position of the fixed-point, which is the same as the number
-	 *         of fractional bits. For floating-point data 0 is returned.
+	 * of fractional bits. For floating-point data 0 is returned.
 	 */
 	@Override
-	public int getFixedPoint(final int c)
-	{
-		return this.imageData[c].getFixedPoint(this.compIdx[c]);
+	public int getFixedPoint ( final int c ) {
+		return this.imageData[ c ].getFixedPoint ( this.compIdx[ c ] );
 	}
 
 	/**
@@ -410,20 +375,20 @@ public class ImgDataJoiner implements BlkImgDataSrc
 	 * specifed rectangular area, in the specified component. The data is
 	 * returned, as a reference to the internal data, if any, instead of as a
 	 * copy, therefore the returned data should not be modified.
-	 * 
-	 * <P>
+	 *
+	 * <p>
 	 * The rectangular area to return is specified by the 'ulx', 'uly', 'w' and
 	 * 'h' members of the 'blk' argument, relative to the current tile. These
 	 * members are not modified by this method. The 'offset' and 'scanw' of the
 	 * returned data can be arbitrary. See the 'DataBlk' class.
-	 * 
-	 * <P>
+	 *
+	 * <p>
 	 * This method, in general, is more efficient than the 'getCompData()'
 	 * method since it may not copy the data. However if the array of returned
 	 * data is to be modified by the caller then the other method is probably
 	 * preferable.
-	 * 
-	 * <P>
+	 *
+	 * <p>
 	 * If the data array in <tt>blk</tt> is <tt>null</tt>, then a new one is
 	 * created if necessary. The implementation of this interface may choose to
 	 * return the same array or a new one, depending on what is more efficient.
@@ -431,27 +396,21 @@ public class ImgDataJoiner implements BlkImgDataSrc
 	 * not be considered to contain the returned data, a new array may have been
 	 * created. Instead, get the array from <tt>blk</tt> after the method has
 	 * returned.
-	 * 
-	 * <P>
+	 *
+	 * <p>
 	 * The returned data may have its 'progressive' attribute set. In this case
 	 * the returned data is only an approximation of the "final" data.
-	 * 
-	 * @param blk
-	 *            Its coordinates and dimensions specify the area to return,
+	 *
+	 * @param blk Its coordinates and dimensions specify the area to return,
 	 *            relative to the current tile. Some fields in this object are
 	 *            modified to return the data.
-	 * 
-	 * @param c
-	 *            The index of the component from which to get the data.
-	 * 
+	 * @param c   The index of the component from which to get the data.
 	 * @return The requested DataBlk
-	 * 
 	 * @see #getCompData
 	 */
 	@Override
-	public DataBlk getInternCompData(final DataBlk blk, final int c)
-	{
-		return this.imageData[c].getInternCompData(blk, this.compIdx[c]);
+	public DataBlk getInternCompData ( final DataBlk blk , final int c ) {
+		return this.imageData[ c ].getInternCompData ( blk , this.compIdx[ c ] );
 	}
 
 	/**
@@ -459,69 +418,57 @@ public class ImgDataJoiner implements BlkImgDataSrc
 	 * specifed rectangular area, in the specified component. The data is
 	 * returned, as a copy of the internal data, therefore the returned data can
 	 * be modified "in place".
-	 * 
-	 * <P>
+	 *
+	 * <p>
 	 * The rectangular area to return is specified by the 'ulx', 'uly', 'w' and
 	 * 'h' members of the 'blk' argument, relative to the current tile. These
 	 * members are not modified by this method. The 'offset' of the returned
 	 * data is 0, and the 'scanw' is the same as the block's width. See the
 	 * 'DataBlk' class.
-	 * 
-	 * <P>
+	 *
+	 * <p>
 	 * This method, in general, is less efficient than the 'getInternCompData()'
 	 * method since, in general, it copies the data. However if the array of
 	 * returned data is to be modified by the caller then this method is
 	 * preferable.
-	 * 
-	 * <P>
+	 *
+	 * <p>
 	 * If the data array in 'blk' is 'null', then a new one is created. If the
 	 * data array is not 'null' then it is reused, and it must be large enough
 	 * to contain the block's data. Otherwise an 'ArrayStoreException' or an
 	 * 'IndexOutOfBoundsException' is thrown by the Java system.
-	 * 
-	 * <P>
+	 *
+	 * <p>
 	 * The returned data may have its 'progressive' attribute set. In this case
 	 * the returned data is only an approximation of the "final" data.
-	 * 
-	 * @param blk
-	 *            Its coordinates and dimensions specify the area to return,
+	 *
+	 * @param blk Its coordinates and dimensions specify the area to return,
 	 *            relative to the current tile. If it contains a non-null data
 	 *            array, then it must be large enough. If it contains a null
 	 *            data array a new one is created. Some fields in this object
 	 *            are modified to return the data.
-	 * 
-	 * @param c
-	 *            The index of the component from which to get the data.
-	 * 
+	 * @param c   The index of the component from which to get the data.
 	 * @return The requested DataBlk
-	 * 
 	 * @see #getInternCompData
 	 */
 	@Override
-	public DataBlk getCompData(final DataBlk blk, final int c)
-	{
-		return this.imageData[c].getCompData(blk, this.compIdx[c]);
+	public DataBlk getCompData ( final DataBlk blk , final int c ) {
+		return this.imageData[ c ].getCompData ( blk , this.compIdx[ c ] );
 	}
 
 	/**
 	 * Changes the current tile, given the new coordinates. An
 	 * IllegalArgumentException is thrown if the coordinates do not correspond
 	 * to a valid tile.
-	 * 
-	 * @param x
-	 *            The horizontal coordinate of the tile.
-	 * 
-	 * @param y
-	 *            The vertical coordinate of the new tile.
-	 * 
+	 *
+	 * @param x The horizontal coordinate of the tile.
+	 * @param y The vertical coordinate of the new tile.
 	 * @return The new tile index
 	 */
 	@Override
-	public int setTile(final int x, final int y)
-	{
-		if (0 != x || 0 != y)
-		{
-			throw new IllegalArgumentException();
+	public int setTile ( final int x , final int y ) {
+		if ( 0 != x || 0 != y ) {
+			throw new IllegalArgumentException ( );
 		}
 		return 0;
 	}
@@ -531,113 +478,103 @@ public class ImgDataJoiner implements BlkImgDataSrc
 	 * columns). A NoNextElementException is thrown if the current tile is the
 	 * last one (i.e. there is no next tile). This default implementation
 	 * assumes no tiling, so NoNextElementException() is always thrown.
-	 * 
+	 *
 	 * @return The new tile index
 	 */
 	@Override
-	public int nextTile()
-	{
-		throw new NoNextElementException();
+	public int nextTile ( ) {
+		throw new NoNextElementException ( );
 	}
 
 	/**
 	 * Returns the coordinates of the current tile. This default implementation
 	 * assumes no-tiling, so (0,0) is returned.
-	 * 
-	 * @param co
-	 *            If not null this object is used to return the information. If
-	 *            null a new one is created and returned.
-	 * 
+	 *
+	 * @param co If not null this object is used to return the information. If
+	 *           null a new one is created and returned.
 	 * @return The current tile's coordinates.
 	 */
 	@Override
-	public Coord getTile(final Coord co)
-	{
-		if (null != co)
-		{
+	public Coord getTile ( final Coord co ) {
+		if ( null != co ) {
 			co.x = 0;
 			co.y = 0;
 			return co;
 		}
-		return new Coord(0, 0);
+		return new Coord ( 0 , 0 );
 	}
 
 	/**
 	 * Returns the index of the current tile, relative to a standard scan-line
 	 * order. This default implementations assumes no tiling, so 0 is always
 	 * returned.
-	 * 
+	 *
 	 * @return The current tile's index (starts at 0).
 	 */
 	@Override
-	public int getTileIdx()
-	{
+	public int getTileIdx ( ) {
 		return 0;
 	}
 
 	/**
 	 * Returns the horizontal coordinate of the upper-left corner of the
 	 * specified component in the current tile.
-	 * 
-	 * @param c
-	 *            The component index.
+	 *
+	 * @param c The component index.
 	 */
 	@Override
-	public int getCompULX(final int c)
-	{
+	public int getCompULX ( final int c ) {
 		return 0;
 	}
 
 	/**
 	 * Returns the vertical coordinate of the upper-left corner of the specified
 	 * component in the current tile.
-	 * 
-	 * @param c
-	 *            The component index.
+	 *
+	 * @param c The component index.
 	 */
 	@Override
-	public int getCompULY(final int c)
-	{
+	public int getCompULY ( final int c ) {
 		return 0;
 	}
 
-	/** Returns the horizontal tile partition offset in the reference grid */
+	/**
+	 * Returns the horizontal tile partition offset in the reference grid
+	 */
 	@Override
-	public int getTilePartULX()
-	{
+	public int getTilePartULX ( ) {
 		return 0;
 	}
 
-	/** Returns the vertical tile partition offset in the reference grid */
+	/**
+	 * Returns the vertical tile partition offset in the reference grid
+	 */
 	@Override
-	public int getTilePartULY()
-	{
+	public int getTilePartULY ( ) {
 		return 0;
 	}
 
 	/**
 	 * Returns the horizontal coordinate of the image origin, the top-left
 	 * corner, in the canvas system, on the reference grid.
-	 * 
+	 *
 	 * @return The horizontal coordinate of the image origin in the canvas
-	 *         system, on the reference grid.
+	 * system, on the reference grid.
 	 */
 	@Override
-	public int getImgULX()
-	{
+	public int getImgULX ( ) {
 		return 0;
 	}
 
 	/**
 	 * Returns the vertical coordinate of the image origin, the top-left corner,
 	 * in the canvas system, on the reference grid.
-	 * 
+	 *
 	 * @return The vertical coordinate of the image origin in the canvas system,
-	 *         on the reference grid.
+	 * on the reference grid.
 	 */
 	@Override
-	public int getImgULY()
-	{
+	public int getImgULY ( ) {
 		return 0;
 	}
 
@@ -645,35 +582,30 @@ public class ImgDataJoiner implements BlkImgDataSrc
 	 * Returns the number of tiles in the horizontal and vertical directions.
 	 * This default implementation assumes no tiling, so (1,1) is always
 	 * returned.
-	 * 
-	 * @param co
-	 *            If not null this object is used to return the information. If
-	 *            null a new one is created and returned.
-	 * 
+	 *
+	 * @param co If not null this object is used to return the information. If
+	 *           null a new one is created and returned.
 	 * @return The number of tiles in the horizontal (Coord.x) and vertical
-	 *         (Coord.y) directions.
+	 * (Coord.y) directions.
 	 */
 	@Override
-	public Coord getNumTiles(final Coord co)
-	{
-		if (null != co)
-		{
+	public Coord getNumTiles ( final Coord co ) {
+		if ( null != co ) {
 			co.x = 1;
 			co.y = 1;
 			return co;
 		}
-		return new Coord(1, 1);
+		return new Coord ( 1 , 1 );
 	}
 
 	/**
 	 * Returns the total number of tiles in the image. This default
 	 * implementation assumes no tiling, so 1 is always returned.
-	 * 
+	 *
 	 * @return The total number of tiles in the image.
 	 */
 	@Override
-	public int getNumTiles()
-	{
+	public int getNumTiles ( ) {
 		return 1;
 	}
 
@@ -681,16 +613,14 @@ public class ImgDataJoiner implements BlkImgDataSrc
 	 * Returns a string of information about the object, more than 1 line long.
 	 * The information string includes information from the several input
 	 * ImgData (their toString() method are called one after the other).
-	 * 
+	 *
 	 * @return A string of information about the object.
 	 */
 	@Override
-	public String toString()
-	{
+	public String toString ( ) {
 		String string = "ImgDataJoiner: WxH = " + this.w + "x" + this.h;
-		for (int i = 0; i < this.nc; i++)
-		{
-			string += "\n- Component " + i + " " + this.imageData[i];
+		for ( int i = 0 ; i < this.nc ; i++ ) {
+			string += "\n- Component " + i + " " + this.imageData[ i ];
 		}
 		return string;
 	}

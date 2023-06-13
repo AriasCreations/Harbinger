@@ -2,7 +2,7 @@
  * cvs identifier:
  *
  * $Id: FileFormatWriter.java,v 1.13 2001/02/16 11:53:54 qtxjoas Exp $
- * 
+ *
  * Class:                   FileFormatWriter
  *
  * Description:             Writes the file format
@@ -42,288 +42,265 @@
  */
 package dev.zontreck.harbinger.thirdparty.jj2000.j2k.fileformat.writer;
 
+import dev.zontreck.harbinger.thirdparty.jj2000.j2k.fileformat.FileFormatBoxes;
+
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-
-import dev.zontreck.harbinger.thirdparty.jj2000.j2k.fileformat.FileFormatBoxes;
 
 
 /**
  * This class writes the file format wrapper that may or may not exist around a
  * valid JPEG 2000 codestream. This class writes the simple possible legal
  * fileformat
- * 
+ *
  * @see dev.zontreck.harbinger.thirdparty.jj2000.j2k.fileformat.reader.FileFormatReader
  */
-public class FileFormatWriter implements FileFormatBoxes
-{
+public class FileFormatWriter implements FileFormatBoxes {
+	/**
+	 * Length of Colour Specification Box
+	 */
+	private static final int CSB_LENGTH = 15;
+	/**
+	 * Length of File Type Box
+	 */
+	private static final int FTB_LENGTH = 20;
+	/**
+	 * Length of Image Header Box
+	 */
+	private static final int IHB_LENGTH = 22;
+	/**
+	 * base length of Bits Per Component box
+	 */
+	private static final int BPC_LENGTH = 8;
 	/**
 	 * The byte buffer to which to write the fileformat header
 	 */
 	private final DataOutputStream out;
 	private final ByteArrayOutputStream baos;
-
-	/** Image height */
+	/**
+	 * Image height
+	 */
 	private final int height;
-
-	/** Image width */
+	/**
+	 * Image width
+	 */
 	private final int width;
-
-	/** Number of components */
+	/**
+	 * Number of components
+	 */
 	private final int nc;
-
-	/** Bits per component */
+	/**
+	 * Bits per component
+	 */
 	private final int[] bpc;
-
-	/** Flag indicating whether number of bits per component varies */
+	/**
+	 * Flag indicating whether number of bits per component varies
+	 */
 	private boolean bpcVaries;
-
-	/** Length of Colour Specification Box */
-	private static final int CSB_LENGTH = 15;
-
-	/** Length of File Type Box */
-	private static final int FTB_LENGTH = 20;
-
-	/** Length of Image Header Box */
-	private static final int IHB_LENGTH = 22;
-
-	/** base length of Bits Per Component box */
-	private static final int BPC_LENGTH = 8;
 
 	/**
 	 * The constructor of the FileFormatWriter. It receives all the information
 	 * necessary about a codestream to generate a legal JP2 file
-	 * 
-	 * @param os
-	 *            The output stream to write the file format header into
-	 * 
-	 * @param height
-	 *            The height of the image
-	 * 
-	 * @param width
-	 *            The width of the image
-	 * 
-	 * @param nc
-	 *            The number of components
-	 * 
-	 * @param bpc
-	 *            The number of bits per component
-	 * 
-	 * @param clength
-	 *            Length of codestream
-	 * @throws IOException 
+	 *
+	 * @param os      The output stream to write the file format header into
+	 * @param height  The height of the image
+	 * @param width   The width of the image
+	 * @param nc      The number of components
+	 * @param bpc     The number of bits per component
+	 * @param clength Length of codestream
+	 * @throws IOException
 	 */
-	public FileFormatWriter(final OutputStream os, final int height, final int width, final int nc, final int[] bpc, final int clength) throws IOException
-	{
+	public FileFormatWriter ( final OutputStream os , final int height , final int width , final int nc , final int[] bpc , final int clength ) throws IOException {
 		this.height = height;
 		this.width = width;
 		this.nc = nc;
 		this.bpc = bpc;
-		baos = new ByteArrayOutputStream();
-		out = new DataOutputStream(this.baos);
+		baos = new ByteArrayOutputStream ( );
+		out = new DataOutputStream ( this.baos );
 
 		this.bpcVaries = false;
-		final int fixbpc = bpc[0];
-		for (int i = nc - 1; 0 < i; i--)
-		{
-			if (bpc[i] != fixbpc) {
+		final int fixbpc = bpc[ 0 ];
+		for ( int i = nc - 1 ; 0 < i ; i-- ) {
+			if ( bpc[ i ] != fixbpc ) {
 				this.bpcVaries = true;
 				break;
 			}
 		}
 
 		// Write the JP2_SIGNATURE_BOX
-		this.out.writeInt(0x0000000c);
-		this.out.writeInt(FileFormatBoxes.JP2_SIGNATURE_BOX);
-		this.out.writeInt(0x0d0a870a);
+		this.out.writeInt ( 0x0000000c );
+		this.out.writeInt ( FileFormatBoxes.JP2_SIGNATURE_BOX );
+		this.out.writeInt ( 0x0d0a870a );
 
 		// Write File Type box
-		this.writeFileTypeBox();
+		this.writeFileTypeBox ( );
 
 		// Write JP2 Header box
-		this.writeJP2HeaderBox();
-			
+		this.writeJP2HeaderBox ( );
+
 		// Write JP2 Codestream header
-		this.writeContiguousCodeStreamBoxHeader(clength);
-		
-		os.write(this.baos.toByteArray());
+		this.writeContiguousCodeStreamBoxHeader ( clength );
+
+		os.write ( this.baos.toByteArray ( ) );
 	}
-	
-	public int length()
-	{
-		return this.baos.size();
+
+	public int length ( ) {
+		return this.baos.size ( );
 	}
-	
+
 	/**
 	 * This method writes the File Type box
-	 * 
-	 * @exception java.io.IOException
-	 *                If an I/O error occurred.
+	 *
+	 * @throws java.io.IOException If an I/O error occurred.
 	 */
-	private void writeFileTypeBox() throws IOException
-	{
+	private void writeFileTypeBox ( ) throws IOException {
 		// Write box length (LBox)
 		// LBox(4) + TBox (4) + BR(4) + MinV(4) + CL(4) = 20
-		this.out.writeInt(FileFormatWriter.FTB_LENGTH);
+		this.out.writeInt ( FileFormatWriter.FTB_LENGTH );
 
 		// Write File Type box (TBox)
-		this.out.writeInt(FileFormatBoxes.FILE_TYPE_BOX);
+		this.out.writeInt ( FileFormatBoxes.FILE_TYPE_BOX );
 
 		// Write File Type data (DBox)
 		// Write Brand box (BR)
-		this.out.writeInt(FileFormatBoxes.FT_BR);
+		this.out.writeInt ( FileFormatBoxes.FT_BR );
 
 		// Write Minor Version
-		this.out.writeInt(0);
+		this.out.writeInt ( 0 );
 
 		// Write Compatibility list
-		this.out.writeInt(FileFormatBoxes.FT_BR);
+		this.out.writeInt ( FileFormatBoxes.FT_BR );
 
 	}
 
 	/**
 	 * This method writes the JP2Header box
-	 * 
-	 * @exception java.io.IOException
-	 *                If an I/O error occurred.
+	 *
+	 * @throws java.io.IOException If an I/O error occurred.
 	 */
-	private void writeJP2HeaderBox() throws IOException
-	{
+	private void writeJP2HeaderBox ( ) throws IOException {
 
 		// Write box length (LBox)
 		// if the number of bits per components varies, a bpcc box is written
-		if (this.bpcVaries)
-			this.out.writeInt(8 + FileFormatWriter.IHB_LENGTH + FileFormatWriter.CSB_LENGTH + FileFormatWriter.BPC_LENGTH + this.nc);
+		if ( this.bpcVaries )
+			this.out.writeInt ( 8 + FileFormatWriter.IHB_LENGTH + FileFormatWriter.CSB_LENGTH + FileFormatWriter.BPC_LENGTH + this.nc );
 		else
-			this.out.writeInt(8 + FileFormatWriter.IHB_LENGTH + FileFormatWriter.CSB_LENGTH);
+			this.out.writeInt ( 8 + FileFormatWriter.IHB_LENGTH + FileFormatWriter.CSB_LENGTH );
 
 		// Write a JP2Header (TBox)
-		this.out.writeInt(FileFormatBoxes.JP2_HEADER_BOX);       // 4 bytes
+		this.out.writeInt ( FileFormatBoxes.JP2_HEADER_BOX );       // 4 bytes
 
 		// Write image header box
-		this.writeImageHeaderBox();             // 22 bytes
+		this.writeImageHeaderBox ( );             // 22 bytes
 
 		// Write Colour Bpecification Box
-		this.writeColourSpecificationBox();     // 15 Bytes
+		this.writeColourSpecificationBox ( );     // 15 Bytes
 
 		// if the number of bits per components varies write bpcc box
-		if (this.bpcVaries)
-			this.writeBitsPerComponentBox();    // 8 Byte + nc Bytes
+		if ( this.bpcVaries )
+			this.writeBitsPerComponentBox ( );    // 8 Byte + nc Bytes
 	}
 
 	/**
 	 * This method writes the Bits Per Component box
-	 * 
-	 * @exception java.io.IOException
-	 *                If an I/O error occurred.
-	 * 
+	 *
+	 * @throws java.io.IOException If an I/O error occurred.
 	 */
-	private void writeBitsPerComponentBox() throws IOException
-	{
+	private void writeBitsPerComponentBox ( ) throws IOException {
 		// Write box length (LBox)
-		this.out.writeInt(FileFormatWriter.BPC_LENGTH + this.nc);
+		this.out.writeInt ( FileFormatWriter.BPC_LENGTH + this.nc );
 
 		// Write a Bits Per Component box (TBox)
-		this.out.writeInt(FileFormatBoxes.BITS_PER_COMPONENT_BOX);
+		this.out.writeInt ( FileFormatBoxes.BITS_PER_COMPONENT_BOX );
 
 		// Write bpc fields
-		for (int i = 0; i < this.nc; i++)
-		{
-			this.out.writeByte(this.bpc[i] - 1);
+		for ( int i = 0 ; i < this.nc ; i++ ) {
+			this.out.writeByte ( this.bpc[ i ] - 1 );
 		}
 	}
 
 	/**
 	 * This method writes the Colour Specification box
-	 * 
-	 * @exception java.io.IOException
-	 *                If an I/O error occurred.
-	 * 
+	 *
+	 * @throws java.io.IOException If an I/O error occurred.
 	 */
-	private void writeColourSpecificationBox() throws IOException
-	{
+	private void writeColourSpecificationBox ( ) throws IOException {
 		// Write box length (LBox)
-		this.out.writeInt(FileFormatWriter.CSB_LENGTH);
+		this.out.writeInt ( FileFormatWriter.CSB_LENGTH );
 
 		// Write a Bits Per Component box (TBox)
-		this.out.writeInt(FileFormatBoxes.COLOUR_SPECIFICATION_BOX);
+		this.out.writeInt ( FileFormatBoxes.COLOUR_SPECIFICATION_BOX );
 
 		// Write METH field
-		this.out.writeByte(FileFormatBoxes.CSB_METH);
+		this.out.writeByte ( FileFormatBoxes.CSB_METH );
 
 		// Write PREC field
-		this.out.writeByte(FileFormatBoxes.CSB_PREC);
+		this.out.writeByte ( FileFormatBoxes.CSB_PREC );
 
 		// Write APPROX field
-		this.out.writeByte(FileFormatBoxes.CSB_APPROX);
+		this.out.writeByte ( FileFormatBoxes.CSB_APPROX );
 
 		// Write EnumCS field
-		if (1 < nc)
-			this.out.writeInt(FileFormatBoxes.CSB_ENUM_SRGB);
+		if ( 1 < nc )
+			this.out.writeInt ( FileFormatBoxes.CSB_ENUM_SRGB );
 		else
-			this.out.writeInt(FileFormatBoxes.CSB_ENUM_GREY);
+			this.out.writeInt ( FileFormatBoxes.CSB_ENUM_GREY );
 	}
 
 	/**
 	 * This method writes the Image Header box
-	 * 
-	 * @exception java.io.IOException
-	 *                If an I/O error occurred.
+	 *
+	 * @throws java.io.IOException If an I/O error occurred.
 	 */
-	private void writeImageHeaderBox() throws IOException
-	{
+	private void writeImageHeaderBox ( ) throws IOException {
 
 		// Write box length
-		this.out.writeInt(FileFormatWriter.IHB_LENGTH);
+		this.out.writeInt ( FileFormatWriter.IHB_LENGTH );
 
 		// Write ihdr box name
-		this.out.writeInt(FileFormatBoxes.IMAGE_HEADER_BOX);
+		this.out.writeInt ( FileFormatBoxes.IMAGE_HEADER_BOX );
 
 		// Write HEIGHT field
-		this.out.writeInt(this.height);
+		this.out.writeInt ( this.height );
 
 		// Write WIDTH field
-		this.out.writeInt(this.width);
+		this.out.writeInt ( this.width );
 
 		// Write NC field
-		this.out.writeShort(this.nc);
+		this.out.writeShort ( this.nc );
 
 		// Write BPC field
 		// if the number of bits per component varies write 0xff else write
 		// number of bits per components
-		if (this.bpcVaries)
-			this.out.writeByte(0xff);
+		if ( this.bpcVaries )
+			this.out.writeByte ( 0xff );
 		else
-			this.out.writeByte(this.bpc[0] - 1);
+			this.out.writeByte ( this.bpc[ 0 ] - 1 );
 
 		// Write C field
-		this.out.writeByte(FileFormatBoxes.IMB_C);
+		this.out.writeByte ( FileFormatBoxes.IMB_C );
 
 		// Write UnkC field
-		this.out.writeByte(FileFormatBoxes.IMB_UnkC);
+		this.out.writeByte ( FileFormatBoxes.IMB_UnkC );
 
 		// Write IPR field
-		this.out.writeByte(FileFormatBoxes.IMB_IPR);
+		this.out.writeByte ( FileFormatBoxes.IMB_IPR );
 	}
 
 	/**
 	 * This method writes the Contiguous codestream box header which is directly followed by the codestream data
 	 * Call this function with the actual number of codestream data bytes after the codestream has been written
-	 * 
-	 * @param clength
-	 *            The contiguous codestream length
-	 * 
-	 * @exception java.io.IOException
-	 *                If an I/O error occurred.
+	 *
+	 * @param clength The contiguous codestream length
+	 * @throws java.io.IOException If an I/O error occurred.
 	 */
-	private void writeContiguousCodeStreamBoxHeader(final int clength) throws IOException
-	{
+	private void writeContiguousCodeStreamBoxHeader ( final int clength ) throws IOException {
 		// Write box length (LBox)
-		this.out.writeInt(clength + 8);
+		this.out.writeInt ( clength + 8 );
 
 		// Write contiguous codestream box name (TBox)
-		this.out.writeInt(FileFormatBoxes.CONTIGUOUS_CODESTREAM_BOX);
+		this.out.writeInt ( FileFormatBoxes.CONTIGUOUS_CODESTREAM_BOX );
 	}
 }

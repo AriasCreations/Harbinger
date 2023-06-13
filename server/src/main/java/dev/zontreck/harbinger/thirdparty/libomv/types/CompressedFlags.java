@@ -1,8 +1,7 @@
 package dev.zontreck.harbinger.thirdparty.libomv.types;
 
 
-public enum CompressedFlags
-{
+public enum CompressedFlags {
 	;
 	public static final short None = 0x00;
 	// Unknown
@@ -25,16 +24,13 @@ public enum CompressedFlags
 	public static final short HasNameValues = 0x100;
 	// Whether the object has a Media URL set
 	public static final short MediaURL = 0x200;
-
-	public static short setValue(final short value)
-	{
-		return (short) (value & CompressedFlags._mask);
-	}
-
-	public static short getValue(final int value)
-	{
-		return (short) (value & CompressedFlags._mask);
-	}
-
 	private static final short _mask = 0x3FF;
+
+	public static short setValue ( final short value ) {
+		return ( short ) ( value & CompressedFlags._mask );
+	}
+
+	public static short getValue ( final int value ) {
+		return ( short ) ( value & CompressedFlags._mask );
+	}
 }

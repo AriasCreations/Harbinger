@@ -11,7 +11,7 @@
  *
  *
  * COPYRIGHT:
- * 
+ *
  * This software module was originally developed by Rapha�l Grosbois and
  * Diego Santa Cruz (Swiss Federal Institute of Technology-EPFL); Joel
  * Askel�f (Ericsson Radio Systems AB); and Bertrand Berthelot, David
@@ -38,54 +38,67 @@
  * using this software module for non JPEG 2000 Standard conforming
  * products. This copyright notice must be included in all copies or
  * derivative works of this software module.
- * 
+ *
  * Copyright (c) 1999/2000 JJ2000 Partners.
  */
 package dev.zontreck.harbinger.thirdparty.jj2000.j2k.codestream.writer;
 
-import dev.zontreck.harbinger.thirdparty.jj2000.j2k.wavelet.analysis.*;
-import dev.zontreck.harbinger.thirdparty.jj2000.j2k.entropy.encoder.*;
-import dev.zontreck.harbinger.thirdparty.jj2000.j2k.codestream.*;
-import dev.zontreck.harbinger.thirdparty.jj2000.j2k.encoder.*;
-import dev.zontreck.harbinger.thirdparty.jj2000.j2k.image.*;
-import dev.zontreck.harbinger.thirdparty.jj2000.j2k.util.*;
+import dev.zontreck.harbinger.thirdparty.jj2000.j2k.codestream.CBlkCoordInfo;
+import dev.zontreck.harbinger.thirdparty.jj2000.j2k.codestream.PrecInfo;
+import dev.zontreck.harbinger.thirdparty.jj2000.j2k.encoder.EncoderSpecs;
+import dev.zontreck.harbinger.thirdparty.jj2000.j2k.entropy.encoder.CBlkRateDistStats;
+import dev.zontreck.harbinger.thirdparty.jj2000.j2k.entropy.encoder.CodedCBlkDataSrcEnc;
+import dev.zontreck.harbinger.thirdparty.jj2000.j2k.image.Coord;
+import dev.zontreck.harbinger.thirdparty.jj2000.j2k.util.ArrayUtil;
+import dev.zontreck.harbinger.thirdparty.jj2000.j2k.util.MathUtil;
+import dev.zontreck.harbinger.thirdparty.jj2000.j2k.util.ParameterList;
+import dev.zontreck.harbinger.thirdparty.jj2000.j2k.wavelet.analysis.SubbandAn;
 
 /**
  * This class builds packets and keeps the state information of packet
  * interdependencies. It also supports saving the state and reverting
  * (restoring) to the last saved state, with the save() and restore() methods.
- * 
+ *
  * <p>
  * Each time the encodePacket() method is called a new packet is encoded, the
  * packet header is returned by the method, and the packet body can be obtained
  * with the getLastBodyBuf() and getLastBodyLen() methods.
  */
-public class PktEncoder
-{
+public class PktEncoder {
 
-	/** The prefix for packet encoding options: 'P' */
+	/**
+	 * The prefix for packet encoding options: 'P'
+	 */
 	public static final char OPT_PREFIX = 'P';
 
-	/** The list of parameters that is accepted for packet encoding. */
+	/**
+	 * The list of parameters that is accepted for packet encoding.
+	 */
 	private static final String[][] pinfo = {
 			{
-					"Psop",
-					"[<tile idx>] on|off[ [<tile idx>] on|off ...]",
+					"Psop" ,
+					"[<tile idx>] on|off[ [<tile idx>] on|off ...]" ,
 					"Specifies whether start of packet (SOP) markers should be used. "
-							+ "'on' enables, 'off' disables it.", "off" },
+							+ "'on' enables, 'off' disables it." , "off" } ,
 			{
-					"Peph",
-					"[<tile idx>] on|off[ [<tile  idx>] on|off ...]",
+					"Peph" ,
+					"[<tile idx>] on|off[ [<tile  idx>] on|off ...]" ,
 					"Specifies whether end of packet header (EPH) markers should be "
-							+ " used. 'on' enables, 'off' disables it.", "off" } };
+							+ " used. 'on' enables, 'off' disables it." , "off" } };
 
-	/** The initial value for the lblock */
+	/**
+	 * The initial value for the lblock
+	 */
 	private static final int INIT_LBLOCK = 3;
 
-	/** The source object */
+	/**
+	 * The source object
+	 */
 	private final CodedCBlkDataSrcEnc infoSrc;
 
-	/** The encoder specs */
+	/**
+	 * The encoder specs
+	 */
 	private final EncoderSpecs encSpec;
 
 	/**
@@ -94,7 +107,7 @@ public class PktEncoder
 	 * 1 is used. The subband indices are used as they are defined in the
 	 * Subband class. The tile indices start at 0 and follow a lexicographical
 	 * order.
-	 * 
+	 *
 	 * <ul>
 	 * <li>1st index: tile index, in lexicographical order</li>
 	 * <li>2nd index: component index</li>
@@ -111,7 +124,7 @@ public class PktEncoder
 	 * layer index minus 1 is used. The subband indices are used as they are
 	 * defined in the Subband class. The tile indices start at 0 and follow a
 	 * lexicographical order.
-	 * 
+	 *
 	 * <ul>
 	 * <li>1st index: tile index, in lexicographical order</li>
 	 * <li>2nd index: component index</li>
@@ -129,7 +142,7 @@ public class PktEncoder
 	 * minus 1 is used. The subband indices are used as they are defined in the
 	 * Subband class. The tile indices start at 0 and follow a lexicographical
 	 * order.
-	 * 
+	 *
 	 * <ul>
 	 * <li>1st index: tile index, in lexicographical order</li>
 	 * <li>2nd index: component index</li>
@@ -147,11 +160,11 @@ public class PktEncoder
 	 * defined in the Subband class. The tile indices start at 0 and follow a
 	 * lexicographical order. The code-block indices follow a lexicographical
 	 * order within the subband tile.
-	 * 
-	 * <P>
+	 *
+	 * <p>
 	 * What is actually stored is the index of the element in
 	 * CBlkRateDistStats.truncIdxs that gives the real truncation point.
-	 * 
+	 *
 	 * <ul>
 	 * <li>1st index: tile index, in lexicographical order</li>
 	 * <li>2nd index: component index</li>
@@ -161,7 +174,18 @@ public class PktEncoder
 	 * </ul>
 	 */
 	private final int[][][][][] prevtIdxs;
-
+	/**
+	 * Array containing the coordinates, width, height, indexes, ... of the
+	 * precincts.
+	 *
+	 * <ul>
+	 * <li>1st dim: tile index.</li>
+	 * <li>2nd dim: component index.</li>
+	 * <li>3rd dim: resolution level index.</li>
+	 * <li>4th dim: precinct index.</li>
+	 * </ul>
+	 */
+	private final PrecInfo[][][][] ppinfo;
 	/**
 	 * The saved base number of bits for sending code-block length information.
 	 * It is used for restoring previous saved state by restore(). The indexes
@@ -169,7 +193,7 @@ public class PktEncoder
 	 * the layer index minus 1 is used. The subband indices are used as they are
 	 * defined in the Subband class. The tile indices start at 0 and follow a
 	 * lexicographical order.
-	 * 
+	 *
 	 * <ul>
 	 * <li>1st index: tile index, in lexicographical order</li>
 	 * <li>2nd index: component index</li>
@@ -179,7 +203,6 @@ public class PktEncoder
 	 * </ul>
 	 */
 	private int[][][][][] bak_lblock;
-
 	/**
 	 * The saved last encoded truncation point for each code-block. It is used
 	 * for restoring previous saved state by restore(). A negative value means
@@ -188,7 +211,7 @@ public class PktEncoder
 	 * Subband class. The tile indices start at 0 and follow a lexicographical
 	 * order. The code-block indices follow a lexicographical order within the
 	 * subband tile.
-	 * 
+	 *
 	 * <ul>
 	 * <li>1st index: tile index, in lexicographical order</li>
 	 * <li>2nd index: component index</li>
@@ -198,186 +221,178 @@ public class PktEncoder
 	 * </ul>
 	 */
 	private int[][][][][] bak_prevtIdxs;
-
-	/** The body buffer of the last encoded packet */
-	private byte[] lbbuf;
-
-	/** The body length of the last encoded packet */
-	private int lblen;
-
-	/** The saved state */
-	private boolean saved;
-
-	/** Whether or not there is ROI information in the last encoded Packet */
-	private boolean roiInPkt;
-
-	/** Length to read in current packet body to get all the ROI information */
-	private int roiLen;
-
 	/**
-	 * Array containing the coordinates, width, height, indexes, ... of the
-	 * precincts.
-	 * 
-	 * <ul>
-	 * <li>1st dim: tile index.</li>
-	 * <li>2nd dim: component index.</li>
-	 * <li>3rd dim: resolution level index.</li>
-	 * <li>4th dim: precinct index.</li>
-	 * </ul>
+	 * The body buffer of the last encoded packet
 	 */
-	private final PrecInfo[][][][] ppinfo;
-
-	/** Whether or not the current packet is writable */
+	private byte[] lbbuf;
+	/**
+	 * The body length of the last encoded packet
+	 */
+	private int lblen;
+	/**
+	 * The saved state
+	 */
+	private boolean saved;
+	/**
+	 * Whether or not there is ROI information in the last encoded Packet
+	 */
+	private boolean roiInPkt;
+	/**
+	 * Length to read in current packet body to get all the ROI information
+	 */
+	private int roiLen;
+	/**
+	 * Whether or not the current packet is writable
+	 */
 	private boolean packetWritable;
 
 	/**
 	 * Creates a new packet encoder object, using the information from the
 	 * 'infoSrc' object.
-	 * 
-	 * @param infoSrc
-	 *            The source of information to construct the object.
-	 * 
-	 * @param encSpec
-	 *            The encoding parameters.
-	 * 
-	 * @param numPrec
-	 *            Maximum number of precincts in each tile, component and
-	 *            resolution level.
-	 * 
-	 * @param pl
-	 *            ParameterList instance that holds command line options
+	 *
+	 * @param infoSrc The source of information to construct the object.
+	 * @param encSpec The encoding parameters.
+	 * @param numPrec Maximum number of precincts in each tile, component and
+	 *                resolution level.
+	 * @param pl      ParameterList instance that holds command line options
 	 */
-	public PktEncoder(final CodedCBlkDataSrcEnc infoSrc, final EncoderSpecs encSpec, final Coord[][][] numPrec, final ParameterList pl)
-	{
+	public PktEncoder ( final CodedCBlkDataSrcEnc infoSrc , final EncoderSpecs encSpec , final Coord[][][] numPrec , final ParameterList pl ) {
 		this.infoSrc = infoSrc;
 		this.encSpec = encSpec;
 
 		// Check parameters
-		pl.checkList(PktEncoder.OPT_PREFIX, ParameterList.toNameArray(PktEncoder.pinfo));
+		pl.checkList ( PktEncoder.OPT_PREFIX , ParameterList.toNameArray ( PktEncoder.pinfo ) );
 
 		// Get number of components and tiles
-		final int nc = infoSrc.getNumComps();
-		final int nt = infoSrc.getNumTiles();
+		final int nc = infoSrc.getNumComps ( );
+		final int nt = infoSrc.getNumTiles ( );
 
 		// Do initial allocation
-		this.ttIncl = new TagTreeEncoder[nt][nc][][][];
-		this.ttMaxBP = new TagTreeEncoder[nt][nc][][][];
-		this.lblock = new int[nt][nc][][][];
-		this.prevtIdxs = new int[nt][nc][][][];
-		this.ppinfo = new PrecInfo[nt][nc][][];
+		this.ttIncl = new TagTreeEncoder[ nt ][ nc ][][][];
+		this.ttMaxBP = new TagTreeEncoder[ nt ][ nc ][][][];
+		this.lblock = new int[ nt ][ nc ][][][];
+		this.prevtIdxs = new int[ nt ][ nc ][][][];
+		this.ppinfo = new PrecInfo[ nt ][ nc ][][];
 
 		// Finish allocation
 		SubbandAn root, sb;
 		int maxs, mins;
 		int mrl;
 		int numcb; // Number of code-blocks
-		infoSrc.setTile(0, 0);
-		for (int t = 0; t < nt; t++)
-		{ // Loop on tiles
-			for (int c = 0; c < nc; c++)
-			{ // Loop on components
+		infoSrc.setTile ( 0 , 0 );
+		for ( int t = 0 ; t < nt ; t++ ) { // Loop on tiles
+			for ( int c = 0 ; c < nc ; c++ ) { // Loop on components
 				// Get number of resolution levels
-				root = infoSrc.getAnSubbandTree(t, c);
+				root = infoSrc.getAnSubbandTree ( t , c );
 				mrl = root.resLvl;
 
-				this.lblock[t][c] = new int[mrl + 1][][];
-				this.ttIncl[t][c] = new TagTreeEncoder[mrl + 1][][];
-				this.ttMaxBP[t][c] = new TagTreeEncoder[mrl + 1][][];
-				this.prevtIdxs[t][c] = new int[mrl + 1][][];
-				this.ppinfo[t][c] = new PrecInfo[mrl + 1][];
+				this.lblock[ t ][ c ] = new int[ mrl + 1 ][][];
+				this.ttIncl[ t ][ c ] = new TagTreeEncoder[ mrl + 1 ][][];
+				this.ttMaxBP[ t ][ c ] = new TagTreeEncoder[ mrl + 1 ][][];
+				this.prevtIdxs[ t ][ c ] = new int[ mrl + 1 ][][];
+				this.ppinfo[ t ][ c ] = new PrecInfo[ mrl + 1 ][];
 
-				for (int r = 0; r <= mrl; r++)
-				{ // Loop on resolution levels
-					mins = (0 == r) ? 0 : 1;
-					maxs = (0 == r) ? 1 : 4;
+				for ( int r = 0 ; r <= mrl ; r++ ) { // Loop on resolution levels
+					mins = ( 0 == r ) ? 0 : 1;
+					maxs = ( 0 == r ) ? 1 : 4;
 
-					final int maxPrec = numPrec[t][c][r].x * numPrec[t][c][r].y;
+					final int maxPrec = numPrec[ t ][ c ][ r ].x * numPrec[ t ][ c ][ r ].y;
 
-					this.ttIncl[t][c][r] = new TagTreeEncoder[maxPrec][maxs];
-					this.ttMaxBP[t][c][r] = new TagTreeEncoder[maxPrec][maxs];
-					this.prevtIdxs[t][c][r] = new int[maxs][];
-					this.lblock[t][c][r] = new int[maxs][];
+					this.ttIncl[ t ][ c ][ r ] = new TagTreeEncoder[ maxPrec ][ maxs ];
+					this.ttMaxBP[ t ][ c ][ r ] = new TagTreeEncoder[ maxPrec ][ maxs ];
+					this.prevtIdxs[ t ][ c ][ r ] = new int[ maxs ][];
+					this.lblock[ t ][ c ][ r ] = new int[ maxs ][];
 
 					// Precincts and code-blocks
-					this.ppinfo[t][c][r] = new PrecInfo[maxPrec];
-					this.fillPrecInfo(t, c, r);
+					this.ppinfo[ t ][ c ][ r ] = new PrecInfo[ maxPrec ];
+					this.fillPrecInfo ( t , c , r );
 
-					for (int s = mins; s < maxs; s++)
-					{
+					for ( int s = mins ; s < maxs ; s++ ) {
 						// Loop on subbands
-						sb = (SubbandAn) root.getSubbandByIdx(r, s);
+						sb = ( SubbandAn ) root.getSubbandByIdx ( r , s );
 						numcb = sb.numCb.x * sb.numCb.y;
 
-						this.lblock[t][c][r][s] = new int[numcb];
-						ArrayUtil.intArraySet(this.lblock[t][c][r][s], PktEncoder.INIT_LBLOCK);
+						this.lblock[ t ][ c ][ r ][ s ] = new int[ numcb ];
+						ArrayUtil.intArraySet ( this.lblock[ t ][ c ][ r ][ s ] , PktEncoder.INIT_LBLOCK );
 
-						this.prevtIdxs[t][c][r][s] = new int[numcb];
-						ArrayUtil.intArraySet(this.prevtIdxs[t][c][r][s], -1);
+						this.prevtIdxs[ t ][ c ][ r ][ s ] = new int[ numcb ];
+						ArrayUtil.intArraySet ( this.prevtIdxs[ t ][ c ][ r ][ s ] , - 1 );
 					}
 				}
 			}
-			if (t != nt - 1)
-				infoSrc.nextTile();
+			if ( t != nt - 1 )
+				infoSrc.nextTile ( );
 		}
+	}
+
+	/**
+	 * Returns the parameters that are used in this class and implementing
+	 * classes. It returns a 2D String array. Each of the 1D arrays is for a
+	 * different option, and they have 3 elements. The first element is the
+	 * option name, the second one is the synopsis, the third one is a long
+	 * description of what the parameter is and the fourth is its default value.
+	 * The synopsis or description may be 'null', in which case it is assumed
+	 * that there is no synopsis or description of the option, respectively.
+	 * Null may be returned if no options are supported.
+	 *
+	 * @return the options name, their synopsis and their explanation, or null
+	 * if no options are supported.
+	 */
+	public static String[][] getParameterInfo ( ) {
+		return PktEncoder.pinfo;
 	}
 
 	/**
 	 * Retrives precincts and code-blocks coordinates in the given resolution,
 	 * component and tile. It terminates TagTreeEncoder initialization as well.
-	 * 
-	 * @param t
-	 *            Tile index.
-	 * 
-	 * @param c
-	 *            Component index.
-	 * 
-	 * @param r
-	 *            Resolution level index.
+	 *
+	 * @param t Tile index.
+	 * @param c Component index.
+	 * @param r Resolution level index.
 	 */
-	private void fillPrecInfo(final int t, final int c, final int r)
-	{
-		if (0 == ppinfo[t][c][r].length)
+	private void fillPrecInfo ( final int t , final int c , final int r ) {
+		if ( 0 == ppinfo[ t ][ c ][ r ].length )
 			return; // No precinct in this
 		// resolution level
 
-		final Coord tileI = this.infoSrc.getTile(null);
-		final Coord nTiles = this.infoSrc.getNumTiles(null);
+		final Coord tileI = this.infoSrc.getTile ( null );
+		final Coord nTiles = this.infoSrc.getNumTiles ( null );
 
-		final int x0siz = this.infoSrc.getImgULX();
-		final int y0siz = this.infoSrc.getImgULY();
-		final int xsiz = x0siz + this.infoSrc.getImgWidth();
-		final int ysiz = y0siz + this.infoSrc.getImgHeight();
-		final int xt0siz = this.infoSrc.getTilePartULX();
-		final int yt0siz = this.infoSrc.getTilePartULY();
-		final int xtsiz = this.infoSrc.getNomTileWidth();
-		final int ytsiz = this.infoSrc.getNomTileHeight();
+		final int x0siz = this.infoSrc.getImgULX ( );
+		final int y0siz = this.infoSrc.getImgULY ( );
+		final int xsiz = x0siz + this.infoSrc.getImgWidth ( );
+		final int ysiz = y0siz + this.infoSrc.getImgHeight ( );
+		final int xt0siz = this.infoSrc.getTilePartULX ( );
+		final int yt0siz = this.infoSrc.getTilePartULY ( );
+		final int xtsiz = this.infoSrc.getNomTileWidth ( );
+		final int ytsiz = this.infoSrc.getNomTileHeight ( );
 
-		final int tx0 = (0 == tileI.x) ? x0siz : xt0siz + tileI.x * xtsiz;
-		final int ty0 = (0 == tileI.y) ? y0siz : yt0siz + tileI.y * ytsiz;
-		final int tx1 = (tileI.x != nTiles.x - 1) ? xt0siz + (tileI.x + 1) * xtsiz : xsiz;
-		final int ty1 = (tileI.y != nTiles.y - 1) ? yt0siz + (tileI.y + 1) * ytsiz : ysiz;
+		final int tx0 = ( 0 == tileI.x ) ? x0siz : xt0siz + tileI.x * xtsiz;
+		final int ty0 = ( 0 == tileI.y ) ? y0siz : yt0siz + tileI.y * ytsiz;
+		final int tx1 = ( tileI.x != nTiles.x - 1 ) ? xt0siz + ( tileI.x + 1 ) * xtsiz : xsiz;
+		final int ty1 = ( tileI.y != nTiles.y - 1 ) ? yt0siz + ( tileI.y + 1 ) * ytsiz : ysiz;
 
-		final int xrsiz = this.infoSrc.getCompSubsX(c);
-		final int yrsiz = this.infoSrc.getCompSubsY(c);
+		final int xrsiz = this.infoSrc.getCompSubsX ( c );
+		final int yrsiz = this.infoSrc.getCompSubsY ( c );
 
-		final int tcx0 = (int) Math.ceil(tx0 / (double) (xrsiz));
-		final int tcy0 = (int) Math.ceil(ty0 / (double) (yrsiz));
-		final int tcx1 = (int) Math.ceil(tx1 / (double) (xrsiz));
-		final int tcy1 = (int) Math.ceil(ty1 / (double) (yrsiz));
+		final int tcx0 = ( int ) Math.ceil ( tx0 / ( double ) ( xrsiz ) );
+		final int tcy0 = ( int ) Math.ceil ( ty0 / ( double ) ( yrsiz ) );
+		final int tcx1 = ( int ) Math.ceil ( tx1 / ( double ) ( xrsiz ) );
+		final int tcy1 = ( int ) Math.ceil ( ty1 / ( double ) ( yrsiz ) );
 
-		final int ndl = this.infoSrc.getAnSubbandTree(t, c).resLvl - r;
-		final int trx0 = (int) Math.ceil(tcx0 / (double) (1 << ndl));
-		final int try0 = (int) Math.ceil(tcy0 / (double) (1 << ndl));
-		final int trx1 = (int) Math.ceil(tcx1 / (double) (1 << ndl));
-		final int try1 = (int) Math.ceil(tcy1 / (double) (1 << ndl));
+		final int ndl = this.infoSrc.getAnSubbandTree ( t , c ).resLvl - r;
+		final int trx0 = ( int ) Math.ceil ( tcx0 / ( double ) ( 1 << ndl ) );
+		final int try0 = ( int ) Math.ceil ( tcy0 / ( double ) ( 1 << ndl ) );
+		final int trx1 = ( int ) Math.ceil ( tcx1 / ( double ) ( 1 << ndl ) );
+		final int try1 = ( int ) Math.ceil ( tcy1 / ( double ) ( 1 << ndl ) );
 
-		final int cb0x = this.infoSrc.getCbULX();
-		final int cb0y = this.infoSrc.getCbULY();
+		final int cb0x = this.infoSrc.getCbULX ( );
+		final int cb0y = this.infoSrc.getCbULY ( );
 
-		final double twoppx = this.encSpec.pss.getPPX(t, c, r);
-		final double twoppy = this.encSpec.pss.getPPY(t, c, r);
-		final int twoppx2 = (int) (twoppx / 2);
-		final int twoppy2 = (int) (twoppy / 2);
+		final double twoppx = this.encSpec.pss.getPPX ( t , c , r );
+		final double twoppy = this.encSpec.pss.getPPY ( t , c , r );
+		final int twoppx2 = ( int ) ( twoppx / 2 );
+		final int twoppy2 = ( int ) ( twoppy / 2 );
 
 		// Precincts are located at (cb0x+i*twoppx,cb0y+j*twoppy)
 		// Valid precincts are those which intersect with the current
@@ -385,14 +400,14 @@ public class PktEncoder
 		// int maxPrec = ppinfo[t][c][r].length;
 		int nPrec = 0;
 
-		final int istart = (int) Math.floor((try0 - cb0y) / twoppy);
-		final int iend = (int) Math.floor((try1 - 1 - cb0y) / twoppy);
-		final int jstart = (int) Math.floor((trx0 - cb0x) / twoppx);
-		final int jend = (int) Math.floor((trx1 - 1 - cb0x) / twoppx);
+		final int istart = ( int ) Math.floor ( ( try0 - cb0y ) / twoppy );
+		final int iend = ( int ) Math.floor ( ( try1 - 1 - cb0y ) / twoppy );
+		final int jstart = ( int ) Math.floor ( ( trx0 - cb0x ) / twoppx );
+		final int jend = ( int ) Math.floor ( ( trx1 - 1 - cb0x ) / twoppx );
 
 		int acb0x, acb0y;
 
-		final SubbandAn root = this.infoSrc.getAnSubbandTree(t, c);
+		final SubbandAn root = this.infoSrc.getAnSubbandTree ( t , c );
 		SubbandAn sb = null;
 
 		int p0x, p0y, p1x, p1y; // Precinct projection in subband
@@ -400,87 +415,76 @@ public class PktEncoder
 		int cw, ch;
 		int kstart, kend, lstart, lend, k0, l0;
 		int prg_ulx, prg_uly;
-		final int prg_w = (int) twoppx << ndl;
-		final int prg_h = (int) twoppy << ndl;
+		final int prg_w = ( int ) twoppx << ndl;
+		final int prg_h = ( int ) twoppy << ndl;
 
 		CBlkCoordInfo cb;
 
-		for (int i = istart; i <= iend; i++)
-		{ // Vertical precincts
-			for (int j = jstart; j <= jend; j++, nPrec++)
-			{ // Horizontal precincts
-				if (j == jstart && 0 != (trx0 - cb0x) % (xrsiz * ((int) twoppx)))
-				{
+		for ( int i = istart ; i <= iend ; i++ ) { // Vertical precincts
+			for ( int j = jstart ; j <= jend ; j++ , nPrec++ ) { // Horizontal precincts
+				if ( j == jstart && 0 != ( trx0 - cb0x ) % ( xrsiz * ( ( int ) twoppx ) ) ) {
 					prg_ulx = tx0;
 				}
-				else
-				{
-					prg_ulx = cb0x + j * xrsiz * ((int) twoppx << ndl);
+				else {
+					prg_ulx = cb0x + j * xrsiz * ( ( int ) twoppx << ndl );
 				}
-				if (i == istart && 0 != (try0 - cb0y) % (yrsiz * ((int) twoppy)))
-				{
+				if ( i == istart && 0 != ( try0 - cb0y ) % ( yrsiz * ( ( int ) twoppy ) ) ) {
 					prg_uly = ty0;
 				}
-				else
-				{
-					prg_uly = cb0y + i * yrsiz * ((int) twoppy << ndl);
+				else {
+					prg_uly = cb0y + i * yrsiz * ( ( int ) twoppy << ndl );
 				}
 
-				this.ppinfo[t][c][r][nPrec] = new PrecInfo(r, (int) (cb0x + j * twoppx), (int) (cb0y + i * twoppy),
-						(int) twoppx, (int) twoppy, prg_ulx, prg_uly, prg_w, prg_h);
+				this.ppinfo[ t ][ c ][ r ][ nPrec ] = new PrecInfo ( r , ( int ) ( cb0x + j * twoppx ) , ( int ) ( cb0y + i * twoppy ) ,
+						( int ) twoppx , ( int ) twoppy , prg_ulx , prg_uly , prg_w , prg_h
+				);
 
-				if (0 == r)
-				{ // LL subband
+				if ( 0 == r ) { // LL subband
 					acb0x = cb0x;
 					acb0y = cb0y;
 
-					p0x = acb0x + j * (int) twoppx;
-					p1x = p0x + (int) twoppx;
-					p0y = acb0y + i * (int) twoppy;
-					p1y = p0y + (int) twoppy;
+					p0x = acb0x + j * ( int ) twoppx;
+					p1x = p0x + ( int ) twoppx;
+					p0y = acb0y + i * ( int ) twoppy;
+					p1y = p0y + ( int ) twoppy;
 
-					sb = (SubbandAn) root.getSubbandByIdx(0, 0);
-					s0x = (p0x < sb.ulcx) ? sb.ulcx : p0x;
-					s1x = (p1x > sb.ulcx + sb.w) ? sb.ulcx + sb.w : p1x;
-					s0y = (p0y < sb.ulcy) ? sb.ulcy : p0y;
-					s1y = (p1y > sb.ulcy + sb.h) ? sb.ulcy + sb.h : p1y;
+					sb = ( SubbandAn ) root.getSubbandByIdx ( 0 , 0 );
+					s0x = ( p0x < sb.ulcx ) ? sb.ulcx : p0x;
+					s1x = ( p1x > sb.ulcx + sb.w ) ? sb.ulcx + sb.w : p1x;
+					s0y = ( p0y < sb.ulcy ) ? sb.ulcy : p0y;
+					s1y = ( p1y > sb.ulcy + sb.h ) ? sb.ulcy + sb.h : p1y;
 
 					// Code-blocks are located at (acb0x+k*cw,acb0y+l*ch)
 					cw = sb.nomCBlkW;
 					ch = sb.nomCBlkH;
-					k0 = (int) Math.floor((sb.ulcy - acb0y) / (double) ch);
-					kstart = (int) Math.floor((s0y - acb0y) / (double) ch);
-					kend = (int) Math.floor((s1y - 1 - acb0y) / (double) ch);
-					l0 = (int) Math.floor((sb.ulcx - acb0x) / (double) cw);
-					lstart = (int) Math.floor((s0x - acb0x) / (double) cw);
-					lend = (int) Math.floor((s1x - 1 - acb0x) / (double) cw);
+					k0 = ( int ) Math.floor ( ( sb.ulcy - acb0y ) / ( double ) ch );
+					kstart = ( int ) Math.floor ( ( s0y - acb0y ) / ( double ) ch );
+					kend = ( int ) Math.floor ( ( s1y - 1 - acb0y ) / ( double ) ch );
+					l0 = ( int ) Math.floor ( ( sb.ulcx - acb0x ) / ( double ) cw );
+					lstart = ( int ) Math.floor ( ( s0x - acb0x ) / ( double ) cw );
+					lend = ( int ) Math.floor ( ( s1x - 1 - acb0x ) / ( double ) cw );
 
-					if (0 >= s1x - s0x || 0 >= s1y - s0y)
-					{
-						this.ppinfo[t][c][0][nPrec].nblk[0] = 0;
-						this.ttIncl[t][c][r][nPrec][0] = new TagTreeEncoder(0, 0);
-						this.ttMaxBP[t][c][r][nPrec][0] = new TagTreeEncoder(0, 0);
+					if ( 0 >= s1x - s0x || 0 >= s1y - s0y ) {
+						this.ppinfo[ t ][ c ][ 0 ][ nPrec ].nblk[ 0 ] = 0;
+						this.ttIncl[ t ][ c ][ 0 ][ nPrec ][ 0 ] = new TagTreeEncoder ( 0 , 0 );
+						this.ttMaxBP[ t ][ c ][ 0 ][ nPrec ][ 0 ] = new TagTreeEncoder ( 0 , 0 );
 					}
-					else
-					{
-						this.ttIncl[t][c][r][nPrec][0] = new TagTreeEncoder(kend - kstart + 1, lend - lstart + 1);
-						this.ttMaxBP[t][c][r][nPrec][0] = new TagTreeEncoder(kend - kstart + 1, lend - lstart + 1);
-						this.ppinfo[t][c][r][nPrec].cblk[0] = new CBlkCoordInfo[kend - kstart + 1][lend - lstart + 1];
-						this.ppinfo[t][c][r][nPrec].nblk[0] = (kend - kstart + 1) * (lend - lstart + 1);
+					else {
+						this.ttIncl[ t ][ c ][ r ][ nPrec ][ 0 ] = new TagTreeEncoder ( kend - kstart + 1 , lend - lstart + 1 );
+						this.ttMaxBP[ t ][ c ][ r ][ nPrec ][ 0 ] = new TagTreeEncoder ( kend - kstart + 1 , lend - lstart + 1 );
+						this.ppinfo[ t ][ c ][ r ][ nPrec ].cblk[ 0 ] = new CBlkCoordInfo[ kend - kstart + 1 ][ lend - lstart + 1 ];
+						this.ppinfo[ t ][ c ][ r ][ nPrec ].nblk[ 0 ] = ( kend - kstart + 1 ) * ( lend - lstart + 1 );
 
-						for (int k = kstart; k <= kend; k++)
-						{ // Vertical cblks
-							for (int l = lstart; l <= lend; l++)
-							{ // Horiz. cblks
+						for ( int k = kstart ; k <= kend ; k++ ) { // Vertical cblks
+							for ( int l = lstart ; l <= lend ; l++ ) { // Horiz. cblks
 
-								cb = new CBlkCoordInfo(k - k0, l - l0);
-								this.ppinfo[t][c][r][nPrec].cblk[0][k - kstart][l - lstart] = cb;
+								cb = new CBlkCoordInfo ( k - k0 , l - l0 );
+								this.ppinfo[ t ][ c ][ r ][ nPrec ].cblk[ 0 ][ k - kstart ][ l - lstart ] = cb;
 							} // Horizontal code-blocks
 						} // Vertical code-blocks
 					}
 				}
-				else
-				{ // HL, LH and HH subbands
+				else { // HL, LH and HH subbands
 					// HL subband
 					acb0x = 0;
 					acb0y = cb0y;
@@ -490,41 +494,37 @@ public class PktEncoder
 					p0y = acb0y + i * twoppy2;
 					p1y = p0y + twoppy2;
 
-					sb = (SubbandAn) root.getSubbandByIdx(r, 1);
-					s0x = (p0x < sb.ulcx) ? sb.ulcx : p0x;
-					s1x = (p1x > sb.ulcx + sb.w) ? sb.ulcx + sb.w : p1x;
-					s0y = (p0y < sb.ulcy) ? sb.ulcy : p0y;
-					s1y = (p1y > sb.ulcy + sb.h) ? sb.ulcy + sb.h : p1y;
+					sb = ( SubbandAn ) root.getSubbandByIdx ( r , 1 );
+					s0x = ( p0x < sb.ulcx ) ? sb.ulcx : p0x;
+					s1x = ( p1x > sb.ulcx + sb.w ) ? sb.ulcx + sb.w : p1x;
+					s0y = ( p0y < sb.ulcy ) ? sb.ulcy : p0y;
+					s1y = ( p1y > sb.ulcy + sb.h ) ? sb.ulcy + sb.h : p1y;
 
 					// Code-blocks are located at (acb0x+k*cw,acb0y+l*ch)
 					cw = sb.nomCBlkW;
 					ch = sb.nomCBlkH;
-					k0 = (int) Math.floor((sb.ulcy - acb0y) / (double) ch);
-					kstart = (int) Math.floor((s0y - acb0y) / (double) ch);
-					kend = (int) Math.floor((s1y - 1 - acb0y) / (double) ch);
-					l0 = (int) Math.floor((sb.ulcx - acb0x) / (double) cw);
-					lstart = (int) Math.floor((s0x - acb0x) / (double) cw);
-					lend = (int) Math.floor((s1x - 1 - acb0x) / (double) cw);
+					k0 = ( int ) Math.floor ( ( sb.ulcy - acb0y ) / ( double ) ch );
+					kstart = ( int ) Math.floor ( ( s0y - acb0y ) / ( double ) ch );
+					kend = ( int ) Math.floor ( ( s1y - 1 - acb0y ) / ( double ) ch );
+					l0 = ( int ) Math.floor ( ( sb.ulcx - acb0x ) / ( double ) cw );
+					lstart = ( int ) Math.floor ( ( s0x - acb0x ) / ( double ) cw );
+					lend = ( int ) Math.floor ( ( s1x - 1 - acb0x ) / ( double ) cw );
 
-					if (0 >= s1x - s0x || 0 >= s1y - s0y)
-					{
-						this.ppinfo[t][c][r][nPrec].nblk[1] = 0;
-						this.ttIncl[t][c][r][nPrec][1] = new TagTreeEncoder(0, 0);
-						this.ttMaxBP[t][c][r][nPrec][1] = new TagTreeEncoder(0, 0);
+					if ( 0 >= s1x - s0x || 0 >= s1y - s0y ) {
+						this.ppinfo[ t ][ c ][ r ][ nPrec ].nblk[ 1 ] = 0;
+						this.ttIncl[ t ][ c ][ r ][ nPrec ][ 1 ] = new TagTreeEncoder ( 0 , 0 );
+						this.ttMaxBP[ t ][ c ][ r ][ nPrec ][ 1 ] = new TagTreeEncoder ( 0 , 0 );
 					}
-					else
-					{
-						this.ttIncl[t][c][r][nPrec][1] = new TagTreeEncoder(kend - kstart + 1, lend - lstart + 1);
-						this.ttMaxBP[t][c][r][nPrec][1] = new TagTreeEncoder(kend - kstart + 1, lend - lstart + 1);
-						this.ppinfo[t][c][r][nPrec].cblk[1] = new CBlkCoordInfo[kend - kstart + 1][lend - lstart + 1];
-						this.ppinfo[t][c][r][nPrec].nblk[1] = (kend - kstart + 1) * (lend - lstart + 1);
+					else {
+						this.ttIncl[ t ][ c ][ r ][ nPrec ][ 1 ] = new TagTreeEncoder ( kend - kstart + 1 , lend - lstart + 1 );
+						this.ttMaxBP[ t ][ c ][ r ][ nPrec ][ 1 ] = new TagTreeEncoder ( kend - kstart + 1 , lend - lstart + 1 );
+						this.ppinfo[ t ][ c ][ r ][ nPrec ].cblk[ 1 ] = new CBlkCoordInfo[ kend - kstart + 1 ][ lend - lstart + 1 ];
+						this.ppinfo[ t ][ c ][ r ][ nPrec ].nblk[ 1 ] = ( kend - kstart + 1 ) * ( lend - lstart + 1 );
 
-						for (int k = kstart; k <= kend; k++)
-						{ // Vertical cblks
-							for (int l = lstart; l <= lend; l++)
-							{ // Horiz. cblks
-								cb = new CBlkCoordInfo(k - k0, l - l0);
-								this.ppinfo[t][c][r][nPrec].cblk[1][k - kstart][l - lstart] = cb;
+						for ( int k = kstart ; k <= kend ; k++ ) { // Vertical cblks
+							for ( int l = lstart ; l <= lend ; l++ ) { // Horiz. cblks
+								cb = new CBlkCoordInfo ( k - k0 , l - l0 );
+								this.ppinfo[ t ][ c ][ r ][ nPrec ].cblk[ 1 ][ k - kstart ][ l - lstart ] = cb;
 							} // Horizontal code-blocks
 						} // Vertical code-blocks
 					}
@@ -538,41 +538,37 @@ public class PktEncoder
 					p0y = acb0y + i * twoppy2;
 					p1y = p0y + twoppy2;
 
-					sb = (SubbandAn) root.getSubbandByIdx(r, 2);
-					s0x = (p0x < sb.ulcx) ? sb.ulcx : p0x;
-					s1x = (p1x > sb.ulcx + sb.w) ? sb.ulcx + sb.w : p1x;
-					s0y = (p0y < sb.ulcy) ? sb.ulcy : p0y;
-					s1y = (p1y > sb.ulcy + sb.h) ? sb.ulcy + sb.h : p1y;
+					sb = ( SubbandAn ) root.getSubbandByIdx ( r , 2 );
+					s0x = ( p0x < sb.ulcx ) ? sb.ulcx : p0x;
+					s1x = ( p1x > sb.ulcx + sb.w ) ? sb.ulcx + sb.w : p1x;
+					s0y = ( p0y < sb.ulcy ) ? sb.ulcy : p0y;
+					s1y = ( p1y > sb.ulcy + sb.h ) ? sb.ulcy + sb.h : p1y;
 
 					// Code-blocks are located at (acb0x+k*cw,acb0y+l*ch)
 					cw = sb.nomCBlkW;
 					ch = sb.nomCBlkH;
-					k0 = (int) Math.floor((sb.ulcy - acb0y) / (double) ch);
-					kstart = (int) Math.floor((s0y - acb0y) / (double) ch);
-					kend = (int) Math.floor((s1y - 1 - acb0y) / (double) ch);
-					l0 = (int) Math.floor((sb.ulcx - acb0x) / (double) cw);
-					lstart = (int) Math.floor((s0x - acb0x) / (double) cw);
-					lend = (int) Math.floor((s1x - 1 - acb0x) / (double) cw);
+					k0 = ( int ) Math.floor ( ( sb.ulcy - acb0y ) / ( double ) ch );
+					kstart = ( int ) Math.floor ( ( s0y - acb0y ) / ( double ) ch );
+					kend = ( int ) Math.floor ( ( s1y - 1 - acb0y ) / ( double ) ch );
+					l0 = ( int ) Math.floor ( ( sb.ulcx - acb0x ) / ( double ) cw );
+					lstart = ( int ) Math.floor ( ( s0x - acb0x ) / ( double ) cw );
+					lend = ( int ) Math.floor ( ( s1x - 1 - acb0x ) / ( double ) cw );
 
-					if (0 >= s1x - s0x || 0 >= s1y - s0y)
-					{
-						this.ppinfo[t][c][r][nPrec].nblk[2] = 0;
-						this.ttIncl[t][c][r][nPrec][2] = new TagTreeEncoder(0, 0);
-						this.ttMaxBP[t][c][r][nPrec][2] = new TagTreeEncoder(0, 0);
+					if ( 0 >= s1x - s0x || 0 >= s1y - s0y ) {
+						this.ppinfo[ t ][ c ][ r ][ nPrec ].nblk[ 2 ] = 0;
+						this.ttIncl[ t ][ c ][ r ][ nPrec ][ 2 ] = new TagTreeEncoder ( 0 , 0 );
+						this.ttMaxBP[ t ][ c ][ r ][ nPrec ][ 2 ] = new TagTreeEncoder ( 0 , 0 );
 					}
-					else
-					{
-						this.ttIncl[t][c][r][nPrec][2] = new TagTreeEncoder(kend - kstart + 1, lend - lstart + 1);
-						this.ttMaxBP[t][c][r][nPrec][2] = new TagTreeEncoder(kend - kstart + 1, lend - lstart + 1);
-						this.ppinfo[t][c][r][nPrec].cblk[2] = new CBlkCoordInfo[kend - kstart + 1][lend - lstart + 1];
-						this.ppinfo[t][c][r][nPrec].nblk[2] = (kend - kstart + 1) * (lend - lstart + 1);
+					else {
+						this.ttIncl[ t ][ c ][ r ][ nPrec ][ 2 ] = new TagTreeEncoder ( kend - kstart + 1 , lend - lstart + 1 );
+						this.ttMaxBP[ t ][ c ][ r ][ nPrec ][ 2 ] = new TagTreeEncoder ( kend - kstart + 1 , lend - lstart + 1 );
+						this.ppinfo[ t ][ c ][ r ][ nPrec ].cblk[ 2 ] = new CBlkCoordInfo[ kend - kstart + 1 ][ lend - lstart + 1 ];
+						this.ppinfo[ t ][ c ][ r ][ nPrec ].nblk[ 2 ] = ( kend - kstart + 1 ) * ( lend - lstart + 1 );
 
-						for (int k = kstart; k <= kend; k++)
-						{ // Vertical cblks
-							for (int l = lstart; l <= lend; l++)
-							{ // Horiz cblks
-								cb = new CBlkCoordInfo(k - k0, l - l0);
-								this.ppinfo[t][c][r][nPrec].cblk[2][k - kstart][l - lstart] = cb;
+						for ( int k = kstart ; k <= kend ; k++ ) { // Vertical cblks
+							for ( int l = lstart ; l <= lend ; l++ ) { // Horiz cblks
+								cb = new CBlkCoordInfo ( k - k0 , l - l0 );
+								this.ppinfo[ t ][ c ][ r ][ nPrec ].cblk[ 2 ][ k - kstart ][ l - lstart ] = cb;
 							} // Horizontal code-blocks
 						} // Vertical code-blocks
 					}
@@ -586,41 +582,37 @@ public class PktEncoder
 					p0y = acb0y + i * twoppy2;
 					p1y = p0y + twoppy2;
 
-					sb = (SubbandAn) root.getSubbandByIdx(r, 3);
-					s0x = (p0x < sb.ulcx) ? sb.ulcx : p0x;
-					s1x = (p1x > sb.ulcx + sb.w) ? sb.ulcx + sb.w : p1x;
-					s0y = (p0y < sb.ulcy) ? sb.ulcy : p0y;
-					s1y = (p1y > sb.ulcy + sb.h) ? sb.ulcy + sb.h : p1y;
+					sb = ( SubbandAn ) root.getSubbandByIdx ( r , 3 );
+					s0x = ( p0x < sb.ulcx ) ? sb.ulcx : p0x;
+					s1x = ( p1x > sb.ulcx + sb.w ) ? sb.ulcx + sb.w : p1x;
+					s0y = ( p0y < sb.ulcy ) ? sb.ulcy : p0y;
+					s1y = ( p1y > sb.ulcy + sb.h ) ? sb.ulcy + sb.h : p1y;
 
 					// Code-blocks are located at (acb0x+k*cw,acb0y+l*ch)
 					cw = sb.nomCBlkW;
 					ch = sb.nomCBlkH;
-					k0 = (int) Math.floor((sb.ulcy - acb0y) / (double) ch);
-					kstart = (int) Math.floor((s0y - acb0y) / (double) ch);
-					kend = (int) Math.floor((s1y - 1 - acb0y) / (double) ch);
-					l0 = (int) Math.floor((sb.ulcx - acb0x) / (double) cw);
-					lstart = (int) Math.floor((s0x - acb0x) / (double) cw);
-					lend = (int) Math.floor((s1x - 1 - acb0x) / (double) cw);
+					k0 = ( int ) Math.floor ( ( sb.ulcy - acb0y ) / ( double ) ch );
+					kstart = ( int ) Math.floor ( ( s0y - acb0y ) / ( double ) ch );
+					kend = ( int ) Math.floor ( ( s1y - 1 - acb0y ) / ( double ) ch );
+					l0 = ( int ) Math.floor ( ( sb.ulcx - acb0x ) / ( double ) cw );
+					lstart = ( int ) Math.floor ( ( s0x - acb0x ) / ( double ) cw );
+					lend = ( int ) Math.floor ( ( s1x - 1 - acb0x ) / ( double ) cw );
 
-					if (0 >= s1x - s0x || 0 >= s1y - s0y)
-					{
-						this.ppinfo[t][c][r][nPrec].nblk[3] = 0;
-						this.ttIncl[t][c][r][nPrec][3] = new TagTreeEncoder(0, 0);
-						this.ttMaxBP[t][c][r][nPrec][3] = new TagTreeEncoder(0, 0);
+					if ( 0 >= s1x - s0x || 0 >= s1y - s0y ) {
+						this.ppinfo[ t ][ c ][ r ][ nPrec ].nblk[ 3 ] = 0;
+						this.ttIncl[ t ][ c ][ r ][ nPrec ][ 3 ] = new TagTreeEncoder ( 0 , 0 );
+						this.ttMaxBP[ t ][ c ][ r ][ nPrec ][ 3 ] = new TagTreeEncoder ( 0 , 0 );
 					}
-					else
-					{
-						this.ttIncl[t][c][r][nPrec][3] = new TagTreeEncoder(kend - kstart + 1, lend - lstart + 1);
-						this.ttMaxBP[t][c][r][nPrec][3] = new TagTreeEncoder(kend - kstart + 1, lend - lstart + 1);
-						this.ppinfo[t][c][r][nPrec].cblk[3] = new CBlkCoordInfo[kend - kstart + 1][lend - lstart + 1];
-						this.ppinfo[t][c][r][nPrec].nblk[3] = (kend - kstart + 1) * (lend - lstart + 1);
+					else {
+						this.ttIncl[ t ][ c ][ r ][ nPrec ][ 3 ] = new TagTreeEncoder ( kend - kstart + 1 , lend - lstart + 1 );
+						this.ttMaxBP[ t ][ c ][ r ][ nPrec ][ 3 ] = new TagTreeEncoder ( kend - kstart + 1 , lend - lstart + 1 );
+						this.ppinfo[ t ][ c ][ r ][ nPrec ].cblk[ 3 ] = new CBlkCoordInfo[ kend - kstart + 1 ][ lend - lstart + 1 ];
+						this.ppinfo[ t ][ c ][ r ][ nPrec ].nblk[ 3 ] = ( kend - kstart + 1 ) * ( lend - lstart + 1 );
 
-						for (int k = kstart; k <= kend; k++)
-						{ // Vertical cblks
-							for (int l = lstart; l <= lend; l++)
-							{ // Horiz cblks
-								cb = new CBlkCoordInfo(k - k0, l - l0);
-								this.ppinfo[t][c][r][nPrec].cblk[3][k - kstart][l - lstart] = cb;
+						for ( int k = kstart ; k <= kend ; k++ ) { // Vertical cblks
+							for ( int l = lstart ; l <= lend ; l++ ) { // Horiz cblks
+								cb = new CBlkCoordInfo ( k - k0 , l - l0 );
+								this.ppinfo[ t ][ c ][ r ][ nPrec ].cblk[ 3 ][ k - kstart ][ l - lstart ] = cb;
 							} // Horizontal code-blocks
 						} // Vertical code-blocks
 					}
@@ -648,48 +640,31 @@ public class PktEncoder
 	 * Otherwise, if larger, the code-block is included in the packet. The body
 	 * of the packet can be obtained with the getLastBodyBuf() and
 	 * getLastBodyLen() methods.
-	 * 
+	 *
 	 * <p>
 	 * Layers must be coded in increasing order, in consecutive manner, for each
 	 * tile, component and resolution level (e.g., layer 1, then layer 2, etc.).
 	 * For different tile, component and/or resolution level no particular order
 	 * must be followed.
-	 * 
-	 * @param ly
-	 *            The layer index (starts at 1).
-	 * 
-	 * @param c
-	 *            The component index.
-	 * 
-	 * @param r
-	 *            The resolution level
-	 * 
-	 * @param t
-	 *            Index of the current tile
-	 * 
-	 * @param cbs
-	 *            The 3D array of coded code-blocks.
-	 * 
-	 * @param tIndx
-	 *            The truncation point indices for each code-block.
-	 * 
-	 * @param hbuf
-	 *            The header buffer. If null a new BitOutputBuffer is created
-	 *            and returned. This buffer is reset before anything is written
-	 *            to it.
-	 * 
-	 * @param bbuf
-	 *            The body buffer. If null a new one is created. If not large
-	 *            enough a new one is created.
-	 * 
-	 * @param pIdx
-	 *            The precinct index.
-	 * 
+	 *
+	 * @param ly    The layer index (starts at 1).
+	 * @param c     The component index.
+	 * @param r     The resolution level
+	 * @param t     Index of the current tile
+	 * @param cbs   The 3D array of coded code-blocks.
+	 * @param tIndx The truncation point indices for each code-block.
+	 * @param hbuf  The header buffer. If null a new BitOutputBuffer is created
+	 *              and returned. This buffer is reset before anything is written
+	 *              to it.
+	 * @param bbuf  The body buffer. If null a new one is created. If not large
+	 *              enough a new one is created.
+	 * @param pIdx  The precinct index.
 	 * @return The buffer containing the packet header.
 	 */
-	public BitOutputBuffer encodePacket(final int ly, final int c, final int r, final int t, final CBlkRateDistStats[][] cbs, final int[][] tIndx,
-										BitOutputBuffer hbuf, byte[] bbuf, final int pIdx)
-	{
+	public BitOutputBuffer encodePacket (
+			final int ly , final int c , final int r , final int t , final CBlkRateDistStats[][] cbs , final int[][] tIndx ,
+			BitOutputBuffer hbuf , byte[] bbuf , final int pIdx
+	) {
 		int b, i, maxi;
 		int thmax;
 		int newtp;
@@ -700,10 +675,10 @@ public class PktEncoder
 		int[] cur_prevtIdxs; // last encoded truncation points
 		CBlkRateDistStats[] cur_cbs;
 		int[] cur_tIndx; // truncation points to encode
-		final int minsb = (0 == r) ? 0 : 1;
-		final int maxsb = (0 == r) ? 1 : 4;
+		final int minsb = ( 0 == r ) ? 0 : 1;
+		final int maxsb = ( 0 == r ) ? 1 : 4;
 		Coord cbCoord = null;
-		final SubbandAn root = this.infoSrc.getAnSubbandTree(t, c);
+		final SubbandAn root = this.infoSrc.getAnSubbandTree ( t , c );
 		SubbandAn sb;
 		this.roiInPkt = false;
 		this.roiLen = 0;
@@ -711,21 +686,18 @@ public class PktEncoder
 
 		// Checks if a precinct with such an index exists in this resolution
 		// level
-		if (pIdx >= this.ppinfo[t][c][r].length)
-		{
+		if ( pIdx >= this.ppinfo[ t ][ c ][ r ].length ) {
 			this.packetWritable = false;
 			return hbuf;
 		}
-		final PrecInfo prec = this.ppinfo[t][c][r][pIdx];
+		final PrecInfo prec = this.ppinfo[ t ][ c ][ r ][ pIdx ];
 
 		// First, we check if packet is empty (i.e precinct 'pIdx' has no
 		// code-block in any of the subbands)
 		boolean isPrecVoid = true;
 
-		for (int s = minsb; s < maxsb; s++)
-		{
-			if (0 == prec.nblk[s])
-			{
+		for ( int s = minsb ; s < maxsb ; s++ ) {
+			if ( 0 == prec.nblk[ s ] ) {
 				// The precinct has no code-block in this subband.
 				continue;
 			}
@@ -735,35 +707,29 @@ public class PktEncoder
 			break;
 		}
 
-		if (isPrecVoid)
-		{
+		if ( isPrecVoid ) {
 			this.packetWritable = true;
 
-			if (null == hbuf)
-			{
-				hbuf = new BitOutputBuffer();
+			if ( null == hbuf ) {
+				hbuf = new BitOutputBuffer ( );
 			}
-			else
-			{
-				hbuf.reset();
+			else {
+				hbuf.reset ( );
 			}
-			if (null == bbuf)
-			{
-				this.lbbuf = bbuf = new byte[1];
+			if ( null == bbuf ) {
+				this.lbbuf = bbuf = new byte[ 1 ];
 			}
-			hbuf.writeBit(0);
+			hbuf.writeBit ( 0 );
 			this.lblen = 0;
 
 			return hbuf;
 		}
 
-		if (null == hbuf)
-		{
-			hbuf = new BitOutputBuffer();
+		if ( null == hbuf ) {
+			hbuf = new BitOutputBuffer ( );
 		}
-		else
-		{
-			hbuf.reset();
+		else {
+			hbuf.reset ( );
 		}
 
 		// Invalidate last body buffer
@@ -771,141 +737,120 @@ public class PktEncoder
 		this.lblen = 0;
 
 		// Signal that packet is present
-		hbuf.writeBit(1);
+		hbuf.writeBit ( 1 );
 
-		for (int s = minsb; s < maxsb; s++)
-		{ // Loop on subbands
-			sb = (SubbandAn) root.getSubbandByIdx(r, s);
+		for ( int s = minsb ; s < maxsb ; s++ ) { // Loop on subbands
+			sb = ( SubbandAn ) root.getSubbandByIdx ( r , s );
 
 			// Go directly to next subband if the precinct has no code-block
 			// in the current one.
-			if (0 == prec.nblk[s])
-			{
+			if ( 0 == prec.nblk[ s ] ) {
 				continue;
 			}
 
-			cur_ttIncl = this.ttIncl[t][c][r][pIdx][s];
-			cur_ttMaxBP = this.ttMaxBP[t][c][r][pIdx][s];
-			cur_prevtIdxs = this.prevtIdxs[t][c][r][s];
-			cur_cbs = cbs[s];
-			cur_tIndx = tIndx[s];
+			cur_ttIncl = this.ttIncl[ t ][ c ][ r ][ pIdx ][ s ];
+			cur_ttMaxBP = this.ttMaxBP[ t ][ c ][ r ][ pIdx ][ s ];
+			cur_prevtIdxs = this.prevtIdxs[ t ][ c ][ r ][ s ];
+			cur_cbs = cbs[ s ];
+			cur_tIndx = tIndx[ s ];
 
 			// Set tag tree values for code-blocks in this precinct
-			mend = (null == prec.cblk[s]) ? 0 : prec.cblk[s].length;
-			for (int m = 0; m < mend; m++)
-			{
-				nend = (null == prec.cblk[s][m]) ? 0 : prec.cblk[s][m].length;
-				for (int n = 0; n < nend; n++)
-				{
-					cbCoord = prec.cblk[s][m][n].idx;
+			mend = ( null == prec.cblk[ s ] ) ? 0 : prec.cblk[ s ].length;
+			for ( int m = 0 ; m < mend ; m++ ) {
+				nend = ( null == prec.cblk[ s ][ m ] ) ? 0 : prec.cblk[ s ][ m ].length;
+				for ( int n = 0 ; n < nend ; n++ ) {
+					cbCoord = prec.cblk[ s ][ m ][ n ].idx;
 					b = cbCoord.x + cbCoord.y * sb.numCb.x;
 
-					if (cur_tIndx[b] > cur_prevtIdxs[b] && 0 > cur_prevtIdxs[b])
-					{
+					if ( cur_tIndx[ b ] > cur_prevtIdxs[ b ] && 0 > cur_prevtIdxs[ b ] ) {
 						// First inclusion
-						cur_ttIncl.setValue(m, n, ly - 1);
+						cur_ttIncl.setValue ( m , n , ly - 1 );
 					}
-					if (1 == ly)
-					{ // First layer, need to set the skip of MSBP
-						cur_ttMaxBP.setValue(m, n, cur_cbs[b].skipMSBP);
+					if ( 1 == ly ) { // First layer, need to set the skip of MSBP
+						cur_ttMaxBP.setValue ( m , n , cur_cbs[ b ].skipMSBP );
 					}
 				}
 			}
 
 			// Now encode the information
-			for (int m = 0; m < prec.cblk[s].length; m++)
-			{ // Vertical code-blocks
-				for (int n = 0; n < prec.cblk[s][m].length; n++)
-				{ // Horiz. cblks
-					cbCoord = prec.cblk[s][m][n].idx;
+			for ( int m = 0 ; m < prec.cblk[ s ].length ; m++ ) { // Vertical code-blocks
+				for ( int n = 0 ; n < prec.cblk[ s ][ m ].length ; n++ ) { // Horiz. cblks
+					cbCoord = prec.cblk[ s ][ m ][ n ].idx;
 					b = cbCoord.x + cbCoord.y * sb.numCb.x;
 
 					// 1) Inclusion information
-					if (cur_tIndx[b] > cur_prevtIdxs[b])
-					{
+					if ( cur_tIndx[ b ] > cur_prevtIdxs[ b ] ) {
 						// Code-block included in this layer
-						if (0 > cur_prevtIdxs[b])
-						{ // First inclusion
+						if ( 0 > cur_prevtIdxs[ b ] ) { // First inclusion
 							// Encode layer info
-							cur_ttIncl.encode(m, n, ly, hbuf);
+							cur_ttIncl.encode ( m , n , ly , hbuf );
 
 							// 2) Max bitdepth info. Encode value
-							thmax = cur_cbs[b].skipMSBP + 1;
-							for (i = 1; i <= thmax; i++)
-							{
-								cur_ttMaxBP.encode(m, n, i, hbuf);
+							thmax = cur_cbs[ b ].skipMSBP + 1;
+							for ( i = 1; i <= thmax ; i++ ) {
+								cur_ttMaxBP.encode ( m , n , i , hbuf );
 							}
 
 							// Count body size for packet
-							this.lblen += cur_cbs[b].truncRates[cur_cbs[b].truncIdxs[cur_tIndx[b]]];
+							this.lblen += cur_cbs[ b ].truncRates[ cur_cbs[ b ].truncIdxs[ cur_tIndx[ b ] ] ];
 						}
-						else
-						{ // Already in previous layer
+						else { // Already in previous layer
 							// Send "1" bit
-							hbuf.writeBit(1);
+							hbuf.writeBit ( 1 );
 							// Count body size for packet
-							this.lblen += cur_cbs[b].truncRates[cur_cbs[b].truncIdxs[cur_tIndx[b]]]
-									- cur_cbs[b].truncRates[cur_cbs[b].truncIdxs[cur_prevtIdxs[b]]];
+							this.lblen += cur_cbs[ b ].truncRates[ cur_cbs[ b ].truncIdxs[ cur_tIndx[ b ] ] ]
+									- cur_cbs[ b ].truncRates[ cur_cbs[ b ].truncIdxs[ cur_prevtIdxs[ b ] ] ];
 						}
 
 						// 3) Truncation point information
-						if (0 > cur_prevtIdxs[b])
-						{
-							newtp = cur_cbs[b].truncIdxs[cur_tIndx[b]];
+						if ( 0 > cur_prevtIdxs[ b ] ) {
+							newtp = cur_cbs[ b ].truncIdxs[ cur_tIndx[ b ] ];
 						}
-						else
-						{
-							newtp = cur_cbs[b].truncIdxs[cur_tIndx[b]] - cur_cbs[b].truncIdxs[cur_prevtIdxs[b]] - 1;
+						else {
+							newtp = cur_cbs[ b ].truncIdxs[ cur_tIndx[ b ] ] - cur_cbs[ b ].truncIdxs[ cur_prevtIdxs[ b ] ] - 1;
 						}
 
 						// Mix of switch and if is faster
-						switch (newtp)
-						{
+						switch ( newtp ) {
 							case 0:
-								hbuf.writeBit(0); // Send one "0" bit
+								hbuf.writeBit ( 0 ); // Send one "0" bit
 								break;
 							case 1:
-								hbuf.writeBits(2, 2); // Send one "1" and one
-														// "0"
+								hbuf.writeBits ( 2 , 2 ); // Send one "1" and one
+								// "0"
 								break;
 							case 2:
 							case 3:
 							case 4:
 								// Send two "1" bits followed by 2 bits
 								// representation of newtp-2
-								hbuf.writeBits((3 << 2) | (newtp - 2), 4);
+								hbuf.writeBits ( ( 3 << 2 ) | ( newtp - 2 ) , 4 );
 								break;
 							default:
-								if (35 >= newtp)
-								{
+								if ( 35 >= newtp ) {
 									// Send four "1" bits followed by a five
 									// bits
 									// representation of newtp-5
-									hbuf.writeBits((15 << 5) | (newtp - 5), 9);
+									hbuf.writeBits ( ( 15 << 5 ) | ( newtp - 5 ) , 9 );
 								}
-								else if (163 >= newtp)
-								{
+								else if ( 163 >= newtp ) {
 									// Send nine "1" bits followed by a seven
 									// bits
 									// representation of newtp-36
-									hbuf.writeBits((511 << 7) | (newtp - 36), 16);
+									hbuf.writeBits ( ( 511 << 7 ) | ( newtp - 36 ) , 16 );
 								}
-								else
-								{
-									throw new ArithmeticException("Maximum number of truncation " + "points exceeded");
+								else {
+									throw new ArithmeticException ( "Maximum number of truncation " + "points exceeded" );
 								}
 						}
 					}
-					else
-					{ // Block not included in this layer
-						if (0 <= cur_prevtIdxs[b])
-						{
+					else { // Block not included in this layer
+						if ( 0 <= cur_prevtIdxs[ b ] ) {
 							// Already in previous layer. Send "0" bit
-							hbuf.writeBit(0);
+							hbuf.writeBit ( 0 );
 						}
-						else
-						{ // Not in any previous layers
-							cur_ttIncl.encode(m, n, ly, hbuf);
+						else { // Not in any previous layers
+							cur_ttIncl.encode ( m , n , ly , hbuf );
 						}
 						// Go to the next one.
 						continue;
@@ -917,84 +862,78 @@ public class PktEncoder
 					// signal the length of each terminated segment and the
 					// final truncation point.
 					newtp = 1;
-					maxi = cur_cbs[b].truncIdxs[cur_tIndx[b]];
-					cblen = (0 > cur_prevtIdxs[b]) ? 0 : cur_cbs[b].truncRates[cur_cbs[b].truncIdxs[cur_prevtIdxs[b]]];
+					maxi = cur_cbs[ b ].truncIdxs[ cur_tIndx[ b ] ];
+					cblen = ( 0 > cur_prevtIdxs[ b ] ) ? 0 : cur_cbs[ b ].truncRates[ cur_cbs[ b ].truncIdxs[ cur_prevtIdxs[ b ] ] ];
 
 					// Loop on truncation points
-					i = (0 > cur_prevtIdxs[b]) ? 0 : cur_cbs[b].truncIdxs[cur_prevtIdxs[b]] + 1;
+					i = ( 0 > cur_prevtIdxs[ b ] ) ? 0 : cur_cbs[ b ].truncIdxs[ cur_prevtIdxs[ b ] ] + 1;
 					int minbits = 0;
-					for (; i < maxi; i++, newtp++)
-					{
+					for ( ; i < maxi ; i++ , newtp++ ) {
 						// If terminated truncation point calculate length
-						if (null != cur_cbs[b].isTermPass && cur_cbs[b].isTermPass[i])
-						{
+						if ( null != cur_cbs[ b ].isTermPass && cur_cbs[ b ].isTermPass[ i ] ) {
 
 							// Calculate length
-							cblen = cur_cbs[b].truncRates[i] - cblen;
+							cblen = cur_cbs[ b ].truncRates[ i ] - cblen;
 
 							// Calculate number of needed bits
-							prednbits = this.lblock[t][c][r][s][b] + MathUtil.log2(newtp);
-							minbits = ((0 < cblen) ? MathUtil.log2(cblen) : 0) + 1;
+							prednbits = this.lblock[ t ][ c ][ r ][ s ][ b ] + MathUtil.log2 ( newtp );
+							minbits = ( ( 0 < cblen ) ? MathUtil.log2 ( cblen ) : 0 ) + 1;
 
 							// Update Lblock increment if needed
-							for (int j = prednbits; j < minbits; j++)
-							{
-								this.lblock[t][c][r][s][b]++;
-								hbuf.writeBit(1);
+							for ( int j = prednbits ; j < minbits ; j++ ) {
+								this.lblock[ t ][ c ][ r ][ s ][ b ]++;
+								hbuf.writeBit ( 1 );
 							}
 							// Initialize for next length
 							newtp = 0;
-							cblen = cur_cbs[b].truncRates[i];
+							cblen = cur_cbs[ b ].truncRates[ i ];
 						}
 					}
 
 					// Last truncation point length always sent
 
 					// Calculate length
-					cblen = cur_cbs[b].truncRates[i] - cblen;
+					cblen = cur_cbs[ b ].truncRates[ i ] - cblen;
 
 					// Calculate number of bits
-					prednbits = this.lblock[t][c][r][s][b] + MathUtil.log2(newtp);
-					minbits = ((0 < cblen) ? MathUtil.log2(cblen) : 0) + 1;
+					prednbits = this.lblock[ t ][ c ][ r ][ s ][ b ] + MathUtil.log2 ( newtp );
+					minbits = ( ( 0 < cblen ) ? MathUtil.log2 ( cblen ) : 0 ) + 1;
 					// Update Lblock increment if needed
-					for (int j = prednbits; j < minbits; j++)
-					{
-						this.lblock[t][c][r][s][b]++;
-						hbuf.writeBit(1);
+					for ( int j = prednbits ; j < minbits ; j++ ) {
+						this.lblock[ t ][ c ][ r ][ s ][ b ]++;
+						hbuf.writeBit ( 1 );
 					}
 
 					// End of comma-code increment
-					hbuf.writeBit(0);
+					hbuf.writeBit ( 0 );
 
 					// There can be terminated several segments, send length
 					// info for all terminated truncation points in addition
 					// to final one
 					newtp = 1;
-					maxi = cur_cbs[b].truncIdxs[cur_tIndx[b]];
-					cblen = (0 > cur_prevtIdxs[b]) ? 0 : cur_cbs[b].truncRates[cur_cbs[b].truncIdxs[cur_prevtIdxs[b]]];
+					maxi = cur_cbs[ b ].truncIdxs[ cur_tIndx[ b ] ];
+					cblen = ( 0 > cur_prevtIdxs[ b ] ) ? 0 : cur_cbs[ b ].truncRates[ cur_cbs[ b ].truncIdxs[ cur_prevtIdxs[ b ] ] ];
 					// Loop on truncation points and count the groups
-					i = (0 > cur_prevtIdxs[b]) ? 0 : cur_cbs[b].truncIdxs[cur_prevtIdxs[b]] + 1;
-					for (; i < maxi; i++, newtp++)
-					{
+					i = ( 0 > cur_prevtIdxs[ b ] ) ? 0 : cur_cbs[ b ].truncIdxs[ cur_prevtIdxs[ b ] ] + 1;
+					for ( ; i < maxi ; i++ , newtp++ ) {
 						// If terminated truncation point, send length
-						if (null != cur_cbs[b].isTermPass && cur_cbs[b].isTermPass[i])
-						{
+						if ( null != cur_cbs[ b ].isTermPass && cur_cbs[ b ].isTermPass[ i ] ) {
 
-							cblen = cur_cbs[b].truncRates[i] - cblen;
-							nbits = MathUtil.log2(newtp) + this.lblock[t][c][r][s][b];
-							hbuf.writeBits(cblen, nbits);
+							cblen = cur_cbs[ b ].truncRates[ i ] - cblen;
+							nbits = MathUtil.log2 ( newtp ) + this.lblock[ t ][ c ][ r ][ s ][ b ];
+							hbuf.writeBits ( cblen , nbits );
 
 							// Initialize for next length
 							newtp = 0;
-							cblen = cur_cbs[b].truncRates[i];
+							cblen = cur_cbs[ b ].truncRates[ i ];
 						}
 					}
 					// Last truncation point length is always signalled
 					// First calculate number of bits needed to signal
 					// Calculate length
-					cblen = cur_cbs[b].truncRates[i] - cblen;
-					nbits = MathUtil.log2(newtp) + this.lblock[t][c][r][s][b];
-					hbuf.writeBits(cblen, nbits);
+					cblen = cur_cbs[ b ].truncRates[ i ] - cblen;
+					nbits = MathUtil.log2 ( newtp ) + this.lblock[ t ][ c ][ r ][ s ][ b ];
+					hbuf.writeBits ( cblen , nbits );
 
 				} // End loop on horizontal code-blocks
 			} // End loop on vertical code-blocks
@@ -1003,60 +942,53 @@ public class PktEncoder
 		// -> Copy the data to the body buffer
 
 		// Ensure size for body data
-		if (null == bbuf || bbuf.length < this.lblen)
-		{
-			bbuf = new byte[this.lblen];
+		if ( null == bbuf || bbuf.length < this.lblen ) {
+			bbuf = new byte[ this.lblen ];
 		}
 		this.lbbuf = bbuf;
 		this.lblen = 0;
 
-		for (int s = minsb; s < maxsb; s++)
-		{ // Loop on subbands
-			sb = (SubbandAn) root.getSubbandByIdx(r, s);
+		for ( int s = minsb ; s < maxsb ; s++ ) { // Loop on subbands
+			sb = ( SubbandAn ) root.getSubbandByIdx ( r , s );
 
-			cur_prevtIdxs = this.prevtIdxs[t][c][r][s];
-			cur_cbs = cbs[s];
-			cur_tIndx = tIndx[s];
+			cur_prevtIdxs = this.prevtIdxs[ t ][ c ][ r ][ s ];
+			cur_cbs = cbs[ s ];
+			cur_tIndx = tIndx[ s ];
 
-			mend = (null == prec.cblk[s]) ? 0 : prec.cblk[s].length;
-			for (int m = 0; m < mend; m++)
-			{ // Vertical code-blocks
-				nend = (null == prec.cblk[s][m]) ? 0 : prec.cblk[s][m].length;
-				for (int n = 0; n < nend; n++)
-				{ // Horiz. cblks
-					cbCoord = prec.cblk[s][m][n].idx;
+			mend = ( null == prec.cblk[ s ] ) ? 0 : prec.cblk[ s ].length;
+			for ( int m = 0 ; m < mend ; m++ ) { // Vertical code-blocks
+				nend = ( null == prec.cblk[ s ][ m ] ) ? 0 : prec.cblk[ s ][ m ].length;
+				for ( int n = 0 ; n < nend ; n++ ) { // Horiz. cblks
+					cbCoord = prec.cblk[ s ][ m ][ n ].idx;
 					b = cbCoord.x + cbCoord.y * sb.numCb.x;
 
-					if (cur_tIndx[b] > cur_prevtIdxs[b])
-					{
+					if ( cur_tIndx[ b ] > cur_prevtIdxs[ b ] ) {
 
 						// Block included in this precinct -> Copy data to
 						// body buffer and get code-size
-						if (0 > cur_prevtIdxs[b])
-						{
-							cblen = cur_cbs[b].truncRates[cur_cbs[b].truncIdxs[cur_tIndx[b]]];
-							System.arraycopy(cur_cbs[b].data, 0, this.lbbuf, this.lblen, cblen);
+						if ( 0 > cur_prevtIdxs[ b ] ) {
+							cblen = cur_cbs[ b ].truncRates[ cur_cbs[ b ].truncIdxs[ cur_tIndx[ b ] ] ];
+							System.arraycopy ( cur_cbs[ b ].data , 0 , this.lbbuf , this.lblen , cblen );
 						}
-						else
-						{
-							cblen = cur_cbs[b].truncRates[cur_cbs[b].truncIdxs[cur_tIndx[b]]]
-									- cur_cbs[b].truncRates[cur_cbs[b].truncIdxs[cur_prevtIdxs[b]]];
-							System.arraycopy(cur_cbs[b].data,
-									cur_cbs[b].truncRates[cur_cbs[b].truncIdxs[cur_prevtIdxs[b]]], this.lbbuf, this.lblen, cblen);
+						else {
+							cblen = cur_cbs[ b ].truncRates[ cur_cbs[ b ].truncIdxs[ cur_tIndx[ b ] ] ]
+									- cur_cbs[ b ].truncRates[ cur_cbs[ b ].truncIdxs[ cur_prevtIdxs[ b ] ] ];
+							System.arraycopy ( cur_cbs[ b ].data ,
+									cur_cbs[ b ].truncRates[ cur_cbs[ b ].truncIdxs[ cur_prevtIdxs[ b ] ] ] , this.lbbuf , this.lblen , cblen
+							);
 						}
 						this.lblen += cblen;
 
 						// Verifies if this code-block contains new ROI
 						// information
-						if (0 != cur_cbs[b].nROIcoeff
-								&& (-1 == cur_prevtIdxs[b] || cur_cbs[b].truncIdxs[cur_prevtIdxs[b]] <= cur_cbs[b].nROIcp - 1))
-						{
+						if ( 0 != cur_cbs[ b ].nROIcoeff
+								&& ( - 1 == cur_prevtIdxs[ b ] || cur_cbs[ b ].truncIdxs[ cur_prevtIdxs[ b ] ] <= cur_cbs[ b ].nROIcp - 1 ) ) {
 							this.roiInPkt = true;
 							this.roiLen = this.lblen;
 						}
 
 						// Update truncation point
-						cur_prevtIdxs[b] = cur_tIndx[b];
+						cur_prevtIdxs[ b ] = cur_tIndx[ b ];
 					}
 				} // End loop on horizontal code-blocks
 			} // End loop on vertical code-blocks
@@ -1065,9 +997,8 @@ public class PktEncoder
 		this.packetWritable = true;
 
 		// Must never happen
-		if (0 == hbuf.getLength())
-		{
-			throw new Error("You have found a bug in PktEncoder, method: encodePacket");
+		if ( 0 == hbuf.getLength ( ) ) {
+			throw new Error ( "You have found a bug in PktEncoder, method: encodePacket" );
 		}
 
 		return hbuf;
@@ -1078,20 +1009,15 @@ public class PktEncoder
 	 * the body can be retrieved with the getLastBodyLen() method. The length of
 	 * the array returned by this method may be larger than the actual body
 	 * length.
-	 * 
+	 *
 	 * @return The buffer of body of the last encoded packet.
-	 * 
-	 * @exception IllegalArgumentException
-	 *                If no packet has been coded since last reset(), last
-	 *                restore(), or object creation.
-	 * 
+	 * @throws IllegalArgumentException If no packet has been coded since last reset(), last
+	 *                                  restore(), or object creation.
 	 * @see #getLastBodyLen
 	 */
-	public byte[] getLastBodyBuf()
-	{
-		if (null == lbbuf)
-		{
-			throw new IllegalArgumentException();
+	public byte[] getLastBodyBuf ( ) {
+		if ( null == lbbuf ) {
+			throw new IllegalArgumentException ( );
 		}
 		return this.lbbuf;
 	}
@@ -1099,50 +1025,42 @@ public class PktEncoder
 	/**
 	 * Returns the length of the body of the last encoded packet, in bytes. The
 	 * body itself can be retrieved with the getLastBodyBuf() method.
-	 * 
+	 *
 	 * @return The length of the body of last encoded packet, in bytes.
-	 * 
 	 * @see #getLastBodyBuf
 	 */
-	public int getLastBodyLen()
-	{
+	public int getLastBodyLen ( ) {
 		return this.lblen;
 	}
 
 	/**
 	 * Saves the current state of this object. The last saved state can be
 	 * restored with the restore() method.
-	 * 
+	 *
 	 * @see #restore
 	 */
-	public void save()
-	{
+	public void save ( ) {
 		int maxsbi, minsbi;
 
 		// Have we done any save yet?
-		if (null == bak_lblock)
-		{
+		if ( null == bak_lblock ) {
 			// Allocate backup buffers
-			this.bak_lblock = new int[this.ttIncl.length][][][][];
-			this.bak_prevtIdxs = new int[this.ttIncl.length][][][][];
-			for (int t = this.ttIncl.length - 1; 0 <= t; t--)
-			{
-				this.bak_lblock[t] = new int[this.ttIncl[t].length][][][];
-				this.bak_prevtIdxs[t] = new int[this.ttIncl[t].length][][][];
-				for (int c = this.ttIncl[t].length - 1; 0 <= c; c--)
-				{
-					this.bak_lblock[t][c] = new int[this.lblock[t][c].length][][];
-					this.bak_prevtIdxs[t][c] = new int[this.ttIncl[t][c].length][][];
-					for (int r = this.lblock[t][c].length - 1; 0 <= r; r--)
-					{
-						this.bak_lblock[t][c][r] = new int[this.lblock[t][c][r].length][];
-						this.bak_prevtIdxs[t][c][r] = new int[this.prevtIdxs[t][c][r].length][];
-						minsbi = (0 == r) ? 0 : 1;
-						maxsbi = (0 == r) ? 1 : 4;
-						for (int s = minsbi; s < maxsbi; s++)
-						{
-							this.bak_lblock[t][c][r][s] = new int[this.lblock[t][c][r][s].length];
-							this.bak_prevtIdxs[t][c][r][s] = new int[this.prevtIdxs[t][c][r][s].length];
+			this.bak_lblock = new int[ this.ttIncl.length ][][][][];
+			this.bak_prevtIdxs = new int[ this.ttIncl.length ][][][][];
+			for ( int t = this.ttIncl.length - 1 ; 0 <= t ; t-- ) {
+				this.bak_lblock[ t ] = new int[ this.ttIncl[ t ].length ][][][];
+				this.bak_prevtIdxs[ t ] = new int[ this.ttIncl[ t ].length ][][][];
+				for ( int c = this.ttIncl[ t ].length - 1 ; 0 <= c ; c-- ) {
+					this.bak_lblock[ t ][ c ] = new int[ this.lblock[ t ][ c ].length ][][];
+					this.bak_prevtIdxs[ t ][ c ] = new int[ this.ttIncl[ t ][ c ].length ][][];
+					for ( int r = this.lblock[ t ][ c ].length - 1 ; 0 <= r ; r-- ) {
+						this.bak_lblock[ t ][ c ][ r ] = new int[ this.lblock[ t ][ c ][ r ].length ][];
+						this.bak_prevtIdxs[ t ][ c ][ r ] = new int[ this.prevtIdxs[ t ][ c ][ r ].length ][];
+						minsbi = ( 0 == r ) ? 0 : 1;
+						maxsbi = ( 0 == r ) ? 1 : 4;
+						for ( int s = minsbi ; s < maxsbi ; s++ ) {
+							this.bak_lblock[ t ][ c ][ r ][ s ] = new int[ this.lblock[ t ][ c ][ r ][ s ].length ];
+							this.bak_prevtIdxs[ t ][ c ][ r ][ s ] = new int[ this.prevtIdxs[ t ][ c ][ r ][ s ].length ];
 						}
 					}
 				}
@@ -1162,46 +1080,39 @@ public class PktEncoder
 		int[][] bak_prevtIdxs_t_c_r;
 
 		// Loop on tiles
-		for (int t = this.ttIncl.length - 1; 0 <= t; t--)
-		{
+		for ( int t = this.ttIncl.length - 1 ; 0 <= t ; t-- ) {
 			// Loop on components
-			for (int c = this.ttIncl[t].length - 1; 0 <= c; c--)
-			{
+			for ( int c = this.ttIncl[ t ].length - 1 ; 0 <= c ; c-- ) {
 				// Initialize reference caches
-				lblock_t_c = this.lblock[t][c];
-				bak_lblock_t_c = this.bak_lblock[t][c];
-				ttIncl_t_c = this.ttIncl[t][c];
-				ttMaxBP_t_c = this.ttMaxBP[t][c];
+				lblock_t_c = this.lblock[ t ][ c ];
+				bak_lblock_t_c = this.bak_lblock[ t ][ c ];
+				ttIncl_t_c = this.ttIncl[ t ][ c ];
+				ttMaxBP_t_c = this.ttMaxBP[ t ][ c ];
 				// Loop on resolution levels
-				for (int r = lblock_t_c.length - 1; 0 <= r; r--)
-				{
+				for ( int r = lblock_t_c.length - 1 ; 0 <= r ; r-- ) {
 					// Initialize reference caches
-					ttIncl_t_c_r = ttIncl_t_c[r];
-					ttMaxBP_t_c_r = ttMaxBP_t_c[r];
-					prevtIdxs_t_c_r = this.prevtIdxs[t][c][r];
-					bak_prevtIdxs_t_c_r = this.bak_prevtIdxs[t][c][r];
+					ttIncl_t_c_r = ttIncl_t_c[ r ];
+					ttMaxBP_t_c_r = ttMaxBP_t_c[ r ];
+					prevtIdxs_t_c_r = this.prevtIdxs[ t ][ c ][ r ];
+					bak_prevtIdxs_t_c_r = this.bak_prevtIdxs[ t ][ c ][ r ];
 
 					// Loop on subbands
-					minsbi = (0 == r) ? 0 : 1;
-					maxsbi = (0 == r) ? 1 : 4;
-					for (int s = minsbi; s < maxsbi; s++)
-					{
+					minsbi = ( 0 == r ) ? 0 : 1;
+					maxsbi = ( 0 == r ) ? 1 : 4;
+					for ( int s = minsbi ; s < maxsbi ; s++ ) {
 						// Save 'lblock'
-						System.arraycopy(lblock_t_c[r][s], 0, bak_lblock_t_c[r][s], 0, lblock_t_c[r][s].length);
+						System.arraycopy ( lblock_t_c[ r ][ s ] , 0 , bak_lblock_t_c[ r ][ s ] , 0 , lblock_t_c[ r ][ s ].length );
 						// Save 'prevtIdxs'
-						System.arraycopy(prevtIdxs_t_c_r[s], 0, bak_prevtIdxs_t_c_r[s], 0, prevtIdxs_t_c_r[s].length);
+						System.arraycopy ( prevtIdxs_t_c_r[ s ] , 0 , bak_prevtIdxs_t_c_r[ s ] , 0 , prevtIdxs_t_c_r[ s ].length );
 					} // End loop on subbands
 
 					// Loop on precincts
-					for (int p = this.ppinfo[t][c][r].length - 1; 0 <= p; p--)
-					{
-						if (p < ttIncl_t_c_r.length)
-						{
+					for ( int p = this.ppinfo[ t ][ c ][ r ].length - 1 ; 0 <= p ; p-- ) {
+						if ( p < ttIncl_t_c_r.length ) {
 							// Loop on subbands
-							for (int s = minsbi; s < maxsbi; s++)
-							{
-								ttIncl_t_c_r[p][s].save();
-								ttMaxBP_t_c_r[p][s].save();
+							for ( int s = minsbi ; s < maxsbi ; s++ ) {
+								ttIncl_t_c_r[ p ][ s ].save ( );
+								ttMaxBP_t_c_r[ p ][ s ].save ( );
 							} // End loop on subbands
 						}
 					} // End loop on precincts
@@ -1216,16 +1127,14 @@ public class PktEncoder
 	/**
 	 * Restores the last saved state of this object. An IllegalArgumentException
 	 * is thrown if no state has been saved.
-	 * 
+	 *
 	 * @see #save
 	 */
-	public void restore()
-	{
+	public void restore ( ) {
 		int maxsbi, minsbi;
 
-		if (!this.saved)
-		{
-			throw new IllegalArgumentException();
+		if ( ! this.saved ) {
+			throw new IllegalArgumentException ( );
 		}
 
 		// Invalidate last encoded body buffer
@@ -1244,46 +1153,39 @@ public class PktEncoder
 		int[][] bak_prevtIdxs_t_c_r;
 
 		// Loop on tiles
-		for (int t = this.ttIncl.length - 1; 0 <= t; t--)
-		{
+		for ( int t = this.ttIncl.length - 1 ; 0 <= t ; t-- ) {
 			// Loop on components
-			for (int c = this.ttIncl[t].length - 1; 0 <= c; c--)
-			{
+			for ( int c = this.ttIncl[ t ].length - 1 ; 0 <= c ; c-- ) {
 				// Initialize reference caches
-				lblock_t_c = this.lblock[t][c];
-				bak_lblock_t_c = this.bak_lblock[t][c];
-				ttIncl_t_c = this.ttIncl[t][c];
-				ttMaxBP_t_c = this.ttMaxBP[t][c];
+				lblock_t_c = this.lblock[ t ][ c ];
+				bak_lblock_t_c = this.bak_lblock[ t ][ c ];
+				ttIncl_t_c = this.ttIncl[ t ][ c ];
+				ttMaxBP_t_c = this.ttMaxBP[ t ][ c ];
 				// Loop on resolution levels
-				for (int r = lblock_t_c.length - 1; 0 <= r; r--)
-				{
+				for ( int r = lblock_t_c.length - 1 ; 0 <= r ; r-- ) {
 					// Initialize reference caches
-					ttIncl_t_c_r = ttIncl_t_c[r];
-					ttMaxBP_t_c_r = ttMaxBP_t_c[r];
-					prevtIdxs_t_c_r = this.prevtIdxs[t][c][r];
-					bak_prevtIdxs_t_c_r = this.bak_prevtIdxs[t][c][r];
+					ttIncl_t_c_r = ttIncl_t_c[ r ];
+					ttMaxBP_t_c_r = ttMaxBP_t_c[ r ];
+					prevtIdxs_t_c_r = this.prevtIdxs[ t ][ c ][ r ];
+					bak_prevtIdxs_t_c_r = this.bak_prevtIdxs[ t ][ c ][ r ];
 
 					// Loop on subbands
-					minsbi = (0 == r) ? 0 : 1;
-					maxsbi = (0 == r) ? 1 : 4;
-					for (int s = minsbi; s < maxsbi; s++)
-					{
+					minsbi = ( 0 == r ) ? 0 : 1;
+					maxsbi = ( 0 == r ) ? 1 : 4;
+					for ( int s = minsbi ; s < maxsbi ; s++ ) {
 						// Restore 'lblock'
-						System.arraycopy(bak_lblock_t_c[r][s], 0, lblock_t_c[r][s], 0, lblock_t_c[r][s].length);
+						System.arraycopy ( bak_lblock_t_c[ r ][ s ] , 0 , lblock_t_c[ r ][ s ] , 0 , lblock_t_c[ r ][ s ].length );
 						// Restore 'prevtIdxs'
-						System.arraycopy(bak_prevtIdxs_t_c_r[s], 0, prevtIdxs_t_c_r[s], 0, prevtIdxs_t_c_r[s].length);
+						System.arraycopy ( bak_prevtIdxs_t_c_r[ s ] , 0 , prevtIdxs_t_c_r[ s ] , 0 , prevtIdxs_t_c_r[ s ].length );
 					} // End loop on subbands
 
 					// Loop on precincts
-					for (int p = this.ppinfo[t][c][r].length - 1; 0 <= p; p--)
-					{
-						if (p < ttIncl_t_c_r.length)
-						{
+					for ( int p = this.ppinfo[ t ][ c ][ r ].length - 1 ; 0 <= p ; p-- ) {
+						if ( p < ttIncl_t_c_r.length ) {
 							// Loop on subbands
-							for (int s = minsbi; s < maxsbi; s++)
-							{
-								ttIncl_t_c_r[p][s].restore();
-								ttMaxBP_t_c_r[p][s].restore();
+							for ( int s = minsbi ; s < maxsbi ; s++ ) {
+								ttIncl_t_c_r[ p ][ s ].restore ( );
+								ttMaxBP_t_c_r[ p ][ s ].restore ( );
 							} // End loop on subbands
 						}
 					} // End loop on precincts
@@ -1296,8 +1198,7 @@ public class PktEncoder
 	 * Resets the state of the object to the initial state, as if the object was
 	 * just created.
 	 */
-	public void reset()
-	{
+	public void reset ( ) {
 		int maxsbi, minsbi;
 
 		// Invalidate save
@@ -1316,44 +1217,37 @@ public class PktEncoder
 		int[][] prevtIdxs_t_c_r;
 
 		// Loop on tiles
-		for (int t = this.ttIncl.length - 1; 0 <= t; t--)
-		{
+		for ( int t = this.ttIncl.length - 1 ; 0 <= t ; t-- ) {
 			// Loop on components
-			for (int c = this.ttIncl[t].length - 1; 0 <= c; c--)
-			{
+			for ( int c = this.ttIncl[ t ].length - 1 ; 0 <= c ; c-- ) {
 				// Initialize reference caches
-				lblock_t_c = this.lblock[t][c];
-				ttIncl_t_c = this.ttIncl[t][c];
-				ttMaxBP_t_c = this.ttMaxBP[t][c];
+				lblock_t_c = this.lblock[ t ][ c ];
+				ttIncl_t_c = this.ttIncl[ t ][ c ];
+				ttMaxBP_t_c = this.ttMaxBP[ t ][ c ];
 				// Loop on resolution levels
-				for (int r = lblock_t_c.length - 1; 0 <= r; r--)
-				{
+				for ( int r = lblock_t_c.length - 1 ; 0 <= r ; r-- ) {
 					// Initialize reference caches
-					ttIncl_t_c_r = ttIncl_t_c[r];
-					ttMaxBP_t_c_r = ttMaxBP_t_c[r];
-					prevtIdxs_t_c_r = this.prevtIdxs[t][c][r];
+					ttIncl_t_c_r = ttIncl_t_c[ r ];
+					ttMaxBP_t_c_r = ttMaxBP_t_c[ r ];
+					prevtIdxs_t_c_r = this.prevtIdxs[ t ][ c ][ r ];
 
 					// Loop on subbands
-					minsbi = (0 == r) ? 0 : 1;
-					maxsbi = (0 == r) ? 1 : 4;
-					for (int s = minsbi; s < maxsbi; s++)
-					{
+					minsbi = ( 0 == r ) ? 0 : 1;
+					maxsbi = ( 0 == r ) ? 1 : 4;
+					for ( int s = minsbi ; s < maxsbi ; s++ ) {
 						// Reset 'prevtIdxs'
-						ArrayUtil.intArraySet(prevtIdxs_t_c_r[s], -1);
+						ArrayUtil.intArraySet ( prevtIdxs_t_c_r[ s ] , - 1 );
 						// Reset 'lblock'
-						ArrayUtil.intArraySet(lblock_t_c[r][s], PktEncoder.INIT_LBLOCK);
+						ArrayUtil.intArraySet ( lblock_t_c[ r ][ s ] , PktEncoder.INIT_LBLOCK );
 					} // End loop on subbands
 
 					// Loop on precincts
-					for (int p = this.ppinfo[t][c][r].length - 1; 0 <= p; p--)
-					{
-						if (p < ttIncl_t_c_r.length)
-						{
+					for ( int p = this.ppinfo[ t ][ c ][ r ].length - 1 ; 0 <= p ; p-- ) {
+						if ( p < ttIncl_t_c_r.length ) {
 							// Loop on subbands
-							for (int s = minsbi; s < maxsbi; s++)
-							{
-								ttIncl_t_c_r[p][s].reset();
-								ttMaxBP_t_c_r[p][s].reset();
+							for ( int s = minsbi ; s < maxsbi ; s++ ) {
+								ttIncl_t_c_r[ p ][ s ].reset ( );
+								ttMaxBP_t_c_r[ p ][ s ].reset ( );
 							} // End loop on subbands
 						}
 					} // End loop on precincts
@@ -1366,16 +1260,14 @@ public class PktEncoder
 	 * Returns true if the current packet is writable i.e. should be written.
 	 * Returns false otherwise.
 	 */
-	public boolean isPacketWritable()
-	{
+	public boolean isPacketWritable ( ) {
 		return this.packetWritable;
 	}
 
 	/**
 	 * Tells if there was ROI information in the last written packet
 	 */
-	public boolean isROIinPkt()
-	{
+	public boolean isROIinPkt ( ) {
 		return this.roiInPkt;
 	}
 
@@ -1383,46 +1275,19 @@ public class PktEncoder
 	 * Gives the length to read in current packet body to get all ROI
 	 * information
 	 */
-	public int getROILen()
-	{
+	public int getROILen ( ) {
 		return this.roiLen;
 	}
 
 	/**
-	 * Returns the parameters that are used in this class and implementing
-	 * classes. It returns a 2D String array. Each of the 1D arrays is for a
-	 * different option, and they have 3 elements. The first element is the
-	 * option name, the second one is the synopsis, the third one is a long
-	 * description of what the parameter is and the fourth is its default value.
-	 * The synopsis or description may be 'null', in which case it is assumed
-	 * that there is no synopsis or description of the option, respectively.
-	 * Null may be returned if no options are supported.
-	 * 
-	 * @return the options name, their synopsis and their explanation, or null
-	 *         if no options are supported.
-	 */
-	public static String[][] getParameterInfo()
-	{
-		return PktEncoder.pinfo;
-	}
-
-	/**
 	 * Returns information about a given precinct
-	 * 
-	 * @param t
-	 *            Tile index.
-	 * 
-	 * @param c
-	 *            Component index.
-	 * 
-	 * @param r
-	 *            Resolution level index.
-	 * 
-	 * @param p
-	 *            Precinct index
+	 *
+	 * @param t Tile index.
+	 * @param c Component index.
+	 * @param r Resolution level index.
+	 * @param p Precinct index
 	 */
-	public PrecInfo getPrecInfo(final int t, final int c, final int r, final int p)
-	{
-		return this.ppinfo[t][c][r][p];
+	public PrecInfo getPrecInfo ( final int t , final int c , final int r , final int p ) {
+		return this.ppinfo[ t ][ c ][ r ][ p ];
 	}
 }

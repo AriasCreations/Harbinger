@@ -10,7 +10,7 @@
  *
  *
  * COPYRIGHT:
- * 
+ *
  * This software module was originally developed by Rapha�l Grosbois and
  * Diego Santa Cruz (Swiss Federal Institute of Technology-EPFL); Joel
  * Askel�f (Ericsson Radio Systems AB); and Bertrand Berthelot, David
@@ -37,12 +37,12 @@
  * using this software module for non JPEG 2000 Standard conforming
  * products. This copyright notice must be included in all copies or
  * derivative works of this software module.
- * 
+ *
  * Copyright (c) 1999/2000 JJ2000 Partners.
  */
 package dev.zontreck.harbinger.thirdparty.jj2000.j2k.codestream.writer;
 
-import dev.zontreck.harbinger.thirdparty.jj2000.j2k.util.*;
+import dev.zontreck.harbinger.thirdparty.jj2000.j2k.util.ArrayUtil;
 
 /**
  * This class implements the tag tree encoder. A tag tree codes a 2D matrix of
@@ -50,46 +50,50 @@ import dev.zontreck.harbinger.thirdparty.jj2000.j2k.util.*;
  * information about a value of the matrix, given a threshold. The procedure
  * encodes the sufficient information to identify whether or not the value is
  * greater than or equal to the threshold.
- * 
+ *
  * <p>
  * The tag tree saves encoded information to a BitOutputBuffer.
- * 
+ *
  * <p>
  * A particular and useful property of tag trees is that it is possible to
  * change a value of the matrix, provided both new and old values of the element
  * are both greater than or equal to the largest threshold which has yet been
  * supplied to the coding procedure 'encode()'. This property can be exploited
  * through the 'setValue()' method.
- * 
+ *
  * <p>
  * This class allows saving the state of the tree at any point and restoring it
  * at a later time, by calling save() and restore().
- * 
+ *
  * <p>
  * A tag tree can also be reused, or restarted, if one of the reset() methods is
  * called.
- * 
+ *
  * <p>
  * The TagTreeDecoder class implements the tag tree decoder.
- * 
+ *
  * <p>
  * Tag trees that have one dimension, or both, as 0 are allowed for convenience.
  * Of course no values can be set or coded in such cases.
- * 
+ *
  * @see BitOutputBuffer
- * 
  * @see dev.zontreck.harbinger.thirdparty.jj2000.j2k.codestream.reader.TagTreeDecoder
  */
-public class TagTreeEncoder
-{
+public class TagTreeEncoder {
 
-	/** The horizontal dimension of the base level */
+	/**
+	 * The horizontal dimension of the base level
+	 */
 	protected int w;
 
-	/** The vertical dimensions of the base level */
+	/**
+	 * The vertical dimensions of the base level
+	 */
 	protected int h;
 
-	/** The number of levels in the tag tree */
+	/**
+	 * The number of levels in the tag tree
+	 */
 	protected int lvls;
 
 	/**
@@ -130,30 +134,24 @@ public class TagTreeEncoder
 	 * Creates a tag tree encoder with 'w' elements along the horizontal
 	 * dimension and 'h' elements along the vertical direction. The total number
 	 * of elements is thus 'vdim' x 'hdim'.
-	 * 
+	 *
 	 * <p>
 	 * The values of all elements are initialized to Integer.MAX_VALUE.
-	 * 
-	 * @param h
-	 *            The number of elements along the horizontal direction.
-	 * 
-	 * @param w
-	 *            The number of elements along the vertical direction.
+	 *
+	 * @param h The number of elements along the horizontal direction.
+	 * @param w The number of elements along the vertical direction.
 	 */
-	public TagTreeEncoder(final int h, final int w)
-	{
+	public TagTreeEncoder ( final int h , final int w ) {
 		int k;
 		// Check arguments
-		if (0 > w || 0 > h)
-		{
-			throw new IllegalArgumentException();
+		if ( 0 > w || 0 > h ) {
+			throw new IllegalArgumentException ( );
 		}
 		// Initialize elements
-		this.init(w, h);
+		this.init ( w , h );
 		// Set values to max
-		for (k = this.treeV.length - 1; 0 <= k; k--)
-		{
-			ArrayUtil.intArraySet(this.treeV[k], Integer.MAX_VALUE);
+		for ( k = this.treeV.length - 1; 0 <= k ; k-- ) {
+			ArrayUtil.intArraySet ( this.treeV[ k ] , Integer.MAX_VALUE );
 		}
 	}
 
@@ -162,56 +160,46 @@ public class TagTreeEncoder
 	 * dimension and 'h' elements along the vertical direction. The total number
 	 * of elements is thus 'vdim' x 'hdim'. The values of the leafs in the tag
 	 * tree are initialized to the values of the 'val' array.
-	 * 
+	 *
 	 * <p>
 	 * The values in the 'val' array are supposed to appear in lexicographical
 	 * order, starting at index 0.
-	 * 
-	 * @param h
-	 *            The number of elements along the horizontal direction.
-	 * 
-	 * @param w
-	 *            The number of elements along the vertical direction.
-	 * 
-	 * @param val
-	 *            The values with which initialize the leafs of the tag tree.
+	 *
+	 * @param h   The number of elements along the horizontal direction.
+	 * @param w   The number of elements along the vertical direction.
+	 * @param val The values with which initialize the leafs of the tag tree.
 	 */
-	public TagTreeEncoder(final int h, final int w, final int[] val)
-	{
+	public TagTreeEncoder ( final int h , final int w , final int[] val ) {
 		int k;
 		// Check arguments
-		if (0 > w || 0 > h || val.length < w * h)
-		{
-			throw new IllegalArgumentException();
+		if ( 0 > w || 0 > h || val.length < w * h ) {
+			throw new IllegalArgumentException ( );
 		}
 		// Initialize elements
-		this.init(w, h);
+		this.init ( w , h );
 		// Update leaf values
-		for (k = w * h - 1; 0 <= k; k--)
-		{
-			this.treeV[0][k] = val[k];
+		for ( k = w * h - 1; 0 <= k ; k-- ) {
+			this.treeV[ 0 ][ k ] = val[ k ];
 		}
 		// Calculate values at other levels
-		this.recalcTreeV();
+		this.recalcTreeV ( );
 	}
 
 	/**
 	 * Returns the number of leafs along the horizontal direction.
-	 * 
+	 *
 	 * @return The number of leafs along the horizontal direction.
 	 */
-	public final int getWidth()
-	{
+	public final int getWidth ( ) {
 		return this.w;
 	}
 
 	/**
 	 * Returns the number of leafs along the vertical direction.
-	 * 
+	 *
 	 * @return The number of leafs along the vertical direction.
 	 */
-	public final int getHeight()
-	{
+	public final int getHeight ( ) {
 		return this.h;
 	}
 
@@ -219,46 +207,38 @@ public class TagTreeEncoder
 	 * Initializes the variables of this class, given the dimensions at the base
 	 * level (leaf level). All the state ('treeS' array) and values ('treeV'
 	 * array) are intialized to 0. This method is called by the constructors.
-	 * 
-	 * @param w
-	 *            The number of elements along the vertical direction.
-	 * 
-	 * @param h
-	 *            The number of elements along the horizontal direction.
+	 *
+	 * @param w The number of elements along the vertical direction.
+	 * @param h The number of elements along the horizontal direction.
 	 */
-	private void init(int w, int h)
-	{
+	private void init ( int w , int h ) {
 		int i;
 		// Initialize dimensions
 		this.w = w;
 		this.h = h;
 		// Calculate the number of levels
-		if (0 == w || 0 == h)
-		{
+		if ( 0 == w || 0 == h ) {
 			this.lvls = 0;
 		}
-		else
-		{
+		else {
 			this.lvls = 1;
-			while (1 != h || 1 != w)
-			{ // Loop until we reach root
-				w = (w + 1) >> 1;
-				h = (h + 1) >> 1;
+			while ( 1 != h || 1 != w ) { // Loop until we reach root
+				w = ( w + 1 ) >> 1;
+				h = ( h + 1 ) >> 1;
 				this.lvls++;
 			}
 		}
 		// Allocate tree values and states (no need to initialize to 0 since
 		// it's the default)
-		this.treeV = new int[this.lvls][];
-		this.treeS = new int[this.lvls][];
+		this.treeV = new int[ this.lvls ][];
+		this.treeS = new int[ this.lvls ][];
 		w = this.w;
 		h = this.h;
-		for (i = 0; i < this.lvls; i++)
-		{
-			this.treeV[i] = new int[h * w];
-			this.treeS[i] = new int[h * w];
-			w = (w + 1) >> 1;
-			h = (h + 1) >> 1;
+		for ( i = 0; i < this.lvls ; i++ ) {
+			this.treeV[ i ] = new int[ h * w ];
+			this.treeS[ i ] = new int[ h * w ];
+			w = ( w + 1 ) >> 1;
+			h = ( h + 1 ) >> 1;
 		}
 	}
 
@@ -266,55 +246,47 @@ public class TagTreeEncoder
 	 * Recalculates the values of the elements in the tag tree, in levels 1 and
 	 * up, based on the values of the leafs (level 0).
 	 */
-	private void recalcTreeV()
-	{
+	private void recalcTreeV ( ) {
 		int m, n, bi, lw, tm1, tm2, lh, k;
 		// Loop on all other levels, updating minimum
-		for (k = 0; k < this.lvls - 1; k++)
-		{
+		for ( k = 0; k < this.lvls - 1 ; k++ ) {
 			// Visit all elements in level
-			lw = (this.w + (1 << k) - 1) >> k;
-			lh = (this.h + (1 << k) - 1) >> k;
-			for (m = ((lh >> 1) << 1) - 2; 0 <= m; m -= 2)
-			{ // All quads with 2 lines
-				for (n = ((lw >> 1) << 1) - 2; 0 <= n; n -= 2)
-				{ // All quads with 2 columns
+			lw = ( this.w + ( 1 << k ) - 1 ) >> k;
+			lh = ( this.h + ( 1 << k ) - 1 ) >> k;
+			for ( m = ( ( lh >> 1 ) << 1 ) - 2; 0 <= m ; m -= 2 ) { // All quads with 2 lines
+				for ( n = ( ( lw >> 1 ) << 1 ) - 2; 0 <= n ; n -= 2 ) { // All quads with 2 columns
 					// Take minimum of 4 elements and put it in higher
 					// level
 					bi = m * lw + n;
-					tm1 = (this.treeV[k][bi] < this.treeV[k][bi + 1]) ? this.treeV[k][bi] : this.treeV[k][bi + 1];
-					tm2 = (this.treeV[k][bi + lw] < this.treeV[k][bi + lw + 1]) ? this.treeV[k][bi + lw] : this.treeV[k][bi + lw + 1];
-					this.treeV[k + 1][(m >> 1) * ((lw + 1) >> 1) + (n >> 1)] = tm1 < tm2 ? tm1 : tm2;
+					tm1 = ( this.treeV[ k ][ bi ] < this.treeV[ k ][ bi + 1 ] ) ? this.treeV[ k ][ bi ] : this.treeV[ k ][ bi + 1 ];
+					tm2 = ( this.treeV[ k ][ bi + lw ] < this.treeV[ k ][ bi + lw + 1 ] ) ? this.treeV[ k ][ bi + lw ] : this.treeV[ k ][ bi + lw + 1 ];
+					this.treeV[ k + 1 ][ ( m >> 1 ) * ( ( lw + 1 ) >> 1 ) + ( n >> 1 ) ] = tm1 < tm2 ? tm1 : tm2;
 				}
 				// Now we may have quad with 1 column, 2 lines
-				if (0 != lw % 2)
-				{
-					n = ((lw >> 1) << 1);
+				if ( 0 != lw % 2 ) {
+					n = ( ( lw >> 1 ) << 1 );
 					// Take minimum of 2 elements and put it in higher
 					// level
 					bi = m * lw + n;
-					this.treeV[k + 1][(m >> 1) * ((lw + 1) >> 1) + (n >> 1)] = (this.treeV[k][bi] < this.treeV[k][bi + lw]) ? this.treeV[k][bi]
-							: this.treeV[k][bi + lw];
+					this.treeV[ k + 1 ][ ( m >> 1 ) * ( ( lw + 1 ) >> 1 ) + ( n >> 1 ) ] = ( this.treeV[ k ][ bi ] < this.treeV[ k ][ bi + lw ] ) ? this.treeV[ k ][ bi ]
+							: this.treeV[ k ][ bi + lw ];
 				}
 			}
 			// Now we may have quads with 1 line, 2 or 1 columns
-			if (0 != lh % 2)
-			{
-				m = ((lh >> 1) << 1);
-				for (n = ((lw >> 1) << 1) - 2; 0 <= n; n -= 2)
-				{ // All quads with 2 columns
+			if ( 0 != lh % 2 ) {
+				m = ( ( lh >> 1 ) << 1 );
+				for ( n = ( ( lw >> 1 ) << 1 ) - 2; 0 <= n ; n -= 2 ) { // All quads with 2 columns
 					// Take minimum of 2 elements and put it in higher
 					// level
 					bi = m * lw + n;
-					this.treeV[k + 1][(m >> 1) * ((lw + 1) >> 1) + (n >> 1)] = (this.treeV[k][bi] < this.treeV[k][bi + 1]) ? this.treeV[k][bi]
-							: this.treeV[k][bi + 1];
+					this.treeV[ k + 1 ][ ( m >> 1 ) * ( ( lw + 1 ) >> 1 ) + ( n >> 1 ) ] = ( this.treeV[ k ][ bi ] < this.treeV[ k ][ bi + 1 ] ) ? this.treeV[ k ][ bi ]
+							: this.treeV[ k ][ bi + 1 ];
 				}
 				// Now we may have quad with 1 column, 1 line
-				if (0 != lw % 2)
-				{
+				if ( 0 != lw % 2 ) {
 					// Just copy the value
-					n = ((lw >> 1) << 1);
-					this.treeV[k + 1][(m >> 1) * ((lw + 1) >> 1) + (n >> 1)] = this.treeV[k][m * lw + n];
+					n = ( ( lw >> 1 ) << 1 );
+					this.treeV[ k + 1 ][ ( m >> 1 ) * ( ( lw + 1 ) >> 1 ) + ( n >> 1 ) ] = this.treeV[ k ][ m * lw + n ];
 				}
 			}
 		}
@@ -324,38 +296,28 @@ public class TagTreeEncoder
 	 * Changes the value of a leaf in the tag tree. The new and old values of
 	 * the element must be not smaller than the largest threshold which has yet
 	 * been supplied to 'encode()'.
-	 * 
-	 * @param m
-	 *            The vertical index of the element.
-	 * 
-	 * @param n
-	 *            The horizontal index of the element.
-	 * 
-	 * @param v
-	 *            The new value of the element.
+	 *
+	 * @param m The vertical index of the element.
+	 * @param n The horizontal index of the element.
+	 * @param v The new value of the element.
 	 */
-	public void setValue(final int m, final int n, final int v)
-	{
+	public void setValue ( final int m , final int n , final int v ) {
 		int k, idx;
 		// Check arguments
-		if (0 == lvls || 0 > n || n >= this.w || v < this.treeS[this.lvls - 1][0] || this.treeV[0][m * this.w + n] < this.treeS[this.lvls - 1][0])
-		{
-			throw new IllegalArgumentException();
+		if ( 0 == lvls || 0 > n || n >= this.w || v < this.treeS[ this.lvls - 1 ][ 0 ] || this.treeV[ 0 ][ m * this.w + n ] < this.treeS[ this.lvls - 1 ][ 0 ] ) {
+			throw new IllegalArgumentException ( );
 		}
 		// Update the leaf value
-		this.treeV[0][m * this.w + n] = v;
+		this.treeV[ 0 ][ m * this.w + n ] = v;
 		// Update all parents
-		for (k = 1; k < this.lvls; k++)
-		{
-			idx = (m >> k) * ((this.w + (1 << k) - 1) >> k) + (n >> k);
-			if (v < this.treeV[k][idx])
-			{
+		for ( k = 1; k < this.lvls ; k++ ) {
+			idx = ( m >> k ) * ( ( this.w + ( 1 << k ) - 1 ) >> k ) + ( n >> k );
+			if ( v < this.treeV[ k ][ idx ] ) {
 				// We need to update minimum and continue checking
 				// in higher levels
-				this.treeV[k][idx] = v;
+				this.treeV[ k ][ idx ] = v;
 			}
-			else
-			{
+			else {
 				// We are done: v is equal or less to minimum
 				// in this level, no other minimums to update.
 				break;
@@ -369,39 +331,33 @@ public class TagTreeEncoder
 	 * value is smaller than largest threshold which has yet been supplied to
 	 * 'encode()'. However such a leaf can keep its old value (i.e. new and old
 	 * value must be identical.
-	 * 
+	 *
 	 * <p>
 	 * This method is more efficient than the setValue() method if a large
 	 * proportion of the leafs change their value. Note that for leafs which
 	 * don't have their value defined yet the value should be Integer.MAX_VALUE
 	 * (which is the default initialization value).
-	 * 
-	 * @param val
-	 *            The new values for the leafs, in lexicographical order.
-	 * 
+	 *
+	 * @param val The new values for the leafs, in lexicographical order.
 	 * @see #setValue
 	 */
-	public void setValues(final int[] val)
-	{
+	public void setValues ( final int[] val ) {
 		int i;
 		final int maxt;
-		if (0 == lvls)
-		{ // Can't set values on empty tree
-			throw new IllegalArgumentException();
+		if ( 0 == lvls ) { // Can't set values on empty tree
+			throw new IllegalArgumentException ( );
 		}
 		// Check the values
-		maxt = this.treeS[this.lvls - 1][0];
-		for (i = this.w * this.h - 1; 0 <= i; i--)
-		{
-			if ((this.treeV[0][i] < maxt || val[i] < maxt) && this.treeV[0][i] != val[i])
-			{
-				throw new IllegalArgumentException();
+		maxt = this.treeS[ this.lvls - 1 ][ 0 ];
+		for ( i = this.w * this.h - 1; 0 <= i ; i-- ) {
+			if ( ( this.treeV[ 0 ][ i ] < maxt || val[ i ] < maxt ) && this.treeV[ 0 ][ i ] != val[ i ] ) {
+				throw new IllegalArgumentException ( );
 			}
 			// Update leaf value
-			this.treeV[0][i] = val[i];
+			this.treeV[ 0 ][ i ] = val[ i ];
 		}
 		// Recalculate tree at other levels
-		this.recalcTreeV();
+		this.recalcTreeV ( );
 	}
 
 	/**
@@ -409,56 +365,41 @@ public class TagTreeEncoder
 	 * threshold and sends it to the 'out' stream. The information that is coded
 	 * is whether or not the value of the element is greater than or equal to
 	 * the value of the threshold.
-	 * 
-	 * @param m
-	 *            The vertical index of the element.
-	 * 
-	 * @param n
-	 *            The horizontal index of the element.
-	 * 
-	 * @param t
-	 *            The threshold to use for encoding. It must be non-negative.
-	 * 
-	 * @param out
-	 *            The stream where to write the coded information.
+	 *
+	 * @param m   The vertical index of the element.
+	 * @param n   The horizontal index of the element.
+	 * @param t   The threshold to use for encoding. It must be non-negative.
+	 * @param out The stream where to write the coded information.
 	 */
-	public void encode(final int m, final int n, final int t, final BitOutputBuffer out)
-	{
+	public void encode ( final int m , final int n , final int t , final BitOutputBuffer out ) {
 		int k, ts, idx, tmin;
 
 		// Check arguments
-		if (m >= this.h || n >= this.w || 0 > t)
-		{
-			throw new IllegalArgumentException();
+		if ( m >= this.h || n >= this.w || 0 > t ) {
+			throw new IllegalArgumentException ( );
 		}
 
 		// Initialize
 		k = this.lvls - 1;
-		tmin = this.treeS[k][0];
+		tmin = this.treeS[ k ][ 0 ];
 
 		// Loop on levels
-		while (true)
-		{
+		while ( true ) {
 			// Index of element in level 'k'
-			idx = (m >> k) * ((this.w + (1 << k) - 1) >> k) + (n >> k);
+			idx = ( m >> k ) * ( ( this.w + ( 1 << k ) - 1 ) >> k ) + ( n >> k );
 			// Cache state
-			ts = this.treeS[k][idx];
-			if (ts < tmin)
-			{
+			ts = this.treeS[ k ][ idx ];
+			if ( ts < tmin ) {
 				ts = tmin;
 			}
-			while (t > ts)
-			{
-				if (this.treeV[k][idx] > ts)
-				{
-					out.writeBit(0); // Send '0' bit
+			while ( t > ts ) {
+				if ( this.treeV[ k ][ idx ] > ts ) {
+					out.writeBit ( 0 ); // Send '0' bit
 				}
-				else if (this.treeV[k][idx] == ts)
-				{
-					out.writeBit(1); // Send '1' bit
+				else if ( this.treeV[ k ][ idx ] == ts ) {
+					out.writeBit ( 1 ); // Send '1' bit
 				}
-				else
-				{ // we are done: set ts and get out of this while
+				else { // we are done: set ts and get out of this while
 					ts = t;
 					break;
 				}
@@ -466,15 +407,13 @@ public class TagTreeEncoder
 				ts++;
 			}
 			// Update state
-			this.treeS[k][idx] = ts;
+			this.treeS[ k ][ idx ] = ts;
 			// Update tmin or terminate
-			if (0 < k)
-			{
-				tmin = ts < this.treeV[k][idx] ? ts : this.treeV[k][idx];
+			if ( 0 < k ) {
+				tmin = ts < this.treeV[ k ][ idx ] ? ts : this.treeV[ k ][ idx ];
 				k--;
 			}
-			else
-			{
+			else {
 				// Terminate
 				return;
 			}
@@ -484,31 +423,27 @@ public class TagTreeEncoder
 	/**
 	 * Saves the current values and state of the tree. Calling restore()
 	 * restores the tag tree the saved state.
-	 * 
+	 *
 	 * @see #restore
 	 */
-	public void save()
-	{
+	public void save ( ) {
 		int k;
 
-		if (null == treeVbak)
-		{ // Nothing saved yet
+		if ( null == treeVbak ) { // Nothing saved yet
 			// Allocate saved arrays
 			// treeV and treeS have the same dimensions
-			this.treeVbak = new int[this.lvls][];
-			this.treeSbak = new int[this.lvls][];
-			for (k = this.lvls - 1; 0 <= k; k--)
-			{
-				this.treeVbak[k] = new int[this.treeV[k].length];
-				this.treeSbak[k] = new int[this.treeV[k].length];
+			this.treeVbak = new int[ this.lvls ][];
+			this.treeSbak = new int[ this.lvls ][];
+			for ( k = this.lvls - 1; 0 <= k ; k-- ) {
+				this.treeVbak[ k ] = new int[ this.treeV[ k ].length ];
+				this.treeSbak[ k ] = new int[ this.treeV[ k ].length ];
 			}
 		}
 
 		// Copy the arrays
-		for (k = this.treeV.length - 1; 0 <= k; k--)
-		{
-			System.arraycopy(this.treeV[k], 0, this.treeVbak[k], 0, this.treeV[k].length);
-			System.arraycopy(this.treeS[k], 0, this.treeSbak[k], 0, this.treeS[k].length);
+		for ( k = this.treeV.length - 1; 0 <= k ; k-- ) {
+			System.arraycopy ( this.treeV[ k ] , 0 , this.treeVbak[ k ] , 0 , this.treeV[ k ].length );
+			System.arraycopy ( this.treeS[ k ] , 0 , this.treeSbak[ k ] , 0 , this.treeS[ k ].length );
 		}
 
 		// Set saved state
@@ -519,23 +454,20 @@ public class TagTreeEncoder
 	 * Restores the saved values and state of the tree. An
 	 * IllegalArgumentException is thrown if the tree values and state have not
 	 * been saved yet.
-	 * 
+	 *
 	 * @see #save
 	 */
-	public void restore()
-	{
+	public void restore ( ) {
 		int k;
 
-		if (!this.saved)
-		{ // Nothing saved yet
-			throw new IllegalArgumentException();
+		if ( ! this.saved ) { // Nothing saved yet
+			throw new IllegalArgumentException ( );
 		}
 
 		// Copy the arrays
-		for (k = this.lvls - 1; 0 <= k; k--)
-		{
-			System.arraycopy(this.treeVbak[k], 0, this.treeV[k], 0, this.treeV[k].length);
-			System.arraycopy(this.treeSbak[k], 0, this.treeS[k], 0, this.treeS[k].length);
+		for ( k = this.lvls - 1; 0 <= k ; k-- ) {
+			System.arraycopy ( this.treeVbak[ k ] , 0 , this.treeV[ k ] , 0 , this.treeV[ k ].length );
+			System.arraycopy ( this.treeSbak[ k ] , 0 , this.treeS[ k ] , 0 , this.treeS[ k ].length );
 		}
 
 	}
@@ -544,15 +476,13 @@ public class TagTreeEncoder
 	 * Resets the tree values and state. All the values are set to
 	 * Integer.MAX_VALUE and the states to 0.
 	 */
-	public void reset()
-	{
+	public void reset ( ) {
 		int k;
 		// Set all values to Integer.MAX_VALUE
 		// and states to 0
-		for (k = this.lvls - 1; 0 <= k; k--)
-		{
-			ArrayUtil.intArraySet(this.treeV[k], Integer.MAX_VALUE);
-			ArrayUtil.intArraySet(this.treeS[k], 0);
+		for ( k = this.lvls - 1; 0 <= k ; k-- ) {
+			ArrayUtil.intArraySet ( this.treeV[ k ] , Integer.MAX_VALUE );
+			ArrayUtil.intArraySet ( this.treeS[ k ] , 0 );
 		}
 		// Invalidate saved tree
 		this.saved = false;
@@ -561,24 +491,20 @@ public class TagTreeEncoder
 	/**
 	 * Resets the tree values and state. The values are set to the values in
 	 * 'val'. The states are all set to 0.
-	 * 
-	 * @param val
-	 *            The new values for the leafs, in lexicographical order.
+	 *
+	 * @param val The new values for the leafs, in lexicographical order.
 	 */
-	public void reset(final int[] val)
-	{
+	public void reset ( final int[] val ) {
 		int k;
 		// Set values for leaf level
-		for (k = this.w * this.h - 1; 0 <= k; k--)
-		{
-			this.treeV[0][k] = val[k];
+		for ( k = this.w * this.h - 1; 0 <= k ; k-- ) {
+			this.treeV[ 0 ][ k ] = val[ k ];
 		}
 		// Calculate values at other levels
-		this.recalcTreeV();
+		this.recalcTreeV ( );
 		// Set all states to 0
-		for (k = this.lvls - 1; 0 <= k; k--)
-		{
-			ArrayUtil.intArraySet(this.treeS[k], 0);
+		for ( k = this.lvls - 1; 0 <= k ; k-- ) {
+			ArrayUtil.intArraySet ( this.treeS[ k ] , 0 );
 		}
 		// Invalidate saved tree
 		this.saved = false;

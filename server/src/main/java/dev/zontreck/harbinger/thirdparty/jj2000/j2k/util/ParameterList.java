@@ -78,7 +78,7 @@ public class ParameterList extends Properties {
 	 * adding elements one by one, by loading them from a file, or by
 	 * initializing them from an argument string.
 	 */
-	public ParameterList() {
+	public ParameterList ( ) {
 	}
 
 	/**
@@ -89,8 +89,35 @@ public class ParameterList extends Properties {
 	 *
 	 * @param def The defaults parameters
 	 */
-	public ParameterList(final ParameterList def) {
-		super(def);
+	public ParameterList ( final ParameterList def ) {
+		super ( def );
+	}
+
+	/**
+	 * Converts the usage information to a list of parameter names in a single
+	 * array. The usage information appears in a 2D array of String. The first
+	 * dimensions contains the different options, the second dimension contains
+	 * the name of the option (first element), the synopsis and the explanation.
+	 * This method takes the names of the different options in 'pinfo' and
+	 * returns them in a single array of String.
+	 *
+	 * @param pinfo The list of options and their usage info (see above).
+	 * @return An array with the names of the options in pinfo. If pinfo is
+	 * null, null is returned.
+	 */
+	public static String[] toNameArray ( final String[][] pinfo ) {
+		final String[] pnames;
+
+		if ( null == pinfo ) {
+			return null;
+		}
+
+		pnames = new String[ pinfo.length ];
+
+		for ( int i = pinfo.length - 1 ; 0 <= i ; i-- ) {
+			pnames[ i ] = pinfo[ i ][ 0 ];
+		}
+		return pnames;
 	}
 
 	/**
@@ -98,8 +125,8 @@ public class ParameterList extends Properties {
 	 *
 	 * @return Default ParameterList
 	 */
-	public ParameterList getDefaultParameterList() {
-		return (ParameterList) this.defaults;
+	public ParameterList getDefaultParameterList ( ) {
+		return ( ParameterList ) this.defaults;
 	}
 
 	/**
@@ -138,94 +165,95 @@ public class ParameterList extends Properties {
 	 * @param argv The argument list.
 	 * @throws StringFormatException if there are invalid arguments in 'argv'
 	 */
-	public void parseArgs(final String[] argv) {
+	public void parseArgs ( final String[] argv ) {
 		int k;
 		char c, c2;
 		String pname;
 		final StringBuffer pvalue;
 
 		// Read options
-		k = -1;
+		k = - 1;
 		// Skip empty arguments
 		do {
 			k++;
-			if (k >= argv.length) {
+			if ( k >= argv.length ) {
 				// Nothing to put in parameters
 				return;
 			}
-		} while (0 >= argv[k].length());
+		} while ( 0 >= argv[ k ].length ( ) );
 
 		// Check that we start with an option and that its is not a number
-		c = argv[k].charAt(0);
-		if ('-' != c && '+' != c) { // It's not an option
-			throw new StringFormatException("Argument list does not" + " start with an option: " + argv[k]);
+		c = argv[ k ].charAt ( 0 );
+		if ( '-' != c && '+' != c ) { // It's not an option
+			throw new StringFormatException ( "Argument list does not" + " start with an option: " + argv[ k ] );
 		}
-		if (2 <= argv[k].length() && Character.isDigit(argv[k].charAt(1))) {
-			throw new StringFormatException("Numeric option name: " + argv[k]);
+		if ( 2 <= argv[ k ].length ( ) && Character.isDigit ( argv[ k ].charAt ( 1 ) ) ) {
+			throw new StringFormatException ( "Numeric option name: " + argv[ k ] );
 		}
-		pvalue = new StringBuffer();
-		while (k < argv.length) {
+		pvalue = new StringBuffer ( );
+		while ( k < argv.length ) {
 			// Read parameter name
-			if (1 >= argv[k].length()) {
-				throw new StringFormatException("Option \"" + argv[k] + "\" is too short.");
+			if ( 1 >= argv[ k ].length ( ) ) {
+				throw new StringFormatException ( "Option \"" + argv[ k ] + "\" is too short." );
 			}
-			c = argv[k].charAt(0);
-			pname = argv[k];
+			c = argv[ k ].charAt ( 0 );
+			pname = argv[ k ];
 			k++;
-			pvalue.setLength(0);
+			pvalue.setLength ( 0 );
 			// Are there any more arguments?
-			if (k >= argv.length) {
+			if ( k >= argv.length ) {
 				// No more words in argument list => must be boolean
-				pvalue.append(('-' == c) ? "on" : "off");
-			} else {
-				c2 = argv[k].charAt(0);
+				pvalue.append ( ( '-' == c ) ? "on" : "off" );
+			}
+			else {
+				c2 = argv[ k ].charAt ( 0 );
 				// Is next word an option or a value?
-				if ('-' == c2 || '+' == c2) { // Next word could be an option
-					if (1 >= argv[k].length()) {
-						throw new StringFormatException("Option or argument \"" + argv[k] + "\" too short");
+				if ( '-' == c2 || '+' == c2 ) { // Next word could be an option
+					if ( 1 >= argv[ k ].length ( ) ) {
+						throw new StringFormatException ( "Option or argument \"" + argv[ k ] + "\" too short" );
 					}
-					if (!Character.isDigit(argv[k].charAt(1))) {
+					if ( ! Character.isDigit ( argv[ k ].charAt ( 1 ) ) ) {
 						// Not a number => we have a boolean option in pname
-						pvalue.append(('-' == c) ? "on" : "off");
+						pvalue.append ( ( '-' == c ) ? "on" : "off" );
 					}
 				}
-				if (0 == pvalue.length()) { // No value yet
+				if ( 0 == pvalue.length ( ) ) { // No value yet
 					// It should not a boolean option, read the values
-					if ('+' == c) {
-						throw new StringFormatException("Boolean option \"" + pname + "\" has a value");
+					if ( '+' == c ) {
+						throw new StringFormatException ( "Boolean option \"" + pname + "\" has a value" );
 					}
 					// We have at least one value
-					pvalue.append(argv[k]);
+					pvalue.append ( argv[ k ] );
 					k++;
-					while (k < argv.length) {
+					while ( k < argv.length ) {
 						// If empty string skip it
-						if (0 == argv[k].length()) {
+						if ( 0 == argv[ k ].length ( ) ) {
 							k++;
 							continue;
 						}
-						c = argv[k].charAt(0);
-						if ('-' == c || '+' == c) {
+						c = argv[ k ].charAt ( 0 );
+						if ( '-' == c || '+' == c ) {
 							// Next word could be an option
-							if (1 >= argv[k].length()) {
-								throw new StringFormatException("Option or " + "argument \"" + argv[k] + "\" too short");
+							if ( 1 >= argv[ k ].length ( ) ) {
+								throw new StringFormatException ( "Option or " + "argument \"" + argv[ k ] + "\" too short" );
 							}
-							if (!Character.isDigit(argv[k].charAt(1))) {
+							if ( ! Character.isDigit ( argv[ k ].charAt ( 1 ) ) ) {
 								// It's an option => stop
 								break;
 							}
 						}
-						pvalue.append(' '); // Add a space
-						pvalue.append(argv[k]);
+						pvalue.append ( ' ' ); // Add a space
+						pvalue.append ( argv[ k ] );
 						k++;
 					}
 				}
 			}
 			// Now put parameter and value in the list
-			if (null != get(pname.substring(1))) {
+			if ( null != getProperty ( pname.substring ( 1 ) ) ) {
 				// Option is repeated => ERROR
-				throw new StringFormatException("Option \"" + pname + "\" appears more than once");
+				throw new StringFormatException ( "Option \"" + pname + "\" appears more than once" );
 			}
-			this.put(pname.substring(1), pvalue.toString());
+			this.put ( pname.substring ( 1 ) , pvalue.toString ( ) );
 		}
 	}
 
@@ -237,13 +265,13 @@ public class ParameterList extends Properties {
 	 * @return the value of the parameter as a string, or null if there is no
 	 * parameter with the name 'pname'.
 	 */
-	public String getParameter(final String pname) {
+	public String getParameter ( final String pname ) {
 		String pval;
 
-		pval = (String) this.get(pname);
-		if (null == pval && null != defaults) { // if parameter is not there
+		pval = this.getProperty ( pname );
+		if ( null == pval && null != defaults ) { // if parameter is not there
 			// Look in defaults
-			pval = this.defaults.getProperty(pname);
+			pval = this.defaults.getProperty ( pname );
 		}
 		return pval;
 	}
@@ -262,17 +290,20 @@ public class ParameterList extends Properties {
 	 * @throws IllegalArgumentException If there is no parameter with the name 'pname' in the
 	 *                                  parameter list.
 	 */
-	public boolean getBooleanParameter(final String pname) {
-		final String s = this.getParameter(pname);
+	public boolean getBooleanParameter ( final String pname ) {
+		final String s = this.getParameter ( pname );
 
-		if (null == s) {
-			throw new IllegalArgumentException("No parameter with name " + pname);
-		} else if ("on".equals(s)) {
+		if ( null == s ) {
+			throw new IllegalArgumentException ( "No parameter with name " + pname );
+		}
+		else if ( "on".equals ( s ) ) {
 			return true;
-		} else if ("off".equals(s)) {
+		}
+		else if ( "off".equals ( s ) ) {
 			return false;
-		} else {
-			throw new StringFormatException("Parameter \"" + pname + "\" is not boolean: " + s);
+		}
+		else {
+			throw new StringFormatException ( "Parameter \"" + pname + "\" is not boolean: " + s );
 		}
 	}
 
@@ -289,16 +320,16 @@ public class ParameterList extends Properties {
 	 * @throws IllegalArgumentException If there is no parameter with the name 'pname' in the
 	 *                                  parameter list.
 	 */
-	public int getIntParameter(final String pname) {
-		final String s = this.getParameter(pname);
+	public int getIntParameter ( final String pname ) {
+		final String s = this.getParameter ( pname );
 
-		if (null == s) {
-			throw new IllegalArgumentException("No parameter with name " + pname);
+		if ( null == s ) {
+			throw new IllegalArgumentException ( "No parameter with name " + pname );
 		}
 		try {
-			return Integer.parseInt(s);
-		} catch (final NumberFormatException e) {
-			throw new NumberFormatException("Parameter \"" + pname + "\" is not integer: " + e.getMessage());
+			return Integer.parseInt ( s );
+		} catch ( final NumberFormatException e ) {
+			throw new NumberFormatException ( "Parameter \"" + pname + "\" is not integer: " + e.getMessage ( ) );
 		}
 	}
 
@@ -315,18 +346,18 @@ public class ParameterList extends Properties {
 	 * @throws IllegalArgumentException If there is no parameter with the name 'pname' in the
 	 *                                  parameter list.
 	 */
-	public float getFloatParameter(final String pname) {
-		final String s = this.getParameter(pname);
+	public float getFloatParameter ( final String pname ) {
+		final String s = this.getParameter ( pname );
 
-		if (null == s) {
-			throw new IllegalArgumentException("No parameter with name " + pname);
+		if ( null == s ) {
+			throw new IllegalArgumentException ( "No parameter with name " + pname );
 		}
 		try {
 			// Unfortunately there is no method to convert from a string
 			// directly to a float
-			return (new Float(s)).floatValue();
-		} catch (final NumberFormatException e) {
-			throw new NumberFormatException("Parameter \"" + pname + "\" is not floating-point: " + e.getMessage());
+			return ( new Float ( s ) ).floatValue ( );
+		} catch ( final NumberFormatException e ) {
+			throw new NumberFormatException ( "Parameter \"" + pname + "\" is not floating-point: " + e.getMessage ( ) );
 		}
 	}
 
@@ -343,29 +374,29 @@ public class ParameterList extends Properties {
 	 * @throws IllegalArgumentException If there's a parameter name starting with 'prfx' which is
 	 *                                  not in the valid list of parameter names.
 	 */
-	@SuppressWarnings("unchecked")
-	public void checkList(final char prfx, final String[] plist) {
+	@SuppressWarnings ("unchecked")
+	public void checkList ( final char prfx , final String[] plist ) {
 		final Enumeration<String> args;
 		String val;
 		int i;
 		boolean isvalid;
 
-		args = (Enumeration<String>) this.propertyNames();
+		args = ( Enumeration<String> ) this.propertyNames ( );
 
-		while (args.hasMoreElements()) {
-			val = args.nextElement();
-			if (0 < val.length() && val.charAt(0) == prfx) {
+		while ( args.hasMoreElements ( ) ) {
+			val = args.nextElement ( );
+			if ( 0 < val.length ( ) && val.charAt ( 0 ) == prfx ) {
 				isvalid = false;
-				if (null != plist) {
-					for (i = plist.length - 1; 0 <= i; i--) {
-						if (val.equals(plist[i])) {
+				if ( null != plist ) {
+					for ( i = plist.length - 1; 0 <= i ; i-- ) {
+						if ( val.equals ( plist[ i ] ) ) {
 							isvalid = true;
 							break;
 						}
 					}
 				}
-				if (!isvalid) { // Did not find valid flag
-					throw new IllegalArgumentException("Option '" + val + "' is " + "not a valid one.");
+				if ( ! isvalid ) { // Did not find valid flag
+					throw new IllegalArgumentException ( "Option '" + val + "' is " + "not a valid one." );
 				}
 			}
 		}
@@ -384,60 +415,33 @@ public class ParameterList extends Properties {
 	 * @throws IllegalArgumentException If there's a parameter name not starting with 'prfx' which
 	 *                                  is not in the valid list of parameter names.
 	 */
-	@SuppressWarnings("unchecked")
-	public void checkList(final char[] prfxs, final String[] plist) {
+	@SuppressWarnings ("unchecked")
+	public void checkList ( final char[] prfxs , final String[] plist ) {
 		final Enumeration<String> args;
 		String val;
 		final String strprfxs;
 		int i;
 		boolean isvalid;
 
-		args = (Enumeration<String>) this.propertyNames();
-		strprfxs = new String(prfxs);
+		args = ( Enumeration<String> ) this.propertyNames ( );
+		strprfxs = new String ( prfxs );
 
-		while (args.hasMoreElements()) {
-			val = args.nextElement();
-			if (0 < val.length() && -1 == strprfxs.indexOf(val.charAt(0))) {
+		while ( args.hasMoreElements ( ) ) {
+			val = args.nextElement ( );
+			if ( 0 < val.length ( ) && - 1 == strprfxs.indexOf ( val.charAt ( 0 ) ) ) {
 				isvalid = false;
-				if (null != plist) {
-					for (i = plist.length - 1; 0 <= i; i--) {
-						if (val.equals(plist[i])) {
+				if ( null != plist ) {
+					for ( i = plist.length - 1; 0 <= i ; i-- ) {
+						if ( val.equals ( plist[ i ] ) ) {
 							isvalid = true;
 							break;
 						}
 					}
 				}
-				if (!isvalid) {
-					throw new IllegalArgumentException("Option '" + val + "' is " + "not a valid one.");
+				if ( ! isvalid ) {
+					throw new IllegalArgumentException ( "Option '" + val + "' is " + "not a valid one." );
 				}
 			}
 		}
-	}
-
-	/**
-	 * Converts the usage information to a list of parameter names in a single
-	 * array. The usage information appears in a 2D array of String. The first
-	 * dimensions contains the different options, the second dimension contains
-	 * the name of the option (first element), the synopsis and the explanation.
-	 * This method takes the names of the different options in 'pinfo' and
-	 * returns them in a single array of String.
-	 *
-	 * @param pinfo The list of options and their usage info (see above).
-	 * @return An array with the names of the options in pinfo. If pinfo is
-	 * null, null is returned.
-	 */
-	public static String[] toNameArray(final String[][] pinfo) {
-		final String[] pnames;
-
-		if (null == pinfo) {
-			return null;
-		}
-
-		pnames = new String[pinfo.length];
-
-		for (int i = pinfo.length - 1; 0 <= i; i--) {
-			pnames[i] = pinfo[i][0];
-		}
-		return pnames;
 	}
 }

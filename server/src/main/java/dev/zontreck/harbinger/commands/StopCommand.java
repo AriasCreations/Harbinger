@@ -16,19 +16,20 @@ public enum StopCommand {
 
 
 	@Subscribe
-	public static void onStop(final CommandEvent event) {
-		if (event.command.equals(StopCommand.Stop)) {
-			HTTPServer.stopServer();
-			CommandRegistry.LOGGER.info("Server is stopping...");
-			Terminal.setRunning(false);
-			DelayedExecutorService.stop();
-			EventBus.BUS.post(new ServerStoppingEvent());
+	public static void onStop ( final CommandEvent event ) {
+		if ( event.command.equals ( StopCommand.Stop ) ) {
+			HTTPServer.stopServer ( );
+			CommandRegistry.LOGGER.info ( "Server is stopping..." );
+			Terminal.setRunning ( false );
+			DelayedExecutorService.stop ( );
+			EventBus.BUS.post ( new ServerStoppingEvent ( ) );
 
-			event.setCancelled(true);
-		} else if ("save".equals(event.command)) {
-			CommandRegistry.LOGGER.info("Saving data...");
-			EventBus.BUS.post(new MemoryAlteredEvent());
-			CommandRegistry.LOGGER.info("Save completed");
+			event.setCancelled ( true );
+		}
+		else if ( "save".equals ( event.command ) ) {
+			CommandRegistry.LOGGER.info ( "Saving data..." );
+			EventBus.BUS.post ( new MemoryAlteredEvent ( ) );
+			CommandRegistry.LOGGER.info ( "Save completed" );
 		}
 	}
 }

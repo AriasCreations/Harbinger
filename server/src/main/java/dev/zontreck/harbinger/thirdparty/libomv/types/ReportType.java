@@ -1,8 +1,7 @@
 package dev.zontreck.harbinger.thirdparty.libomv.types;
 
 
-public enum ReportType
-{
+public enum ReportType {
 	// No report
 	None,
 	// Unknown report type
@@ -14,15 +13,13 @@ public enum ReportType
 	// Customer service report
 	CustomerServiceRequest;
 
-	public static ReportType setValue(final int value)
-	{
-		if (0 <= value && value < ReportType.values().length)
-			return ReportType.values()[value];
-		return null;
+	public byte getValue ( ) {
+		return ( byte ) this.ordinal ( );
 	}
 
-	public byte getValue()
-	{
-		return (byte) this.ordinal();
+	public static ReportType setValue ( final int value ) {
+		if ( 0 <= value && value < ReportType.values ( ).length )
+			return ReportType.values ( )[ value ];
+		return null;
 	}
 }

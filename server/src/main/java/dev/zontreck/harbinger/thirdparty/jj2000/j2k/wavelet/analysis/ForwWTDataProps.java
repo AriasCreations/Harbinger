@@ -60,7 +60,7 @@ public interface ForwWTDataProps extends ImgData {
 	 * @param c Component index
 	 * @return true is the data is reversible, false if not.
 	 */
-	boolean isReversible(int t, int c);
+	boolean isReversible ( int t , int c );
 
 	/**
 	 * Returns a reference to the root of subband tree structure representing
@@ -72,17 +72,17 @@ public interface ForwWTDataProps extends ImgData {
 	 * @see SubbandAn
 	 * @see Subband
 	 */
-	SubbandAn getAnSubbandTree(int t, int c);
+	SubbandAn getAnSubbandTree ( int t , int c );
 
 	/**
 	 * Returns the horizontal offset of the code-block partition. Allowable
 	 * values are 0 and 1, nothing else.
 	 */
-	int getCbULX();
+	int getCbULX ( );
 
 	/**
 	 * Returns the vertical offset of the code-block partition. Allowable values
 	 * are 0 and 1, nothing else.
 	 */
-	int getCbULY();
+	int getCbULY ( );
 }

@@ -76,76 +76,80 @@ public class AnWTFilterSpec extends ModuleSpec {
 	 * @param qts  Quantization specifications
 	 * @param pl   The ParameterList
 	 */
-	public AnWTFilterSpec(final int nt, final int nc, final byte type, final QuantTypeSpec qts, final ParameterList pl) {
-		super(nt, nc, type);
+	public AnWTFilterSpec ( final int nt , final int nc , final byte type , final QuantTypeSpec qts , final ParameterList pl ) {
+		super ( nt , nc , type );
 
 		// Check parameters
-		pl.checkList(AnWTFilter.OPT_PREFIX, ParameterList.toNameArray(AnWTFilter.getParameterInfo()));
+		pl.checkList ( AnWTFilter.OPT_PREFIX , ParameterList.toNameArray ( AnWTFilter.getParameterInfo ( ) ) );
 
-		final String param = pl.getParameter("Ffilters");
+		final String param = pl.getParameter ( "Ffilters" );
 		boolean isFilterSpecified = true;
 
 		// No parameter specified
-		if (null == param) {
+		if ( null == param ) {
 			isFilterSpecified = false;
 
 			// If lossless compression, uses the reversible filters in each
 			// tile-components
-			if (pl.getBooleanParameter("lossless")) {
-				this.setDefault(this.parseFilters(AnWTFilterSpec.REV_FILTER_STR));
+			if ( pl.getBooleanParameter ( "lossless" ) ) {
+				this.setDefault ( this.parseFilters ( AnWTFilterSpec.REV_FILTER_STR ) );
 				return;
 			}
 
 			// If no filter is specified through the command-line, use
 			// REV_FILTER_STR or NON_REV_FILTER_STR according to the
 			// quantization type
-			for (int t = nt - 1; 0 <= t; t--) {
-				for (int c = nc - 1; 0 <= c; c--) {
-					switch (qts.getSpecValType(t, c)) {
+			for ( int t = nt - 1 ; 0 <= t ; t-- ) {
+				for ( int c = nc - 1 ; 0 <= c ; c-- ) {
+					switch ( qts.getSpecValType ( t , c ) ) {
 						case ModuleSpec.SPEC_DEF:
-							if (null == getDefault()) {
-								if (pl.getBooleanParameter("lossless"))
-									this.setDefault(this.parseFilters(AnWTFilterSpec.REV_FILTER_STR));
-								if (qts.getDefault().equals("reversible")) {
-									this.setDefault(this.parseFilters(AnWTFilterSpec.REV_FILTER_STR));
-								} else {
-									this.setDefault(this.parseFilters(AnWTFilterSpec.NON_REV_FILTER_STR));
+							if ( null == getDefault ( ) ) {
+								if ( pl.getBooleanParameter ( "lossless" ) )
+									this.setDefault ( this.parseFilters ( AnWTFilterSpec.REV_FILTER_STR ) );
+								if ( qts.getDefault ( ).equals ( "reversible" ) ) {
+									this.setDefault ( this.parseFilters ( AnWTFilterSpec.REV_FILTER_STR ) );
+								}
+								else {
+									this.setDefault ( this.parseFilters ( AnWTFilterSpec.NON_REV_FILTER_STR ) );
 								}
 							}
-							this.specValType[t][c] = ModuleSpec.SPEC_DEF;
+							this.specValType[ t ][ c ] = ModuleSpec.SPEC_DEF;
 							break;
 						case ModuleSpec.SPEC_COMP_DEF:
-							if (!this.isCompSpecified(c)) {
-								if (qts.getCompDef(c).equals("reversible")) {
-									this.setCompDef(c, this.parseFilters(AnWTFilterSpec.REV_FILTER_STR));
-								} else {
-									this.setCompDef(c, this.parseFilters(AnWTFilterSpec.NON_REV_FILTER_STR));
+							if ( ! this.isCompSpecified ( c ) ) {
+								if ( qts.getCompDef ( c ).equals ( "reversible" ) ) {
+									this.setCompDef ( c , this.parseFilters ( AnWTFilterSpec.REV_FILTER_STR ) );
+								}
+								else {
+									this.setCompDef ( c , this.parseFilters ( AnWTFilterSpec.NON_REV_FILTER_STR ) );
 								}
 							}
-							this.specValType[t][c] = ModuleSpec.SPEC_COMP_DEF;
+							this.specValType[ t ][ c ] = ModuleSpec.SPEC_COMP_DEF;
 							break;
 						case ModuleSpec.SPEC_TILE_DEF:
-							if (!this.isTileSpecified(t)) {
-								if (qts.getTileDef(t).equals("reversible")) {
-									this.setTileDef(t, this.parseFilters(AnWTFilterSpec.REV_FILTER_STR));
-								} else {
-									this.setTileDef(t, this.parseFilters(AnWTFilterSpec.NON_REV_FILTER_STR));
+							if ( ! this.isTileSpecified ( t ) ) {
+								if ( qts.getTileDef ( t ).equals ( "reversible" ) ) {
+									this.setTileDef ( t , this.parseFilters ( AnWTFilterSpec.REV_FILTER_STR ) );
+								}
+								else {
+									this.setTileDef ( t , this.parseFilters ( AnWTFilterSpec.NON_REV_FILTER_STR ) );
 								}
 							}
-							this.specValType[t][c] = ModuleSpec.SPEC_TILE_DEF;
+							this.specValType[ t ][ c ] = ModuleSpec.SPEC_TILE_DEF;
 							break;
 						case ModuleSpec.SPEC_TILE_COMP:
-							if (!this.isTileCompSpecified(t, c)) {
-								if (qts.getTileCompVal(t, c).equals("reversible")) {
-									this.setTileCompVal(t, c, this.parseFilters(AnWTFilterSpec.REV_FILTER_STR));
-								} else {
-									this.setTileCompVal(t, c, this.parseFilters(AnWTFilterSpec.NON_REV_FILTER_STR));
+							if ( ! this.isTileCompSpecified ( t , c ) ) {
+								if ( qts.getTileCompVal ( t , c ).equals ( "reversible" ) ) {
+									this.setTileCompVal ( t , c , this.parseFilters ( AnWTFilterSpec.REV_FILTER_STR ) );
+								}
+								else {
+									this.setTileCompVal ( t , c , this.parseFilters ( AnWTFilterSpec.NON_REV_FILTER_STR ) );
 								}
 							}
-							this.specValType[t][c] = ModuleSpec.SPEC_TILE_COMP;
+							this.specValType[ t ][ c ] = ModuleSpec.SPEC_TILE_COMP;
 							break;
 						default:
-							throw new IllegalArgumentException("Unsupported specification ype");
+							throw new IllegalArgumentException ( "Unsupported specification ype" );
 					}
 				}
 			}
@@ -153,7 +157,7 @@ public class AnWTFilterSpec extends ModuleSpec {
 		}
 
 		// Parse argument
-		final StringTokenizer stk = new StringTokenizer(param);
+		final StringTokenizer stk = new StringTokenizer ( param );
 		String word; // current word
 		byte curSpecType = ModuleSpec.SPEC_DEF; // Specification type of the
 		// current parameter
@@ -161,52 +165,55 @@ public class AnWTFilterSpec extends ModuleSpec {
 		boolean[] compSpec = null; // Components concerned by the specification
 		AnWTFilter[][] filter;
 
-		while (stk.hasMoreTokens()) {
-			word = stk.nextToken();
+		while ( stk.hasMoreTokens ( ) ) {
+			word = stk.nextToken ( );
 
-			switch (word.charAt(0)) {
+			switch ( word.charAt ( 0 ) ) {
 				case 't': // Tiles specification
 				case 'T': // Tiles specification
-					tileSpec = ModuleSpec.parseIdx(word, this.nTiles);
-					if (SPEC_COMP_DEF == curSpecType)
+					tileSpec = ModuleSpec.parseIdx ( word , this.nTiles );
+					if ( ModuleSpec.SPEC_COMP_DEF == curSpecType )
 						curSpecType = ModuleSpec.SPEC_TILE_COMP;
 					else
 						curSpecType = ModuleSpec.SPEC_TILE_DEF;
 					break;
 				case 'c': // Components specification
 				case 'C': // Components specification
-					compSpec = ModuleSpec.parseIdx(word, this.nComp);
-					if (SPEC_TILE_DEF == curSpecType)
+					compSpec = ModuleSpec.parseIdx ( word , this.nComp );
+					if ( ModuleSpec.SPEC_TILE_DEF == curSpecType )
 						curSpecType = ModuleSpec.SPEC_TILE_COMP;
 					else
 						curSpecType = ModuleSpec.SPEC_COMP_DEF;
 					break;
 				case 'w': // WT filters specification
 				case 'W': // WT filters specification
-					if (pl.getBooleanParameter("lossless") && "w9x7".equalsIgnoreCase(word)) {
-						throw new IllegalArgumentException("Cannot use non reversible wavelet transform with"
-								+ " '-lossless' option");
+					if ( pl.getBooleanParameter ( "lossless" ) && "w9x7".equalsIgnoreCase ( word ) ) {
+						throw new IllegalArgumentException ( "Cannot use non reversible wavelet transform with"
+								+ " '-lossless' option" );
 
 					}
 
-					filter = this.parseFilters(word);
-					if (SPEC_DEF == curSpecType) {
-						this.setDefault(filter);
-					} else if (SPEC_TILE_DEF == curSpecType) {
-						for (int i = tileSpec.length - 1; 0 <= i; i--)
-							if (tileSpec[i]) {
-								this.setTileDef(i, filter);
+					filter = this.parseFilters ( word );
+					if ( ModuleSpec.SPEC_DEF == curSpecType ) {
+						this.setDefault ( filter );
+					}
+					else if ( ModuleSpec.SPEC_TILE_DEF == curSpecType ) {
+						for ( int i = tileSpec.length - 1 ; 0 <= i ; i-- )
+							if ( tileSpec[ i ] ) {
+								this.setTileDef ( i , filter );
 							}
-					} else if (SPEC_COMP_DEF == curSpecType) {
-						for (int i = compSpec.length - 1; 0 <= i; i--)
-							if (compSpec[i]) {
-								this.setCompDef(i, filter);
+					}
+					else if ( ModuleSpec.SPEC_COMP_DEF == curSpecType ) {
+						for ( int i = compSpec.length - 1 ; 0 <= i ; i-- )
+							if ( compSpec[ i ] ) {
+								this.setCompDef ( i , filter );
 							}
-					} else {
-						for (int i = tileSpec.length - 1; 0 <= i; i--) {
-							for (int j = compSpec.length - 1; 0 <= j; j--) {
-								if (tileSpec[i] && compSpec[j]) {
-									this.setTileCompVal(i, j, filter);
+					}
+					else {
+						for ( int i = tileSpec.length - 1 ; 0 <= i ; i-- ) {
+							for ( int j = compSpec.length - 1 ; 0 <= j ; j-- ) {
+								if ( tileSpec[ i ] && compSpec[ j ] ) {
+									this.setTileCompVal ( i , j , filter );
 								}
 							}
 						}
@@ -219,16 +226,16 @@ public class AnWTFilterSpec extends ModuleSpec {
 					break;
 
 				default:
-					throw new IllegalArgumentException("Bad construction for parameter: " + word);
+					throw new IllegalArgumentException ( "Bad construction for parameter: " + word );
 			}
 		}
 
 		// Check that default value has been specified
-		if (null == getDefault()) {
+		if ( null == getDefault ( ) ) {
 			int ndefspec = 0;
-			for (int t = nt - 1; 0 <= t; t--) {
-				for (int c = nc - 1; 0 <= c; c--) {
-					if (SPEC_DEF == specValType[t][c]) {
+			for ( int t = nt - 1 ; 0 <= t ; t-- ) {
+				for ( int c = nc - 1 ; 0 <= c ; c-- ) {
+					if ( ModuleSpec.SPEC_DEF == specValType[ t ][ c ] ) {
 						ndefspec++;
 					}
 				}
@@ -236,73 +243,77 @@ public class AnWTFilterSpec extends ModuleSpec {
 
 			// If some tile-component have received no specification, it takes
 			// the default value defined in ParameterList
-			if (0 != ndefspec) {
-				if (qts.getDefault().equals("reversible"))
-					this.setDefault(this.parseFilters(AnWTFilterSpec.REV_FILTER_STR));
+			if ( 0 != ndefspec ) {
+				if ( qts.getDefault ( ).equals ( "reversible" ) )
+					this.setDefault ( this.parseFilters ( AnWTFilterSpec.REV_FILTER_STR ) );
 				else
-					this.setDefault(this.parseFilters(AnWTFilterSpec.NON_REV_FILTER_STR));
-			} else {
+					this.setDefault ( this.parseFilters ( AnWTFilterSpec.NON_REV_FILTER_STR ) );
+			}
+			else {
 				// All tile-component have been specified, takes the first
 				// tile-component value as default.
-				this.setDefault(this.getTileCompVal(0, 0));
-				switch (this.specValType[0][0]) {
+				this.setDefault ( this.getTileCompVal ( 0 , 0 ) );
+				switch ( this.specValType[ 0 ][ 0 ] ) {
 					case ModuleSpec.SPEC_TILE_DEF:
-						for (int c = nc - 1; 0 <= c; c--) {
-							if (SPEC_TILE_DEF == specValType[0][c])
-								this.specValType[0][c] = ModuleSpec.SPEC_DEF;
+						for ( int c = nc - 1 ; 0 <= c ; c-- ) {
+							if ( ModuleSpec.SPEC_TILE_DEF == specValType[ 0 ][ c ] )
+								this.specValType[ 0 ][ c ] = ModuleSpec.SPEC_DEF;
 						}
-						this.tileDef[0] = null;
+						this.tileDef[ 0 ] = null;
 						break;
 					case ModuleSpec.SPEC_COMP_DEF:
-						for (int t = nt - 1; 0 <= t; t--) {
-							if (SPEC_COMP_DEF == specValType[t][0])
-								this.specValType[t][0] = ModuleSpec.SPEC_DEF;
+						for ( int t = nt - 1 ; 0 <= t ; t-- ) {
+							if ( ModuleSpec.SPEC_COMP_DEF == specValType[ t ][ 0 ] )
+								this.specValType[ t ][ 0 ] = ModuleSpec.SPEC_DEF;
 						}
-						this.compDef[0] = null;
+						this.compDef[ 0 ] = null;
 						break;
 					case ModuleSpec.SPEC_TILE_COMP:
-						this.specValType[0][0] = ModuleSpec.SPEC_DEF;
-						this.tileCompVal.put("t0c0", null);
+						this.specValType[ 0 ][ 0 ] = ModuleSpec.SPEC_DEF;
+						this.tileCompVal.put ( "t0c0" , null );
 						break;
 					default:
-						throw new IllegalArgumentException("unhandled spec tile type " + this.specValType[0][0] + " in transformation");
+						throw new IllegalArgumentException ( "unhandled spec tile type " + this.specValType[ 0 ][ 0 ] + " in transformation" );
 				}
 			}
 		}
 
 		// Check consistency between filter and quantization type
 		// specification
-		for (int t = nt - 1; 0 <= t; t--) {
-			for (int c = nc - 1; 0 <= c; c--) {
+		for ( int t = nt - 1 ; 0 <= t ; t-- ) {
+			for ( int c = nc - 1 ; 0 <= c ; c-- ) {
 				// Reversible quantization
-				if (qts.getTileCompVal(t, c).equals("reversible")) {
+				if ( qts.getTileCompVal ( t , c ).equals ( "reversible" ) ) {
 					// If filter is reversible, it is OK
-					if (this.isReversible(t, c))
+					if ( this.isReversible ( t , c ) )
 						continue;
 
 					// If no filter has been defined, use reversible filter
-					if (!isFilterSpecified) {
-						this.setTileCompVal(t, c, this.parseFilters(AnWTFilterSpec.REV_FILTER_STR));
-					} else {
-						// Non reversible filter specified -> Error
-						throw new IllegalArgumentException("Filter of tile-component (" + t + "," + c
-								+ ") does not allow reversible quantization. Specify '-Qtype "
-								+ "expounded' or '-Qtype derived' in the command line.");
+					if ( ! isFilterSpecified ) {
+						this.setTileCompVal ( t , c , this.parseFilters ( AnWTFilterSpec.REV_FILTER_STR ) );
 					}
-				} else { // No reversible quantization
+					else {
+						// Non reversible filter specified -> Error
+						throw new IllegalArgumentException ( "Filter of tile-component (" + t + "," + c
+								+ ") does not allow reversible quantization. Specify '-Qtype "
+								+ "expounded' or '-Qtype derived' in the command line." );
+					}
+				}
+				else { // No reversible quantization
 					// No reversible filter -> OK
-					if (!this.isReversible(t, c))
+					if ( ! this.isReversible ( t , c ) )
 						continue;
 
 					// If no filter has been specified, use non-reversible
 					// filter
-					if (!isFilterSpecified) {
-						this.setTileCompVal(t, c, this.parseFilters(AnWTFilterSpec.NON_REV_FILTER_STR));
-					} else {
+					if ( ! isFilterSpecified ) {
+						this.setTileCompVal ( t , c , this.parseFilters ( AnWTFilterSpec.NON_REV_FILTER_STR ) );
+					}
+					else {
 						// Reversible filter specified -> Error
-						throw new IllegalArgumentException("Filter of tile-component (" + t + "," + c
+						throw new IllegalArgumentException ( "Filter of tile-component (" + t + "," + c
 								+ ") does not allow non-reversible quantization. Specify '-Qtype "
-								+ "reversible' in the command line");
+								+ "reversible' in the command line" );
 					}
 				}
 			}
@@ -316,18 +327,20 @@ public class AnWTFilterSpec extends ModuleSpec {
 	 * @return Analysis wavelet filter (first dimension: by direction, second
 	 * dimension: by decomposition levels)
 	 */
-	private AnWTFilter[][] parseFilters(final String word) {
-		final AnWTFilter[][] filt = new AnWTFilter[2][1];
-		if ("w5x3".equalsIgnoreCase(word)) {
-			filt[0][0] = new AnWTFilterIntLift5x3();
-			filt[1][0] = new AnWTFilterIntLift5x3();
+	private AnWTFilter[][] parseFilters ( final String word ) {
+		final AnWTFilter[][] filt = new AnWTFilter[ 2 ][ 1 ];
+		if ( "w5x3".equalsIgnoreCase ( word ) ) {
+			filt[ 0 ][ 0 ] = new AnWTFilterIntLift5x3 ( );
+			filt[ 1 ][ 0 ] = new AnWTFilterIntLift5x3 ( );
 			return filt;
-		} else if ("w9x7".equalsIgnoreCase(word)) {
-			filt[0][0] = new AnWTFilterFloatLift9x7();
-			filt[1][0] = new AnWTFilterFloatLift9x7();
+		}
+		else if ( "w9x7".equalsIgnoreCase ( word ) ) {
+			filt[ 0 ][ 0 ] = new AnWTFilterFloatLift9x7 ( );
+			filt[ 1 ][ 0 ] = new AnWTFilterFloatLift9x7 ( );
 			return filt;
-		} else {
-			throw new IllegalArgumentException("Non JPEG 2000 part I filter: " + word);
+		}
+		else {
+			throw new IllegalArgumentException ( "Non JPEG 2000 part I filter: " + word );
 		}
 	}
 
@@ -340,9 +353,9 @@ public class AnWTFilterSpec extends ModuleSpec {
 	 * @return The data type of the filters in this object
 	 * @see dev.zontreck.harbinger.thirdparty.jj2000.j2k.image.DataBlk
 	 */
-	public int getWTDataType(final int t, final int c) {
-		final AnWTFilter[][] an = (AnWTFilter[][]) this.getSpec(t, c);
-		return an[0][0].getDataType();
+	public int getWTDataType ( final int t , final int c ) {
+		final AnWTFilter[][] an = ( AnWTFilter[][] ) this.getSpec ( t , c );
+		return an[ 0 ][ 0 ].getDataType ( );
 	}
 
 	/**
@@ -362,9 +375,9 @@ public class AnWTFilterSpec extends ModuleSpec {
 	 * @return The array of horizontal analysis filters for component 'n' and
 	 * tile 't'.
 	 */
-	public AnWTFilter[] getHFilters(final int t, final int c) {
-		final AnWTFilter[][] an = (AnWTFilter[][]) this.getSpec(t, c);
-		return an[0];
+	public AnWTFilter[] getHFilters ( final int t , final int c ) {
+		final AnWTFilter[][] an = ( AnWTFilter[][] ) this.getSpec ( t , c );
+		return an[ 0 ];
 	}
 
 	/**
@@ -384,35 +397,35 @@ public class AnWTFilterSpec extends ModuleSpec {
 	 * @return The array of horizontal analysis filters for component 'n' and
 	 * tile 't'.
 	 */
-	public AnWTFilter[] getVFilters(final int t, final int c) {
-		final AnWTFilter[][] an = (AnWTFilter[][]) this.getSpec(t, c);
-		return an[1];
+	public AnWTFilter[] getVFilters ( final int t , final int c ) {
+		final AnWTFilter[][] an = ( AnWTFilter[][] ) this.getSpec ( t , c );
+		return an[ 1 ];
 	}
 
 	/**
 	 * Debugging method
 	 */
 	@Override
-	public String toString() {
+	public String toString ( ) {
 		String str = "";
 		AnWTFilter[][] an;
 
 		str += "nTiles=" + this.nTiles + "\nnComp=" + this.nComp + "\n\n";
 
-		for (int t = 0; t < this.nTiles; t++) {
-			for (int c = 0; c < this.nComp; c++) {
-				an = (AnWTFilter[][]) this.getSpec(t, c);
+		for ( int t = 0 ; t < this.nTiles ; t++ ) {
+			for ( int c = 0 ; c < this.nComp ; c++ ) {
+				an = ( AnWTFilter[][] ) this.getSpec ( t , c );
 
 				str += "(t:" + t + ",c:" + c + ")\n";
 
 				// Horizontal filters
 				str += "\tH:";
-				for (int i = 0; i < an[0].length; i++)
-					str += " " + an[0][i];
+				for ( int i = 0 ; i < an[ 0 ].length ; i++ )
+					str += " " + an[ 0 ][ i ];
 				// Horizontal filters
 				str += "\n\tV:";
-				for (int i = 0; i < an[1].length; i++)
-					str += " " + an[1][i];
+				for ( int i = 0 ; i < an[ 1 ].length ; i++ )
+					str += " " + an[ 1 ][ i ];
 				str += "\n";
 			}
 		}
@@ -426,15 +439,15 @@ public class AnWTFilterSpec extends ModuleSpec {
 	 * @param t The index of the tile
 	 * @param c The index of the component
 	 */
-	public boolean isReversible(final int t, final int c) {
+	public boolean isReversible ( final int t , final int c ) {
 		// Note: no need to buffer the result since this method is
 		// normally called once per tile-component.
-		final AnWTFilter[] hfilter = this.getHFilters(t, c);
-		final AnWTFilter[] vfilter = this.getVFilters(t, c);
+		final AnWTFilter[] hfilter = this.getHFilters ( t , c );
+		final AnWTFilter[] vfilter = this.getVFilters ( t , c );
 
 		// As soon as a filter is not reversible, false can be returned
-		for (int i = hfilter.length - 1; 0 <= i; i--)
-			if (!hfilter[i].isReversible() || !vfilter[i].isReversible())
+		for ( int i = hfilter.length - 1 ; 0 <= i ; i-- )
+			if ( ! hfilter[ i ].isReversible ( ) || ! vfilter[ i ].isReversible ( ) )
 				return false;
 		return true;
 	}

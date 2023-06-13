@@ -2,19 +2,19 @@
  * Copyright (c) 2006-2014, openmetaverse.org
  * Copyright (c) 2009-2017, Frederick Martian
  * All rights reserved.
- *
+ * <p>
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ * <p>
  * - Redistributions of source code must retain the above copyright notice, this
- *   list of conditions and the following disclaimer.
+ * list of conditions and the following disclaimer.
  * - Redistributions in binary form must reproduce the above copyright notice,
- *   this list of conditions and the following disclaimer in the
- *   documentation and/or other materials provided with the distribution.
+ * this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
  * - Neither the name of the openmetaverse.org or dev.zontreck.harbinger.thirdparty.libomv-java project nor the
- *   names of its contributors may be used to endorse or promote products derived
- *   from this software without specific prior written permission.
- *
+ * names of its contributors may be used to endorse or promote products derived
+ * from this software without specific prior written permission.
+ * <p>
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -33,36 +33,7 @@ import dev.zontreck.harbinger.thirdparty.libomv.StructuredData.OSD;
 import dev.zontreck.harbinger.thirdparty.libomv.StructuredData.OSDMap;
 
 // Describes physics attributes of the prim
-public class PhysicsProperties
-{
-	// Type of physics representation used for this prim in the simulator
-	public enum PhysicsShapeType
-	{
-		// Use prim physics form this object
-		Prim,
-		// No physics, prim doesn't collide
-		None,
-		// Use convex hull represantion of this prim
-		ConvexHull;
-
-		public static PhysicsShapeType setValue(final int value)
-		{
-			if (value <= PhysicsShapeType.ConvexHull.getValue())
-				return PhysicsShapeType.values()[value];
-			return PhysicsShapeType.Prim;
-		}
-
-		public static byte getValue(final PhysicsShapeType value)
-		{
-			return (byte) value.ordinal();
-		}
-
-		public byte getValue()
-		{
-			return (byte) this.ordinal();
-		}
-	}
-
+public class PhysicsProperties {
 	// Primitive's local ID
 	public int LocalID;
 	// Density (1000 for normal density)
@@ -78,37 +49,57 @@ public class PhysicsProperties
 
 	/**
 	 * Creates PhysicsProperties from OSD
-	 * 
-	 * @param osd
-	 *            OSDMap with incoming data</param>
+	 *
+	 * @param osd OSDMap with incoming data</param>
 	 */
-	public PhysicsProperties(final OSD osd)
-	{
-		if (osd instanceof final OSDMap map)
-		{
-			this.LocalID = map.get("LocalID").AsUInteger();
-			this.Density = (float) map.get("Density").AsReal();
-			this.Friction = (float) map.get("Friction").AsReal();
-			this.GravityMultiplier = (float) map.get("GravityMultiplier").AsReal();
-			this.Restitution = (float) map.get("Restitution").AsReal();
-			this.ShapeType = PhysicsShapeType.setValue(map.get("PhysicsShapeType").AsInteger());
+	public PhysicsProperties ( final OSD osd ) {
+		if ( osd instanceof final OSDMap map ) {
+			this.LocalID = map.get ( "LocalID" ).AsUInteger ( );
+			this.Density = ( float ) map.get ( "Density" ).AsReal ( );
+			this.Friction = ( float ) map.get ( "Friction" ).AsReal ( );
+			this.GravityMultiplier = ( float ) map.get ( "GravityMultiplier" ).AsReal ( );
+			this.Restitution = ( float ) map.get ( "Restitution" ).AsReal ( );
+			this.ShapeType = PhysicsShapeType.setValue ( map.get ( "PhysicsShapeType" ).AsInteger ( ) );
 		}
 	}
 
 	/**
 	 * Serializes PhysicsProperties to OSD
-	 * 
+	 *
 	 * @returns OSDMap with serialized PhysicsProperties data
 	 */
-	public OSDMap getOSD()
-	{
-		final OSDMap map = new OSDMap(6);
-		map.put("LocalID", OSD.FromUInteger(this.LocalID));
-		map.put("Density", OSD.FromReal(this.Density));
-		map.put("Friction", OSD.FromReal(this.Friction));
-		map.put("GravityMultiplier", OSD.FromReal(this.GravityMultiplier));
-		map.put("Restitution", OSD.FromReal(this.Restitution));
-		map.put("PhysicsShapeType", OSD.FromInteger(this.ShapeType.getValue()));
+	public OSDMap getOSD ( ) {
+		final OSDMap map = new OSDMap ( 6 );
+		map.put ( "LocalID" , OSD.FromUInteger ( this.LocalID ) );
+		map.put ( "Density" , OSD.FromReal ( this.Density ) );
+		map.put ( "Friction" , OSD.FromReal ( this.Friction ) );
+		map.put ( "GravityMultiplier" , OSD.FromReal ( this.GravityMultiplier ) );
+		map.put ( "Restitution" , OSD.FromReal ( this.Restitution ) );
+		map.put ( "PhysicsShapeType" , OSD.FromInteger ( this.ShapeType.getValue ( ) ) );
 		return map;
+	}
+
+	// Type of physics representation used for this prim in the simulator
+	public enum PhysicsShapeType {
+		// Use prim physics form this object
+		Prim,
+		// No physics, prim doesn't collide
+		None,
+		// Use convex hull represantion of this prim
+		ConvexHull;
+
+		public static byte getValue ( final PhysicsShapeType value ) {
+			return ( byte ) value.ordinal ( );
+		}
+
+		public byte getValue ( ) {
+			return ( byte ) this.ordinal ( );
+		}
+
+		public static PhysicsShapeType setValue ( final int value ) {
+			if ( value <= PhysicsShapeType.ConvexHull.getValue ( ) )
+				return PhysicsShapeType.values ( )[ value ];
+			return PhysicsShapeType.Prim;
+		}
 	}
 }

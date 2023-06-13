@@ -71,23 +71,20 @@ public enum FacilityManager {
 	/**
 	 * The loggers associated to different threads
 	 */
-	private static final Hashtable<Thread, MsgLogger> loggerList = new Hashtable<Thread, MsgLogger>();
-
-	/**
-	 * The default logger, for threads that have none associated with them
-	 */
-	private static MsgLogger defMsgLogger = new StreamMsgLogger(System.out, System.err, 78);
-
+	private static final Hashtable<Thread, MsgLogger> loggerList = new Hashtable<Thread, MsgLogger> ( );
 	/**
 	 * The ProgressWatch instance associated to different threads
 	 */
-	private static final Hashtable<Thread, ProgressWatch> watchProgList = new Hashtable<Thread, ProgressWatch>();
-
+	private static final Hashtable<Thread, ProgressWatch> watchProgList = new Hashtable<Thread, ProgressWatch> ( );
 	/**
 	 * The default ProgressWatch for threads that have none associated with
 	 * them.
 	 */
 	private static final ProgressWatch defWatchProg = null;
+	/**
+	 * The default logger, for threads that have none associated with them
+	 */
+	private static MsgLogger defMsgLogger = new StreamMsgLogger ( System.out , System.err , 78 );
 
 	/*
 	 * / public static void registerProgressWatch(Thread t, ProgressWatch pw) {
@@ -98,9 +95,9 @@ public enum FacilityManager {
 	 * (the thread that calls this method). If the current thread has no
 	 * registered ProgressWatch, then the default one is used.
 	 */
-	public static ProgressWatch getProgressWatch() {
-		final ProgressWatch pw = FacilityManager.watchProgList.get(Thread.currentThread());
-		return (null == pw) ? FacilityManager.defWatchProg : pw;
+	public static ProgressWatch getProgressWatch ( ) {
+		final ProgressWatch pw = FacilityManager.watchProgList.get ( Thread.currentThread ( ) );
+		return ( null == pw ) ? FacilityManager.defWatchProg : pw;
 	}
 
 	/**
@@ -113,14 +110,15 @@ public enum FacilityManager {
 	 * @param t  The thread to associate with 'ml'
 	 * @param ml The MsgLogger to associate with therad ml
 	 */
-	public static void registerMsgLogger(final Thread t, final MsgLogger ml) {
-		if (null == ml) {
-			throw new NullPointerException();
+	public static void registerMsgLogger ( final Thread t , final MsgLogger ml ) {
+		if ( null == ml ) {
+			throw new NullPointerException ( );
 		}
-		if (null == t) {
+		if ( null == t ) {
 			FacilityManager.defMsgLogger = ml;
-		} else {
-			FacilityManager.loggerList.put(t, ml);
+		}
+		else {
+			FacilityManager.loggerList.put ( t , ml );
 		}
 	}
 
@@ -132,9 +130,9 @@ public enum FacilityManager {
 	 * @return The MsgLogger registerd for the current thread, or the default
 	 * one if there is none registered for it.
 	 */
-	public static MsgLogger getMsgLogger() {
-		final MsgLogger ml = FacilityManager.loggerList.get(Thread.currentThread());
-		return (null == ml) ? FacilityManager.defMsgLogger : ml;
+	public static MsgLogger getMsgLogger ( ) {
+		final MsgLogger ml = FacilityManager.loggerList.get ( Thread.currentThread ( ) );
+		return ( null == ml ) ? FacilityManager.defMsgLogger : ml;
 	}
 
 	/**
@@ -146,8 +144,8 @@ public enum FacilityManager {
 	 * @return The MsgLogger registerd for the current thread, or the default
 	 * one if there is none registered for it.
 	 */
-	public static MsgLogger getMsgLogger(final Thread t) {
-		final MsgLogger ml = FacilityManager.loggerList.get(t);
-		return (null == ml) ? FacilityManager.defMsgLogger : ml;
+	public static MsgLogger getMsgLogger ( final Thread t ) {
+		final MsgLogger ml = FacilityManager.loggerList.get ( t );
+		return ( null == ml ) ? FacilityManager.defMsgLogger : ml;
 	}
 }

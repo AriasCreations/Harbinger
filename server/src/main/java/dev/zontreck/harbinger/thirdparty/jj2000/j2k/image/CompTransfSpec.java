@@ -1,16 +1,16 @@
-/* 
+/*
  * CVS identifier:
- * 
+ *
  * $Id: CompTransfSpec.java,v 1.18 2001/04/10 14:23:26 grosbois Exp $
- * 
+ *
  * Class:                   CompTransfSpec
- * 
+ *
  * Description:             Component Transformation specification
- * 
- * 
- * 
+ *
+ *
+ *
  * COPYRIGHT:
- * 
+ *
  * This software module was originally developed by Rapha�l Grosbois and
  * Diego Santa Cruz (Swiss Federal Institute of Technology-EPFL); Joel
  * Askel�f (Ericsson Radio Systems AB); and Bertrand Berthelot, David
@@ -37,63 +37,51 @@
  * using this software module for non JPEG 2000 Standard conforming
  * products. This copyright notice must be included in all copies or
  * derivative works of this software module.
- * 
+ *
  * Copyright (c) 1999/2000 JJ2000 Partners.
  */
 package dev.zontreck.harbinger.thirdparty.jj2000.j2k.image;
 
-import dev.zontreck.harbinger.thirdparty.jj2000.j2k.image.invcomptransf.*;
-import dev.zontreck.harbinger.thirdparty.jj2000.j2k.*;
+import dev.zontreck.harbinger.thirdparty.jj2000.j2k.ModuleSpec;
+import dev.zontreck.harbinger.thirdparty.jj2000.j2k.image.invcomptransf.InvCompTransf;
 
 /**
  * This class extends the ModuleSpec class in order to hold tile specifications
  * for multiple component transformation
- * 
+ *
  * @see ModuleSpec
  */
-public class CompTransfSpec extends ModuleSpec
-{
+public class CompTransfSpec extends ModuleSpec {
 
 	/**
 	 * Constructs an empty 'CompTransfSpec' with the specified number of tiles
 	 * and components. This constructor is called by the decoder. Note: The
 	 * number of component is here for symmetry purpose. It is useless since
 	 * only tile specifications are meaningful.
-	 * 
-	 * @param nt
-	 *            Number of tiles
-	 * 
-	 * @param nc
-	 *            Number of components
-	 * 
-	 * @param type
-	 *            the type of the specification module i.e. tile specific,
-	 *            component specific or both.
+	 *
+	 * @param nt   Number of tiles
+	 * @param nc   Number of components
+	 * @param type the type of the specification module i.e. tile specific,
+	 *             component specific or both.
 	 */
-	public CompTransfSpec(final int nt, final int nc, final byte type)
-	{
-		super(nt, nc, type);
+	public CompTransfSpec ( final int nt , final int nc , final byte type ) {
+		super ( nt , nc , type );
 	}
 
 	/**
 	 * Check if component transformation is used in any of the tiles. This
 	 * method must not be used by the encoder.
-	 * 
+	 *
 	 * @return True if a component transformation is used in at least on tile.
 	 */
-	public boolean isCompTransfUsed()
-	{
-		if (InvCompTransf.NONE != ((Integer) def).intValue())
-		{
+	public boolean isCompTransfUsed ( ) {
+		if ( InvCompTransf.NONE != ( ( Integer ) def ).intValue ( ) ) {
 			return true;
 		}
 
-		if (null != tileDef)
-		{
-			for (int t = this.nTiles - 1; 0 <= t; t--)
-			{
-				if (null != tileDef[t] && (InvCompTransf.NONE != ((Integer) tileDef[t]).intValue()))
-				{
+		if ( null != tileDef ) {
+			for ( int t = this.nTiles - 1 ; 0 <= t ; t-- ) {
+				if ( null != tileDef[ t ] && ( InvCompTransf.NONE != ( ( Integer ) tileDef[ t ] ).intValue ( ) ) ) {
 					return true;
 				}
 			}

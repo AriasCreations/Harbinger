@@ -9,7 +9,7 @@ public class ServerTickEvent extends Event {
 	public static final int FREQUENCY = 5;
 
 	@Override
-	public boolean isCancellable() {
+	public boolean isCancellable ( ) {
 		return false;
 	}
 }

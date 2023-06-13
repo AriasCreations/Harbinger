@@ -11,7 +11,7 @@
  *
  *
  * COPYRIGHT:
- * 
+ *
  * This software module was originally developed by Rapha�l Grosbois and
  * Diego Santa Cruz (Swiss Federal Institute of Technology-EPFL); Joel
  * Askel�f (Ericsson Radio Systems AB); and Bertrand Berthelot, David
@@ -38,7 +38,7 @@
  * using this software module for non JPEG 2000 Standard conforming
  * products. This copyright notice must be included in all copies or
  * derivative works of this software module.
- * 
+ *
  * Copyright (c) 1999/2000 JJ2000 Partners.
  */
 package dev.zontreck.harbinger.thirdparty.jj2000.j2k.wavelet;
@@ -48,126 +48,130 @@ package dev.zontreck.harbinger.thirdparty.jj2000.j2k.wavelet;
  * itself. This interface defines only the commonalities between the analysis
  * and synthesis filters. The AnWTFilter and SynWTFilter classes provide the
  * specifics of analysis and synthesis filters.
- * 
+ *
  * <p>
  * Both analysis and filters must be able to return the extent of the negative
  * and positive support for both synthesis and analysis sides. This simplifies
  * the sue of some functionalities that need extra information about the
  * filters.
- * 
+ *
  * @see dev.zontreck.harbinger.thirdparty.jj2000.j2k.wavelet.analysis.AnWTFilter
  * @see dev.zontreck.harbinger.thirdparty.jj2000.j2k.wavelet.synthesis.SynWTFilter
  */
-public interface WaveletFilter
-{
+public interface WaveletFilter {
 
-	/** The ID for integer lifting spteps implementations */
+	/**
+	 * The ID for integer lifting spteps implementations
+	 */
 	int WT_FILTER_INT_LIFT = 0;
 
-	/** The ID for floating-point lifting spteps implementations */
+	/**
+	 * The ID for floating-point lifting spteps implementations
+	 */
 	int WT_FILTER_FLOAT_LIFT = 1;
 
-	/** The ID for floatring-poitn convolution implementations */
+	/**
+	 * The ID for floatring-poitn convolution implementations
+	 */
 	int WT_FILTER_FLOAT_CONVOL = 2;
 
 	/**
 	 * Returns the negative support of the low-pass analysis filter. That is the
 	 * number of taps of the filter in the negative direction.
-	 * 
+	 *
 	 * @return The number of taps of the low-pass analysis filter in the
-	 *         negative direction
+	 * negative direction
 	 */
-	int getAnLowNegSupport();
+	int getAnLowNegSupport ( );
 
 	/**
 	 * Returns the positive support of the low-pass analysis filter. That is the
 	 * number of taps of the filter in the negative direction.
-	 * 
+	 *
 	 * @return The number of taps of the low-pass analysis filter in the
-	 *         positive direction
+	 * positive direction
 	 */
-	int getAnLowPosSupport();
+	int getAnLowPosSupport ( );
 
 	/**
 	 * Returns the negative support of the high-pass analysis filter. That is
 	 * the number of taps of the filter in the negative direction.
-	 * 
+	 *
 	 * @return The number of taps of the high-pass analysis filter in the
-	 *         negative direction
+	 * negative direction
 	 */
-	int getAnHighNegSupport();
+	int getAnHighNegSupport ( );
 
 	/**
 	 * Returns the positive support of the high-pass analysis filter. That is
 	 * the number of taps of the filter in the negative direction.
-	 * 
+	 *
 	 * @return The number of taps of the high-pass analysis filter in the
-	 *         positive direction
+	 * positive direction
 	 */
-	int getAnHighPosSupport();
+	int getAnHighPosSupport ( );
 
 	/**
 	 * Returns the negative support of the low-pass synthesis filter. That is
 	 * the number of taps of the filter in the negative direction.
-	 * 
+	 *
 	 * @return The number of taps of the low-pass synthesis filter in the
-	 *         negative direction
+	 * negative direction
 	 */
-	int getSynLowNegSupport();
+	int getSynLowNegSupport ( );
 
 	/**
 	 * Returns the positive support of the low-pass synthesis filter. That is
 	 * the number of taps of the filter in the negative direction.
-	 * 
+	 *
 	 * @return The number of taps of the low-pass synthesis filter in the
-	 *         positive direction
+	 * positive direction
 	 */
-	int getSynLowPosSupport();
+	int getSynLowPosSupport ( );
 
 	/**
 	 * Returns the negative support of the high-pass synthesis filter. That is
 	 * the number of taps of the filter in the negative direction.
-	 * 
+	 *
 	 * @return The number of taps of the high-pass synthesis filter in the
-	 *         negative direction
+	 * negative direction
 	 */
-	int getSynHighNegSupport();
+	int getSynHighNegSupport ( );
 
 	/**
 	 * Returns the positive support of the high-pass synthesis filter. That is
 	 * the number of taps of the filter in the negative direction.
-	 * 
+	 *
 	 * @return The number of taps of the high-pass synthesis filter in the
-	 *         positive direction
+	 * positive direction
 	 */
-	int getSynHighPosSupport();
+	int getSynHighPosSupport ( );
 
 	/**
 	 * Returns the implementation type of this filter, as defined in this class,
 	 * such as WT_FILTER_INT_LIFT, WT_FILTER_FLOAT_LIFT, WT_FILTER_FLOAT_CONVOL.
-	 * 
+	 *
 	 * @return The implementation type of this filter: WT_FILTER_INT_LIFT,
-	 *         WT_FILTER_FLOAT_LIFT, WT_FILTER_FLOAT_CONVOL.
+	 * WT_FILTER_FLOAT_LIFT, WT_FILTER_FLOAT_CONVOL.
 	 */
-	int getImplType();
+	int getImplType ( );
 
 	/**
 	 * Returns the type of data on which this filter works, as defined in the
 	 * DataBlk interface.
-	 * 
+	 *
 	 * @return The type of data as defined in the DataBlk interface.
-	 * 
 	 * @see dev.zontreck.harbinger.thirdparty.jj2000.j2k.image.DataBlk
 	 */
-	int getDataType();
+	int getDataType ( );
 
 	/**
 	 * Returns the reversibility of the filter. A filter is considered
 	 * reversible if it is suitable for lossless coding.
-	 * 
+	 *
 	 * @return true if the filter is reversible, false otherwise.
 	 */
-	boolean isReversible();
+	boolean isReversible ( );
 
 	/**
 	 * Returns true if the wavelet filter computes or uses the same "inner"
@@ -177,27 +181,21 @@ public interface WaveletFilter
 	 * this applies only with respect to the coefficient that are not affected
 	 * by image boundaries processings such as symmetric extension, since there
 	 * is not reference method for this.
-	 * 
+	 *
 	 * <p>
 	 * The result depends on the length of the allowed overlap when compared to
 	 * the overlap required by the wavelet filter. It also depends on how
 	 * overlap processing is implemented in the wavelet filter.
-	 * 
-	 * @param tailOvrlp
-	 *            This is the number of samples in the input signal before the
-	 *            first sample to filter that can be used for overlap.
-	 * 
-	 * @param headOvrlp
-	 *            This is the number of samples in the input signal after the
-	 *            last sample to filter that can be used for overlap.
-	 * 
-	 * @param inLen
-	 *            This is the lenght of the input signal to filter.The required
-	 *            number of samples in the input signal after the last sample
-	 *            depends on the length of the input signal.
-	 * 
+	 *
+	 * @param tailOvrlp This is the number of samples in the input signal before the
+	 *                  first sample to filter that can be used for overlap.
+	 * @param headOvrlp This is the number of samples in the input signal after the
+	 *                  last sample to filter that can be used for overlap.
+	 * @param inLen     This is the lenght of the input signal to filter.The required
+	 *                  number of samples in the input signal after the last sample
+	 *                  depends on the length of the input signal.
 	 * @return true if the overlaps are large enough and correct processing is
-	 *         performed, false otherwise.
+	 * performed, false otherwise.
 	 */
-	boolean isSameAsFullWT(int tailOvrlp, int headOvrlp, int inLen);
+	boolean isSameAsFullWT ( int tailOvrlp , int headOvrlp , int inLen );
 }

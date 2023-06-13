@@ -68,7 +68,7 @@ public class CBlkWTDataFloat extends CBlkWTData {
 	 * @see DataBlk#TYPE_FLOAT
 	 */
 	@Override
-	public final int getDataType() {
+	public final int getDataType ( ) {
 		return DataBlk.TYPE_FLOAT;
 	}
 
@@ -79,16 +79,7 @@ public class CBlkWTDataFloat extends CBlkWTData {
 	 * @return The array of data (a float[]) or null if there is no data.
 	 */
 	@Override
-	public final Object getData() {
-		return this.data;
-	}
-
-	/**
-	 * Returns the array containing the data, or null if there is no data array.
-	 *
-	 * @return The array of data or null if there is no data.
-	 */
-	public final float[] getDataFloat() {
+	public final Object getData ( ) {
 		return this.data;
 	}
 
@@ -100,8 +91,17 @@ public class CBlkWTDataFloat extends CBlkWTData {
 	 * @param arr The data array to use. Must be a float array.
 	 */
 	@Override
-	public final void setData(final Object arr) {
-		this.data = (float[]) arr;
+	public final void setData ( final Object arr ) {
+		this.data = ( float[] ) arr;
+	}
+
+	/**
+	 * Returns the array containing the data, or null if there is no data array.
+	 *
+	 * @return The array of data or null if there is no data.
+	 */
+	public final float[] getDataFloat ( ) {
+		return this.data;
 	}
 
 	/**
@@ -111,7 +111,7 @@ public class CBlkWTDataFloat extends CBlkWTData {
 	 *
 	 * @param arr The data array to use.
 	 */
-	public final void setDataFloat(final float[] arr) {
+	public final void setDataFloat ( final float[] arr ) {
 		this.data = arr;
 	}
 }

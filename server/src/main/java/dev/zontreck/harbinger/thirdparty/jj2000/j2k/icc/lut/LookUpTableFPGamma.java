@@ -12,38 +12,36 @@ import dev.zontreck.harbinger.thirdparty.jj2000.j2k.icc.tags.ICCCurveType;
 
 /**
  * Class Description
- * 
- * @version 1.0
+ *
  * @author Bruce A. Kern
+ * @version 1.0
  */
 
-public class LookUpTableFPGamma extends LookUpTableFP
-{
+public class LookUpTableFPGamma extends LookUpTableFP {
 
-	double dfE = -1;
+	double dfE = - 1;
 
 	// private static final String eol = System.getProperty("line.separator");
 
-	public LookUpTableFPGamma(final ICCCurveType curve, // Pointer to the curve data
-							  final int dwNumInput // Number of input values in created LUT
-	)
-	{
-		super(curve, dwNumInput);
+	public LookUpTableFPGamma (
+			final ICCCurveType curve , // Pointer to the curve data
+			final int dwNumInput // Number of input values in created LUT
+	) {
+		super ( curve , dwNumInput );
 
 		// Gamma exponent for inverse transformation
-		this.dfE = ICCCurveType.CurveGammaToDouble(curve.entry(0));
-		for (int i = 0; i < dwNumInput; i++)
-			this.lut[i] = (float) Math.pow((double) i / (dwNumInput - 1), this.dfE);
+		this.dfE = ICCCurveType.CurveGammaToDouble ( curve.entry ( 0 ) );
+		for ( int i = 0 ; i < dwNumInput ; i++ )
+			this.lut[ i ] = ( float ) Math.pow ( ( double ) i / ( dwNumInput - 1 ) , this.dfE );
 	}
 
 	/**
 	 * Create an abbreviated string representation of a 16 bit lut.
-	 * 
+	 *
 	 * @return the lut as a String
 	 */
 	@Override
-	public String toString()
-	{
+	public String toString ( ) {
 		final String rep = "[LookUpTableGamma " + "dfe= " + this.dfE +
 				", nentries= " + this.lut.length +
 				"]";

@@ -10,7 +10,7 @@ import dev.zontreck.ariaslib.events.Event;
 public class MemoryAlteredEvent extends Event {
 
 	@Override
-	public boolean isCancellable() {
+	public boolean isCancellable ( ) {
 		return false;
 	}
 }

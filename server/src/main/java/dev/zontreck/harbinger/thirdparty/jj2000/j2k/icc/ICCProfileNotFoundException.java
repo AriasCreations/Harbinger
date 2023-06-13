@@ -11,31 +11,27 @@ package dev.zontreck.harbinger.thirdparty.jj2000.j2k.icc;
 /**
  * This exception is thrown when an image contains no dev.zontreck.harbinger.thirdparty.jj2000.j2k.icc profile. is incorrect.
  *
- * @version 1.0
  * @author Bruce A. Kern
+ * @version 1.0
  */
 
-public class ICCProfileNotFoundException extends ICCProfileException
-{
+public class ICCProfileNotFoundException extends ICCProfileException {
 	private static final long serialVersionUID = 1L;
 
 	/**
 	 * Contruct with message
-	 * 
-	 * @param msg
-	 *            returned by getMessage()
+	 *
+	 * @param msg returned by getMessage()
 	 */
-	ICCProfileNotFoundException(final String msg)
-	{
-		super(msg);
+	ICCProfileNotFoundException ( final String msg ) {
+		super ( msg );
 	}
 
 	/**
 	 * Empty constructor
 	 */
-	ICCProfileNotFoundException()
-	{
-		super("no dev.zontreck.harbinger.thirdparty.jj2000.j2k.icc profile in image");
+	ICCProfileNotFoundException ( ) {
+		super ( "no dev.zontreck.harbinger.thirdparty.jj2000.j2k.icc profile in image" );
 	}
 
 	/* end class ICCProfileNotFoundException */

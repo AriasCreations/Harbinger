@@ -47,21 +47,20 @@ package dev.zontreck.harbinger.thirdparty.jj2000.j2k.io;
 /**
  * This interface defines constants for the two types of byte ordering: little-
  * and big-endian.
- * 
- * <P>
+ *
+ * <p>
  * Little-endian is least significant byte first.
- * 
- * <P>
+ *
+ * <p>
  * Big-endian is most significant byte first.
- * 
- * <P>
+ *
+ * <p>
  * This interface defines the constants only. In order to use the constants in
  * any other class you can either use the fully qualified name (e.g.,
  * <tt>EndianType.LITTLE_ENDIAN</tt>) or declare this interface in the
  * implements clause of the class and then access the identifier directly.
  */
-public interface EndianType
-{
+public interface EndianType {
 
 	/**
 	 * Identifier for big-endian byte ordering (i.e. most significant byte

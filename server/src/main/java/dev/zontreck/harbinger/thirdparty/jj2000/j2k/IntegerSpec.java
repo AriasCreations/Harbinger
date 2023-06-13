@@ -69,8 +69,8 @@ public class IntegerSpec extends ModuleSpec {
 	 * @param nc   The number of components
 	 * @param type The type of allowed specifications
 	 */
-	public IntegerSpec(final int nt, final int nc, final byte type) {
-		super(nt, nc, type);
+	public IntegerSpec ( final int nt , final int nc , final byte type ) {
+		super ( nt , nc , type );
 	}
 
 	/**
@@ -85,74 +85,80 @@ public class IntegerSpec extends ModuleSpec {
 	 * @param pl      The ParameterList instance
 	 * @param optName The name of the option to process
 	 */
-	public IntegerSpec(final int nt, final int nc, final byte type, final ParameterList pl, final String optName) {
-		super(nt, nc, type);
+	public IntegerSpec ( final int nt , final int nc , final byte type , final ParameterList pl , final String optName ) {
+		super ( nt , nc , type );
 
 		Integer value;
-		String param = pl.getParameter(optName);
+		String param = pl.getParameter ( optName );
 
-		if (null == param) { // No parameter specified
-			param = pl.getDefaultParameterList().getParameter(optName);
+		if ( null == param ) { // No parameter specified
+			param = pl.getDefaultParameterList ( ).getParameter ( optName );
 			try {
-				this.setDefault(Integer.valueOf(param));
-			} catch (final NumberFormatException e) {
-				throw new IllegalArgumentException("Non recognized value for option -" + optName + ": " + param);
+				this.setDefault ( Integer.valueOf ( param ) );
+			} catch ( final NumberFormatException e ) {
+				throw new IllegalArgumentException ( "Non recognized value for option -" + optName + ": " + param );
 			}
 			return;
 		}
 
 		// Parse argument
-		final StringTokenizer stk = new StringTokenizer(param);
+		final StringTokenizer stk = new StringTokenizer ( param );
 		String word; // current word
 		byte curSpecType = ModuleSpec.SPEC_DEF; // Specification type of the
 		// current parameter
 		boolean[] tileSpec = null; // Tiles concerned by the specification
 		boolean[] compSpec = null; // Components concerned by the specification
 
-		while (stk.hasMoreTokens()) {
-			word = stk.nextToken();
+		while ( stk.hasMoreTokens ( ) ) {
+			word = stk.nextToken ( );
 
-			switch (word.charAt(0)) {
+			switch ( word.charAt ( 0 ) ) {
 				case 't': // Tiles specification
-					tileSpec = ModuleSpec.parseIdx(word, this.nTiles);
-					if (SPEC_COMP_DEF == curSpecType) {
+					tileSpec = ModuleSpec.parseIdx ( word , this.nTiles );
+					if ( ModuleSpec.SPEC_COMP_DEF == curSpecType ) {
 						curSpecType = ModuleSpec.SPEC_TILE_COMP;
-					} else {
+					}
+					else {
 						curSpecType = ModuleSpec.SPEC_TILE_DEF;
 					}
 					break;
 				case 'c': // Components specification
-					compSpec = ModuleSpec.parseIdx(word, this.nComp);
-					if (SPEC_TILE_DEF == curSpecType) {
+					compSpec = ModuleSpec.parseIdx ( word , this.nComp );
+					if ( ModuleSpec.SPEC_TILE_DEF == curSpecType ) {
 						curSpecType = ModuleSpec.SPEC_TILE_COMP;
-					} else {
+					}
+					else {
 						curSpecType = ModuleSpec.SPEC_COMP_DEF;
 					}
 					break;
 				default:
 					try {
-						value = Integer.valueOf(word);
-					} catch (final NumberFormatException e) {
-						throw new IllegalArgumentException("Non recognized value for option -" + optName + ": " + word);
+						value = Integer.valueOf ( word );
+					} catch (
+							final NumberFormatException e ) {
+						throw new IllegalArgumentException ( "Non recognized value for option -" + optName + ": " + word );
 					}
 
-					if (SPEC_DEF == curSpecType) {
-						this.setDefault(value);
-					} else if (SPEC_TILE_DEF == curSpecType) {
-						for (int i = tileSpec.length - 1; 0 <= i; i--)
-							if (tileSpec[i]) {
-								this.setTileDef(i, value);
+					if ( ModuleSpec.SPEC_DEF == curSpecType ) {
+						this.setDefault ( value );
+					}
+					else if ( ModuleSpec.SPEC_TILE_DEF == curSpecType ) {
+						for ( int i = tileSpec.length - 1 ; 0 <= i ; i-- )
+							if ( tileSpec[ i ] ) {
+								this.setTileDef ( i , value );
 							}
-					} else if (SPEC_COMP_DEF == curSpecType) {
-						for (int i = compSpec.length - 1; 0 <= i; i--)
-							if (compSpec[i]) {
-								this.setCompDef(i, value);
+					}
+					else if ( ModuleSpec.SPEC_COMP_DEF == curSpecType ) {
+						for ( int i = compSpec.length - 1 ; 0 <= i ; i-- )
+							if ( compSpec[ i ] ) {
+								this.setCompDef ( i , value );
 							}
-					} else {
-						for (int i = tileSpec.length - 1; 0 <= i; i--) {
-							for (int j = compSpec.length - 1; 0 <= j; j--) {
-								if (tileSpec[i] && compSpec[j]) {
-									this.setTileCompVal(i, j, value);
+					}
+					else {
+						for ( int i = tileSpec.length - 1 ; 0 <= i ; i-- ) {
+							for ( int j = compSpec.length - 1 ; 0 <= j ; j-- ) {
+								if ( tileSpec[ i ] && compSpec[ j ] ) {
+									this.setTileCompVal ( i , j , value );
 								}
 							}
 						}
@@ -167,11 +173,11 @@ public class IntegerSpec extends ModuleSpec {
 		}
 
 		// Check that default value has been specified
-		if (null == getDefault()) {
+		if ( null == getDefault ( ) ) {
 			int ndefspec = 0;
-			for (int t = nt - 1; 0 <= t; t--) {
-				for (int c = nc - 1; 0 <= c; c--) {
-					if (SPEC_DEF == specValType[t][c]) {
+			for ( int t = nt - 1 ; 0 <= t ; t-- ) {
+				for ( int c = nc - 1 ; 0 <= c ; c-- ) {
+					if ( ModuleSpec.SPEC_DEF == specValType[ t ][ c ] ) {
 						ndefspec++;
 					}
 				}
@@ -179,38 +185,39 @@ public class IntegerSpec extends ModuleSpec {
 
 			// If some tile-component have received no specification, it takes
 			// the default value defined in ParameterList
-			if (0 != ndefspec) {
-				param = pl.getDefaultParameterList().getParameter(optName);
+			if ( 0 != ndefspec ) {
+				param = pl.getDefaultParameterList ( ).getParameter ( optName );
 				try {
-					this.setDefault(Integer.valueOf(param));
-				} catch (final NumberFormatException e) {
-					throw new IllegalArgumentException("Non recognized value for option -" + optName + ": " + param);
+					this.setDefault ( Integer.valueOf ( param ) );
+				} catch ( final NumberFormatException e ) {
+					throw new IllegalArgumentException ( "Non recognized value for option -" + optName + ": " + param );
 				}
-			} else {
+			}
+			else {
 				// All tile-component have been specified, takes the first
 				// tile-component value as default.
-				this.setDefault(this.getTileCompVal(0, 0));
-				switch (this.specValType[0][0]) {
+				this.setDefault ( this.getTileCompVal ( 0 , 0 ) );
+				switch ( this.specValType[ 0 ][ 0 ] ) {
 					case ModuleSpec.SPEC_TILE_DEF:
-						for (int c = nc - 1; 0 <= c; c--) {
-							if (SPEC_TILE_DEF == specValType[0][c])
-								this.specValType[0][c] = ModuleSpec.SPEC_DEF;
+						for ( int c = nc - 1 ; 0 <= c ; c-- ) {
+							if ( ModuleSpec.SPEC_TILE_DEF == specValType[ 0 ][ c ] )
+								this.specValType[ 0 ][ c ] = ModuleSpec.SPEC_DEF;
 						}
-						this.tileDef[0] = null;
+						this.tileDef[ 0 ] = null;
 						break;
 					case ModuleSpec.SPEC_COMP_DEF:
-						for (int t = nt - 1; 0 <= t; t--) {
-							if (SPEC_COMP_DEF == specValType[t][0])
-								this.specValType[t][0] = ModuleSpec.SPEC_DEF;
+						for ( int t = nt - 1 ; 0 <= t ; t-- ) {
+							if ( ModuleSpec.SPEC_COMP_DEF == specValType[ t ][ 0 ] )
+								this.specValType[ t ][ 0 ] = ModuleSpec.SPEC_DEF;
 						}
-						this.compDef[0] = null;
+						this.compDef[ 0 ] = null;
 						break;
 					case ModuleSpec.SPEC_TILE_COMP:
-						this.specValType[0][0] = ModuleSpec.SPEC_DEF;
-						this.tileCompVal.put("t0c0", null);
+						this.specValType[ 0 ][ 0 ] = ModuleSpec.SPEC_DEF;
+						this.tileCompVal.put ( "t0c0" , null );
 						break;
 					default:
-						throw new InvalidParameterException("Invalid spec Type: " + this.specValType[0][0]);
+						throw new InvalidParameterException ( "Invalid spec Type: " + this.specValType[ 0 ][ 0 ] );
 				}
 			}
 		}
@@ -222,14 +229,14 @@ public class IntegerSpec extends ModuleSpec {
 	 *
 	 * @return The maximum value
 	 */
-	public int getMax() {
-		int max = ((Integer) this.def).intValue();
+	public int getMax ( ) {
+		int max = ( ( Integer ) this.def ).intValue ( );
 		int tmp;
 
-		for (int t = 0; t < this.nTiles; t++) {
-			for (int c = 0; c < this.nComp; c++) {
-				tmp = ((Integer) this.getSpec(t, c)).intValue();
-				if (max < tmp)
+		for ( int t = 0 ; t < this.nTiles ; t++ ) {
+			for ( int c = 0 ; c < this.nComp ; c++ ) {
+				tmp = ( ( Integer ) this.getSpec ( t , c ) ).intValue ( );
+				if ( max < tmp )
 					max = tmp;
 			}
 		}
@@ -242,14 +249,14 @@ public class IntegerSpec extends ModuleSpec {
 	 *
 	 * @return The minimum value
 	 */
-	public int getMin() {
-		int min = ((Integer) this.def).intValue();
+	public int getMin ( ) {
+		int min = ( ( Integer ) this.def ).intValue ( );
 		int tmp;
 
-		for (int t = 0; t < this.nTiles; t++) {
-			for (int c = 0; c < this.nComp; c++) {
-				tmp = ((Integer) this.getSpec(t, c)).intValue();
-				if (min > tmp)
+		for ( int t = 0 ; t < this.nTiles ; t++ ) {
+			for ( int c = 0 ; c < this.nComp ; c++ ) {
+				tmp = ( ( Integer ) this.getSpec ( t , c ) ).intValue ( );
+				if ( min > tmp )
 					min = tmp;
 			}
 		}
@@ -263,13 +270,13 @@ public class IntegerSpec extends ModuleSpec {
 	 * @param c The component index
 	 * @return The maximum value
 	 */
-	public int getMaxInComp(final int c) {
+	public int getMaxInComp ( final int c ) {
 		int max = 0;
 		int tmp;
 
-		for (int t = 0; t < this.nTiles; t++) {
-			tmp = ((Integer) this.getSpec(t, c)).intValue();
-			if (max < tmp)
+		for ( int t = 0 ; t < this.nTiles ; t++ ) {
+			tmp = ( ( Integer ) this.getSpec ( t , c ) ).intValue ( );
+			if ( max < tmp )
 				max = tmp;
 		}
 
@@ -282,13 +289,13 @@ public class IntegerSpec extends ModuleSpec {
 	 * @param c The component index
 	 * @return The minimum value
 	 */
-	public int getMinInComp(final int c) {
+	public int getMinInComp ( final int c ) {
 		int min = IntegerSpec.MAX_INT; // Big value
 		int tmp;
 
-		for (int t = 0; t < this.nTiles; t++) {
-			tmp = ((Integer) this.getSpec(t, c)).intValue();
-			if (min > tmp)
+		for ( int t = 0 ; t < this.nTiles ; t++ ) {
+			tmp = ( ( Integer ) this.getSpec ( t , c ) ).intValue ( );
+			if ( min > tmp )
 				min = tmp;
 		}
 
@@ -301,13 +308,13 @@ public class IntegerSpec extends ModuleSpec {
 	 * @param t The tile index
 	 * @return The maximum value
 	 */
-	public int getMaxInTile(final int t) {
+	public int getMaxInTile ( final int t ) {
 		int max = 0;
 		int tmp;
 
-		for (int c = 0; c < this.nComp; c++) {
-			tmp = ((Integer) this.getSpec(t, c)).intValue();
-			if (max < tmp)
+		for ( int c = 0 ; c < this.nComp ; c++ ) {
+			tmp = ( ( Integer ) this.getSpec ( t , c ) ).intValue ( );
+			if ( max < tmp )
 				max = tmp;
 		}
 
@@ -320,13 +327,13 @@ public class IntegerSpec extends ModuleSpec {
 	 * @param t The tile index
 	 * @return The minimum value
 	 */
-	public int getMinInTile(final int t) {
+	public int getMinInTile ( final int t ) {
 		int min = IntegerSpec.MAX_INT; // Big value
 		int tmp;
 
-		for (int c = 0; c < this.nComp; c++) {
-			tmp = ((Integer) this.getSpec(t, c)).intValue();
-			if (min > tmp)
+		for ( int c = 0 ; c < this.nComp ; c++ ) {
+			tmp = ( ( Integer ) this.getSpec ( t , c ) ).intValue ( );
+			if ( min > tmp )
 				min = tmp;
 		}
 

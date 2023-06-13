@@ -42,103 +42,75 @@
  */
 package dev.zontreck.harbinger.thirdparty.jj2000.j2k.io;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 
 /**
  * This class defines a Buffered Random Access File, where all I/O is considered
  * to be big-endian. It extends the <tt>BufferedRandomAccessFile</tt> class.
- * 
+ *
  * @see RandomAccessIO
  * @see BinaryDataOutput
  * @see BinaryDataInput
  * @see BufferedRandomAccessFile
  */
-public class BEBufferedRandomAccessFile extends BufferedRandomAccessFile
-{
+public class BEBufferedRandomAccessFile extends BufferedRandomAccessFile {
 
 	/**
 	 * Constructor. Always needs a size for the buffer.
-	 * 
-	 * @param file
-	 *            The file associated with the buffer
-	 * 
-	 * @param mode
-	 *            "r" for read, "rw" or "rw+" for read and write mode ("rw+"
-	 *            opens the file for update whereas "rw" removes it before. So
-	 *            the 2 modes are different only if the file already exists).
-	 * 
-	 * @param bufferSize
-	 *            The number of bytes to buffer
-	 * 
-	 * @exception java.io.IOException
-	 *                If an I/O error occurred.
+	 *
+	 * @param file       The file associated with the buffer
+	 * @param mode       "r" for read, "rw" or "rw+" for read and write mode ("rw+"
+	 *                   opens the file for update whereas "rw" removes it before. So
+	 *                   the 2 modes are different only if the file already exists).
+	 * @param bufferSize The number of bytes to buffer
+	 * @throws java.io.IOException If an I/O error occurred.
 	 */
-	public BEBufferedRandomAccessFile(final File file, final String mode, final int bufferSize) throws IOException
-	{
-		super(file, mode, bufferSize);
+	public BEBufferedRandomAccessFile ( final File file , final String mode , final int bufferSize ) throws IOException {
+		super ( file , mode , bufferSize );
 		this.byteOrdering = EndianType.BIG_ENDIAN;
 	}
 
 	/**
 	 * Constructor. Uses the default value for the byte-buffer size (512 bytes).
-	 * 
-	 * @param file
-	 *            The file associated with the buffer
-	 * 
-	 * @param mode
-	 *            "r" for read, "rw" or "rw+" for read and write mode ("rw+"
-	 *            opens the file for update whereas "rw" removes it before. So
-	 *            the 2 modes are different only if the file already exists).
-	 * 
-	 * @exception java.io.IOException
-	 *                If an I/O error occurred.
+	 *
+	 * @param file The file associated with the buffer
+	 * @param mode "r" for read, "rw" or "rw+" for read and write mode ("rw+"
+	 *             opens the file for update whereas "rw" removes it before. So
+	 *             the 2 modes are different only if the file already exists).
+	 * @throws java.io.IOException If an I/O error occurred.
 	 */
-	public BEBufferedRandomAccessFile(final File file, final String mode) throws IOException
-	{
-		super(file, mode);
+	public BEBufferedRandomAccessFile ( final File file , final String mode ) throws IOException {
+		super ( file , mode );
 		this.byteOrdering = EndianType.BIG_ENDIAN;
 	}
 
 	/**
 	 * Constructor. Always needs a size for the buffer.
-	 * 
-	 * @param name
-	 *            The name of the file associated with the buffer
-	 * 
-	 * @param mode
-	 *            "r" for read, "rw" or "rw+" for read and write mode ("rw+"
-	 *            opens the file for update whereas "rw" removes it before. So
-	 *            the 2 modes are different only if the file already exists).
-	 * 
-	 * @param bufferSize
-	 *            The number of bytes to buffer
-	 * 
-	 * @exception java.io.IOException
-	 *                If an I/O error occurred.
+	 *
+	 * @param name       The name of the file associated with the buffer
+	 * @param mode       "r" for read, "rw" or "rw+" for read and write mode ("rw+"
+	 *                   opens the file for update whereas "rw" removes it before. So
+	 *                   the 2 modes are different only if the file already exists).
+	 * @param bufferSize The number of bytes to buffer
+	 * @throws java.io.IOException If an I/O error occurred.
 	 */
-	public BEBufferedRandomAccessFile(final String name, final String mode, final int bufferSize) throws IOException
-	{
-		super(name, mode, bufferSize);
+	public BEBufferedRandomAccessFile ( final String name , final String mode , final int bufferSize ) throws IOException {
+		super ( name , mode , bufferSize );
 		this.byteOrdering = EndianType.BIG_ENDIAN;
 	}
 
 	/**
 	 * Constructor. Uses the default value for the byte-buffer size (512 bytes).
-	 * 
-	 * @param name
-	 *            The name of the file associated with the buffer
-	 * 
-	 * @param mode
-	 *            "r" for read, "rw" or "rw+" for read and write mode ("rw+"
-	 *            opens the file for update whereas "rw" removes it before. So
-	 *            the 2 modes are different only if the file already exists).
-	 * 
-	 * @exception java.io.IOException
-	 *                If an I/O error occurred.
+	 *
+	 * @param name The name of the file associated with the buffer
+	 * @param mode "r" for read, "rw" or "rw+" for read and write mode ("rw+"
+	 *             opens the file for update whereas "rw" removes it before. So
+	 *             the 2 modes are different only if the file already exists).
+	 * @throws java.io.IOException If an I/O error occurred.
 	 */
-	public BEBufferedRandomAccessFile(final String name, final String mode) throws IOException
-	{
-		super(name, mode);
+	public BEBufferedRandomAccessFile ( final String name , final String mode ) throws IOException {
+		super ( name , mode );
 		this.byteOrdering = EndianType.BIG_ENDIAN;
 	}
 
@@ -146,256 +118,208 @@ public class BEBufferedRandomAccessFile extends BufferedRandomAccessFile
 	 * Writes the short value of <tt>v</tt> (i.e., 16 least significant bits) to
 	 * the output. Prior to writing, the output should be realigned at the byte
 	 * level.
-	 * 
+	 *
 	 * <p>
 	 * Signed or unsigned data can be written. To write a signed value just pass
 	 * the <tt>short</tt> value as an argument. To write unsigned data pass the
 	 * <tt>int</tt> value as an argument (it will be automatically casted, and
 	 * only the 16 least significant bits will be written).
-	 * 
-	 * @param v
-	 *            The value to write to the output
-	 * 
-	 * @exception java.io.IOException
-	 *                If an I/O error occurred.
+	 *
+	 * @param v The value to write to the output
+	 * @throws java.io.IOException If an I/O error occurred.
 	 */
 	@Override
-	public final void writeShort(final int v) throws IOException
-	{
-		this.write(v >>> 8);
-		this.write(v);
+	public final void writeShort ( final int v ) throws IOException {
+		this.write ( v >>> 8 );
+		this.write ( v );
 	}
 
 	/**
 	 * Writes the int value of <tt>v</tt> (i.e., the 32 bits) to the output.
 	 * Prior to writing, the output should be realigned at the byte level.
-	 * 
-	 * @param v
-	 *            The value to write to the output
-	 * 
-	 * @exception java.io.IOException
-	 *                If an I/O error occurred.
+	 *
+	 * @param v The value to write to the output
+	 * @throws java.io.IOException If an I/O error occurred.
 	 */
 	@Override
-	public final void writeInt(final int v) throws IOException
-	{
-		this.write(v >>> 24);
-		this.write(v >>> 16);
-		this.write(v >>> 8);
-		this.write(v);
+	public final void writeInt ( final int v ) throws IOException {
+		this.write ( v >>> 24 );
+		this.write ( v >>> 16 );
+		this.write ( v >>> 8 );
+		this.write ( v );
 	}
 
 	/**
 	 * Writes the long value of <tt>v</tt> (i.e., the 64 bits) to the output.
 	 * Prior to writing, the output should be realigned at the byte level.
-	 * 
-	 * @param v
-	 *            The value to write to the output
-	 * 
-	 * @exception java.io.IOException
-	 *                If an I/O error occurred.
+	 *
+	 * @param v The value to write to the output
+	 * @throws java.io.IOException If an I/O error occurred.
 	 */
 	@Override
-	public final void writeLong(final long v) throws IOException
-	{
-		this.write((int) (v >>> 56));
-		this.write((int) (v >>> 48));
-		this.write((int) (v >>> 40));
-		this.write((int) (v >>> 32));
-		this.write((int) (v >>> 24));
-		this.write((int) (v >>> 16));
-		this.write((int) (v >>> 8));
-		this.write((int) v);
+	public final void writeLong ( final long v ) throws IOException {
+		this.write ( ( int ) ( v >>> 56 ) );
+		this.write ( ( int ) ( v >>> 48 ) );
+		this.write ( ( int ) ( v >>> 40 ) );
+		this.write ( ( int ) ( v >>> 32 ) );
+		this.write ( ( int ) ( v >>> 24 ) );
+		this.write ( ( int ) ( v >>> 16 ) );
+		this.write ( ( int ) ( v >>> 8 ) );
+		this.write ( ( int ) v );
 	}
 
 	/**
 	 * Writes the IEEE float value <tt>v</tt> (i.e., 32 bits) to the output.
 	 * Prior to writing, the output should be realigned at the byte level.
-	 * 
-	 * @param v
-	 *            The value to write to the output
-	 * 
-	 * @exception java.io.IOException
-	 *                If an I/O error occurred.
+	 *
+	 * @param v The value to write to the output
+	 * @throws java.io.IOException If an I/O error occurred.
 	 */
 	@Override
-	public final void writeFloat(final float v) throws IOException
-	{
-		final int intV = Float.floatToIntBits(v);
+	public final void writeFloat ( final float v ) throws IOException {
+		final int intV = Float.floatToIntBits ( v );
 
-		this.write(intV >>> 24);
-		this.write(intV >>> 16);
-		this.write(intV >>> 8);
-		this.write(intV);
+		this.write ( intV >>> 24 );
+		this.write ( intV >>> 16 );
+		this.write ( intV >>> 8 );
+		this.write ( intV );
 	}
 
 	/**
 	 * Writes the IEEE double value <tt>v</tt> (i.e., 64 bits) to the output.
 	 * Prior to writing, the output should be realigned at the byte level.
-	 * 
-	 * @param v
-	 *            The value to write to the output
-	 * 
-	 * @exception java.io.IOException
-	 *                If an I/O error occurred.
+	 *
+	 * @param v The value to write to the output
+	 * @throws java.io.IOException If an I/O error occurred.
 	 */
 	@Override
-	public final void writeDouble(final double v) throws IOException
-	{
-		final long longV = Double.doubleToLongBits(v);
+	public final void writeDouble ( final double v ) throws IOException {
+		final long longV = Double.doubleToLongBits ( v );
 
-		this.write((int) (longV >>> 56));
-		this.write((int) (longV >>> 48));
-		this.write((int) (longV >>> 40));
-		this.write((int) (longV >>> 32));
-		this.write((int) (longV >>> 24));
-		this.write((int) (longV >>> 16));
-		this.write((int) (longV >>> 8));
-		this.write((int) (longV));
+		this.write ( ( int ) ( longV >>> 56 ) );
+		this.write ( ( int ) ( longV >>> 48 ) );
+		this.write ( ( int ) ( longV >>> 40 ) );
+		this.write ( ( int ) ( longV >>> 32 ) );
+		this.write ( ( int ) ( longV >>> 24 ) );
+		this.write ( ( int ) ( longV >>> 16 ) );
+		this.write ( ( int ) ( longV >>> 8 ) );
+		this.write ( ( int ) ( longV ) );
 	}
 
 	/**
 	 * Reads a signed short (i.e. 16 bit) from the input. Prior to reading, the
 	 * input should be realigned at the byte level.
-	 * 
+	 *
 	 * @return The next byte-aligned signed short (16 bit) from the input.
-	 * 
-	 * @exception java.io.EOFException
-	 *                If the end-of file was reached before getting all the
-	 *                necessary data.
-	 * 
-	 * @exception java.io.IOException
-	 *                If an I/O error occurred.
+	 * @throws java.io.EOFException If the end-of file was reached before getting all the
+	 *                              necessary data.
+	 * @throws java.io.IOException  If an I/O error occurred.
 	 */
 	@Override
-	public final short readShort() throws IOException {
-		return (short) ((this.read() << 8) | (this.read()));
+	public final short readShort ( ) throws IOException {
+		return ( short ) ( ( this.read ( ) << 8 ) | ( this.read ( ) ) );
 	}
 
 	/**
 	 * Reads an unsigned short (i.e., 16 bit) from the input. It is returned as
 	 * an <tt>int</tt> since Java does not have an unsigned short type. Prior to
 	 * reading, the input should be realigned at the byte level.
-	 * 
+	 *
 	 * @return The next byte-aligned unsigned short (16 bit) from the input, as
-	 *         an <tt>int</tt>.
-	 * 
-	 * @exception java.io.EOFException
-	 *                If the end-of file was reached before getting all the
-	 *                necessary data.
-	 * 
-	 * @exception java.io.IOException
-	 *                If an I/O error occurred.
+	 * an <tt>int</tt>.
+	 * @throws java.io.EOFException If the end-of file was reached before getting all the
+	 *                              necessary data.
+	 * @throws java.io.IOException  If an I/O error occurred.
 	 */
 	@Override
-	public final int readUnsignedShort() throws IOException {
-		return ((this.read() << 8) | this.read());
+	public final int readUnsignedShort ( ) throws IOException {
+		return ( ( this.read ( ) << 8 ) | this.read ( ) );
 	}
 
 	/**
 	 * Reads a signed int (i.e., 32 bit) from the input. Prior to reading, the
 	 * input should be realigned at the byte level.
-	 * 
+	 *
 	 * @return The next byte-aligned signed int (32 bit) from the input.
-	 * 
-	 * @exception java.io.EOFException
-	 *                If the end-of file was reached before getting all the
-	 *                necessary data.
-	 * 
-	 * @exception java.io.IOException
-	 *                If an I/O error occurred.
+	 * @throws java.io.EOFException If the end-of file was reached before getting all the
+	 *                              necessary data.
+	 * @throws java.io.IOException  If an I/O error occurred.
 	 */
 	@Override
-	public final int readInt() throws IOException {
-		return ((this.read() << 24) | (this.read() << 16) | (this.read() << 8) | this.read());
+	public final int readInt ( ) throws IOException {
+		return ( ( this.read ( ) << 24 ) | ( this.read ( ) << 16 ) | ( this.read ( ) << 8 ) | this.read ( ) );
 	}
 
 	/**
 	 * Reads an unsigned int (i.e., 32 bit) from the input. It is returned as a
 	 * <tt>long</tt> since Java does not have an unsigned short type. Prior to
 	 * reading, the input should be realigned at the byte level.
-	 * 
+	 *
 	 * @return The next byte-aligned unsigned int (32 bit) from the input, as a
-	 *         <tt>long</tt>.
-	 * 
-	 * @exception java.io.EOFException
-	 *                If the end-of file was reached before getting all the
-	 *                necessary data.
-	 * 
-	 * @exception java.io.IOException
-	 *                If an I/O error occurred.
+	 * <tt>long</tt>.
+	 * @throws java.io.EOFException If the end-of file was reached before getting all the
+	 *                              necessary data.
+	 * @throws java.io.IOException  If an I/O error occurred.
 	 */
 	@Override
-	public final long readUnsignedInt() throws IOException {
-		return (((long) this.read() << 24) | ((long) this.read() << 16) | ((long) this.read() << 8) | this.read());
+	public final long readUnsignedInt ( ) throws IOException {
+		return ( ( ( long ) this.read ( ) << 24 ) | ( ( long ) this.read ( ) << 16 ) | ( ( long ) this.read ( ) << 8 ) | this.read ( ) );
 	}
 
 	/**
 	 * Reads a signed long (i.e., 64 bit) from the input. Prior to reading, the
 	 * input should be realigned at the byte level.
-	 * 
+	 *
 	 * @return The next byte-aligned signed long (64 bit) from the input.
-	 * 
-	 * @exception java.io.EOFException
-	 *                If the end-of file was reached before getting all the
-	 *                necessary data.
-	 * 
-	 * @exception java.io.IOException
-	 *                If an I/O error occurred.
+	 * @throws java.io.EOFException If the end-of file was reached before getting all the
+	 *                              necessary data.
+	 * @throws java.io.IOException  If an I/O error occurred.
 	 */
 	@Override
-	public final long readLong() throws IOException {
-		return (((long) this.read() << 56) | ((long) this.read() << 48) | ((long) this.read() << 40) | ((long) this.read() << 32)
-				| ((long) this.read() << 24) | ((long) this.read() << 16) | ((long) this.read() << 8) | this.read());
+	public final long readLong ( ) throws IOException {
+		return (
+				( ( long ) this.read ( ) << 56 ) | ( ( long ) this.read ( ) << 48 ) | ( ( long ) this.read ( ) << 40 ) | ( ( long ) this.read ( ) << 32 )
+						| ( ( long ) this.read ( ) << 24 ) | ( ( long ) this.read ( ) << 16 ) | ( ( long ) this.read ( ) << 8 ) | this.read ( )
+		);
 	}
 
 	/**
 	 * Reads an IEEE single precision (i.e., 32 bit) floating-point number from
 	 * the input. Prior to reading, the input should be realigned at the byte
 	 * level.
-	 * 
+	 *
 	 * @return The next byte-aligned IEEE float (32 bit) from the input.
-	 * 
-	 * @exception java.io.EOFException
-	 *                If the end-of file was reached before getting all the
-	 *                necessary data.
-	 * 
-	 * @exception java.io.IOException
-	 *                If an I/O error occurred.
+	 * @throws java.io.EOFException If the end-of file was reached before getting all the
+	 *                              necessary data.
+	 * @throws java.io.IOException  If an I/O error occurred.
 	 */
 	@Override
-	public final float readFloat() throws IOException
-	{
-		return Float.intBitsToFloat((this.read() << 24) | (this.read() << 16) | (this.read() << 8) | (this.read()));
+	public final float readFloat ( ) throws IOException {
+		return Float.intBitsToFloat ( ( this.read ( ) << 24 ) | ( this.read ( ) << 16 ) | ( this.read ( ) << 8 ) | ( this.read ( ) ) );
 	}
 
 	/**
 	 * Reads an IEEE double precision (i.e., 64 bit) floating-point number from
 	 * the input. Prior to reading, the input should be realigned at the byte
 	 * level.
-	 * 
+	 *
 	 * @return The next byte-aligned IEEE double (64 bit) from the input.
-	 * 
-	 * @exception java.io.EOFException
-	 *                If the end-of file was reached before getting all the
-	 *                necessary data.
-	 * 
-	 * @exception java.io.IOException
-	 *                If an I/O error occurred.
+	 * @throws java.io.EOFException If the end-of file was reached before getting all the
+	 *                              necessary data.
+	 * @throws java.io.IOException  If an I/O error occurred.
 	 */
 	@Override
-	public final double readDouble() throws IOException {
-		return Double.longBitsToDouble(((long) this.read() << 56) | ((long) this.read() << 48) | ((long) this.read() << 40)
-				| ((long) this.read() << 32) | ((long) this.read() << 24) | ((long) this.read() << 16) | ((long) this.read() << 8)
-				| (this.read()));
+	public final double readDouble ( ) throws IOException {
+		return Double.longBitsToDouble ( ( ( long ) this.read ( ) << 56 ) | ( ( long ) this.read ( ) << 48 ) | ( ( long ) this.read ( ) << 40 )
+				| ( ( long ) this.read ( ) << 32 ) | ( ( long ) this.read ( ) << 24 ) | ( ( long ) this.read ( ) << 16 ) | ( ( long ) this.read ( ) << 8 )
+				| ( this.read ( ) ) );
 	}
 
 	/**
 	 * Returns a string of information about the file and the endianess
 	 */
 	@Override
-	public String toString()
-	{
-		return super.toString() + "\nBig-Endian ordering";
+	public String toString ( ) {
+		return super.toString ( ) + "\nBig-Endian ordering";
 	}
 }

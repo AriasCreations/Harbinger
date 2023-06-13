@@ -44,15 +44,15 @@ public interface ProgressWatch {
 	/**
 	 * Initialize the progress watching process
 	 */
-	void initProgressWatch(int min, int max, String info);
+	void initProgressWatch ( int min , int max , String info );
 
 	/**
 	 * Update the progress watching process to the specified value
 	 */
-	void updateProgressWatch(int val, String info);
+	void updateProgressWatch ( int val , String info );
 
 	/**
 	 * Terminate the progress watch process
 	 */
-	void terminateProgressWatch();
+	void terminateProgressWatch ( );
 }

@@ -63,8 +63,8 @@ public class StringSpec extends ModuleSpec {
 	 * @param type the type of the specification module i.e. tile specific,
 	 *             component specific or both.
 	 */
-	public StringSpec(final int nt, final int nc, final byte type) {
-		super(nt, nc, type);
+	public StringSpec ( final int nt , final int nc , final byte type ) {
+		super ( nt , nc , type );
 	}
 
 	/**
@@ -77,36 +77,36 @@ public class StringSpec extends ModuleSpec {
 	 * <u>Note:</u> The arguments must not start with 't' or 'c' since it is
 	 * reserved for respectively tile and components indexes specification.
 	 *
-	 * @param nt   The number of tiles
-	 * @param nc   The number of components
-	 * @param type the type of the specification module i.e. tile specific,
-	 *             component specific or both.
+	 * @param nt      The number of tiles
+	 * @param nc      The number of components
+	 * @param type    the type of the specification module i.e. tile specific,
+	 *                component specific or both.
 	 * @param optName of the option using boolean spec.
-	 * @param list The list of all recognized argument in a String array
-	 * @param pl   The ParameterList
+	 * @param list    The list of all recognized argument in a String array
+	 * @param pl      The ParameterList
 	 */
-	public StringSpec(final int nt, final int nc, final byte type, final String optName, final String[] list, final ParameterList pl) {
-		super(nt, nc, type);
+	public StringSpec ( final int nt , final int nc , final byte type , final String optName , final String[] list , final ParameterList pl ) {
+		super ( nt , nc , type );
 
-		String param = pl.getParameter(optName);
+		String param = pl.getParameter ( optName );
 		boolean recognized = false;
 
-		if (null == param) {
-			param = pl.getDefaultParameterList().getParameter(optName);
-			for (int i = list.length - 1; 0 <= i; i--)
-				if (param.equalsIgnoreCase(list[i])) {
+		if ( null == param ) {
+			param = pl.getDefaultParameterList ( ).getParameter ( optName );
+			for ( int i = list.length - 1 ; 0 <= i ; i-- )
+				if ( param.equalsIgnoreCase ( list[ i ] ) ) {
 					recognized = true;
 					break;
 				}
-			if (!recognized)
-				throw new IllegalArgumentException("Default parameter of option -" + optName + " not" + " recognized: "
-						+ param);
-			this.setDefault(param);
+			if ( ! recognized )
+				throw new IllegalArgumentException ( "Default parameter of option -" + optName + " not" + " recognized: "
+						+ param );
+			this.setDefault ( param );
 			return;
 		}
 
 		// Parse argument
-		final StringTokenizer stk = new StringTokenizer(param);
+		final StringTokenizer stk = new StringTokenizer ( param );
 		String word; // current word
 		byte curSpecType = ModuleSpec.SPEC_DEF; // Specification type of the
 		// current parameter
@@ -114,54 +114,59 @@ public class StringSpec extends ModuleSpec {
 		// specification
 		boolean[] compSpec = null; // Components concerned by the specification
 
-		while (stk.hasMoreTokens()) {
-			word = stk.nextToken();
+		while ( stk.hasMoreTokens ( ) ) {
+			word = stk.nextToken ( );
 
-			switch (word.charAt(0)) {
+			switch ( word.charAt ( 0 ) ) {
 				case 't': // Tiles specification
-					tileSpec = ModuleSpec.parseIdx(word, this.nTiles);
-					if (SPEC_COMP_DEF == curSpecType) {
+					tileSpec = ModuleSpec.parseIdx ( word , this.nTiles );
+					if ( ModuleSpec.SPEC_COMP_DEF == curSpecType ) {
 						curSpecType = ModuleSpec.SPEC_TILE_COMP;
-					} else {
+					}
+					else {
 						curSpecType = ModuleSpec.SPEC_TILE_DEF;
 					}
 					break;
 				case 'c': // Components specification
-					compSpec = ModuleSpec.parseIdx(word, this.nComp);
-					if (SPEC_TILE_DEF == curSpecType) {
+					compSpec = ModuleSpec.parseIdx ( word , this.nComp );
+					if ( ModuleSpec.SPEC_TILE_DEF == curSpecType ) {
 						curSpecType = ModuleSpec.SPEC_TILE_COMP;
-					} else
+					}
+					else
 						curSpecType = ModuleSpec.SPEC_COMP_DEF;
 					break;
 				default:
 					recognized = false;
 
-					for (int i = list.length - 1; 0 <= i; i--)
-						if (word.equalsIgnoreCase(list[i])) {
+					for ( int i = list.length - 1 ; 0 <= i ; i-- )
+						if ( word.equalsIgnoreCase ( list[ i ] ) ) {
 							recognized = true;
 							break;
 						}
-					if (!recognized)
-						throw new IllegalArgumentException("Default parameter of option -" + optName + " not"
-								+ " recognized: " + word);
+					if ( ! recognized )
+						throw new IllegalArgumentException ( "Default parameter of option -" + optName + " not"
+								+ " recognized: " + word );
 
-					if (SPEC_DEF == curSpecType) {
-						this.setDefault(word);
-					} else if (SPEC_TILE_DEF == curSpecType) {
-						for (int i = tileSpec.length - 1; 0 <= i; i--)
-							if (tileSpec[i]) {
-								this.setTileDef(i, word);
+					if ( ModuleSpec.SPEC_DEF == curSpecType ) {
+						this.setDefault ( word );
+					}
+					else if ( ModuleSpec.SPEC_TILE_DEF == curSpecType ) {
+						for ( int i = tileSpec.length - 1 ; 0 <= i ; i-- )
+							if ( tileSpec[ i ] ) {
+								this.setTileDef ( i , word );
 							}
-					} else if (SPEC_COMP_DEF == curSpecType) {
-						for (int i = compSpec.length - 1; 0 <= i; i--)
-							if (compSpec[i]) {
-								this.setCompDef(i, word);
+					}
+					else if ( ModuleSpec.SPEC_COMP_DEF == curSpecType ) {
+						for ( int i = compSpec.length - 1 ; 0 <= i ; i-- )
+							if ( compSpec[ i ] ) {
+								this.setCompDef ( i , word );
 							}
-					} else {
-						for (int i = tileSpec.length - 1; 0 <= i; i--) {
-							for (int j = compSpec.length - 1; 0 <= j; j--) {
-								if (tileSpec[i] && compSpec[j]) {
-									this.setTileCompVal(i, j, word);
+					}
+					else {
+						for ( int i = tileSpec.length - 1 ; 0 <= i ; i-- ) {
+							for ( int j = compSpec.length - 1 ; 0 <= j ; j-- ) {
+								if ( tileSpec[ i ] && compSpec[ j ] ) {
+									this.setTileCompVal ( i , j , word );
 								}
 							}
 						}
@@ -176,11 +181,11 @@ public class StringSpec extends ModuleSpec {
 		}
 
 		// Check that default value has been specified
-		if (null == getDefault()) {
+		if ( null == getDefault ( ) ) {
 			int ndefspec = 0;
-			for (int t = nt - 1; 0 <= t; t--) {
-				for (int c = nc - 1; 0 <= c; c--) {
-					if (SPEC_DEF == specValType[t][c]) {
+			for ( int t = nt - 1 ; 0 <= t ; t-- ) {
+				for ( int c = nc - 1 ; 0 <= c ; c-- ) {
+					if ( ModuleSpec.SPEC_DEF == specValType[ t ][ c ] ) {
 						ndefspec++;
 					}
 				}
@@ -188,42 +193,43 @@ public class StringSpec extends ModuleSpec {
 
 			// If some tile-component have received no specification, it takes
 			// the default value defined in ParameterList
-			if (0 != ndefspec) {
-				param = pl.getDefaultParameterList().getParameter(optName);
-				for (int i = list.length - 1; 0 <= i; i--)
-					if (param.equalsIgnoreCase(list[i])) {
+			if ( 0 != ndefspec ) {
+				param = pl.getDefaultParameterList ( ).getParameter ( optName );
+				for ( int i = list.length - 1 ; 0 <= i ; i-- )
+					if ( param.equalsIgnoreCase ( list[ i ] ) ) {
 						recognized = true;
 						break;
 					}
-				if (!recognized)
-					throw new IllegalArgumentException("Default parameter of option -" + optName + " not"
-							+ " recognized: " + param);
-				this.setDefault(param);
-			} else {
+				if ( ! recognized )
+					throw new IllegalArgumentException ( "Default parameter of option -" + optName + " not"
+							+ " recognized: " + param );
+				this.setDefault ( param );
+			}
+			else {
 				// All tile-component have been specified, takes the first
 				// tile-component value as default.
-				this.setDefault(this.getSpec(0, 0));
-				switch (this.specValType[0][0]) {
+				this.setDefault ( this.getSpec ( 0 , 0 ) );
+				switch ( this.specValType[ 0 ][ 0 ] ) {
 					case ModuleSpec.SPEC_TILE_DEF:
-						for (int c = nc - 1; 0 <= c; c--) {
-							if (SPEC_TILE_DEF == specValType[0][c])
-								this.specValType[0][c] = ModuleSpec.SPEC_DEF;
+						for ( int c = nc - 1 ; 0 <= c ; c-- ) {
+							if ( ModuleSpec.SPEC_TILE_DEF == specValType[ 0 ][ c ] )
+								this.specValType[ 0 ][ c ] = ModuleSpec.SPEC_DEF;
 						}
-						this.tileDef[0] = null;
+						this.tileDef[ 0 ] = null;
 						break;
 					case ModuleSpec.SPEC_COMP_DEF:
-						for (int t = nt - 1; 0 <= t; t--) {
-							if (SPEC_COMP_DEF == specValType[t][0])
-								this.specValType[t][0] = ModuleSpec.SPEC_DEF;
+						for ( int t = nt - 1 ; 0 <= t ; t-- ) {
+							if ( ModuleSpec.SPEC_COMP_DEF == specValType[ t ][ 0 ] )
+								this.specValType[ t ][ 0 ] = ModuleSpec.SPEC_DEF;
 						}
-						this.compDef[0] = null;
+						this.compDef[ 0 ] = null;
 						break;
 					case ModuleSpec.SPEC_TILE_COMP:
-						this.specValType[0][0] = ModuleSpec.SPEC_DEF;
-						this.tileCompVal.put("t0c0", null);
+						this.specValType[ 0 ][ 0 ] = ModuleSpec.SPEC_DEF;
+						this.tileCompVal.put ( "t0c0" , null );
 						break;
 					default:
-						throw new InvalidParameterException("Invalid spec Type: " + this.specValType[0][0]);
+						throw new InvalidParameterException ( "Invalid spec Type: " + this.specValType[ 0 ][ 0 ] );
 				}
 			}
 		}

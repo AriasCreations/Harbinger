@@ -10,32 +10,28 @@ package dev.zontreck.harbinger.thirdparty.jj2000.j2k.icc.lut;
 
 /**
  * Thrown by MatrixBasedTransformTosRGB
- * 
- * @see dev.zontreck.harbinger.thirdparty.jj2000.j2k.icc.lut.MatrixBasedTransformTosRGB
- * @version 1.0
+ *
  * @author Bruce A. Kern
+ * @version 1.0
+ * @see dev.zontreck.harbinger.thirdparty.jj2000.j2k.icc.lut.MatrixBasedTransformTosRGB
  */
 
-public class MatrixBasedTransformException extends Exception
-{
+public class MatrixBasedTransformException extends Exception {
 	private static final long serialVersionUID = 1L;
 
 	/**
 	 * Contruct with message
-	 * 
-	 * @param msg
-	 *            returned by getMessage()
+	 *
+	 * @param msg returned by getMessage()
 	 */
-	MatrixBasedTransformException(final String msg)
-	{
-		super(msg);
+	MatrixBasedTransformException ( final String msg ) {
+		super ( msg );
 	}
 
 	/**
 	 * Empty constructor
 	 */
-	MatrixBasedTransformException()
-	{
+	MatrixBasedTransformException ( ) {
 	}
 
 	/* end class MatrixBasedTransformException */

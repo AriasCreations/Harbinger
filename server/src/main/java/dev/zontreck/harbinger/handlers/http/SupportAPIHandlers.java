@@ -16,59 +16,61 @@ public enum SupportAPIHandlers {
 	;
 
 	@Subscribe
-	public static void onSupport(final APIRequestEvent event) {
-		if ("support".equals(event.request_object.getString("type"))) {
-			final JSONObject response = new JSONObject();
+	public static void onSupport ( final APIRequestEvent event ) {
+		if ( "support".equals ( event.request_object.getString ( "type" ) ) ) {
+			final JSONObject response = new JSONObject ( );
 			// Validate PSK
-			final boolean auth = Persist.serverSettings.PSK.validate(event.request_object.getString("psk")); // This is to control if tasks that require admin should be executed or not
-			event.setCancelled(true);
-			final UUID ID = UUID.fromString(event.request_object.getString("id"));
+			final boolean auth = Persist.serverSettings.PSK.validate ( event.request_object.getString ( "psk" ) ); // This is to control if tasks that require admin should be executed or not
+			event.setCancelled ( true );
+			final UUID ID = UUID.fromString ( event.request_object.getString ( "id" ) );
 
-			switch (event.request_object.getString("sub_command")) {
+			switch ( event.request_object.getString ( "sub_command" ) ) {
 				case "delete": {
-					if (!auth) {
-						response.put("result", "Admin access required");
+					if ( ! auth ) {
+						response.put ( "result" , "Admin access required" );
 						break;
 					}
 					// Deletes the support rep if possible
-					if (SupportReps.hasID(ID)) {
-						SupportReps.remove(SupportReps.get(ID));
-						response.put("result", "Support representative deleted.");
-						EventBus.BUS.post(new MemoryAlteredEvent());
-					} else
-						response.put("result", "No such support rep. No changes have been made.");
+					if ( SupportReps.hasID ( ID ) ) {
+						SupportReps.remove ( SupportReps.get ( ID ) );
+						response.put ( "result" , "Support representative deleted." );
+						EventBus.BUS.post ( new MemoryAlteredEvent ( ) );
+					}
+					else
+						response.put ( "result" , "No such support rep. No changes have been made." );
 					break;
 				}
 				case "get": {
 					// Gets the support level
-					if (SupportReps.hasID(ID)) {
-						final Person p = SupportReps.get(ID);
-						response.put("result", "Found");
-						response.put("level", p.Permissions.getFlag());
-						response.put("level_id", p.Permissions.name());
-						response.put("id", ID.toString());
-					} else {
-						response.put("result", "No user");
-						response.put("level", 0);
-						response.put("level_id", "None");
-						response.put("id", ID.toString());
+					if ( SupportReps.hasID ( ID ) ) {
+						final Person p = SupportReps.get ( ID );
+						response.put ( "result" , "Found" );
+						response.put ( "level" , p.Permissions.getFlag ( ) );
+						response.put ( "level_id" , p.Permissions.name ( ) );
+						response.put ( "id" , ID.toString ( ) );
+					}
+					else {
+						response.put ( "result" , "No user" );
+						response.put ( "level" , 0 );
+						response.put ( "level_id" , "None" );
+						response.put ( "id" , ID.toString ( ) );
 					}
 					break;
 				}
 				case "add": {
 					// Set a new support rep
-					if (!auth) {
-						response.put("result", "Admin access required");
+					if ( ! auth ) {
+						response.put ( "result" , "Admin access required" );
 						break;
 					}
-					final Person rep = new Person(ID, event.request_object.getString("name"), PermissionLevel.valueOf(event.request_object.getString("level")));
-					if (SupportReps.hasID(ID))
-						SupportReps.remove(SupportReps.get(ID));
+					final Person rep = new Person ( ID , event.request_object.getString ( "name" ) , PermissionLevel.valueOf ( event.request_object.getString ( "level" ) ) );
+					if ( SupportReps.hasID ( ID ) )
+						SupportReps.remove ( SupportReps.get ( ID ) );
 
-					SupportReps.add(rep);
-					response.put("result", "Representative added or updated successfully");
+					SupportReps.add ( rep );
+					response.put ( "result" , "Representative added or updated successfully" );
 
-					EventBus.BUS.post(new MemoryAlteredEvent());
+					EventBus.BUS.post ( new MemoryAlteredEvent ( ) );
 					break;
 				}
 			}

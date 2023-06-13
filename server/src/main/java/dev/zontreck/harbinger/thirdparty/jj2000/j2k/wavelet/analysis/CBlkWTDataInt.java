@@ -66,7 +66,7 @@ public class CBlkWTDataInt extends CBlkWTData {
 	 * @return The data type of the object, always DataBlk.TYPE_INT
 	 */
 	@Override
-	public final int getDataType() {
+	public final int getDataType ( ) {
 		return DataBlk.TYPE_INT;
 	}
 
@@ -77,16 +77,7 @@ public class CBlkWTDataInt extends CBlkWTData {
 	 * @return The array of data (a int[]) or null if there is no data.
 	 */
 	@Override
-	public final Object getData() {
-		return this.data;
-	}
-
-	/**
-	 * Returns the array containing the data, or null if there is no data array.
-	 *
-	 * @return The array of data or null if there is no data.
-	 */
-	public final int[] getDataInt() {
+	public final Object getData ( ) {
 		return this.data;
 	}
 
@@ -98,8 +89,17 @@ public class CBlkWTDataInt extends CBlkWTData {
 	 * @param arr The data array to use. Must be an int array.
 	 */
 	@Override
-	public final void setData(final Object arr) {
-		this.data = (int[]) arr;
+	public final void setData ( final Object arr ) {
+		this.data = ( int[] ) arr;
+	}
+
+	/**
+	 * Returns the array containing the data, or null if there is no data array.
+	 *
+	 * @return The array of data or null if there is no data.
+	 */
+	public final int[] getDataInt ( ) {
+		return this.data;
 	}
 
 	/**
@@ -109,7 +109,7 @@ public class CBlkWTDataInt extends CBlkWTData {
 	 *
 	 * @param arr The data array to use.
 	 */
-	public final void setDataInt(final int[] arr) {
+	public final void setDataInt ( final int[] arr ) {
 		this.data = arr;
 	}
 }

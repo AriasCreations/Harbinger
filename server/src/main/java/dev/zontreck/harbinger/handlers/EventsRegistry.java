@@ -9,10 +9,10 @@ import dev.zontreck.harbinger.handlers.http.simulator.GetGridInfoHandler;
 public enum EventsRegistry {
 	;
 
-	public static void register(final EventBus bus) {
-		bus.register(ProductsAPIHandlers.class);
-		bus.register(SupportAPIHandlers.class);
-		bus.register(ServersAPI.class);
-		bus.register(GetGridInfoHandler.class);
+	public static void register ( final EventBus bus ) {
+		bus.register ( ProductsAPIHandlers.class );
+		bus.register ( SupportAPIHandlers.class );
+		bus.register ( ServersAPI.class );
+		bus.register ( GetGridInfoHandler.class );
 	}
 }

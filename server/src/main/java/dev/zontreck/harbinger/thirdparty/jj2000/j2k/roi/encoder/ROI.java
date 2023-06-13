@@ -113,7 +113,7 @@ public class ROI {
 	 * @param comp    The component the ROI belongs to
 	 * @param maskPGM ImgReaderPGM containing the ROI
 	 */
-	public ROI(final int comp, final ImgReaderPGM maskPGM) {
+	public ROI ( final int comp , final ImgReaderPGM maskPGM ) {
 		this.arbShape = true;
 		this.rect = false;
 		this.comp = comp;
@@ -129,7 +129,7 @@ public class ROI {
 	 * @param w    width of ROI
 	 * @param h    height of ROI
 	 */
-	public ROI(final int comp, final int ulx, final int uly, final int w, final int h) {
+	public ROI ( final int comp , final int ulx , final int uly , final int w , final int h ) {
 		this.arbShape = false;
 		this.comp = comp;
 		this.ulx = ulx;
@@ -147,7 +147,7 @@ public class ROI {
 	 * @param y    y-coordinate of center of ROI
 	 * @param w    radius of ROI
 	 */
-	public ROI(final int comp, final int x, final int y, final int rad) {
+	public ROI ( final int comp , final int x , final int y , final int rad ) {
 		this.arbShape = false;
 		this.comp = comp;
 		this.x = x;
@@ -159,10 +159,11 @@ public class ROI {
 	 * This function prints all relevant data for the ROI
 	 */
 	@Override
-	public String toString() {
-		if (this.arbShape) {
+	public String toString ( ) {
+		if ( this.arbShape ) {
 			return "ROI with arbitrary shape, PGM file= " + this.maskPGM;
-		} else if (this.rect)
+		}
+		else if ( this.rect )
 			return "Rectangular ROI, comp=" + this.comp + " ulx=" + this.ulx + " uly=" + this.uly + " w=" + this.w + " h=" + this.h;
 		else
 			return "Circular ROI,  comp=" + this.comp + " x=" + this.x + " y=" + this.y + " radius=" + this.r;

@@ -13,30 +13,25 @@ import dev.zontreck.harbinger.thirdparty.jj2000.j2k.colorspace.ColorSpaceExcepti
 
 /**
  * The monochrome ICCProfile.
- * 
- * @version 1.0
+ *
  * @author Bruce A. Kern
+ * @version 1.0
  */
-public class ICCMonochromeInputProfile extends ICCProfile
-{
-
-	/**
-	 * Return the ICCProfile embedded in the input image
-	 *
-	 */
-	public static ICCMonochromeInputProfile createInstance(final ColorSpace csm) throws ColorSpaceException,
-			ICCProfileInvalidException
-	{
-		return new ICCMonochromeInputProfile(csm);
-	}
+public class ICCMonochromeInputProfile extends ICCProfile {
 
 	/**
 	 * Construct a ICCMonochromeInputProfile corresponding to the profile file
-	 *
 	 */
-	protected ICCMonochromeInputProfile(final ColorSpace csm) throws ColorSpaceException, ICCProfileInvalidException
-	{
-		super(csm);
+	protected ICCMonochromeInputProfile ( final ColorSpace csm ) throws ColorSpaceException, ICCProfileInvalidException {
+		super ( csm );
+	}
+
+	/**
+	 * Return the ICCProfile embedded in the input image
+	 */
+	public static ICCMonochromeInputProfile createInstance ( final ColorSpace csm ) throws ColorSpaceException,
+			ICCProfileInvalidException {
+		return new ICCMonochromeInputProfile ( csm );
 	}
 
 	/* end class ICCMonochromeInputProfile */

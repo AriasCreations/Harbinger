@@ -13,13 +13,13 @@ public class HTTPStartingEvent extends Event {
 	public int port;
 	public Map<String, HttpHandler> contexts;
 
-	public HTTPStartingEvent(final int port) {
+	public HTTPStartingEvent ( final int port ) {
 		this.port = port;
-		contexts = new HashMap<>();
+		contexts = new HashMap<> ( );
 	}
 
 	@Override
-	public boolean isCancellable() {
+	public boolean isCancellable ( ) {
 		return false;
 	}
 }

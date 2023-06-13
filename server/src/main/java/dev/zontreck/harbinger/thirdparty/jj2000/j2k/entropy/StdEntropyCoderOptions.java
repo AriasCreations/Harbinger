@@ -1,8 +1,8 @@
-/* 
+/*
  * CVS identifier:
- * 
+ *
  * $Id: StdEntropyCoderOptions.java,v 1.10 2001/03/27 09:57:20 grosbois Exp $
- * 
+ *
  * Class:                   StdEntropyCoderOptions
  *
  * Description:             Entropy coding engine of stripes in
@@ -49,8 +49,7 @@ package dev.zontreck.harbinger.thirdparty.jj2000.j2k.entropy;
  * the entropy coder, as well some fixed parameters of the JPEG 2000 entropy
  * coder.
  */
-public interface StdEntropyCoderOptions
-{
+public interface StdEntropyCoderOptions {
 
 	/**
 	 * The flag bit to indicate that selective arithmetic coding bypass should
@@ -137,7 +136,9 @@ public interface StdEntropyCoderOptions
 	 */
 	int NUM_EMPTY_PASSES_IN_MS_BP = 2;
 
-	/** The index of the first "raw" pass, if bypass mode is on. */
+	/**
+	 * The index of the first "raw" pass, if bypass mode is on.
+	 */
 	int FIRST_BYPASS_PASS_IDX = StdEntropyCoderOptions.NUM_PASSES * StdEntropyCoderOptions.NUM_NON_BYPASS_MS_BP - StdEntropyCoderOptions.NUM_EMPTY_PASSES_IN_MS_BP;
 
 }

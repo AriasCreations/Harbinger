@@ -94,7 +94,7 @@ public interface MultiResImgData {
 	 * @param rl The resolution level, from 0 to L.
 	 * @return The total current tile's width in pixels.
 	 */
-	int getTileWidth(int rl);
+	int getTileWidth ( int rl );
 
 	/**
 	 * Returns the overall height of the current tile in pixels, for the given
@@ -105,17 +105,17 @@ public interface MultiResImgData {
 	 * @param rl The resolution level, from 0 to L.
 	 * @return The total current tile's height in pixels.
 	 */
-	int getTileHeight(int rl);
+	int getTileHeight ( int rl );
 
 	/**
 	 * Returns the nominal tiles width
 	 */
-	int getNomTileWidth();
+	int getNomTileWidth ( );
 
 	/**
 	 * Returns the nominal tiles height
 	 */
-	int getNomTileHeight();
+	int getNomTileHeight ( );
 
 	/**
 	 * Returns the overall width of the image in pixels, for the given
@@ -126,7 +126,7 @@ public interface MultiResImgData {
 	 * @param rl The resolution level, from 0 to L.
 	 * @return The total image's width in pixels.
 	 */
-	int getImgWidth(int rl);
+	int getImgWidth ( int rl );
 
 	/**
 	 * Returns the overall height of the image in pixels, for the given
@@ -137,14 +137,14 @@ public interface MultiResImgData {
 	 * @param rl The resolution level, from 0 to L.
 	 * @return The total image's height in pixels.
 	 */
-	int getImgHeight(int rl);
+	int getImgHeight ( int rl );
 
 	/**
 	 * Returns the number of components in the image.
 	 *
 	 * @return The number of components in the image.
 	 */
-	int getNumComps();
+	int getNumComps ( );
 
 	/**
 	 * Returns the component subsampling factor in the horizontal direction, for
@@ -156,7 +156,7 @@ public interface MultiResImgData {
 	 * @return The horizontal subsampling factor of component 'c'
 	 * @see dev.zontreck.harbinger.thirdparty.jj2000.j2k.image.ImgData
 	 */
-	int getCompSubsX(int c);
+	int getCompSubsX ( int c );
 
 	/**
 	 * Returns the component subsampling factor in the vertical direction, for
@@ -168,7 +168,7 @@ public interface MultiResImgData {
 	 * @return The vertical subsampling factor of component 'c'
 	 * @see dev.zontreck.harbinger.thirdparty.jj2000.j2k.image.ImgData
 	 */
-	int getCompSubsY(int c);
+	int getCompSubsY ( int c );
 
 	/**
 	 * Returns the width in pixels of the specified tile-component for the given
@@ -180,7 +180,7 @@ public interface MultiResImgData {
 	 * @return The width in pixels of component <tt>c</tt> in tile <tt>t</tt>
 	 * for resolution <tt>rl</tt>.
 	 */
-	int getTileCompWidth(int t, int c, int rl);
+	int getTileCompWidth ( int t , int c , int rl );
 
 	/**
 	 * Returns the height in pixels of the specified tile-component for the
@@ -191,7 +191,7 @@ public interface MultiResImgData {
 	 * @param rl The resolution level, from 0 to L.
 	 * @return The height in pixels of component <tt>c</tt> in tile <tt>t</tt>.
 	 */
-	int getTileCompHeight(int t, int c, int rl);
+	int getTileCompHeight ( int t , int c , int rl );
 
 	/**
 	 * Returns the width in pixels of the specified component in the overall
@@ -201,7 +201,7 @@ public interface MultiResImgData {
 	 * @param rl The resolution level, from 0 to L.
 	 * @return The width in pixels of component <tt>c</tt> in the overall image.
 	 */
-	int getCompImgWidth(int c, int rl);
+	int getCompImgWidth ( int c , int rl );
 
 	/**
 	 * Returns the height in pixels of the specified component in the overall
@@ -212,7 +212,7 @@ public interface MultiResImgData {
 	 * @return The height in pixels of component <tt>n</tt> in the overall
 	 * image.
 	 */
-	int getCompImgHeight(int n, int rl);
+	int getCompImgHeight ( int n , int rl );
 
 	/**
 	 * Changes the current tile, given the new indexes. An
@@ -223,7 +223,7 @@ public interface MultiResImgData {
 	 * @param y The vertical indexes of the new tile.
 	 * @returns The new tile index
 	 */
-	int setTile(int x, int y);
+	int setTile ( int x , int y );
 
 	/**
 	 * Advances to the next tile, in standard scan-line order (by rows then
@@ -232,7 +232,7 @@ public interface MultiResImgData {
 	 *
 	 * @returns The new tile index
 	 */
-	int nextTile();
+	int nextTile ( );
 
 	/**
 	 * Returns the indexes of the current tile. These are the horizontal and
@@ -242,7 +242,7 @@ public interface MultiResImgData {
 	 *           null a new one is created and returned.
 	 * @return The current tile's indexes (vertical and horizontal indexes).
 	 */
-	Coord getTile(Coord co);
+	Coord getTile ( Coord co );
 
 	/**
 	 * Returns the index of the current tile, relative to a standard scan-line
@@ -250,7 +250,7 @@ public interface MultiResImgData {
 	 *
 	 * @return The current tile's index (starts at 0).
 	 */
-	int getTileIdx();
+	int getTileIdx ( );
 
 	/**
 	 * Returns the horizontal coordinate of the upper-left corner of the
@@ -259,7 +259,7 @@ public interface MultiResImgData {
 	 * @param c  The component index.
 	 * @param rl The resolution level index.
 	 */
-	int getResULX(int c, int rl);
+	int getResULX ( int c , int rl );
 
 	/**
 	 * Returns the vertical coordinate of the upper-left corner of the specified
@@ -268,7 +268,7 @@ public interface MultiResImgData {
 	 * @param c  The component index.
 	 * @param rl The resolution level index.
 	 */
-	int getResULY(int c, int rl);
+	int getResULY ( int c , int rl );
 
 	/**
 	 * Returns the horizontal coordinate of the image origin, the top-left
@@ -280,7 +280,7 @@ public interface MultiResImgData {
 	 * @return The horizontal coordinate of the image origin in the canvas
 	 * system, on the reference grid.
 	 */
-	int getImgULX(int rl);
+	int getImgULX ( int rl );
 
 	/**
 	 * Returns the vertical coordinate of the image origin, the top-left corner,
@@ -292,17 +292,17 @@ public interface MultiResImgData {
 	 * @return The vertical coordinate of the image origin in the canvas system,
 	 * on the reference grid.
 	 */
-	int getImgULY(int rl);
+	int getImgULY ( int rl );
 
 	/**
 	 * Returns the horizontal tile partition offset in the reference grid
 	 */
-	int getTilePartULX();
+	int getTilePartULX ( );
 
 	/**
 	 * Returns the vertical tile partition offset in the reference grid
 	 */
-	int getTilePartULY();
+	int getTilePartULY ( );
 
 	/**
 	 * Returns the number of tiles in the horizontal and vertical directions.
@@ -312,14 +312,14 @@ public interface MultiResImgData {
 	 * @return The number of tiles in the horizontal (Coord.x) and vertical
 	 * (Coord.y) directions.
 	 */
-	Coord getNumTiles(Coord co);
+	Coord getNumTiles ( Coord co );
 
 	/**
 	 * Returns the total number of tiles in the image.
 	 *
 	 * @return The total number of tiles in the image.
 	 */
-	int getNumTiles();
+	int getNumTiles ( );
 
 	/**
 	 * Returns the specified synthesis subband tree
@@ -327,5 +327,5 @@ public interface MultiResImgData {
 	 * @param t Tile index.
 	 * @param c Component index.
 	 */
-	SubbandSyn getSynSubbandTree(int t, int c);
+	SubbandSyn getSynSubbandTree ( int t , int c );
 }

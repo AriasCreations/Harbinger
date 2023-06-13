@@ -82,8 +82,10 @@ public abstract class AnWTFilterFloat extends AnWTFilter {
 	 *                 output samples in the highSig array.
 	 * @see AnWTFilter#analyze_lpf
 	 */
-	public abstract void analyze_lpf(float[] inSig, int inOff, int inLen, int inStep, float[] lowSig, int lowOff,
-									 int lowStep, float[] highSig, int highOff, int highStep);
+	public abstract void analyze_lpf (
+			float[] inSig , int inOff , int inLen , int inStep , float[] lowSig , int lowOff ,
+			int lowStep , float[] highSig , int highOff , int highStep
+	);
 
 	/**
 	 * The general version of the analyze_lpf() method, it just calls the
@@ -110,11 +112,14 @@ public abstract class AnWTFilterFloat extends AnWTFilter {
 	 *                 output samples in the highSig array.
 	 */
 	@Override
-	public void analyze_lpf(final Object inSig, final int inOff, final int inLen, final int inStep, final Object lowSig, final int lowOff, final int lowStep,
-							final Object highSig, final int highOff, final int highStep) {
+	public void analyze_lpf (
+			final Object inSig , final int inOff , final int inLen , final int inStep , final Object lowSig , final int lowOff , final int lowStep ,
+			final Object highSig , final int highOff , final int highStep
+	) {
 
-		this.analyze_lpf((float[]) inSig, inOff, inLen, inStep, (float[]) lowSig, lowOff, lowStep, (float[]) highSig,
-				highOff, highStep);
+		this.analyze_lpf ( ( float[] ) inSig , inOff , inLen , inStep , ( float[] ) lowSig , lowOff , lowStep , ( float[] ) highSig ,
+				highOff , highStep
+		);
 	}
 
 	/**
@@ -139,8 +144,10 @@ public abstract class AnWTFilterFloat extends AnWTFilter {
 	 *                 output samples in the highSig array.
 	 * @see AnWTFilter#analyze_hpf
 	 */
-	public abstract void analyze_hpf(float[] inSig, int inOff, int inLen, int inStep, float[] lowSig, int lowOff,
-									 int lowStep, float[] highSig, int highOff, int highStep);
+	public abstract void analyze_hpf (
+			float[] inSig , int inOff , int inLen , int inStep , float[] lowSig , int lowOff ,
+			int lowStep , float[] highSig , int highOff , int highStep
+	);
 
 	/**
 	 * The general version of the analyze_hpf() method, it just calls the
@@ -167,11 +174,14 @@ public abstract class AnWTFilterFloat extends AnWTFilter {
 	 *                 output samples in the highSig array.
 	 */
 	@Override
-	public void analyze_hpf(final Object inSig, final int inOff, final int inLen, final int inStep, final Object lowSig, final int lowOff, final int lowStep,
-							final Object highSig, final int highOff, final int highStep) {
+	public void analyze_hpf (
+			final Object inSig , final int inOff , final int inLen , final int inStep , final Object lowSig , final int lowOff , final int lowStep ,
+			final Object highSig , final int highOff , final int highStep
+	) {
 
-		this.analyze_hpf((float[]) inSig, inOff, inLen, inStep, (float[]) lowSig, lowOff, lowStep, (float[]) highSig,
-				highOff, highStep);
+		this.analyze_hpf ( ( float[] ) inSig , inOff , inLen , inStep , ( float[] ) lowSig , lowOff , lowStep , ( float[] ) highSig ,
+				highOff , highStep
+		);
 	}
 
 	/**
@@ -182,7 +192,7 @@ public abstract class AnWTFilterFloat extends AnWTFilter {
 	 * @see dev.zontreck.harbinger.thirdparty.jj2000.j2k.image.DataBlk
 	 */
 	@Override
-	public int getDataType() {
+	public int getDataType ( ) {
 		return DataBlk.TYPE_FLOAT;
 	}
 }

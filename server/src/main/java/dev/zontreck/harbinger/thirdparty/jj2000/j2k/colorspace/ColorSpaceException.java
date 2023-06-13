@@ -11,32 +11,28 @@ package dev.zontreck.harbinger.thirdparty.jj2000.j2k.colorspace;
 /**
  * This exception is thrown when the content of an image contains an incorrect
  * dev.zontreck.harbinger.thirdparty.jj2000.j2k.colorspace box
- * 
- * @see dev.zontreck.harbinger.thirdparty.jj2000.j2k.colorspace.ColorSpaceMapper
- * @version 1.0
+ *
  * @author Bruce A. Kern
+ * @version 1.0
+ * @see dev.zontreck.harbinger.thirdparty.jj2000.j2k.colorspace.ColorSpaceMapper
  */
 
-public class ColorSpaceException extends Exception
-{
+public class ColorSpaceException extends Exception {
 	private static final long serialVersionUID = 1L;
 
 	/**
 	 * Contruct with message
-	 * 
-	 * @param msg
-	 *            returned by getMessage()
+	 *
+	 * @param msg returned by getMessage()
 	 */
-	public ColorSpaceException(final String msg)
-	{
-		super(msg);
+	public ColorSpaceException ( final String msg ) {
+		super ( msg );
 	}
 
 	/**
 	 * Empty constructor
 	 */
-	public ColorSpaceException()
-	{
+	public ColorSpaceException ( ) {
 	}
 
 	/* end class ColorSpaceException */

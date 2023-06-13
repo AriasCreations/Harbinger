@@ -10,7 +10,7 @@
  *
  *
  * COPYRIGHT:
- * 
+ *
  * This software module was originally developed by Rapha�l Grosbois and
  * Diego Santa Cruz (Swiss Federal Institute of Technology-EPFL); Joel
  * Askel�f (Ericsson Radio Systems AB); and Bertrand Berthelot, David
@@ -37,7 +37,7 @@
  * using this software module for non JPEG 2000 Standard conforming
  * products. This copyright notice must be included in all copies or
  * derivative works of this software module.
- * 
+ *
  * Copyright (c) 1999/2000 JJ2000 Partners.
  */
 package dev.zontreck.harbinger.thirdparty.jj2000.j2k.codestream;
@@ -47,62 +47,60 @@ package dev.zontreck.harbinger.thirdparty.jj2000.j2k.codestream;
  * precincts. As this is an abstract class, it cannot be used directly but
  * derived classes have been created for code-blocks and packets (CBlkCoordInfo
  * and PrecCoordInfo).
- * 
+ *
  * @see PrecCoordInfo
  * @see CBlkCoordInfo
  */
-public abstract class CoordInfo
-{
+public abstract class CoordInfo {
 
-	/** Horizontal upper left coordinate in the subband */
+	/**
+	 * Horizontal upper left coordinate in the subband
+	 */
 	public int ulx;
 
-	/** Vertical upper left coordinate in the subband */
+	/**
+	 * Vertical upper left coordinate in the subband
+	 */
 	public int uly;
 
-	/** Object's width */
+	/**
+	 * Object's width
+	 */
 	public int w;
 
-	/** Object's height */
+	/**
+	 * Object's height
+	 */
 	public int h;
 
 	/**
 	 * Constructor. Creates a CoordInfo object.
-	 * 
-	 * @param ulx
-	 *            The horizontal upper left coordinate in the subband
-	 * 
-	 * @param uly
-	 *            The vertical upper left coordinate in the subband
-	 * 
-	 * @param w
-	 *            The width
-	 * 
-	 * @param h
-	 *            The height
 	 *
+	 * @param ulx The horizontal upper left coordinate in the subband
+	 * @param uly The vertical upper left coordinate in the subband
+	 * @param w   The width
+	 * @param h   The height
 	 */
-	protected CoordInfo(final int ulx, final int uly, final int w, final int h)
-	{
+	protected CoordInfo ( final int ulx , final int uly , final int w , final int h ) {
 		this.ulx = ulx;
 		this.uly = uly;
 		this.w = w;
 		this.h = h;
 	}
 
-	/** Empty contructor */
-	protected CoordInfo()
-	{
+	/**
+	 * Empty contructor
+	 */
+	protected CoordInfo ( ) {
 	}
 
 	/**
 	 * Returns object's information in a String
-	 * 
+	 *
 	 * @return String with object's information
 	 */
 	@Override
-	public String toString()
-	{
+	public String toString ( ) {
 		return "ulx=" + this.ulx + ",uly=" + this.uly + ",w=" + this.w + ",h=" + this.h;
 	}
 }

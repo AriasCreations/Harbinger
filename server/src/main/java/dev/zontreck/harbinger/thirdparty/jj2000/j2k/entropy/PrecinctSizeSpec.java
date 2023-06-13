@@ -42,27 +42,32 @@
  */
 package dev.zontreck.harbinger.thirdparty.jj2000.j2k.entropy;
 
-import dev.zontreck.harbinger.thirdparty.jj2000.j2k.codestream.*;
-import dev.zontreck.harbinger.thirdparty.jj2000.j2k.image.*;
-import dev.zontreck.harbinger.thirdparty.jj2000.j2k.util.*;
-import dev.zontreck.harbinger.thirdparty.jj2000.j2k.*;
+import dev.zontreck.harbinger.thirdparty.jj2000.j2k.IntegerSpec;
+import dev.zontreck.harbinger.thirdparty.jj2000.j2k.ModuleSpec;
+import dev.zontreck.harbinger.thirdparty.jj2000.j2k.codestream.Markers;
+import dev.zontreck.harbinger.thirdparty.jj2000.j2k.image.BlkImgDataSrc;
+import dev.zontreck.harbinger.thirdparty.jj2000.j2k.util.MathUtil;
+import dev.zontreck.harbinger.thirdparty.jj2000.j2k.util.ParameterList;
 
-import java.util.*;
+import java.util.NoSuchElementException;
+import java.util.StringTokenizer;
+import java.util.Vector;
 
 /**
  * This class extends ModuleSpec class for precinct partition sizes holding
  * purposes.
- * 
+ *
  * <p>
  * It stores the size a of precinct when precinct partition is used or not. If
  * precinct partition is used, we can have several packets for a given
  * resolution level whereas there is only one packet per resolution level if no
  * precinct partition is used.
  */
-public class PrecinctSizeSpec extends ModuleSpec
-{
+public class PrecinctSizeSpec extends ModuleSpec {
 
-	/** Name of the option */
+	/**
+	 * Name of the option
+	 */
 	private static final String optName = "Cpp";
 
 	/**
@@ -74,49 +79,31 @@ public class PrecinctSizeSpec extends ModuleSpec
 	/**
 	 * Creates a new PrecinctSizeSpec object for the specified number of tiles
 	 * and components.
-	 * 
-	 * @param nt
-	 *            The number of tiles
-	 * 
-	 * @param nc
-	 *            The number of components
-	 * 
-	 * @param type
-	 *            the type of the specification module i.e. tile specific,
-	 *            component specific or both.
-	 * 
-	 * @param dls
-	 *            Reference to the number of decomposition levels specification
+	 *
+	 * @param nt   The number of tiles
+	 * @param nc   The number of components
+	 * @param type the type of the specification module i.e. tile specific,
+	 *             component specific or both.
+	 * @param dls  Reference to the number of decomposition levels specification
 	 */
-	public PrecinctSizeSpec(final int nt, final int nc, final byte type, final IntegerSpec dls)
-	{
-		super(nt, nc, type);
+	public PrecinctSizeSpec ( final int nt , final int nc , final byte type , final IntegerSpec dls ) {
+		super ( nt , nc , type );
 		this.dls = dls;
 	}
 
 	/**
 	 * Creates a new PrecinctSizeSpec object for the specified number of tiles
 	 * and components and the ParameterList instance.
-	 * 
-	 * @param nt
-	 *            The number of tiles
-	 * 
-	 * @param nc
-	 *            The number of components
-	 * 
-	 * @param type
-	 *            the type of the specification module i.e. tile specific,
-	 *            component specific or both.
-	 * 
-	 * @param imgsrc
-	 *            The image source (used to get the image size)
-	 * 
-	 * @param pl
-	 *            The ParameterList instance
+	 *
+	 * @param nt     The number of tiles
+	 * @param nc     The number of components
+	 * @param type   the type of the specification module i.e. tile specific,
+	 *               component specific or both.
+	 * @param imgsrc The image source (used to get the image size)
+	 * @param pl     The ParameterList instance
 	 */
-	public PrecinctSizeSpec(final int nt, final int nc, final byte type, final BlkImgDataSrc imgsrc, final IntegerSpec dls, final ParameterList pl)
-	{
-		super(nt, nc, type);
+	public PrecinctSizeSpec ( final int nt , final int nc , final byte type , final BlkImgDataSrc imgsrc , final IntegerSpec dls , final ParameterList pl ) {
+		super ( nt , nc , type );
 
 		this.dls = dls;
 
@@ -136,28 +123,27 @@ public class PrecinctSizeSpec extends ModuleSpec
 		// size or if we were reading something else.
 		boolean wasReadingPrecinctSize = false;
 
-		final String param = pl.getParameter(PrecinctSizeSpec.optName);
+		final String param = pl.getParameter ( PrecinctSizeSpec.optName );
 
 		// Set precinct sizes to default i.e. 2^15 =
 		// Markers.PRECINCT_PARTITION_DEF_SIZE
-		@SuppressWarnings("unchecked") final Vector<Integer>[] tmpv = new Vector[2];
-		tmpv[0] = new Vector<Integer>(); // ppx
-		tmpv[0].addElement(Integer.valueOf(Markers.PRECINCT_PARTITION_DEF_SIZE));
-		tmpv[1] = new Vector<Integer>(); // ppy
-		tmpv[1].addElement(Integer.valueOf(Markers.PRECINCT_PARTITION_DEF_SIZE));
-		this.setDefault(tmpv);
+		@SuppressWarnings ("unchecked") final Vector<Integer>[] tmpv = new Vector[ 2 ];
+		tmpv[ 0 ] = new Vector<Integer> ( ); // ppx
+		tmpv[ 0 ].addElement ( Integer.valueOf ( Markers.PRECINCT_PARTITION_DEF_SIZE ) );
+		tmpv[ 1 ] = new Vector<Integer> ( ); // ppy
+		tmpv[ 1 ].addElement ( Integer.valueOf ( Markers.PRECINCT_PARTITION_DEF_SIZE ) );
+		this.setDefault ( tmpv );
 
-		if (null == param)
-		{
+		if ( null == param ) {
 			// No precinct size specified in the command line so we do not try
 			// to parse it.
 			return;
 		}
 
 		// Precinct partition is used : parse arguments
-		final StringTokenizer stk = new StringTokenizer(param);
+		final StringTokenizer stk = new StringTokenizer ( param );
 		byte curSpecType = ModuleSpec.SPEC_DEF; // Specification type of the
-										// current parameter
+		// current parameter
 		boolean[] tileSpec = null; // Tiles concerned by the specification
 		boolean[] compSpec = null; // Components concerned by the specification
 		int ci, ti;
@@ -167,103 +153,87 @@ public class PrecinctSizeSpec extends ModuleSpec
 		Integer w, h;
 		String errMsg = null;
 
-		while ((stk.hasMoreTokens() || wasReadingPrecinctSize) && !endOfParamList)
-		{
+		while ( ( stk.hasMoreTokens ( ) || wasReadingPrecinctSize ) && ! endOfParamList ) {
 
-			@SuppressWarnings("unchecked") final Vector<Integer>[] v = new Vector[2]; // v[0] : ppx, v[1] : ppy
+			@SuppressWarnings ("unchecked") final Vector<Integer>[] v = new Vector[ 2 ]; // v[0] : ppx, v[1] : ppy
 
 			// We do not read the next token if we were reading a precinct's
 			// size argument as we have already read the next token into word.
-			if (!wasReadingPrecinctSize)
-			{
-				word = stk.nextToken();
+			if ( ! wasReadingPrecinctSize ) {
+				word = stk.nextToken ( );
 			}
 
 			wasReadingPrecinctSize = false;
 
-			switch (word.charAt(0))
-			{
+			switch ( word.charAt ( 0 ) ) {
 
 				case 't': // Tiles specification
-					tileSpec = ModuleSpec.parseIdx(word, this.nTiles);
-					if (SPEC_COMP_DEF == curSpecType)
-					{
+					tileSpec = ModuleSpec.parseIdx ( word , this.nTiles );
+					if ( ModuleSpec.SPEC_COMP_DEF == curSpecType ) {
 						curSpecType = ModuleSpec.SPEC_TILE_COMP;
 					}
-					else
-					{
+					else {
 						curSpecType = ModuleSpec.SPEC_TILE_DEF;
 					}
 					break;
 
 				case 'c': // Components specification
-					compSpec = ModuleSpec.parseIdx(word, this.nComp);
-					if (SPEC_TILE_DEF == curSpecType)
-					{
+					compSpec = ModuleSpec.parseIdx ( word , this.nComp );
+					if ( ModuleSpec.SPEC_TILE_DEF == curSpecType ) {
 						curSpecType = ModuleSpec.SPEC_TILE_COMP;
 					}
-					else
-					{
+					else {
 						curSpecType = ModuleSpec.SPEC_COMP_DEF;
 					}
 					break;
 
 				default:
-					if (!Character.isDigit(word.charAt(0)))
-					{
+					if ( ! Character.isDigit ( word.charAt ( 0 ) ) ) {
 						errMsg = "Bad construction for parameter: " + word;
-						throw new IllegalArgumentException(errMsg);
+						throw new IllegalArgumentException ( errMsg );
 					}
 
 					// Initialises Vector objects
-					v[0] = new Vector<Integer>(); // ppx
-					v[1] = new Vector<Integer>(); // ppy
+					v[ 0 ] = new Vector<Integer> ( ); // ppx
+					v[ 1 ] = new Vector<Integer> ( ); // ppy
 
-					while (true)
-					{
+					while ( true ) {
 
 						// Now get the precinct dimensions
-						try
-						{
+						try {
 							// Get precinct width
-							w = Integer.valueOf(word);
+							w = Integer.valueOf ( word );
 
 							// Get next word in argument list
-							try
-							{
-								word = stk.nextToken();
-							}
-							catch (final
-							NoSuchElementException e)
-							{
+							try {
+								word = stk.nextToken ( );
+							} catch (
+									final
+									NoSuchElementException e ) {
 								errMsg = "'" + PrecinctSizeSpec.optName + "' option : could not parse the precinct's width";
-								throw new IllegalArgumentException(errMsg);
+								throw new IllegalArgumentException ( errMsg );
 
 							}
 							// Get precinct height
-							h = Integer.valueOf(word);
-							if (w.intValue() != (1 << MathUtil.log2(w.intValue()))
-									|| h.intValue() != (1 << MathUtil.log2(h.intValue())))
-							{
+							h = Integer.valueOf ( word );
+							if ( w.intValue ( ) != ( 1 << MathUtil.log2 ( w.intValue ( ) ) )
+									|| h.intValue ( ) != ( 1 << MathUtil.log2 ( h.intValue ( ) ) ) ) {
 								errMsg = "Precinct dimensions must be powers of 2";
-								throw new IllegalArgumentException(errMsg);
+								throw new IllegalArgumentException ( errMsg );
 							}
-						}
-						catch (final NumberFormatException e)
-						{
+						} catch (
+								final NumberFormatException e ) {
 							errMsg = "'" + PrecinctSizeSpec.optName + "' option : the argument '" + word + "' could not be parsed.";
-							throw new IllegalArgumentException(errMsg);
+							throw new IllegalArgumentException ( errMsg );
 						}
 						// Store packet's dimensions in Vector arrays
-						v[0].addElement(w);
-						v[1].addElement(h);
+						v[ 0 ].addElement ( w );
+						v[ 1 ].addElement ( h );
 
 						// Try to get the next token
-						if (stk.hasMoreTokens())
-						{
-							word = stk.nextToken();
-							if (!Character.isDigit(word.charAt(0)))
-							{
+						if ( stk.hasMoreTokens ( ) ) {
+							word = stk.nextToken ( );
+							if ( ! Character.isDigit ( word.charAt ( 0 ) ) ) {
 								// The next token does not start with a digit so
 								// it is not a precinct's size argument. We set
 								// the wasReadingPrecinctSize booleen such that
@@ -272,39 +242,28 @@ public class PrecinctSizeSpec extends ModuleSpec
 								// and check for the end of the parameters list.
 								wasReadingPrecinctSize = true;
 
-								if (SPEC_DEF == curSpecType)
-								{
-									this.setDefault(v);
+								if ( ModuleSpec.SPEC_DEF == curSpecType ) {
+									this.setDefault ( v );
 								}
-								else if (SPEC_TILE_DEF == curSpecType)
-								{
-									for (ti = tileSpec.length - 1; 0 <= ti; ti--)
-									{
-										if (tileSpec[ti])
-										{
-											this.setTileDef(ti, v);
+								else if ( ModuleSpec.SPEC_TILE_DEF == curSpecType ) {
+									for ( ti = tileSpec.length - 1; 0 <= ti ; ti-- ) {
+										if ( tileSpec[ ti ] ) {
+											this.setTileDef ( ti , v );
 										}
 									}
 								}
-								else if (SPEC_COMP_DEF == curSpecType)
-								{
-									for (ci = compSpec.length - 1; 0 <= ci; ci--)
-									{
-										if (compSpec[ci])
-										{
-											this.setCompDef(ci, v);
+								else if ( ModuleSpec.SPEC_COMP_DEF == curSpecType ) {
+									for ( ci = compSpec.length - 1; 0 <= ci ; ci-- ) {
+										if ( compSpec[ ci ] ) {
+											this.setCompDef ( ci , v );
 										}
 									}
 								}
-								else
-								{
-									for (ti = tileSpec.length - 1; 0 <= ti; ti--)
-									{
-										for (ci = compSpec.length - 1; 0 <= ci; ci--)
-										{
-											if (tileSpec[ti] && compSpec[ci])
-											{
-												this.setTileCompVal(ti, ci, v);
+								else {
+									for ( ti = tileSpec.length - 1; 0 <= ti ; ti-- ) {
+										for ( ci = compSpec.length - 1; 0 <= ci ; ci-- ) {
+											if ( tileSpec[ ti ] && compSpec[ ci ] ) {
+												this.setTileCompVal ( ti , ci , v );
 											}
 										}
 									}
@@ -319,43 +278,31 @@ public class PrecinctSizeSpec extends ModuleSpec
 							}
 							// Next token starts with a digit so read it
 						}
-						else
-						{
+						else {
 							// We have reached the end of the parameters list so
 							// we store the last precinct's sizes and we stop
-							if (SPEC_DEF == curSpecType)
-							{
-								this.setDefault(v);
+							if ( ModuleSpec.SPEC_DEF == curSpecType ) {
+								this.setDefault ( v );
 							}
-							else if (SPEC_TILE_DEF == curSpecType)
-							{
-								for (ti = tileSpec.length - 1; 0 <= ti; ti--)
-								{
-									if (tileSpec[ti])
-									{
-										this.setTileDef(ti, v);
+							else if ( ModuleSpec.SPEC_TILE_DEF == curSpecType ) {
+								for ( ti = tileSpec.length - 1; 0 <= ti ; ti-- ) {
+									if ( tileSpec[ ti ] ) {
+										this.setTileDef ( ti , v );
 									}
 								}
 							}
-							else if (SPEC_COMP_DEF == curSpecType)
-							{
-								for (ci = compSpec.length - 1; 0 <= ci; ci--)
-								{
-									if (compSpec[ci])
-									{
-										this.setCompDef(ci, v);
+							else if ( ModuleSpec.SPEC_COMP_DEF == curSpecType ) {
+								for ( ci = compSpec.length - 1; 0 <= ci ; ci-- ) {
+									if ( compSpec[ ci ] ) {
+										this.setCompDef ( ci , v );
 									}
 								}
 							}
-							else
-							{
-								for (ti = tileSpec.length - 1; 0 <= ti; ti--)
-								{
-									for (ci = compSpec.length - 1; 0 <= ci; ci--)
-									{
-										if (tileSpec[ti] && compSpec[ci])
-										{
-											this.setTileCompVal(ti, ci, v);
+							else {
+								for ( ti = tileSpec.length - 1; 0 <= ti ; ti-- ) {
+									for ( ci = compSpec.length - 1; 0 <= ci ; ci-- ) {
+										if ( tileSpec[ ti ] && compSpec[ ci ] ) {
+											this.setTileCompVal ( ti , ci , v );
 										}
 									}
 								}
@@ -374,59 +321,47 @@ public class PrecinctSizeSpec extends ModuleSpec
 	 * resolution level 'rl'. If the tile index is equal to -1 or if the
 	 * component index is equal to -1 it means that those should not be taken
 	 * into account.
-	 * 
-	 * @param t
-	 *            The tile index, in raster scan order. Specify -1 if it is not
-	 *            a specific tile.
-	 * 
-	 * @param c
-	 *            The component index. Specify -1 if it is not a specific
-	 *            component.
-	 * 
-	 * @param rl
-	 *            The resolution level
-	 * 
+	 *
+	 * @param t  The tile index, in raster scan order. Specify -1 if it is not
+	 *           a specific tile.
+	 * @param c  The component index. Specify -1 if it is not a specific
+	 *           component.
+	 * @param rl The resolution level
 	 * @return The precinct partition width in component 'c' and tile 't' at
-	 *         resolution level 'rl'.
+	 * resolution level 'rl'.
 	 */
-	@SuppressWarnings("unchecked")
-	public int getPPX(final int t, final int c, final int rl)
-	{
+	@SuppressWarnings ("unchecked")
+	public int getPPX ( final int t , final int c , final int rl ) {
 		final int mrl;
 		final int idx;
 		Vector<Integer>[] v = null;
-		final boolean tileSpecified = (-1 != t);
-		final boolean compSpecified = (-1 != c);
+		final boolean tileSpecified = ( - 1 != t );
+		final boolean compSpecified = ( - 1 != c );
 
 		// Get the maximum number of decomposition levels and the object
 		// (Vector array) containing the precinct dimensions (width and
 		// height) for the specified (or not) tile/component
-		if (tileSpecified && compSpecified)
-		{
-			mrl = ((Integer) this.dls.getTileCompVal(t, c)).intValue();
-			v = (Vector<Integer>[]) this.getTileCompVal(t, c);
+		if ( tileSpecified && compSpecified ) {
+			mrl = ( ( Integer ) this.dls.getTileCompVal ( t , c ) ).intValue ( );
+			v = ( Vector<Integer>[] ) this.getTileCompVal ( t , c );
 		}
-		else if (tileSpecified && !compSpecified)
-		{
-			mrl = ((Integer) this.dls.getTileDef(t)).intValue();
-			v = (Vector<Integer>[]) this.getTileDef(t);
+		else if ( tileSpecified && ! compSpecified ) {
+			mrl = ( ( Integer ) this.dls.getTileDef ( t ) ).intValue ( );
+			v = ( Vector<Integer>[] ) this.getTileDef ( t );
 		}
-		else if (!tileSpecified && compSpecified)
-		{
-			mrl = ((Integer) this.dls.getCompDef(c)).intValue();
-			v = (Vector<Integer>[]) this.getCompDef(c);
+		else if ( ! tileSpecified && compSpecified ) {
+			mrl = ( ( Integer ) this.dls.getCompDef ( c ) ).intValue ( );
+			v = ( Vector<Integer>[] ) this.getCompDef ( c );
 		}
-		else
-		{
-			mrl = ((Integer) this.dls.getDefault()).intValue();
-			v = (Vector<Integer>[]) this.getDefault();
+		else {
+			mrl = ( ( Integer ) this.dls.getDefault ( ) ).intValue ( );
+			v = ( Vector<Integer>[] ) this.getDefault ( );
 		}
 		idx = mrl - rl;
-		if (v[0].size() > idx)
-		{
-			return v[0].elementAt(idx).intValue();
+		if ( v[ 0 ].size ( ) > idx ) {
+			return v[ 0 ].elementAt ( idx ).intValue ( );
 		}
-		return v[0].elementAt(v[0].size() - 1).intValue();
+		return v[ 0 ].elementAt ( v[ 0 ].size ( ) - 1 ).intValue ( );
 	}
 
 	/**
@@ -434,58 +369,46 @@ public class PrecinctSizeSpec extends ModuleSpec
 	 * resolution level 'rl'. If the tile index is equal to -1 or if the
 	 * component index is equal to -1 it means that those should not be taken
 	 * into account.
-	 * 
-	 * @param t
-	 *            The tile index, in raster scan order. Specify -1 if it is not
-	 *            a specific tile.
-	 * 
-	 * @param c
-	 *            The component index. Specify -1 if it is not a specific
-	 *            component.
-	 * 
-	 * @param rl
-	 *            The resolution level.
-	 * 
+	 *
+	 * @param t  The tile index, in raster scan order. Specify -1 if it is not
+	 *           a specific tile.
+	 * @param c  The component index. Specify -1 if it is not a specific
+	 *           component.
+	 * @param rl The resolution level.
 	 * @return The precinct partition width in component 'n' and tile 't' at
-	 *         resolution level 'rl'.
+	 * resolution level 'rl'.
 	 */
-	@SuppressWarnings("unchecked")
-	public int getPPY(final int t, final int c, final int rl)
-	{
+	@SuppressWarnings ("unchecked")
+	public int getPPY ( final int t , final int c , final int rl ) {
 		final int mrl;
 		final int idx;
 		Vector<Integer>[] v = null;
-		final boolean tileSpecified = (-1 != t);
-		final boolean compSpecified = (-1 != c);
+		final boolean tileSpecified = ( - 1 != t );
+		final boolean compSpecified = ( - 1 != c );
 
 		// Get the maximum number of decomposition levels and the object
 		// (Vector array) containing the precinct dimensions (width and
 		// height) for the specified (or not) tile/component
-		if (tileSpecified && compSpecified)
-		{
-			mrl = ((Integer) this.dls.getTileCompVal(t, c)).intValue();
-			v = (Vector<Integer>[]) this.getTileCompVal(t, c);
+		if ( tileSpecified && compSpecified ) {
+			mrl = ( ( Integer ) this.dls.getTileCompVal ( t , c ) ).intValue ( );
+			v = ( Vector<Integer>[] ) this.getTileCompVal ( t , c );
 		}
-		else if (tileSpecified && !compSpecified)
-		{
-			mrl = ((Integer) this.dls.getTileDef(t)).intValue();
-			v = (Vector<Integer>[]) this.getTileDef(t);
+		else if ( tileSpecified && ! compSpecified ) {
+			mrl = ( ( Integer ) this.dls.getTileDef ( t ) ).intValue ( );
+			v = ( Vector<Integer>[] ) this.getTileDef ( t );
 		}
-		else if (!tileSpecified && compSpecified)
-		{
-			mrl = ((Integer) this.dls.getCompDef(c)).intValue();
-			v = (Vector<Integer>[]) this.getCompDef(c);
+		else if ( ! tileSpecified && compSpecified ) {
+			mrl = ( ( Integer ) this.dls.getCompDef ( c ) ).intValue ( );
+			v = ( Vector<Integer>[] ) this.getCompDef ( c );
 		}
-		else
-		{
-			mrl = ((Integer) this.dls.getDefault()).intValue();
-			v = (Vector<Integer>[]) this.getDefault();
+		else {
+			mrl = ( ( Integer ) this.dls.getDefault ( ) ).intValue ( );
+			v = ( Vector<Integer>[] ) this.getDefault ( );
 		}
 		idx = mrl - rl;
-		if (v[1].size() > idx)
-		{
-			return v[1].elementAt(idx).intValue();
+		if ( v[ 1 ].size ( ) > idx ) {
+			return v[ 1 ].elementAt ( idx ).intValue ( );
 		}
-		return v[1].elementAt(v[1].size() - 1).intValue();
+		return v[ 1 ].elementAt ( v[ 1 ].size ( ) - 1 ).intValue ( );
 	}
 }

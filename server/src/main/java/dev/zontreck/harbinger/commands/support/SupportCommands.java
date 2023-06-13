@@ -21,39 +21,41 @@ public enum SupportCommands {
 
 
 	@Subscribe
-	public static void onListSupport(final CommandEvent ev) {
-		if (ev.command.equals(SupportCommands.SUPPORT)) {
-			if (0 == ev.arguments.size()) {
-				CommandRegistry.LOGGER.info("The following are the accepted subcommands\n \n" +
+	public static void onListSupport ( final CommandEvent ev ) {
+		if ( ev.command.equals ( SupportCommands.SUPPORT ) ) {
+			if ( 0 == ev.arguments.size ( ) ) {
+				CommandRegistry.LOGGER.info ( "The following are the accepted subcommands\n \n" +
 
 						SupportCommands.LIST_SUPPORT + "\t\t- Lists all support representatives\n" +
 						SupportCommands.SUPPORT_ADD + "\t\t- Adds a new support rep\n"
 				);
-			} else {
-				if (ev.arguments.get(0).equals(SupportCommands.LIST_SUPPORT)) {
-					CommandRegistry.LOGGER.info("The following are the support reps: \n{}", SupportReps.dump());
-				} else if (ev.arguments.get(0).equals(SupportCommands.SUPPORT_ADD)) {
-					ev.setCancelled(true);
+			}
+			else {
+				if ( ev.arguments.get ( 0 ).equals ( SupportCommands.LIST_SUPPORT ) ) {
+					CommandRegistry.LOGGER.info ( "The following are the support reps: \n{}" , SupportReps.dump ( ) );
+				}
+				else if ( ev.arguments.get ( 0 ).equals ( SupportCommands.SUPPORT_ADD ) ) {
+					ev.setCancelled ( true );
 
-					ConsolePrompt.console.printf("\nPlease enter the Rep's UUID > ");
-					final String input = ConsolePrompt.console.readLine();
-					ConsolePrompt.console.printf("\nPlease enter the Rep's Second Life User Name (Not display) > ");
-					final String name = ConsolePrompt.console.readLine();
-					ConsolePrompt.console.printf("\nWhat level is this user? \n");
-					for (final PermissionLevel lPermissionLevel : PermissionLevel.values()) {
-						System.out.println(lPermissionLevel.getFlag() + "\t\t-\t" + lPermissionLevel.name());
+					ConsolePrompt.console.printf ( "\nPlease enter the Rep's UUID > " );
+					final String input = ConsolePrompt.console.readLine ( );
+					ConsolePrompt.console.printf ( "\nPlease enter the Rep's Second Life User Name (Not display) > " );
+					final String name = ConsolePrompt.console.readLine ( );
+					ConsolePrompt.console.printf ( "\nWhat level is this user? \n" );
+					for ( final PermissionLevel lPermissionLevel : PermissionLevel.values ( ) ) {
+						System.out.println ( lPermissionLevel.getFlag ( ) + "\t\t-\t" + lPermissionLevel.name ( ) );
 
 					}
-					ConsolePrompt.console.printf("\nChoose a level > ");
-					final String lvl = ConsolePrompt.console.readLine();
-					final PermissionLevel perm = PermissionLevel.of(Integer.parseInt(lvl));
+					ConsolePrompt.console.printf ( "\nChoose a level > " );
+					final String lvl = ConsolePrompt.console.readLine ( );
+					final PermissionLevel perm = PermissionLevel.of ( Integer.parseInt ( lvl ) );
 
-					final Person p = new Person(UUID.fromString(input), name, perm);
-					SupportReps.add(p);
+					final Person p = new Person ( UUID.fromString ( input ) , name , perm );
+					SupportReps.add ( p );
 
-					Terminal.startTerminal();
+					Terminal.startTerminal ( );
 
-					EventBus.BUS.post(new MemoryAlteredEvent());
+					EventBus.BUS.post ( new MemoryAlteredEvent ( ) );
 
 				}
 			}

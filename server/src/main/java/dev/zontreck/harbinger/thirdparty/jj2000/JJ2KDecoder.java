@@ -57,13 +57,13 @@ public enum JJ2KDecoder {
 	 *
 	 * @param argv The command line arguments.
 	 */
-	public static void main(final String[] argv) {
-		if (0 == argv.length) {
-			System.err.println("dev.zontreck.harbinger.thirdparty.jj2000.JJ2KDecoder: JJ2000's JPEG 2000 Decoder\n");
-			System.err.println("    use dev.zontreck.harbinger.thirdparty.jj2000.JJ2KDecoder -u to get help\n");
-			System.exit(1);
+	public static void main ( final String[] argv ) {
+		if ( 0 == argv.length ) {
+			System.err.println ( "dev.zontreck.harbinger.thirdparty.jj2000.JJ2KDecoder: JJ2000's JPEG 2000 Decoder\n" );
+			System.err.println ( "    use dev.zontreck.harbinger.thirdparty.jj2000.JJ2KDecoder -u to get help\n" );
+			System.exit ( 1 );
 		}
 
-		CmdLnDecoder.main(argv);
+		CmdLnDecoder.main ( argv );
 	}
 }

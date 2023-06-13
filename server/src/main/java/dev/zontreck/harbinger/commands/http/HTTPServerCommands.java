@@ -20,41 +20,44 @@ public enum HTTPServerCommands {
 
 
 	@Subscribe
-	public static void onCommand(final CommandEvent ev) {
-		if (ev.command.equals(HTTPServerCommands.HTTPCommands)) {
-			if (0 == ev.arguments.size()) {
-				CommandRegistry.LOGGER.info("The following are the accepted subcommands: \n\n"
+	public static void onCommand ( final CommandEvent ev ) {
+		if ( ev.command.equals ( HTTPServerCommands.HTTPCommands ) ) {
+			if ( 0 == ev.arguments.size ( ) ) {
+				CommandRegistry.LOGGER.info ( "The following are the accepted subcommands: \n\n"
 						+ HTTPServerCommands.START + "\t\tStarts the server\n"
 						+ HTTPServerCommands.STOP + "\t\tStops the server\n"
 						+ HTTPServerCommands.SET_PORT + "\t\tSets the port number for the server"
 				);
-			} else {
-				if (ev.arguments.get(0).equals(HTTPServerCommands.SET_PORT)) {
-					ev.setCancelled(true);
+			}
+			else {
+				if ( ev.arguments.get ( 0 ).equals ( HTTPServerCommands.SET_PORT ) ) {
+					ev.setCancelled ( true );
 
-					ConsolePrompt.console.printf("What should the port be changed to? [" + Persist.serverSettings.port + "] ");
-					Persist.serverSettings.port = Integer.parseInt(ConsolePrompt.console.readLine());
-					EventBus.BUS.post(new MemoryAlteredEvent());
+					ConsolePrompt.console.printf ( "What should the port be changed to? [" + Persist.serverSettings.port + "] " );
+					Persist.serverSettings.port = Integer.parseInt ( ConsolePrompt.console.readLine ( ) );
+					EventBus.BUS.post ( new MemoryAlteredEvent ( ) );
 
-					Terminal.startTerminal();
-				} else if (ev.arguments.get(0).equals(HTTPServerCommands.START)) {
-					CommandRegistry.LOGGER.info("Starting up server...");
-					if (Persist.serverSettings.enabled) {
-						CommandRegistry.LOGGER.info("Fatal: The server is already running");
+					Terminal.startTerminal ( );
+				}
+				else if ( ev.arguments.get ( 0 ).equals ( HTTPServerCommands.START ) ) {
+					CommandRegistry.LOGGER.info ( "Starting up server..." );
+					if ( Persist.serverSettings.enabled ) {
+						CommandRegistry.LOGGER.info ( "Fatal: The server is already running" );
 						return;
 					}
 					Persist.serverSettings.enabled = true;
-					HTTPServer.startServer();
-					EventBus.BUS.post(new MemoryAlteredEvent());
-				} else if (ev.arguments.get(0).equals(HTTPServerCommands.STOP)) {
-					CommandRegistry.LOGGER.info("Stopping server...");
-					if (!Persist.serverSettings.enabled) {
-						CommandRegistry.LOGGER.info("Fatal: The server is already not running");
+					HTTPServer.startServer ( );
+					EventBus.BUS.post ( new MemoryAlteredEvent ( ) );
+				}
+				else if ( ev.arguments.get ( 0 ).equals ( HTTPServerCommands.STOP ) ) {
+					CommandRegistry.LOGGER.info ( "Stopping server..." );
+					if ( ! Persist.serverSettings.enabled ) {
+						CommandRegistry.LOGGER.info ( "Fatal: The server is already not running" );
 						return;
 					}
 					Persist.serverSettings.enabled = false;
-					HTTPServer.stopServer();
-					EventBus.BUS.post(new MemoryAlteredEvent());
+					HTTPServer.stopServer ( );
+					EventBus.BUS.post ( new MemoryAlteredEvent ( ) );
 				}
 			}
 		}

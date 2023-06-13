@@ -42,18 +42,20 @@
  */
 package dev.zontreck.harbinger.thirdparty.jj2000.j2k.entropy.decoder;
 
-import dev.zontreck.harbinger.thirdparty.jj2000.j2k.quantization.dequantizer.*;
-import dev.zontreck.harbinger.thirdparty.jj2000.j2k.wavelet.synthesis.*;
+import dev.zontreck.harbinger.thirdparty.jj2000.j2k.quantization.dequantizer.CBlkQuantDataSrcDec;
+import dev.zontreck.harbinger.thirdparty.jj2000.j2k.wavelet.synthesis.MultiResImgData;
+import dev.zontreck.harbinger.thirdparty.jj2000.j2k.wavelet.synthesis.MultiResImgDataAdapter;
+import dev.zontreck.harbinger.thirdparty.jj2000.j2k.wavelet.synthesis.SubbandSyn;
 
 /**
  * This is the abstract class from which all entropy decoders must inherit. This
  * class implements the 'MultiResImgData', therefore it has the concept of a
  * current tile and all operations are performed on the current tile.
- * 
+ *
  * <p>
  * Default implementations of the methods in 'MultiResImgData' are provided
  * through the 'MultiResImgDataAdapter' abstract class.
- * 
+ *
  * <p>
  * Sign magnitude representation is used (instead of two's complement) for the
  * output data. The most significant bit is used for the sign (0 if positive, 1
@@ -61,13 +63,14 @@ import dev.zontreck.harbinger.thirdparty.jj2000.j2k.wavelet.synthesis.*;
  * the next most significat bits. The most significant magnitude bit corresponds
  * to the most significant bit-plane and so on.
  * </p
- * 
+ *
  * @see MultiResImgData
  * @see MultiResImgDataAdapter
  */
-public abstract class EntropyDecoder extends MultiResImgDataAdapter implements CBlkQuantDataSrcDec
-{
-	/** The prefix for entropy decoder optiojns: 'C' */
+public abstract class EntropyDecoder extends MultiResImgDataAdapter implements CBlkQuantDataSrcDec {
+	/**
+	 * The prefix for entropy decoder optiojns: 'C'
+	 */
 	public static final char OPT_PREFIX = 'C';
 
 	/**
@@ -76,18 +79,18 @@ public abstract class EntropyDecoder extends MultiResImgDataAdapter implements C
 	 */
 	private static final String[][] pinfo = {
 			{
-					"Cverber",
-					"[on|off]",
+					"Cverber" ,
+					"[on|off]" ,
 					"Specifies if the entropy decoder should be verbose about detected "
-							+ "errors. If 'on' a message is printed whenever an error is detected.", "on" },
+							+ "errors. If 'on' a message is printed whenever an error is detected." , "on" } ,
 			{
-					"Cer",
-					"[on|off]",
+					"Cer" ,
+					"[on|off]" ,
 					"Specifies if error detection should be performed by the entropy "
 							+ "decoder engine. If errors are detected they will be concealed and "
 							+ "the resulting distortion will be less important. Note that errors "
 							+ "can only be detected if the encoder that generated the data "
-							+ "included error resilience information.", "on" }, };
+							+ "included error resilience information." , "on" } , };
 
 	/**
 	 * The bit stream transport from where to get the compressed data (the
@@ -97,57 +100,12 @@ public abstract class EntropyDecoder extends MultiResImgDataAdapter implements C
 
 	/**
 	 * Initializes the source of compressed data.
-	 * 
-	 * @param src
-	 *            From where to obtain the compressed data.
+	 *
+	 * @param src From where to obtain the compressed data.
 	 */
-	protected EntropyDecoder(final CodedCBlkDataSrcDec src)
-	{
-		super(src);
+	protected EntropyDecoder ( final CodedCBlkDataSrcDec src ) {
+		super ( src );
 		this.src = src;
-	}
-
-	/**
-	 * Returns the subband tree, for the specified tile-component. This method
-	 * returns the root element of the subband tree structure, see Subband and
-	 * SubbandSyn. The tree comprises all the available resolution levels.
-	 * 
-	 * <P>
-	 * The number of magnitude bits ('magBits' member variable) for each subband
-	 * is not initialized.
-	 * 
-	 * @param t
-	 *            The index of the tile, from 0 to T-1.
-	 * 
-	 * @param c
-	 *            The index of the component, from 0 to C-1.
-	 * 
-	 * @return The root of the tree structure.
-	 */
-	@Override
-	public SubbandSyn getSynSubbandTree(final int t, final int c)
-	{
-		return this.src.getSynSubbandTree(t, c);
-	}
-
-	/**
-	 * Returns the horizontal code-block partition origin. Allowable values are
-	 * 0 and 1, nothing else.
-	 */
-	@Override
-	public int getCbULX()
-	{
-		return this.src.getCbULX();
-	}
-
-	/**
-	 * Returns the vertical code-block partition origin. Allowable values are 0
-	 * and 1, nothing else.
-	 */
-	@Override
-	public int getCbULY()
-	{
-		return this.src.getCbULY();
 	}
 
 	/**
@@ -159,13 +117,48 @@ public abstract class EntropyDecoder extends MultiResImgDataAdapter implements C
 	 * 'null', in which case it is assumed that there is no synopsis or
 	 * description of the option, respectively. Null may be returned if no
 	 * options are supported.
-	 * 
+	 *
 	 * @return the options name, their synopsis and their explanation, or null
-	 *         if no options are supported.
+	 * if no options are supported.
 	 */
-	public static String[][] getParameterInfo()
-	{
+	public static String[][] getParameterInfo ( ) {
 		return EntropyDecoder.pinfo;
+	}
+
+	/**
+	 * Returns the subband tree, for the specified tile-component. This method
+	 * returns the root element of the subband tree structure, see Subband and
+	 * SubbandSyn. The tree comprises all the available resolution levels.
+	 *
+	 * <p>
+	 * The number of magnitude bits ('magBits' member variable) for each subband
+	 * is not initialized.
+	 *
+	 * @param t The index of the tile, from 0 to T-1.
+	 * @param c The index of the component, from 0 to C-1.
+	 * @return The root of the tree structure.
+	 */
+	@Override
+	public SubbandSyn getSynSubbandTree ( final int t , final int c ) {
+		return this.src.getSynSubbandTree ( t , c );
+	}
+
+	/**
+	 * Returns the horizontal code-block partition origin. Allowable values are
+	 * 0 and 1, nothing else.
+	 */
+	@Override
+	public int getCbULX ( ) {
+		return this.src.getCbULX ( );
+	}
+
+	/**
+	 * Returns the vertical code-block partition origin. Allowable values are 0
+	 * and 1, nothing else.
+	 */
+	@Override
+	public int getCbULY ( ) {
+		return this.src.getCbULY ( );
 	}
 
 }

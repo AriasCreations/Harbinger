@@ -77,5 +77,5 @@ public interface InvWT extends WaveletTransform {
 	 * @return The vertical coordinate of the image origin in the canvas system,
 	 * on the reference grid.
 	 */
-	void setImgResLevel(int rl);
+	void setImgResLevel ( int rl );
 }

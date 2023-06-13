@@ -12,30 +12,32 @@ import dev.zontreck.harbinger.thirdparty.jj2000.j2k.icc.tags.ICCCurveType;
 
 /**
  * Toplevel class for a lut. All lookup tables must extend this class.
- * 
- * @version 1.0
+ *
  * @author Bruce A. Kern
+ * @version 1.0
  */
-public abstract class LookUpTable
-{
+public abstract class LookUpTable {
 
-	/** End of line string. */
-	protected static final String eol = System.getProperty("line.separator");
-	/** The curve data */
+	/**
+	 * End of line string.
+	 */
+	protected static final String eol = System.getProperty ( "line.separator" );
+	/**
+	 * The curve data
+	 */
 	protected ICCCurveType curve;
-	/** Number of values in created lut */
+	/**
+	 * Number of values in created lut
+	 */
 	protected int dwNumInput;
 
 	/**
 	 * For subclass usage.
-	 * 
-	 * @param curve
-	 *            The curve data
-	 * @param dwNumInput
-	 *            Number of values in created lut
+	 *
+	 * @param curve      The curve data
+	 * @param dwNumInput Number of values in created lut
 	 */
-	protected LookUpTable(final ICCCurveType curve, final int dwNumInput)
-	{
+	protected LookUpTable ( final ICCCurveType curve , final int dwNumInput ) {
 		this.curve = curve;
 		this.dwNumInput = dwNumInput;
 	}

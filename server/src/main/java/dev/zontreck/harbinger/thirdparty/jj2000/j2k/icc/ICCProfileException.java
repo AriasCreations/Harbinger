@@ -9,30 +9,26 @@ package dev.zontreck.harbinger.thirdparty.jj2000.j2k.icc;
 
 /**
  * This exception is thrown when the content of a profile is incorrect.
- * 
- * @see ICCProfile
- * @version 1.0
+ *
  * @author Bruce A. Kern
+ * @version 1.0
+ * @see ICCProfile
  */
-public class ICCProfileException extends Exception
-{
+public class ICCProfileException extends Exception {
 	private static final long serialVersionUID = 1L;
 
 	/**
 	 * Contruct with message
-	 * 
-	 * @param msg
-	 *            returned by getMessage()
+	 *
+	 * @param msg returned by getMessage()
 	 */
-	public ICCProfileException(final String msg)
-	{
-		super(msg);
+	public ICCProfileException ( final String msg ) {
+		super ( msg );
 	}
 
 	/**
 	 * Empty constructor
 	 */
-	public ICCProfileException()
-	{
+	public ICCProfileException ( ) {
 	}
 }

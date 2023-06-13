@@ -77,7 +77,7 @@ public interface ForwWT extends WaveletTransform, ForwWTDataProps {
 	 * @param c The index of the component for which to return the filters.
 	 * @return The horizontal analysis wavelet filters used in each level.
 	 */
-	AnWTFilter[] getHorAnWaveletFilters(int t, int c);
+	AnWTFilter[] getHorAnWaveletFilters ( int t , int c );
 
 	/**
 	 * Returns the vertical analysis wavelet filters used in each level, for the
@@ -100,7 +100,7 @@ public interface ForwWT extends WaveletTransform, ForwWTDataProps {
 	 * @param c The index of the component for which to return the filters.
 	 * @return The vertical analysis wavelet filters used in each level.
 	 */
-	AnWTFilter[] getVertAnWaveletFilters(int t, int c);
+	AnWTFilter[] getVertAnWaveletFilters ( int t , int c );
 
 	/**
 	 * Returns the number of decomposition levels that are applied to obtain the
@@ -112,7 +112,7 @@ public interface ForwWT extends WaveletTransform, ForwWTDataProps {
 	 * @return The number of decompositions applied to obtain the LL subband
 	 * (0 for no wavelet transform).
 	 */
-	int getDecompLevels(int t, int c);
+	int getDecompLevels ( int t , int c );
 
 	/**
 	 * Returns the wavelet tree decomposition. Only WT_DECOMP_DYADIC is
@@ -122,5 +122,5 @@ public interface ForwWT extends WaveletTransform, ForwWTDataProps {
 	 * @param c The index of the component.
 	 * @return The wavelet decomposition.
 	 */
-	int getDecomp(int t, int c);
+	int getDecomp ( int t , int c );
 }

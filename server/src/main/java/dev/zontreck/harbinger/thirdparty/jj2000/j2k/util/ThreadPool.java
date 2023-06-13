@@ -128,22 +128,18 @@ public class ThreadPool {
 	 * thread list.
 	 */
 	private final ThreadPoolThread[] idle;
-
-	/**
-	 * The number of idle threads
-	 */
-	private int nidle;
-
 	/**
 	 * The name of the pool
 	 */
 	private final String poolName;
-
 	/**
 	 * The priority for the pool
 	 */
 	private final int poolPriority;
-
+	/**
+	 * The number of idle threads
+	 */
+	private int nidle;
 	/**
 	 * The last error thrown by a target. Null if none
 	 */
@@ -155,6 +151,302 @@ public class ThreadPool {
 	 */
 	// NOTE: needs to be volatile, so that only one copy exits in memory
 	private volatile RuntimeException targetRE;
+
+	/**
+	 * Creates a new thread pool of the given size, thread priority and pool
+	 * name.
+	 *
+	 * <p>
+	 * If the Java system property of the name defined by
+	 * 'CONCURRENCY_PROP_NAME' is set, then an attempt will be made to load the
+	 * library that supports concurrency setting (see 'NativeServices'). If that
+	 * succeds the concurrency level will be set to the specified value.
+	 * Otherwise a warning is printed.
+	 *
+	 * @param size     The size of the pool (number of threads to create in the
+	 *                 pool).
+	 * @param priority The priority to give to the threads in the pool. If less than
+	 *                 'Thread.MIN_PRIORITY' it will be the same as the priority of
+	 *                 the calling thread.
+	 * @param name     The name of the pool. If null a default generic name is
+	 *                 chosen.
+	 * @see NativeServices
+	 * @see #CONCURRENCY_PROP_NAME
+	 */
+	public ThreadPool ( final int size , final int priority , final String name ) {
+		int i;
+		ThreadPoolThread t;
+		String prop;
+		final int clevel;
+
+		// Initialize variables checking for special cases
+		if ( 0 >= size ) {
+			throw new IllegalArgumentException ( "Pool must be of positive size" );
+		}
+		if ( Thread.MIN_PRIORITY > priority ) {
+			this.poolPriority = Thread.currentThread ( ).getPriority ( );
+		}
+		else {
+			this.poolPriority = ( Thread.MAX_PRIORITY > priority ) ? priority : Thread.MAX_PRIORITY;
+		}
+		if ( null == name ) {
+			this.poolName = "Anonymous ThreadPool";
+		}
+		else {
+			this.poolName = name;
+		}
+
+		// If requested to set concurrency try to do it
+		prop = null;
+		try {
+			prop = System.getProperty ( ThreadPool.CONCURRENCY_PROP_NAME );
+		} catch ( final SecurityException se ) {
+			// Ignore it.
+		}
+		if ( null == prop ) {
+			// No concurrency to set, do nothing
+		}
+		else {
+			// Get concurrency level
+			try {
+				clevel = Integer.parseInt ( prop );
+				if ( 0 > clevel )
+					throw new NumberFormatException ( );
+			} catch ( final NumberFormatException e ) {
+				throw new IllegalArgumentException ( "Invalid concurrency level " + "in property "
+						+ ThreadPool.CONCURRENCY_PROP_NAME );
+			}
+			// Attempt to load library
+			if ( NativeServices.loadLibrary ( ) ) {
+				// Library load successful
+				FacilityManager.getMsgLogger ( ).printmsg (
+						MsgLogger.INFO ,
+						"Changing thread concurrency " + "level from " + NativeServices.getThreadConcurrency ( ) + " to "
+								+ clevel + "."
+				);
+				NativeServices.setThreadConcurrency ( clevel );
+			}
+			else {
+				// Could not load the library => warn
+				FacilityManager.getMsgLogger ( ).printmsg (
+						MsgLogger.WARNING ,
+						"Native library to set " + "thread concurrency level as specified by the "
+								+ ThreadPool.CONCURRENCY_PROP_NAME + " property not found. " + "Thread concurrency unchanged."
+				);
+			}
+		}
+
+		// Allocate internal variables
+		this.idle = new ThreadPoolThread[ size ];
+		this.nidle = 0;
+
+		// Create and start the threads
+		for ( i = 0; i < size ; i++ ) {
+			t = new ThreadPoolThread ( i , this.poolName + "-" + i );
+			t.start ( );
+		}
+	}
+
+	/**
+	 * Returns the size of the pool. That is the number of threads in this pool
+	 * (idle + busy).
+	 *
+	 * @return The pool's size.
+	 */
+	public int getSize ( ) {
+		return this.idle.length;
+	}
+
+	/**
+	 * Runs the run method of the specified target in an idle thread of this
+	 * pool. When the target's run method completes, the thread waiting on the
+	 * lock object is notified, if any. If there is currently no idle thread the
+	 * method will block until a thread of the pool becomes idle or the calling
+	 * thread is interrupted.
+	 *
+	 * <p>
+	 * This method is the same as <tt>runTarget(t,l,true,false)</tt>.
+	 *
+	 * @param t The target. The 'run()' method of this object will be run in
+	 *          an idle thread of the pool.
+	 * @param l The lock object. A thread waiting on the lock of the 'l'
+	 *          object will be notified, through the 'notify()' call, when the
+	 *          target's run method completes. If null no thread is notified.
+	 * @return True if the target was submitted to some thread. False if no idle
+	 * thread could be found and the target was not submitted for
+	 * execution.
+	 */
+	public boolean runTarget ( final Runnable t , final Object l ) {
+		return this.runTarget ( t , l , false , false );
+	}
+
+	/**
+	 * Runs the run method of the specified target in an idle thread of this
+	 * pool. When the target's run method completes, the thread waiting on the
+	 * lock object is notified, if any. If there is currently no idle thread and
+	 * the asynchronous mode is not used the method will block until a thread of
+	 * the pool becomes idle or the calling thread is interrupted. If the
+	 * asynchronous mode is used then the method will not block and will return
+	 * false.
+	 *
+	 * <p>
+	 * This method is the same as <tt>runTarget(t,l,async,false)</tt>.
+	 *
+	 * @param t     The target. The 'run()' method of this object will be run in
+	 *              an idle thread of the pool.
+	 * @param l     The lock object. A thread waiting on the lock of the 'l'
+	 *              object will be notified, through the 'notify()' call, when the
+	 *              target's run method completes. If null no thread is notified.
+	 * @param async If true the asynchronous mode will be used.
+	 * @return True if the target was submitted to some thread. False if no idle
+	 * thread could be found and the target was not submitted for
+	 * execution.
+	 */
+	public boolean runTarget ( final Runnable t , final Object l , final boolean async ) {
+		return this.runTarget ( t , l , async , false );
+	}
+
+	/**
+	 * Runs the run method of the specified target in an idle thread of this
+	 * pool. When the target's run method completes, the thread waiting on the
+	 * lock object is notified, if any. If there is currently no idle thread and
+	 * the asynchronous mode is not used the method will block until a thread of
+	 * the pool becomes idle or the calling thread is interrupted. If the
+	 * asynchronous mode is used then the method will not block and will return
+	 * false.
+	 *
+	 * @param t         The target. The 'run()' method of this object will be run in
+	 *                  an idle thread of the pool.
+	 * @param l         The lock object. A thread waiting on the lock of the 'l'
+	 *                  object will be notified, through the 'notify()' call, when the
+	 *                  target's run method completes. If null no thread is notified.
+	 * @param async     If true the asynchronous mode will be used.
+	 * @param notifyAll If true, threads waiting on the lock of the 'l' object will be
+	 *                  notified trough the 'notifyAll()' instead of the normal
+	 *                  'notify()' call. This is not normally needed.
+	 * @return True if the target was submitted to some thread. False if no idle
+	 * thread could be found and the target was not submitted for
+	 * execution.
+	 */
+	public boolean runTarget ( final Runnable t , final Object l , final boolean async , final boolean notifyAll ) {
+		final ThreadPoolThread runner; // The thread to run the target
+
+		// Get a thread to run
+		runner = this.getIdle ( async );
+		// If no runner return failure
+		if ( null == runner )
+			return false;
+		// Set the runner
+		runner.setTarget ( t , l , notifyAll );
+		return true;
+	}
+
+	/**
+	 * Checks that no error or runtime exception in any target have occurred so
+	 * far. If an error or runtime exception has occurred in a target's run
+	 * method they are thrown by this method.
+	 *
+	 * @throws Error            If an error condition has been thrown by a target 'run()'
+	 *                          method.
+	 * @throws RuntimeException If a runtime exception has been thrown by a target 'run()'
+	 *                          method.
+	 */
+	public void checkTargetErrors ( ) {
+		// Check for Error
+		if ( null != targetE )
+			throw this.targetE;
+		// Check for RuntimeException
+		if ( null != targetRE )
+			throw this.targetRE;
+	}
+
+	/**
+	 * Clears the current target error conditions, if any. Note that a thread in
+	 * the pool might have set the error conditions since the last check and
+	 * that those error conditions will be lost. Likewise, before returning from
+	 * this method another thread might set the error conditions. There is no
+	 * guarantee that no error conditions exist when returning from this method.
+	 *
+	 * <p>
+	 * In order to ensure that no error conditions exist when returning from
+	 * this method cooperation from the targets and the thread using this pool
+	 * is necessary (i.e. currently no targets running or waiting to run).
+	 */
+	public void clearTargetErrors ( ) {
+		// Clear the error and runtime exception conditions
+		this.targetE = null;
+		this.targetRE = null;
+	}
+
+	/**
+	 * Puts the thread 't' in the idle list. The thread 't' should be in fact
+	 * idle and ready to accept a new target when it joins the idle list.
+	 *
+	 * <p>
+	 * An idle thread that is already in the list should never add itself to the
+	 * list before it is removed. For efficiency reasons there is no check to
+	 * see if the thread is already in the list of idle threads.
+	 *
+	 * <p>
+	 * If the idle list was empty 'notify()' will be called on the 'idle' array,
+	 * to wake up a thread that might be waiting (within the 'getIdle()' method)
+	 * on an idle thread to become available.
+	 *
+	 * @param t The thread to put in the idle list.
+	 */
+	private void putInIdleList ( final ThreadPoolThread t ) {
+		// NOTE: if already in idle => catastrophe! (should be OK since //
+		// this is private method)
+		// Lock the idle array to avoid races with 'getIdle()'
+		synchronized ( this.idle ) {
+			this.idle[ this.nidle ] = t;
+			this.nidle++;
+			// If idle array was empty wakeup any waiting threads.
+			if ( 1 == nidle )
+				this.idle.notify ( );
+		}
+	}
+
+	/**
+	 * Returns and idle thread and removes it from the list of idle threads. In
+	 * asynchronous mode it will immediately return an idle thread, or null if
+	 * none is available. In non-asynchronous mode it will block until a thread
+	 * of the pool becomes idle or the calling thread is interrupted.
+	 *
+	 * <p>
+	 * If in non-asynchronous mode and there are currently no idle threads
+	 * available the calling thread will wait on the 'idle' array lock, until
+	 * notified by 'putInIdleList()' that an idle thread might have become
+	 * available.
+	 *
+	 * @param async If true asynchronous mode is used.
+	 * @return An idle thread of the pool, that has been removed from the idle
+	 * list, or null if none is available.
+	 */
+	private ThreadPoolThread getIdle ( final boolean async ) {
+		// Lock the idle array to avoid races with 'putInIdleList()'
+		synchronized ( this.idle ) {
+			if ( async ) {
+				// In asynchronous mode just return null if no idle thread
+				if ( 0 == nidle )
+					return null;
+			}
+			else {
+				// In synchronous mode wait until a thread becomes idle
+				while ( 0 == nidle ) {
+					try {
+						this.idle.wait ( );
+					} catch ( final InterruptedException e ) {
+						// If we were interrupted just return null
+						return null;
+					}
+				}
+			}
+			// Decrease the idle count and return one of the idle threads
+			this.nidle--;
+			return this.idle[ this.nidle ];
+		}
+	}
 
 	/**
 	 * The threads that are managed by the pool.
@@ -171,10 +463,10 @@ public class ThreadPool {
 		 * @param idx  The index of this thread in the pool
 		 * @param name The name of the thread
 		 */
-		public ThreadPoolThread(final int idx, final String name) {
-			super(name);
-			this.setDaemon(true);
-			this.setPriority(ThreadPool.this.poolPriority);
+		public ThreadPoolThread ( final int idx , final String name ) {
+			super ( name );
+			this.setDaemon ( true );
+			this.setPriority ( ThreadPool.this.poolPriority );
 		}
 
 		/**
@@ -200,54 +492,57 @@ public class ThreadPool {
 		 * error condition is set, this thread is not affected.
 		 */
 		@Override
-		public void run() {
+		public void run ( ) {
 			// Join the idle threads list
-			ThreadPool.this.putInIdleList(this);
+			ThreadPool.this.putInIdleList ( this );
 			// Permanently lock the object while running so that target can
 			// not be changed until we are waiting again. While waiting for a
 			// target the lock is released.
-			synchronized (this) {
-				while (true) {
+			synchronized ( this ) {
+				while ( true ) {
 					// Wait until we get a target
-					while (null == target) {
+					while ( null == target ) {
 						try {
-							wait();
-						} catch (final InterruptedException e) {
+							wait ( );
+						} catch (
+								final InterruptedException e ) {
 						}
 					}
 					// Run the target and catch all possible errors
 					try {
-						this.target.run();
-					} catch (final ThreadDeath td) {
+						this.target.run ( );
+					} catch ( final ThreadDeath td ) {
 						// We have been instructed to abruptly terminate
 						// the thread, which should never be done. This can
 						// cause another thread, or the system, to lock.
-						FacilityManager.getMsgLogger().printmsg(
-								MsgLogger.WARNING,
+						FacilityManager.getMsgLogger ( ).printmsg (
+								MsgLogger.WARNING ,
 								"Thread.stop() called on a ThreadPool " + "thread or ThreadDeath thrown. This is "
-										+ "deprecated. Lock-up might occur.");
+										+ "deprecated. Lock-up might occur."
+						);
 						throw td;
-					} catch (final Error e) {
+					} catch ( final Error e ) {
 						ThreadPool.this.targetE = e;
-					} catch (final RuntimeException re) {
+					} catch ( final RuntimeException re ) {
 						ThreadPool.this.targetRE = re;
-					} catch (final Throwable ue) {
+					} catch ( final Throwable ue ) {
 						// A totally unexpected error has occurred
 						// (Thread.stop(Throwable) has been used, which should
 						// never be.
-						ThreadPool.this.targetRE = new RuntimeException("Unchecked exception " + "thrown by target's "
-								+ "run() method in pool " + ThreadPool.this.poolName + ".");
+						ThreadPool.this.targetRE = new RuntimeException ( "Unchecked exception " + "thrown by target's "
+								+ "run() method in pool " + ThreadPool.this.poolName + "." );
 					}
 					// Join idle threads
-					ThreadPool.this.putInIdleList(this);
+					ThreadPool.this.putInIdleList ( this );
 					// Release the target and notify lock (i.e. wakeup)
 					this.target = null;
-					if (null != lock) {
-						synchronized (this.lock) {
-							if (this.doNotifyAll) {
-								this.lock.notifyAll();
-							} else {
-								this.lock.notify();
+					if ( null != lock ) {
+						synchronized ( this.lock ) {
+							if ( this.doNotifyAll ) {
+								this.lock.notifyAll ( );
+							}
+							else {
+								this.lock.notify ( );
 							}
 						}
 					}
@@ -268,302 +563,13 @@ public class ThreadPool {
 		 * @param notifyAll If true 'notifyAll()', instead of 'notify()', will be
 		 *                  called on tghe lock.
 		 */
-		synchronized void setTarget(final Runnable target, final Object lock, final boolean notifyAll) {
+		synchronized void setTarget ( final Runnable target , final Object lock , final boolean notifyAll ) {
 			// Set the target
 			this.target = target;
 			this.lock = lock;
 			this.doNotifyAll = notifyAll;
 			// Wakeup the thread
-			notify();
-		}
-	}
-
-	/**
-	 * Creates a new thread pool of the given size, thread priority and pool
-	 * name.
-	 *
-	 * <p>
-	 * If the Java system property of the name defined by
-	 * 'CONCURRENCY_PROP_NAME' is set, then an attempt will be made to load the
-	 * library that supports concurrency setting (see 'NativeServices'). If that
-	 * succeds the concurrency level will be set to the specified value.
-	 * Otherwise a warning is printed.
-	 *
-	 * @param size     The size of the pool (number of threads to create in the
-	 *                 pool).
-	 * @param priority The priority to give to the threads in the pool. If less than
-	 *                 'Thread.MIN_PRIORITY' it will be the same as the priority of
-	 *                 the calling thread.
-	 * @param name     The name of the pool. If null a default generic name is
-	 *                 chosen.
-	 * @see NativeServices
-	 * @see #CONCURRENCY_PROP_NAME
-	 */
-	public ThreadPool(final int size, final int priority, final String name) {
-		int i;
-		ThreadPoolThread t;
-		String prop;
-		final int clevel;
-
-		// Initialize variables checking for special cases
-		if (0 >= size) {
-			throw new IllegalArgumentException("Pool must be of positive size");
-		}
-		if (Thread.MIN_PRIORITY > priority) {
-			this.poolPriority = Thread.currentThread().getPriority();
-		} else {
-			this.poolPriority = (Thread.MAX_PRIORITY > priority) ? priority : Thread.MAX_PRIORITY;
-		}
-		if (null == name) {
-			this.poolName = "Anonymous ThreadPool";
-		} else {
-			this.poolName = name;
-		}
-
-		// If requested to set concurrency try to do it
-		prop = null;
-		try {
-			prop = System.getProperty(ThreadPool.CONCURRENCY_PROP_NAME);
-		} catch (final SecurityException se) {
-			// Ignore it.
-		}
-		if (null == prop) {
-			// No concurrency to set, do nothing
-		} else {
-			// Get concurrency level
-			try {
-				clevel = Integer.parseInt(prop);
-				if (0 > clevel)
-					throw new NumberFormatException();
-			} catch (final NumberFormatException e) {
-				throw new IllegalArgumentException("Invalid concurrency level " + "in property "
-						+ ThreadPool.CONCURRENCY_PROP_NAME);
-			}
-			// Attempt to load library
-			if (NativeServices.loadLibrary()) {
-				// Library load successful
-				FacilityManager.getMsgLogger().printmsg(
-						MsgLogger.INFO,
-						"Changing thread concurrency " + "level from " + NativeServices.getThreadConcurrency() + " to "
-								+ clevel + ".");
-				NativeServices.setThreadConcurrency(clevel);
-			} else {
-				// Could not load the library => warn
-				FacilityManager.getMsgLogger().printmsg(
-						MsgLogger.WARNING,
-						"Native library to set " + "thread concurrency level as specified by the "
-								+ ThreadPool.CONCURRENCY_PROP_NAME + " property not found. " + "Thread concurrency unchanged.");
-			}
-		}
-
-		// Allocate internal variables
-		this.idle = new ThreadPoolThread[size];
-		this.nidle = 0;
-
-		// Create and start the threads
-		for (i = 0; i < size; i++) {
-			t = new ThreadPoolThread(i, this.poolName + "-" + i);
-			t.start();
-		}
-	}
-
-	/**
-	 * Returns the size of the pool. That is the number of threads in this pool
-	 * (idle + busy).
-	 *
-	 * @return The pool's size.
-	 */
-	public int getSize() {
-		return this.idle.length;
-	}
-
-	/**
-	 * Runs the run method of the specified target in an idle thread of this
-	 * pool. When the target's run method completes, the thread waiting on the
-	 * lock object is notified, if any. If there is currently no idle thread the
-	 * method will block until a thread of the pool becomes idle or the calling
-	 * thread is interrupted.
-	 *
-	 * <p>
-	 * This method is the same as <tt>runTarget(t,l,true,false)</tt>.
-	 *
-	 * @param t The target. The 'run()' method of this object will be run in
-	 *          an idle thread of the pool.
-	 * @param l The lock object. A thread waiting on the lock of the 'l'
-	 *          object will be notified, through the 'notify()' call, when the
-	 *          target's run method completes. If null no thread is notified.
-	 * @return True if the target was submitted to some thread. False if no idle
-	 * thread could be found and the target was not submitted for
-	 * execution.
-	 */
-	public boolean runTarget(final Runnable t, final Object l) {
-		return this.runTarget(t, l, false, false);
-	}
-
-	/**
-	 * Runs the run method of the specified target in an idle thread of this
-	 * pool. When the target's run method completes, the thread waiting on the
-	 * lock object is notified, if any. If there is currently no idle thread and
-	 * the asynchronous mode is not used the method will block until a thread of
-	 * the pool becomes idle or the calling thread is interrupted. If the
-	 * asynchronous mode is used then the method will not block and will return
-	 * false.
-	 *
-	 * <p>
-	 * This method is the same as <tt>runTarget(t,l,async,false)</tt>.
-	 *
-	 * @param t     The target. The 'run()' method of this object will be run in
-	 *              an idle thread of the pool.
-	 * @param l     The lock object. A thread waiting on the lock of the 'l'
-	 *              object will be notified, through the 'notify()' call, when the
-	 *              target's run method completes. If null no thread is notified.
-	 * @param async If true the asynchronous mode will be used.
-	 * @return True if the target was submitted to some thread. False if no idle
-	 * thread could be found and the target was not submitted for
-	 * execution.
-	 */
-	public boolean runTarget(final Runnable t, final Object l, final boolean async) {
-		return this.runTarget(t, l, async, false);
-	}
-
-	/**
-	 * Runs the run method of the specified target in an idle thread of this
-	 * pool. When the target's run method completes, the thread waiting on the
-	 * lock object is notified, if any. If there is currently no idle thread and
-	 * the asynchronous mode is not used the method will block until a thread of
-	 * the pool becomes idle or the calling thread is interrupted. If the
-	 * asynchronous mode is used then the method will not block and will return
-	 * false.
-	 *
-	 * @param t         The target. The 'run()' method of this object will be run in
-	 *                  an idle thread of the pool.
-	 * @param l         The lock object. A thread waiting on the lock of the 'l'
-	 *                  object will be notified, through the 'notify()' call, when the
-	 *                  target's run method completes. If null no thread is notified.
-	 * @param async     If true the asynchronous mode will be used.
-	 * @param notifyAll If true, threads waiting on the lock of the 'l' object will be
-	 *                  notified trough the 'notifyAll()' instead of the normal
-	 *                  'notify()' call. This is not normally needed.
-	 * @return True if the target was submitted to some thread. False if no idle
-	 * thread could be found and the target was not submitted for
-	 * execution.
-	 */
-	public boolean runTarget(final Runnable t, final Object l, final boolean async, final boolean notifyAll) {
-		final ThreadPoolThread runner; // The thread to run the target
-
-		// Get a thread to run
-		runner = this.getIdle(async);
-		// If no runner return failure
-		if (null == runner)
-			return false;
-		// Set the runner
-		runner.setTarget(t, l, notifyAll);
-		return true;
-	}
-
-	/**
-	 * Checks that no error or runtime exception in any target have occurred so
-	 * far. If an error or runtime exception has occurred in a target's run
-	 * method they are thrown by this method.
-	 *
-	 * @throws Error            If an error condition has been thrown by a target 'run()'
-	 *                          method.
-	 * @throws RuntimeException If a runtime exception has been thrown by a target 'run()'
-	 *                          method.
-	 */
-	public void checkTargetErrors() {
-		// Check for Error
-		if (null != targetE)
-			throw this.targetE;
-		// Check for RuntimeException
-		if (null != targetRE)
-			throw this.targetRE;
-	}
-
-	/**
-	 * Clears the current target error conditions, if any. Note that a thread in
-	 * the pool might have set the error conditions since the last check and
-	 * that those error conditions will be lost. Likewise, before returning from
-	 * this method another thread might set the error conditions. There is no
-	 * guarantee that no error conditions exist when returning from this method.
-	 *
-	 * <p>
-	 * In order to ensure that no error conditions exist when returning from
-	 * this method cooperation from the targets and the thread using this pool
-	 * is necessary (i.e. currently no targets running or waiting to run).
-	 */
-	public void clearTargetErrors() {
-		// Clear the error and runtime exception conditions
-		this.targetE = null;
-		this.targetRE = null;
-	}
-
-	/**
-	 * Puts the thread 't' in the idle list. The thread 't' should be in fact
-	 * idle and ready to accept a new target when it joins the idle list.
-	 *
-	 * <p>
-	 * An idle thread that is already in the list should never add itself to the
-	 * list before it is removed. For efficiency reasons there is no check to
-	 * see if the thread is already in the list of idle threads.
-	 *
-	 * <p>
-	 * If the idle list was empty 'notify()' will be called on the 'idle' array,
-	 * to wake up a thread that might be waiting (within the 'getIdle()' method)
-	 * on an idle thread to become available.
-	 *
-	 * @param t The thread to put in the idle list.
-	 */
-	private void putInIdleList(final ThreadPoolThread t) {
-		// NOTE: if already in idle => catastrophe! (should be OK since //
-		// this is private method)
-		// Lock the idle array to avoid races with 'getIdle()'
-		synchronized (this.idle) {
-			this.idle[this.nidle] = t;
-			this.nidle++;
-			// If idle array was empty wakeup any waiting threads.
-			if (1 == nidle)
-				this.idle.notify();
-		}
-	}
-
-	/**
-	 * Returns and idle thread and removes it from the list of idle threads. In
-	 * asynchronous mode it will immediately return an idle thread, or null if
-	 * none is available. In non-asynchronous mode it will block until a thread
-	 * of the pool becomes idle or the calling thread is interrupted.
-	 *
-	 * <p>
-	 * If in non-asynchronous mode and there are currently no idle threads
-	 * available the calling thread will wait on the 'idle' array lock, until
-	 * notified by 'putInIdleList()' that an idle thread might have become
-	 * available.
-	 *
-	 * @param async If true asynchronous mode is used.
-	 * @return An idle thread of the pool, that has been removed from the idle
-	 * list, or null if none is available.
-	 */
-	private ThreadPoolThread getIdle(final boolean async) {
-		// Lock the idle array to avoid races with 'putInIdleList()'
-		synchronized (this.idle) {
-			if (async) {
-				// In asynchronous mode just return null if no idle thread
-				if (0 == nidle)
-					return null;
-			} else {
-				// In synchronous mode wait until a thread becomes idle
-				while (0 == nidle) {
-					try {
-						this.idle.wait();
-					} catch (final InterruptedException e) {
-						// If we were interrupted just return null
-						return null;
-					}
-				}
-			}
-			// Decrease the idle count and return one of the idle threads
-			this.nidle--;
-			return this.idle[this.nidle];
+			notify ( );
 		}
 	}
 }

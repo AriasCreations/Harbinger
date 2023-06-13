@@ -167,7 +167,7 @@ public abstract class CBlkWTData {
 	 * @return The data type of the object, as defined in the DataBlk class.
 	 * @see DataBlk
 	 */
-	public abstract int getDataType();
+	public abstract int getDataType ( );
 
 	/**
 	 * Returns the array containing the data, or null if there is no data. The
@@ -183,7 +183,7 @@ public abstract class CBlkWTData {
 	 * data.
 	 * @see #getDataType
 	 */
-	public abstract Object getData();
+	public abstract Object getData ( );
 
 	/**
 	 * Sets the data array to the specified one. The type of the specified data
@@ -203,7 +203,7 @@ public abstract class CBlkWTData {
 	 * @param arr The new data array to use
 	 * @see #getDataType
 	 */
-	public abstract void setData(Object arr);
+	public abstract void setData ( Object arr );
 
 	/**
 	 * Returns a string of informations about the DataBlk
@@ -211,9 +211,9 @@ public abstract class CBlkWTData {
 	 * @return Block dimensions and progressiveness in a string
 	 */
 	@Override
-	public String toString() {
+	public String toString ( ) {
 		String typeString = "";
-		switch (this.getDataType()) {
+		switch ( this.getDataType ( ) ) {
 			case DataBlk.TYPE_BYTE:
 				typeString = "Unsigned Byte";
 				break;
@@ -227,7 +227,7 @@ public abstract class CBlkWTData {
 				typeString = "Float";
 				break;
 			default:
-				throw new IllegalArgumentException("unhandled data block type " + this.getDataType());
+				throw new IllegalArgumentException ( "unhandled data block type " + this.getDataType ( ) );
 		}
 
 		return "CBlkWTData: ulx=" + this.ulx + ", uly=" + this.uly + ", code-block(" + this.m + "," + this.n + "), width=" + this.w

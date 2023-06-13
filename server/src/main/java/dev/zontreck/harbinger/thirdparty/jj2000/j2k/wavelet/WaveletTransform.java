@@ -12,7 +12,7 @@
  *
  *
  * COPYRIGHT:
- * 
+ *
  * This software module was originally developed by Rapha�l Grosbois and
  * Diego Santa Cruz (Swiss Federal Institute of Technology-EPFL); Joel
  * Askel�f (Ericsson Radio Systems AB); and Bertrand Berthelot, David
@@ -39,19 +39,19 @@
  * using this software module for non JPEG 2000 Standard conforming
  * products. This copyright notice must be included in all copies or
  * derivative works of this software module.
- * 
+ *
  * Copyright (c) 1999/2000 JJ2000 Partners.
  */
 package dev.zontreck.harbinger.thirdparty.jj2000.j2k.wavelet;
 
-import dev.zontreck.harbinger.thirdparty.jj2000.j2k.image.*;
+import dev.zontreck.harbinger.thirdparty.jj2000.j2k.image.ImgData;
 
 /**
  * This interface defines how a forward or inverse wavelet transform should
  * present itself. As specified in the ImgData interface, from which this class
  * inherits, all operations are confined to the current tile, and all
  * coordinates are relative to it.
- * 
+ *
  * <p>
  * The definition of the methods in this interface allows for different types of
  * implementation, reversibility and levels of decompositions for each component
@@ -59,8 +59,7 @@ import dev.zontreck.harbinger.thirdparty.jj2000.j2k.image.*;
  * all this flexibility (e.g., it may provide the same implementation type and
  * decomposition levels for all tiles and components).
  */
-public interface WaveletTransform extends ImgData
-{
+public interface WaveletTransform extends ImgData {
 
 	/**
 	 * ID for line based implementations of wavelet transforms.
@@ -78,26 +77,20 @@ public interface WaveletTransform extends ImgData
 	 * Returns the reversibility of the wavelet transform for the specified
 	 * component and tile. A wavelet transform is reversible when it is suitable
 	 * for lossless and lossy-to-lossless compression.
-	 * 
-	 * @param t
-	 *            The index of the tile.
-	 * 
-	 * @param c
-	 *            The index of the component.
-	 * 
+	 *
+	 * @param t The index of the tile.
+	 * @param c The index of the component.
 	 * @return true is the wavelet transform is reversible, false if not.
 	 */
-	boolean isReversible(int t, int c);
+	boolean isReversible ( int t , int c );
 
 	/**
 	 * Returns the implementation type of this wavelet transform (WT_IMPL_LINE
 	 * or WT_IMPL_FRAME) for the specified component, in the current tile.
-	 * 
-	 * @param n
-	 *            The index of the component.
-	 * 
+	 *
+	 * @param n The index of the component.
 	 * @return WT_IMPL_LINE or WT_IMPL_FULL for line, block or full-page based
-	 *         transforms.
+	 * transforms.
 	 */
-	int getImplementationType(int n);
+	int getImplementationType ( int n );
 }

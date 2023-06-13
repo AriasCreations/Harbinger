@@ -60,16 +60,16 @@ public class MaxShiftSpec extends ModuleSpec {
 	 * @param type the type of the specification module i.e. tile specific,
 	 *             component specific or both.
 	 */
-	public MaxShiftSpec(final int nt, final int nc, final byte type) {
-		super(nt, nc, type);
+	public MaxShiftSpec ( final int nt , final int nc , final byte type ) {
+		super ( nt , nc , type );
 	}
 
-	public MaxShiftSpec(final int nt, final int nc, final byte type, final String values) {
-		super(nt, nc, type);
+	public MaxShiftSpec ( final int nt , final int nc , final byte type , final String values ) {
+		super ( nt , nc , type );
 		this.specified = values;
 	}
 
-	public String getSpecified() {
+	public String getSpecified ( ) {
 		return this.specified;
 	}
 }

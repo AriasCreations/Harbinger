@@ -68,21 +68,18 @@ import dev.zontreck.harbinger.thirdparty.jj2000.j2k.wavelet.synthesis.SubbandSyn
  */
 public class ROIDeScaler extends MultiResImgDataAdapter implements CBlkQuantDataSrcDec {
 	/**
-	 * The MaxShiftSpec containing the scaling values for all tile-components
-	 */
-	private final MaxShiftSpec mss;
-
-	/**
 	 * The prefix for ROI decoder options: 'R'
 	 */
 	public static final char OPT_PREFIX = 'R';
-
 	/**
 	 * The list of parameters that is accepted by the entropy decoders. They
 	 * start with 'R'.
 	 */
-	private static final String[][] pinfo = {{"Rno_roi", null, "This argument makes sure that the no ROI de-scaling is performed. " + "Decompression is done like there is no ROI in the image", null},};
-
+	private static final String[][] pinfo = { { "Rno_roi" , null , "This argument makes sure that the no ROI de-scaling is performed. " + "Decompression is done like there is no ROI in the image" , null } , };
+	/**
+	 * The MaxShiftSpec containing the scaling values for all tile-components
+	 */
+	private final MaxShiftSpec mss;
 	/**
 	 * The entropy decoder from where to get the compressed data (the source)
 	 */
@@ -96,10 +93,53 @@ public class ROIDeScaler extends MultiResImgDataAdapter implements CBlkQuantData
 	 * @param mss The MaxShiftSpec containing the scaling values for all
 	 *            tile-components
 	 */
-	public ROIDeScaler(final CBlkQuantDataSrcDec src, final MaxShiftSpec mss) {
-		super(src);
+	public ROIDeScaler ( final CBlkQuantDataSrcDec src , final MaxShiftSpec mss ) {
+		super ( src );
 		this.src = src;
 		this.mss = mss;
+	}
+
+	/**
+	 * Returns the parameters that are used in this class and implementing
+	 * classes. It returns a 2D String array. Each of the 1D arrays is for a
+	 * different option, and they have 3 elements. The first element is the
+	 * option name, the second one is the synopsis and the third one is a long
+	 * description of what the parameter is. The synopsis or description may be
+	 * 'null', in which case it is assumed that there is no synopsis or
+	 * description of the option, respectively. Null may be returned if no
+	 * options are supported.
+	 *
+	 * @return the options name, their synopsis and their explanation, or null
+	 * if no options are supported.
+	 */
+	public static String[][] getParameterInfo ( ) {
+		return ROIDeScaler.pinfo;
+	}
+
+	/**
+	 * Creates a ROIDeScaler object. The information needed to create the object
+	 * is the Entropy decoder used and the parameters.
+	 *
+	 * @param src     The source of data that is to be descaled
+	 * @param pl      The parameter list (or options).
+	 * @param decSpec The decoding specifications
+	 * @throws IllegalArgumentException If an error occurs while parsing the options in 'pl'
+	 */
+	public static ROIDeScaler createInstance ( final CBlkQuantDataSrcDec src , final ParameterList pl , final DecoderSpecs decSpec ) {
+		final String noRoi;
+
+		// Check parameters
+		pl.checkList ( ROIDeScaler.OPT_PREFIX , ParameterList.toNameArray ( ROIDeScaler.pinfo ) );
+
+		// Check if no_roi specified in command line or no roi signalled
+		// in bit stream
+		noRoi = pl.getParameter ( "Rno_roi" );
+		if ( null != noRoi || null == decSpec.rois ) {
+			// no_roi specified in commandline!
+			return new ROIDeScaler ( src , null );
+		}
+
+		return new ROIDeScaler ( src , decSpec.rois );
 	}
 
 	/**
@@ -116,8 +156,8 @@ public class ROIDeScaler extends MultiResImgDataAdapter implements CBlkQuantData
 	 * @return The root of the tree structure.
 	 */
 	@Override
-	public SubbandSyn getSynSubbandTree(final int t, final int c) {
-		return this.src.getSynSubbandTree(t, c);
+	public SubbandSyn getSynSubbandTree ( final int t , final int c ) {
+		return this.src.getSynSubbandTree ( t , c );
 	}
 
 	/**
@@ -125,8 +165,8 @@ public class ROIDeScaler extends MultiResImgDataAdapter implements CBlkQuantData
 	 * 0 and 1, nothing else.
 	 */
 	@Override
-	public int getCbULX() {
-		return this.src.getCbULX();
+	public int getCbULX ( ) {
+		return this.src.getCbULX ( );
 	}
 
 	/**
@@ -134,25 +174,8 @@ public class ROIDeScaler extends MultiResImgDataAdapter implements CBlkQuantData
 	 * and 1, nothing else.
 	 */
 	@Override
-	public int getCbULY() {
-		return this.src.getCbULY();
-	}
-
-	/**
-	 * Returns the parameters that are used in this class and implementing
-	 * classes. It returns a 2D String array. Each of the 1D arrays is for a
-	 * different option, and they have 3 elements. The first element is the
-	 * option name, the second one is the synopsis and the third one is a long
-	 * description of what the parameter is. The synopsis or description may be
-	 * 'null', in which case it is assumed that there is no synopsis or
-	 * description of the option, respectively. Null may be returned if no
-	 * options are supported.
-	 *
-	 * @return the options name, their synopsis and their explanation, or null
-	 * if no options are supported.
-	 */
-	public static String[][] getParameterInfo() {
-		return ROIDeScaler.pinfo;
+	public int getCbULY ( ) {
+		return this.src.getCbULY ( );
 	}
 
 	/**
@@ -196,8 +219,8 @@ public class ROIDeScaler extends MultiResImgDataAdapter implements CBlkQuantData
 	 * @see DataBlk
 	 */
 	@Override
-	public DataBlk getCodeBlock(final int c, final int m, final int n, final SubbandSyn sb, final DataBlk cblk) {
-		return this.getInternCodeBlock(c, m, n, sb, cblk);
+	public DataBlk getCodeBlock ( final int c , final int m , final int n , final SubbandSyn sb , final DataBlk cblk ) {
+		return this.getInternCodeBlock ( c , m , n , sb , cblk );
 	}
 
 	/**
@@ -239,7 +262,7 @@ public class ROIDeScaler extends MultiResImgDataAdapter implements CBlkQuantData
 	 * @see DataBlk
 	 */
 	@Override
-	public DataBlk getInternCodeBlock(final int c, final int m, final int n, final SubbandSyn sb, DataBlk cblk) {
+	public DataBlk getInternCodeBlock ( final int c , final int m , final int n , final SubbandSyn sb , DataBlk cblk ) {
 		int i;
 		int j;
 		int k;
@@ -250,69 +273,44 @@ public class ROIDeScaler extends MultiResImgDataAdapter implements CBlkQuantData
 		int tmp;
 
 		// Get data block from entropy decoder
-		cblk = this.src.getInternCodeBlock(c, m, n, sb, cblk);
+		cblk = this.src.getInternCodeBlock ( c , m , n , sb , cblk );
 
 		// If there are no ROIs in the tile, Or if we already got all blocks
-		final boolean noRoiInTile = null == mss || null == mss.getTileCompVal(getTileIdx(), c);
+		final boolean noRoiInTile = null == mss || null == mss.getTileCompVal ( getTileIdx ( ) , c );
 
-		if (noRoiInTile || null == cblk) {
+		if ( noRoiInTile || null == cblk ) {
 			return cblk;
 		}
-		data = (int[]) cblk.getData();
+		data = ( int[] ) cblk.getData ( );
 		w = cblk.w;
 		h = cblk.h;
 
 		// Scale coefficients according to magnitude. If the magnitude of a
 		// coefficient is lower than 2 pow 31-magbits then it is a background
 		// coeff and should be up-scaled
-		final int boost = ((Integer) this.mss.getTileCompVal(this.getTileIdx(), c)).intValue();
-		final int mask = ((1 << sb.magbits) - 1) << (31 - sb.magbits);
-		final int mask2 = (~mask) & 0x7FFFFFFF;
+		final int boost = ( ( Integer ) this.mss.getTileCompVal ( this.getTileIdx ( ) , c ) ).intValue ( );
+		final int mask = ( ( 1 << sb.magbits ) - 1 ) << ( 31 - sb.magbits );
+		final int mask2 = ( ~ mask ) & 0x7FFFFFFF;
 
 		wrap = cblk.scanw - w;
-		i = cblk.offset + cblk.scanw * (h - 1) + w - 1;
-		for (j = h; 0 < j; j--) {
-			for (k = w; 0 < k; k--, i--) {
-				tmp = data[i];
-				if (0 == (tmp & mask)) { // BG
-					data[i] = (tmp & 0x80000000) | (tmp << boost);
-				} else { // ROI
-					if (0 != (tmp & mask2)) {
+		i = cblk.offset + cblk.scanw * ( h - 1 ) + w - 1;
+		for ( j = h; 0 < j ; j-- ) {
+			for ( k = w; 0 < k ; k-- , i-- ) {
+				tmp = data[ i ];
+				if ( 0 == ( tmp & mask ) ) { // BG
+					data[ i ] = ( tmp & 0x80000000 ) | ( tmp << boost );
+				}
+				else { // ROI
+					if ( 0 != ( tmp & mask2 ) ) {
 						// decoded more than magbits bit-planes, set
 						// quantization mid-interval approx. bit just after
 						// the magbits.
-						data[i] = (tmp & (~mask2)) | (1 << (30 - sb.magbits));
+						data[ i ] = ( tmp & ( ~ mask2 ) ) | ( 1 << ( 30 - sb.magbits ) );
 					}
 				}
 			}
 			i -= wrap;
 		}
 		return cblk;
-	}
-
-	/**
-	 * Creates a ROIDeScaler object. The information needed to create the object
-	 * is the Entropy decoder used and the parameters.
-	 *
-	 * @param src     The source of data that is to be descaled
-	 * @param pl      The parameter list (or options).
-	 * @param decSpec The decoding specifications
-	 * @throws IllegalArgumentException If an error occurs while parsing the options in 'pl'
-	 */
-	public static ROIDeScaler createInstance(final CBlkQuantDataSrcDec src, final ParameterList pl, final DecoderSpecs decSpec) {
-		final String noRoi;
-
-		// Check parameters
-		pl.checkList(ROIDeScaler.OPT_PREFIX, ParameterList.toNameArray(ROIDeScaler.pinfo));
-
-		// Check if no_roi specified in command line or no roi signalled
-		// in bit stream
-		noRoi = pl.getParameter("Rno_roi");
-		if (null != noRoi || null == decSpec.rois) {
-			// no_roi specified in commandline!
-			return new ROIDeScaler(src, null);
-		}
-
-		return new ROIDeScaler(src, decSpec.rois);
 	}
 }

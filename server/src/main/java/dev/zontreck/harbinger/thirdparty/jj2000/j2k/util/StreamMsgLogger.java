@@ -84,10 +84,10 @@ public class StreamMsgLogger implements MsgLogger {
 	 * @param errstr Where to print WARNING and ERROR messages
 	 * @param lw     The line width to use in formatting
 	 */
-	public StreamMsgLogger(final OutputStream outstr, final OutputStream errstr, final int lw) {
-		this.out = new PrintWriter(outstr, true, StandardCharsets.UTF_8);
-		this.err = new PrintWriter(errstr, true, StandardCharsets.UTF_8);
-		this.mp = new MsgPrinter(lw);
+	public StreamMsgLogger ( final OutputStream outstr , final OutputStream errstr , final int lw ) {
+		this.out = new PrintWriter ( outstr , true , StandardCharsets.UTF_8 );
+		this.err = new PrintWriter ( errstr , true , StandardCharsets.UTF_8 );
+		this.mp = new MsgPrinter ( lw );
 	}
 
 	/**
@@ -99,10 +99,10 @@ public class StreamMsgLogger implements MsgLogger {
 	 * @param errstr Where to print WARNING and ERROR messages
 	 * @param lw     The line width to use in formatting
 	 */
-	public StreamMsgLogger(final Writer outstr, final Writer errstr, final int lw) {
-		this.out = new PrintWriter(outstr, true);
-		this.err = new PrintWriter(errstr, true);
-		this.mp = new MsgPrinter(lw);
+	public StreamMsgLogger ( final Writer outstr , final Writer errstr , final int lw ) {
+		this.out = new PrintWriter ( outstr , true );
+		this.err = new PrintWriter ( errstr , true );
+		this.mp = new MsgPrinter ( lw );
 	}
 
 	/**
@@ -114,10 +114,10 @@ public class StreamMsgLogger implements MsgLogger {
 	 * @param errstr Where to print WARNING and ERROR messages
 	 * @param lw     The line width to use in formatting
 	 */
-	public StreamMsgLogger(final PrintWriter outstr, final PrintWriter errstr, final int lw) {
+	public StreamMsgLogger ( final PrintWriter outstr , final PrintWriter errstr , final int lw ) {
 		this.out = outstr;
 		this.err = errstr;
-		this.mp = new MsgPrinter(lw);
+		this.mp = new MsgPrinter ( lw );
 	}
 
 	/**
@@ -128,11 +128,11 @@ public class StreamMsgLogger implements MsgLogger {
 	 * @param msg The message to display
 	 */
 	@Override
-	public void printmsg(final int sev, final String msg) {
+	public void printmsg ( final int sev , final String msg ) {
 		final PrintWriter lout;
 		final String prefix;
 
-		switch (sev) {
+		switch ( sev ) {
 			case MsgLogger.LOG:
 				prefix = "[LOG]: ";
 				lout = this.out;
@@ -150,10 +150,10 @@ public class StreamMsgLogger implements MsgLogger {
 				lout = this.err;
 				break;
 			default:
-				throw new IllegalArgumentException("Severity " + sev + " not valid.");
+				throw new IllegalArgumentException ( "Severity " + sev + " not valid." );
 		}
-		this.mp.print(lout, 0, prefix.length(), prefix + msg);
-		lout.flush();
+		this.mp.print ( lout , 0 , prefix.length ( ) , prefix + msg );
+		lout.flush ( );
 	}
 
 	/**
@@ -172,8 +172,8 @@ public class StreamMsgLogger implements MsgLogger {
 	 * @param ind   Indentation of any other lines.
 	 */
 	@Override
-	public void println(final String str, final int flind, final int ind) {
-		this.mp.print(this.out, flind, ind, str);
+	public void println ( final String str , final int flind , final int ind ) {
+		this.mp.print ( this.out , flind , ind , str );
 	}
 
 	/**
@@ -181,7 +181,7 @@ public class StreamMsgLogger implements MsgLogger {
 	 * device.
 	 */
 	@Override
-	public void flush() {
-		this.out.flush();
+	public void flush ( ) {
+		this.out.flush ( );
 	}
 }

@@ -9,13 +9,13 @@ package dev.zontreck.harbinger.thirdparty.v1;
  * @author <a href="http://www.extreme.indiana.edu/~aslom/">Aleksander Slominski</a>
  */
 public class XmlPullParserException extends Exception {
-    protected Throwable detail;
-    protected int row = -1;
-    protected int column = -1;
+	protected Throwable detail;
+	protected int row = - 1;
+	protected int column = - 1;
 
-    public XmlPullParserException(final String s) {
-        super(s);
-    }
+	public XmlPullParserException ( final String s ) {
+		super ( s );
+	}
 
     /*
     public XmlPullParserException(String s, Throwable thrwble) {
@@ -30,22 +30,30 @@ public class XmlPullParserException extends Exception {
     }
     */
 
-    public XmlPullParserException(final String msg, final XmlPullParser parser, final Throwable chain) {
-        super ((null == msg ? "" : msg+" ")
-               + (null == parser ? "" : "(position:"+parser.getPositionDescription()+") ")
-               + (null == chain ? "" : "caused by: "+chain));
+	public XmlPullParserException ( final String msg , final XmlPullParser parser , final Throwable chain ) {
+		super ( ( null == msg ? "" : msg + " " )
+				+ ( null == parser ? "" : "(position:" + parser.getPositionDescription ( ) + ") " )
+				+ ( null == chain ? "" : "caused by: " + chain ) );
 
-        if (null != parser) {
-            row = parser.getLineNumber();
-            column = parser.getColumnNumber();
-        }
-        detail = chain;
-    }
+		if ( null != parser ) {
+			row = parser.getLineNumber ( );
+			column = parser.getColumnNumber ( );
+		}
+		detail = chain;
+	}
 
-    public Throwable getDetail() { return this.detail; }
-    //    public void setDetail(Throwable cause) { this.detail = cause; }
-    public int getLineNumber() { return this.row; }
-    public int getColumnNumber() { return this.column; }
+	public Throwable getDetail ( ) {
+		return this.detail;
+	}
+
+	//    public void setDetail(Throwable cause) { this.detail = cause; }
+	public int getLineNumber ( ) {
+		return this.row;
+	}
+
+	public int getColumnNumber ( ) {
+		return this.column;
+	}
 
     /*
     public String getMessage() {
@@ -57,17 +65,18 @@ public class XmlPullParserException extends Exception {
     }
     */
 
-    //NOTE: code that prints this and detail is difficult in J2ME
-    public void printStackTrace() {
-        if (null == detail) {
-            super.printStackTrace();
-        } else {
-            synchronized(System.err) {
-                System.err.println(getMessage() + "; nested exception is:");
-				this.detail.printStackTrace();
-            }
-        }
-    }
+	//NOTE: code that prints this and detail is difficult in J2ME
+	public void printStackTrace ( ) {
+		if ( null == detail ) {
+			super.printStackTrace ( );
+		}
+		else {
+			synchronized ( System.err ) {
+				System.err.println ( getMessage ( ) + "; nested exception is:" );
+				this.detail.printStackTrace ( );
+			}
+		}
+	}
 
 }
 

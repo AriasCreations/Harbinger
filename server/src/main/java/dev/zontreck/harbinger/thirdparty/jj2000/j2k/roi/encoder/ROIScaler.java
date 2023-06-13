@@ -89,43 +89,36 @@ public class ROIScaler extends ImgDataAdapter implements CBlkQuantDataSrcEnc {
 	 * The list of parameters that are accepted for ROI coding. Options for ROI
 	 * Scaler start with 'R'.
 	 */
-	private static final String[][] pinfo = {{"Rroi", "[<component idx>] R <left> <top> <width> <height>" + " or [<component idx>] C <centre column> <centre row> " + "<radius> or [<component idx>] A <filename>", "Specifies ROIs shape and location. The shape can be either " + "rectangular 'R', or circular 'C' or arbitrary 'A'. " + "Each new occurrence of an 'R', a 'C' or an 'A' is a new ROI. " + "For circular and rectangular ROIs, all values are " + "given as their pixel values relative to the canvas origin. " + "Arbitrary shapes must be included in a PGM file where non 0 " + "values correspond to ROI coefficients. The PGM file must have " + "the size as the image. The component idx specifies which components " + "contain the ROI. The component index is specified as described " + "by points 3 and 4 in the general comment on tile-component idx. " + "If this option is used, the codestream is layer progressive by " + "default unless it is overridden by the 'Aptype' option.", null}, {"Ralign", "[on|off]", "By specifying this argument, the ROI mask will be " + "limited to covering only entire code-blocks. The ROI coding can " + "then be performed without any actual scaling of the coefficients " + "but by instead scaling the distortion estimates.", "off"}, {"Rstart_level", "<level>", "This argument forces the lowest <level> resolution levels to " + "belong to the ROI. By doing this, it is possible to avoid only " + "getting information for the ROI at an early stage of " + "transmission.<level> = 0 means the lowest resolution level " + "belongs to the ROI, 1 means the two lowest etc. (-1 deactivates the option)", "-1"}, {"Rno_rect", "[on|off]", "This argument makes sure that the ROI mask generation is not done " + "using the fast ROI mask generation for rectangular ROIs " + "regardless of whether the specified ROIs are rectangular or not", "off"},};
-
+	private static final String[][] pinfo = { { "Rroi" , "[<component idx>] R <left> <top> <width> <height>" + " or [<component idx>] C <centre column> <centre row> " + "<radius> or [<component idx>] A <filename>" , "Specifies ROIs shape and location. The shape can be either " + "rectangular 'R', or circular 'C' or arbitrary 'A'. " + "Each new occurrence of an 'R', a 'C' or an 'A' is a new ROI. " + "For circular and rectangular ROIs, all values are " + "given as their pixel values relative to the canvas origin. " + "Arbitrary shapes must be included in a PGM file where non 0 " + "values correspond to ROI coefficients. The PGM file must have " + "the size as the image. The component idx specifies which components " + "contain the ROI. The component index is specified as described " + "by points 3 and 4 in the general comment on tile-component idx. " + "If this option is used, the codestream is layer progressive by " + "default unless it is overridden by the 'Aptype' option." , null } , { "Ralign" , "[on|off]" , "By specifying this argument, the ROI mask will be " + "limited to covering only entire code-blocks. The ROI coding can " + "then be performed without any actual scaling of the coefficients " + "but by instead scaling the distortion estimates." , "off" } , { "Rstart_level" , "<level>" , "This argument forces the lowest <level> resolution levels to " + "belong to the ROI. By doing this, it is possible to avoid only " + "getting information for the ROI at an early stage of " + "transmission.<level> = 0 means the lowest resolution level " + "belongs to the ROI, 1 means the two lowest etc. (-1 deactivates the option)" , "-1" } , { "Rno_rect" , "[on|off]" , "This argument makes sure that the ROI mask generation is not done " + "using the fast ROI mask generation for rectangular ROIs " + "regardless of whether the specified ROIs are rectangular or not" , "off" } , };
+	/**
+	 * Flag indicating the presence of ROIs
+	 */
+	private final boolean roi;
+	/**
+	 * Number of resolution levels to include in ROI mask
+	 */
+	private final int useStartLevel;
+	/**
+	 * The source of quantized wavelet transform coefficients
+	 */
+	private final Quantizer src;
 	/**
 	 * The maximum number of magnitude bit-planes in any subband. One value for
 	 * each tile-component
 	 */
 	private int[][] maxMagBits;
-
-	/**
-	 * Flag indicating the presence of ROIs
-	 */
-	private final boolean roi;
-
 	/**
 	 * Flag indicating if block aligned ROIs are used
 	 */
 	private boolean blockAligned;
-
-	/**
-	 * Number of resolution levels to include in ROI mask
-	 */
-	private final int useStartLevel;
-
 	/**
 	 * The class generating the ROI mask
 	 */
 	private ROIMaskGenerator mg;
-
 	/**
 	 * The ROI mask
 	 */
 	private DataBlkInt roiMask;
-
-	/**
-	 * The source of quantized wavelet transform coefficients
-	 */
-	private final Quantizer src;
 
 	/**
 	 * Constructor of the ROI scaler, takes a Quantizer as source of data to
@@ -138,64 +131,18 @@ public class ROIScaler extends ImgDataAdapter implements CBlkQuantDataSrcEnc {
 	 * @param uba     Flag indicating whether block aligning is used.
 	 * @param encSpec The encoder specifications for addition of roi specs
 	 */
-	public ROIScaler(final Quantizer src, final ROIMaskGenerator mg, final boolean roi, final int sLev, final boolean uba, final EncoderSpecs encSpec) {
-		super(src);
+	public ROIScaler ( final Quantizer src , final ROIMaskGenerator mg , final boolean roi , final int sLev , final boolean uba , final EncoderSpecs encSpec ) {
+		super ( src );
 		this.src = src;
 		this.roi = roi;
 		useStartLevel = sLev;
-		if (roi) {
+		if ( roi ) {
 			// If there is no ROI, no need to do this
 			this.mg = mg;
-			this.roiMask = new DataBlkInt();
-			this.calcMaxMagBits(encSpec);
+			this.roiMask = new DataBlkInt ( );
+			this.calcMaxMagBits ( encSpec );
 			this.blockAligned = uba;
 		}
-	}
-
-	/**
-	 * Since ROI scaling is always a reversible operation, it calls
-	 * isReversible() method of it source (the quantizer module).
-	 *
-	 * @param t The tile to test for reversibility
-	 * @param c The component to test for reversibility
-	 * @return True if the quantized data is reversible, false if not.
-	 */
-	@Override
-	public boolean isReversible(final int t, final int c) {
-		return this.src.isReversible(t, c);
-	}
-
-	/**
-	 * Returns a reference to the subband tree structure representing the
-	 * subband decomposition for the specified tile-component.
-	 *
-	 * @param t The index of the tile.
-	 * @param c The index of the component.
-	 * @return The subband tree structure, see SubbandAn.
-	 * @see SubbandAn
-	 * @see Subband
-	 */
-	@Override
-	public SubbandAn getAnSubbandTree(final int t, final int c) {
-		return this.src.getAnSubbandTree(t, c);
-	}
-
-	/**
-	 * Returns the horizontal offset of the code-block partition. Allowable
-	 * values are 0 and 1, nothing else.
-	 */
-	@Override
-	public int getCbULX() {
-		return this.src.getCbULX();
-	}
-
-	/**
-	 * Returns the vertical offset of the code-block partition. Allowable values
-	 * are 0 and 1, nothing else.
-	 */
-	@Override
-	public int getCbULY() {
-		return this.src.getCbULY();
 	}
 
 	/**
@@ -211,54 +158,55 @@ public class ROIScaler extends ImgDataAdapter implements CBlkQuantDataSrcEnc {
 	 * @param encSpec The encoder specifications for addition of roi specs
 	 * @throws IllegalArgumentException If an error occurs while parsing the options in 'pl'
 	 */
-	public static ROIScaler createInstance(final Quantizer src, final ParameterList pl, final EncoderSpecs encSpec) {
-		final Vector<ROI> roiVector = new Vector<ROI>();
+	public static ROIScaler createInstance ( final Quantizer src , final ParameterList pl , final EncoderSpecs encSpec ) {
+		final Vector<ROI> roiVector = new Vector<ROI> ( );
 		ROIMaskGenerator maskGen = null;
 
 		// Check parameters
-		pl.checkList(ROIScaler.OPT_PREFIX, ParameterList.toNameArray(ROIScaler.pinfo));
+		pl.checkList ( ROIScaler.OPT_PREFIX , ParameterList.toNameArray ( ROIScaler.pinfo ) );
 
 		// Get parameters and check if there are and ROIs specified
-		final String roiopt = pl.getParameter("Rroi");
-		if (null == roiopt) {
+		final String roiopt = pl.getParameter ( "Rroi" );
+		if ( null == roiopt ) {
 			// No ROIs specified! Create ROIScaler with no mask generator
-			return new ROIScaler(src, null, false, -1, false, encSpec);
+			return new ROIScaler ( src , null , false , - 1 , false , encSpec );
 		}
 
 		// Check if the lowest resolution levels should belong to the ROI
-		final int sLev = pl.getIntParameter("Rstart_level");
+		final int sLev = pl.getIntParameter ( "Rstart_level" );
 
 		// Check if the ROIs are block-aligned
-		final boolean useBlockAligned = pl.getBooleanParameter("Ralign");
+		final boolean useBlockAligned = pl.getBooleanParameter ( "Ralign" );
 
 		// Check if generic mask generation is specified
-		boolean onlyRect = !pl.getBooleanParameter("Rno_rect");
+		boolean onlyRect = ! pl.getBooleanParameter ( "Rno_rect" );
 
 		// Parse the ROIs
-		ROIScaler.parseROIs(roiopt, src.getNumComps(), roiVector);
-		final ROI[] roiArray = new ROI[roiVector.size()];
-		roiVector.copyInto(roiArray);
+		ROIScaler.parseROIs ( roiopt , src.getNumComps ( ) , roiVector );
+		final ROI[] roiArray = new ROI[ roiVector.size ( ) ];
+		roiVector.copyInto ( roiArray );
 
 		// If onlyRect has been forced, check if there are any non-rectangular
 		// ROIs specified. Currently, only the presence of circular ROIs will
 		// make this false
-		if (onlyRect) {
-			for (int i = roiArray.length - 1; 0 <= i; i--)
-				if (!roiArray[i].rect) {
+		if ( onlyRect ) {
+			for ( int i = roiArray.length - 1 ; 0 <= i ; i-- )
+				if ( ! roiArray[ i ].rect ) {
 					onlyRect = false;
 					break;
 				}
 		}
 
-		if (onlyRect) {
+		if ( onlyRect ) {
 			// It's possible to use the fast ROI mask generation when only
 			// rectangular ROIs are specified.
-			maskGen = new RectROIMaskGenerator(roiArray, src.getNumComps());
-		} else {
-			// It's necessary to use the generic mask generation
-			maskGen = new ArbROIMaskGenerator(roiArray, src.getNumComps(), src);
+			maskGen = new RectROIMaskGenerator ( roiArray , src.getNumComps ( ) );
 		}
-		return new ROIScaler(src, maskGen, true, sLev, useBlockAligned, encSpec);
+		else {
+			// It's necessary to use the generic mask generation
+			maskGen = new ArbROIMaskGenerator ( roiArray , src.getNumComps ( ) , src );
+		}
+		return new ROIScaler ( src , maskGen , true , sLev , useBlockAligned , encSpec );
 	}
 
 	/**
@@ -282,52 +230,54 @@ public class ROIScaler extends ImgDataAdapter implements CBlkQuantDataSrcEnc {
 	 * @param roiVector The vcector containing the ROI parsed from the cmd line
 	 * @return The ROIs specified in roiopt
 	 */
-	protected static Vector<ROI> parseROIs(final String roiopt, final int nc, final Vector<ROI> roiVector) {
+	protected static Vector<ROI> parseROIs ( final String roiopt , final int nc , final Vector<ROI> roiVector ) {
 		ROI roi;
 		final StringTokenizer stok;
 //		int nrOfROIs = 0;
 		int ulx, uly, w, h, x, y, rad;
 		boolean[] roiInComp = null;
 
-		stok = new StringTokenizer(roiopt);
+		stok = new StringTokenizer ( roiopt );
 
 		String word;
-		while (stok.hasMoreTokens()) {
-			word = stok.nextToken();
+		while ( stok.hasMoreTokens ( ) ) {
+			word = stok.nextToken ( );
 
-			switch (word.charAt(0)) {
+			switch ( word.charAt ( 0 ) ) {
 				case 'c': // Components specification
-					roiInComp = ModuleSpec.parseIdx(word, nc);
+					roiInComp = ModuleSpec.parseIdx ( word , nc );
 					break;
 				case 'R': // Rectangular ROI to be read
 //					nrOfROIs++;
 					try {
-						word = stok.nextToken();
-						ulx = (Integer.valueOf(word)).intValue();
-						word = stok.nextToken();
-						uly = (Integer.valueOf(word)).intValue();
-						word = stok.nextToken();
-						w = (Integer.valueOf(word)).intValue();
-						word = stok.nextToken();
-						h = (Integer.valueOf(word)).intValue();
-					} catch (final NumberFormatException e) {
-						throw new IllegalArgumentException("Bad parameter for '-Rroi R' option : " + word);
-					} catch (final NoSuchElementException f) {
-						throw new IllegalArgumentException("Wrong number of parameters for h'-Rroi R' option.");
+						word = stok.nextToken ( );
+						ulx = ( Integer.valueOf ( word ) ).intValue ( );
+						word = stok.nextToken ( );
+						uly = ( Integer.valueOf ( word ) ).intValue ( );
+						word = stok.nextToken ( );
+						w = ( Integer.valueOf ( word ) ).intValue ( );
+						word = stok.nextToken ( );
+						h = ( Integer.valueOf ( word ) ).intValue ( );
+					} catch (
+							final NumberFormatException e ) {
+						throw new IllegalArgumentException ( "Bad parameter for '-Rroi R' option : " + word );
+					} catch (
+							final NoSuchElementException f ) {
+						throw new IllegalArgumentException ( "Wrong number of parameters for h'-Rroi R' option." );
 					}
 
 					// If the ROI is component-specific, check which comps.
-					if (null != roiInComp)
-						for (int i = 0; i < nc; i++) {
-							if (roiInComp[i]) {
-								roi = new ROI(i, ulx, uly, w, h);
-								roiVector.addElement(roi);
+					if ( null != roiInComp )
+						for ( int i = 0 ; i < nc ; i++ ) {
+							if ( roiInComp[ i ] ) {
+								roi = new ROI ( i , ulx , uly , w , h );
+								roiVector.addElement ( roi );
 							}
 						}
 					else { // Otherwise add ROI for all components
-						for (int i = 0; i < nc; i++) {
-							roi = new ROI(i, ulx, uly, w, h);
-							roiVector.addElement(roi);
+						for ( int i = 0 ; i < nc ; i++ ) {
+							roi = new ROI ( i , ulx , uly , w , h );
+							roiVector.addElement ( roi );
 						}
 					}
 					break;
@@ -335,30 +285,32 @@ public class ROIScaler extends ImgDataAdapter implements CBlkQuantDataSrcEnc {
 //					nrOfROIs++;
 
 					try {
-						word = stok.nextToken();
-						x = (Integer.valueOf(word)).intValue();
-						word = stok.nextToken();
-						y = (Integer.valueOf(word)).intValue();
-						word = stok.nextToken();
-						rad = (Integer.valueOf(word)).intValue();
-					} catch (final NumberFormatException e) {
-						throw new IllegalArgumentException("Bad parameter for '-Rroi C' option : " + word);
-					} catch (final NoSuchElementException f) {
-						throw new IllegalArgumentException("Wrong number of parameters for '-Rroi C' option.");
+						word = stok.nextToken ( );
+						x = ( Integer.valueOf ( word ) ).intValue ( );
+						word = stok.nextToken ( );
+						y = ( Integer.valueOf ( word ) ).intValue ( );
+						word = stok.nextToken ( );
+						rad = ( Integer.valueOf ( word ) ).intValue ( );
+					} catch (
+							final NumberFormatException e ) {
+						throw new IllegalArgumentException ( "Bad parameter for '-Rroi C' option : " + word );
+					} catch (
+							final NoSuchElementException f ) {
+						throw new IllegalArgumentException ( "Wrong number of parameters for '-Rroi C' option." );
 					}
 
 					// If the ROI is component-specific, check which comps.
-					if (null != roiInComp)
-						for (int i = 0; i < nc; i++) {
-							if (roiInComp[i]) {
-								roi = new ROI(i, x, y, rad);
-								roiVector.addElement(roi);
+					if ( null != roiInComp )
+						for ( int i = 0 ; i < nc ; i++ ) {
+							if ( roiInComp[ i ] ) {
+								roi = new ROI ( i , x , y , rad );
+								roiVector.addElement ( roi );
 							}
 						}
 					else { // Otherwise add ROI for all components
-						for (int i = 0; i < nc; i++) {
-							roi = new ROI(i, x, y, rad);
-							roiVector.addElement(roi);
+						for ( int i = 0 ; i < nc ; i++ ) {
+							roi = new ROI ( i , x , y , rad );
+							roiVector.addElement ( roi );
 						}
 					}
 					break;
@@ -369,36 +321,100 @@ public class ROIScaler extends ImgDataAdapter implements CBlkQuantDataSrcEnc {
 					ImgReaderPGM maskPGM = null;
 
 					try {
-						filename = stok.nextToken();
-					} catch (final NoSuchElementException e) {
-						throw new IllegalArgumentException("Wrong number of parameters for '-Rroi A' option.");
+						filename = stok.nextToken ( );
+					} catch (
+							final NoSuchElementException e ) {
+						throw new IllegalArgumentException ( "Wrong number of parameters for '-Rroi A' option." );
 					}
 					try {
-						maskPGM = new ImgReaderPGM(filename);
-					} catch (final IOException e) {
-						throw new Error("Cannot read PGM file with ROI");
+						maskPGM = new ImgReaderPGM ( filename );
+					} catch ( final IOException e ) {
+						throw new Error ( "Cannot read PGM file with ROI" );
 					}
 
 					// If the ROI is component-specific, check which comps.
-					if (null != roiInComp)
-						for (int i = 0; i < nc; i++) {
-							if (roiInComp[i]) {
-								roi = new ROI(i, maskPGM);
-								roiVector.addElement(roi);
+					if ( null != roiInComp )
+						for ( int i = 0 ; i < nc ; i++ ) {
+							if ( roiInComp[ i ] ) {
+								roi = new ROI ( i , maskPGM );
+								roiVector.addElement ( roi );
 							}
 						}
 					else { // Otherwise add ROI for all components
-						for (int i = 0; i < nc; i++) {
-							roi = new ROI(i, maskPGM);
-							roiVector.addElement(roi);
+						for ( int i = 0 ; i < nc ; i++ ) {
+							roi = new ROI ( i , maskPGM );
+							roiVector.addElement ( roi );
 						}
 					}
 					break;
 				default:
-					throw new Error("Bad parameters for ROI nr " + roiVector.size());
+					throw new Error ( "Bad parameters for ROI nr " + roiVector.size ( ) );
 			}
 		}
 		return roiVector;
+	}
+
+	/**
+	 * Returns the parameters that are used in this class and implementing
+	 * classes. It returns a 2D String array. Each of the 1D arrays is for a
+	 * different option, and they have 3 elements. The first element is the
+	 * option name, the second one is the synopsis, the third one is a long
+	 * description of what the parameter is and the fourth is its default value.
+	 * The synopsis or description may be 'null', in which case it is assumed
+	 * that there is no synopsis or description of the option, respectively.
+	 * Null may be returned if no options are supported.
+	 *
+	 * @return the options name, their synopsis and their explanation, or null
+	 * if no options are supported.
+	 */
+	public static String[][] getParameterInfo ( ) {
+		return ROIScaler.pinfo;
+	}
+
+	/**
+	 * Since ROI scaling is always a reversible operation, it calls
+	 * isReversible() method of it source (the quantizer module).
+	 *
+	 * @param t The tile to test for reversibility
+	 * @param c The component to test for reversibility
+	 * @return True if the quantized data is reversible, false if not.
+	 */
+	@Override
+	public boolean isReversible ( final int t , final int c ) {
+		return this.src.isReversible ( t , c );
+	}
+
+	/**
+	 * Returns a reference to the subband tree structure representing the
+	 * subband decomposition for the specified tile-component.
+	 *
+	 * @param t The index of the tile.
+	 * @param c The index of the component.
+	 * @return The subband tree structure, see SubbandAn.
+	 * @see SubbandAn
+	 * @see Subband
+	 */
+	@Override
+	public SubbandAn getAnSubbandTree ( final int t , final int c ) {
+		return this.src.getAnSubbandTree ( t , c );
+	}
+
+	/**
+	 * Returns the horizontal offset of the code-block partition. Allowable
+	 * values are 0 and 1, nothing else.
+	 */
+	@Override
+	public int getCbULX ( ) {
+		return this.src.getCbULX ( );
+	}
+
+	/**
+	 * Returns the vertical offset of the code-block partition. Allowable values
+	 * are 0 and 1, nothing else.
+	 */
+	@Override
+	public int getCbULY ( ) {
+		return this.src.getCbULY ( );
 	}
 
 	/**
@@ -426,8 +442,8 @@ public class ROIScaler extends ImgDataAdapter implements CBlkQuantDataSrcEnc {
 	 * @see CBlkWTData
 	 */
 	@Override
-	public CBlkWTData getNextCodeBlock(final int c, final CBlkWTData cblk) {
-		return this.getNextInternCodeBlock(c, cblk);
+	public CBlkWTData getNextCodeBlock ( final int c , final CBlkWTData cblk ) {
+		return this.getNextInternCodeBlock ( c , cblk );
 	}
 
 	/**
@@ -449,7 +465,7 @@ public class ROIScaler extends ImgDataAdapter implements CBlkQuantDataSrcEnc {
 	 * @see CBlkWTData
 	 */
 	@Override
-	public CBlkWTData getNextInternCodeBlock(final int c, CBlkWTData cblk) {
+	public CBlkWTData getNextInternCodeBlock ( final int c , CBlkWTData cblk ) {
 		int mi;
 		int i;
 		int j;
@@ -472,30 +488,31 @@ public class ROIScaler extends ImgDataAdapter implements CBlkQuantDataSrcEnc {
 		int nROIcoeff = 0;
 
 		// Get codeblock's data from quantizer
-		cblk = this.src.getNextCodeBlock(c, cblk);
+		cblk = this.src.getNextCodeBlock ( c , cblk );
 
 		// If there is no ROI in the image, or if we already got all
 		// code-blocks
-		if (!this.roi || null == cblk) {
+		if ( ! this.roi || null == cblk ) {
 			return cblk;
 		}
 
-		data = (int[]) cblk.getData();
+		data = ( int[] ) cblk.getData ( );
 		sb = cblk.sb;
 		ulx = cblk.ulx;
 		uly = cblk.uly;
 		w = cblk.w;
 		h = cblk.h;
-		sbInMask = (sb.resLvl <= this.useStartLevel);
+		sbInMask = ( sb.resLvl <= this.useStartLevel );
 
 		// Check that there is an array for the mask and set it to zero
-		maskData = mask.getDataInt(); // local copy of mask data
-		if (null == maskData || w * h > maskData.length) {
-			maskData = new int[w * h];
-			mask.setDataInt(maskData);
-		} else {
-			for (i = w * h - 1; 0 <= i; i--)
-				maskData[i] = 0;
+		maskData = mask.getDataInt ( ); // local copy of mask data
+		if ( null == maskData || w * h > maskData.length ) {
+			maskData = new int[ w * h ];
+			mask.setDataInt ( maskData );
+		}
+		else {
+			for ( i = w * h - 1; 0 <= i ; i-- )
+				maskData[ i ] = 0;
 		}
 		mask.ulx = ulx;
 		mask.uly = uly;
@@ -503,12 +520,12 @@ public class ROIScaler extends ImgDataAdapter implements CBlkQuantDataSrcEnc {
 		mask.h = h;
 
 		// Get ROI mask from generator
-		root = this.src.getAnSubbandTree(this.tIdx, c);
-		maxBits = this.maxMagBits[this.tIdx][c];
-		roiInTile = this.mg.getROIMask(mask, root, maxBits, c);
+		root = this.src.getAnSubbandTree ( this.tIdx , c );
+		maxBits = this.maxMagBits[ this.tIdx ][ c ];
+		roiInTile = this.mg.getROIMask ( mask , root , maxBits , c );
 
 		// If there is no ROI in this tile, return the code-block untouched
-		if (!roiInTile && (!sbInMask)) {
+		if ( ! roiInTile && ( ! sbInMask ) ) {
 			cblk.nROIbp = 0;
 			return cblk;
 		}
@@ -518,10 +535,10 @@ public class ROIScaler extends ImgDataAdapter implements CBlkQuantDataSrcEnc {
 
 		// If the entire subband belongs to the ROI mask, The code-block is
 		// set to belong entirely to the ROI with the highest scaling value
-		if (sbInMask) {
+		if ( sbInMask ) {
 			// Scale the wmse so that instead of scaling the coefficients, the
 			// wmse is scaled.
-			cblk.wmseScaling *= (1 << (maxBits << 1));
+			cblk.wmseScaling *= ( 1 << ( maxBits << 1 ) );
 			cblk.nROIcoeff = w * h;
 			return cblk;
 		}
@@ -529,35 +546,35 @@ public class ROIScaler extends ImgDataAdapter implements CBlkQuantDataSrcEnc {
 		// In 'block aligned' mode, the code-block is set to belong entirely
 		// to the ROI with the highest scaling value if one coefficient, at
 		// least, belongs to the ROI
-		if (this.blockAligned) {
+		if ( this.blockAligned ) {
 			wrap = cblk.scanw - w;
 			mi = h * w - 1;
-			i = cblk.offset + cblk.scanw * (h - 1) + w - 1;
+			i = cblk.offset + cblk.scanw * ( h - 1 ) + w - 1;
 			int nroicoeff = 0;
-			for (j = h; 0 < j; j--) {
-				for (k = w - 1; 0 <= k; k--, i--, mi--) {
-					if (0 != maskData[mi]) {
+			for ( j = h; 0 < j ; j-- ) {
+				for ( k = w - 1; 0 <= k ; k-- , i-- , mi-- ) {
+					if ( 0 != maskData[ mi ] ) {
 						nroicoeff++;
 					}
 				}
 				i -= wrap;
 			}
-			if (0 != nroicoeff) { // Include the subband
-				cblk.wmseScaling *= (1 << (maxBits << 1));
+			if ( 0 != nroicoeff ) { // Include the subband
+				cblk.wmseScaling *= ( 1 << ( maxBits << 1 ) );
 				cblk.nROIcoeff = w * h;
 			}
 			return cblk;
 		}
 
 		// Scale background coefficients
-		bitMask = (((1 << cblk.magbits) - 1) << (31 - cblk.magbits));
+		bitMask = ( ( ( 1 << cblk.magbits ) - 1 ) << ( 31 - cblk.magbits ) );
 		wrap = cblk.scanw - w;
 		mi = h * w - 1;
-		i = cblk.offset + cblk.scanw * (h - 1) + w - 1;
-		for (j = h; 0 < j; j--) {
-			for (k = w; 0 < k; k--, i--, mi--) {
-				tmp = data[i];
-				if (0 != maskData[mi]) {
+		i = cblk.offset + cblk.scanw * ( h - 1 ) + w - 1;
+		for ( j = h; 0 < j ; j-- ) {
+			for ( k = w; 0 < k ; k-- , i-- , mi-- ) {
+				tmp = data[ i ];
+				if ( 0 != maskData[ mi ] ) {
 					// ROI coeff. We need to erase fractional bits to ensure
 					// that they do not conflict with BG coeffs. This is only
 					// strictly necessary for ROI coeffs. which non-fractional
@@ -566,11 +583,12 @@ public class ROIScaler extends ImgDataAdapter implements CBlkQuantDataSrcEnc {
 					// much more efficient (the entropy coder knows nothing
 					// about ROI and cannot avoid coding the ROI fractional
 					// bits, otherwise this would not be necessary).
-					data[i] = (0x80000000 & tmp) | (tmp & bitMask);
+					data[ i ] = ( 0x80000000 & tmp ) | ( tmp & bitMask );
 					nROIcoeff++;
-				} else {
+				}
+				else {
 					// BG coeff. it is not necessary to erase fractional bits
-					data[i] = (0x80000000 & tmp) | ((tmp & 0x7FFFFFFF) >> maxBits);
+					data[ i ] = ( 0x80000000 & tmp ) | ( ( tmp & 0x7FFFFFFF ) >> maxBits );
 				}
 			}
 			i -= wrap;
@@ -590,7 +608,7 @@ public class ROIScaler extends ImgDataAdapter implements CBlkQuantDataSrcEnc {
 	 *
 	 * @return The roi mask generator
 	 */
-	public ROIMaskGenerator getROIMaskGenerator() {
+	public ROIMaskGenerator getROIMaskGenerator ( ) {
 		return this.mg;
 	}
 
@@ -599,7 +617,7 @@ public class ROIScaler extends ImgDataAdapter implements CBlkQuantDataSrcEnc {
 	 *
 	 * @return Flag indicating whether the ROIs were block aligned
 	 */
-	public boolean getBlockAligned() {
+	public boolean getBlockAligned ( ) {
 		return this.blockAligned;
 	}
 
@@ -608,25 +626,8 @@ public class ROIScaler extends ImgDataAdapter implements CBlkQuantDataSrcEnc {
 	 *
 	 * @return Flag indicating whether there are ROIs in the image
 	 */
-	public boolean useRoi() {
+	public boolean useRoi ( ) {
 		return this.roi;
-	}
-
-	/**
-	 * Returns the parameters that are used in this class and implementing
-	 * classes. It returns a 2D String array. Each of the 1D arrays is for a
-	 * different option, and they have 3 elements. The first element is the
-	 * option name, the second one is the synopsis, the third one is a long
-	 * description of what the parameter is and the fourth is its default value.
-	 * The synopsis or description may be 'null', in which case it is assumed
-	 * that there is no synopsis or description of the option, respectively.
-	 * Null may be returned if no options are supported.
-	 *
-	 * @return the options name, their synopsis and their explanation, or null
-	 * if no options are supported.
-	 */
-	public static String[][] getParameterInfo() {
-		return ROIScaler.pinfo;
 	}
 
 	/**
@@ -639,9 +640,9 @@ public class ROIScaler extends ImgDataAdapter implements CBlkQuantDataSrcEnc {
 	 * @return The new tile index
 	 */
 	@Override
-	public int setTile(final int x, final int y) {
-		final int tIdx = super.setTile(x, y);
-		if (this.roi) this.mg.tileChanged();
+	public int setTile ( final int x , final int y ) {
+		final int tIdx = super.setTile ( x , y );
+		if ( this.roi ) this.mg.tileChanged ( );
 		return tIdx;
 	}
 
@@ -653,9 +654,9 @@ public class ROIScaler extends ImgDataAdapter implements CBlkQuantDataSrcEnc {
 	 * @return The new tile index
 	 */
 	@Override
-	public int nextTile() {
-		final int tIdx = super.nextTile();
-		if (this.roi) this.mg.tileChanged();
+	public int nextTile ( ) {
+		final int tIdx = super.nextTile ( );
+		if ( this.roi ) this.mg.tileChanged ( );
 		return tIdx;
 	}
 
@@ -666,25 +667,25 @@ public class ROIScaler extends ImgDataAdapter implements CBlkQuantDataSrcEnc {
 	 *
 	 * @param encSpec The encoder specifications for addition of roi specs
 	 */
-	private void calcMaxMagBits(final EncoderSpecs encSpec) {
+	private void calcMaxMagBits ( final EncoderSpecs encSpec ) {
 		int tmp;
 		final MaxShiftSpec rois = encSpec.rois;
 
-		final int nt = this.src.getNumTiles();
-		final int nc = this.src.getNumComps();
+		final int nt = this.src.getNumTiles ( );
+		final int nc = this.src.getNumComps ( );
 
-		this.maxMagBits = new int[nt][nc];
+		this.maxMagBits = new int[ nt ][ nc ];
 
-		this.src.setTile(0, 0);
-		for (int t = 0; t < nt; t++) {
-			for (int c = nc - 1; 0 <= c; c--) {
-				tmp = this.src.getMaxMagBits(c);
-				this.maxMagBits[t][c] = tmp;
-				rois.setTileCompVal(t, c, Integer.valueOf(tmp));
+		this.src.setTile ( 0 , 0 );
+		for ( int t = 0 ; t < nt ; t++ ) {
+			for ( int c = nc - 1 ; 0 <= c ; c-- ) {
+				tmp = this.src.getMaxMagBits ( c );
+				this.maxMagBits[ t ][ c ] = tmp;
+				rois.setTileCompVal ( t , c , Integer.valueOf ( tmp ) );
 			}
-			if (t < nt - 1) this.src.nextTile();
+			if ( t < nt - 1 ) this.src.nextTile ( );
 		}
 		// Reset to current initial tile position
-		this.src.setTile(0, 0);
+		this.src.setTile ( 0 , 0 );
 	}
 }

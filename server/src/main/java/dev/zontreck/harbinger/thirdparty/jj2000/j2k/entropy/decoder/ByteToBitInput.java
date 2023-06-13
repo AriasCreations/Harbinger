@@ -1,8 +1,8 @@
-/* 
+/*
  * CVS identifier:
- * 
+ *
  * $Id: ByteToBitInput.java,v 1.14 2002/07/19 12:41:33 grosbois Exp $
- * 
+ *
  * Class:                   ByteToBitInput
  *
  * Description:             Adapter to perform bit based input from a byte
@@ -49,30 +49,31 @@ package dev.zontreck.harbinger.thirdparty.jj2000.j2k.entropy.decoder;
  * performs the bit unstuffing procedure specified for the 'selective arithmetic
  * coding bypass' mode of the JPEG 2000 entropy coder.
  */
-public class ByteToBitInput
-{
+public class ByteToBitInput {
 
-	/** The byte based input */
+	/**
+	 * The byte based input
+	 */
 	ByteInputBuffer in;
 
-	/** The bit buffer */
+	/**
+	 * The bit buffer
+	 */
 	int bbuf;
 
 	/**
 	 * The position of the next bit to get from the byte buffer. When it is -1
 	 * the bit buffer is empty.
 	 */
-	int bpos = -1;
+	int bpos = - 1;
 
 	/**
 	 * Instantiates a new 'ByteToBitInput' object that uses 'in' as the
 	 * underlying byte based input.
-	 * 
-	 * @param in
-	 *            The underlying byte based input.
+	 *
+	 * @param in The underlying byte based input.
 	 */
-	public ByteToBitInput(final ByteInputBuffer in)
-	{
+	public ByteToBitInput ( final ByteInputBuffer in ) {
 		this.in = in;
 	}
 
@@ -80,25 +81,21 @@ public class ByteToBitInput
 	 * Reads from the bit stream one bit. If 'bpos' is -1 then a byte is read
 	 * and loaded into the bit buffer, from where the bit is read. If necessary
 	 * the bit unstuffing will be applied.
-	 * 
+	 *
 	 * @return The read bit (0 or 1).
 	 */
-	public final int readBit()
-	{
-		if (0 > bpos)
-		{
-			if (0xFF != (bbuf & 0xFF))
-			{ // Normal byte to read
-				this.bbuf = this.in.read();
+	public final int readBit ( ) {
+		if ( 0 > bpos ) {
+			if ( 0xFF != ( bbuf & 0xFF ) ) { // Normal byte to read
+				this.bbuf = this.in.read ( );
 				this.bpos = 7;
 			}
-			else
-			{ // Previous byte is 0xFF => there was bit stuffing
-				this.bbuf = this.in.read();
+			else { // Previous byte is 0xFF => there was bit stuffing
+				this.bbuf = this.in.read ( );
 				this.bpos = 6;
 			}
 		}
-		int i = (bbuf >> this.bpos) & 0x01;
+		int i = ( bbuf >> this.bpos ) & 0x01;
 		this.bpos--;
 		return i;
 	}
@@ -110,42 +107,36 @@ public class ByteToBitInput
 	 * that the raw terminated segment length is too long. If no errors are
 	 * detected it does not necessarily mean that the raw bit stream has been
 	 * correctly decoded.
-	 * 
+	 *
 	 * @return True if errors are found, false otherwise.
 	 */
-	public boolean checkBytePadding()
-	{
+	public boolean checkBytePadding ( ) {
 		final int seq; // Byte padding sequence in last byte
 
 		// If there are no spare bits and bbuf is 0xFF (not EOF), then there
 		// is a next byte with bit stuffing that we must load.
-		if (0 > bpos && 0xFF == (bbuf & 0xFF))
-		{
-			this.bbuf = this.in.read();
+		if ( 0 > bpos && 0xFF == ( bbuf & 0xFF ) ) {
+			this.bbuf = this.in.read ( );
 			this.bpos = 6;
 		}
 
 		// 1) Not yet read bits in the last byte must be an alternating
 		// sequence of 0s and 1s, starting with 0.
-		if (0 <= bpos)
-		{
-			seq = this.bbuf & ((1 << (this.bpos + 1)) - 1);
-			if (seq != (0x55 >> (7 - this.bpos)))
+		if ( 0 <= bpos ) {
+			seq = this.bbuf & ( ( 1 << ( this.bpos + 1 ) ) - 1 );
+			if ( seq != ( 0x55 >> ( 7 - this.bpos ) ) )
 				return true;
 		}
 
 		// 2) We must have already reached the last byte in the terminated
 		// segment, unless last bit read is LSB of FF in which case an encoder
 		// can output an extra byte which is smaller than 0x80.
-		if (-1 != bbuf)
-		{
-			if (0xFF == bbuf && 0 == bpos)
-			{
-				return 0x80 <= (in.read() & 0xFF);
+		if ( - 1 != bbuf ) {
+			if ( 0xFF == bbuf && 0 == bpos ) {
+				return 0x80 <= ( in.read ( ) & 0xFF );
 			}
-			else
-			{
-				return -1 != in.read();
+			else {
+				return - 1 != in.read ( );
 			}
 		}
 
@@ -157,34 +148,27 @@ public class ByteToBitInput
 	 * Flushes (i.e. empties) the bit buffer, without loading any new bytes.
 	 * This realigns the input at the next byte boundary, if not already at one.
 	 */
-	final void flush()
-	{
+	final void flush ( ) {
 		this.bbuf = 0; // reset any bit stuffing state
-		this.bpos = -1;
+		this.bpos = - 1;
 	}
 
 	/**
 	 * Resets the underlying byte input to start a new segment. The bit buffer
 	 * is flushed.
-	 * 
-	 * @param buf
-	 *            The byte array containing the byte data. If null the current
+	 *
+	 * @param buf The byte array containing the byte data. If null the current
 	 *            byte array is assumed.
-	 * 
-	 * @param off
-	 *            The index of the first element in 'buf' to be decoded. If
+	 * @param off The index of the first element in 'buf' to be decoded. If
 	 *            negative the byte just after the previous segment is assumed,
 	 *            only valid if 'buf' is null.
-	 * 
-	 * @param len
-	 *            The number of bytes in 'buf' to be decoded. Any subsequent
+	 * @param len The number of bytes in 'buf' to be decoded. Any subsequent
 	 *            bytes are taken to be 0xFF.
 	 */
-	final void setByteArray(final byte[] buf, final int off, final int len)
-	{
-		this.in.setByteArray(buf, off, len);
+	final void setByteArray ( final byte[] buf , final int off , final int len ) {
+		this.in.setByteArray ( buf , off , len );
 		this.bbuf = 0; // reset any bit stuffing state
-		this.bpos = -1;
+		this.bpos = - 1;
 	}
 
 }

@@ -143,8 +143,10 @@ public abstract class SynWTFilter implements WaveletFilter, Markers {
 	 * @param outStep  This is the step, or interleave factor, of the output samples
 	 *                 in the outSig array. See above.
 	 */
-	public abstract void synthetize_lpf(Object lowSig, int lowOff, int lowLen, int lowStep, Object highSig,
-										int highOff, int highLen, int highStep, Object outSig, int outOff, int outStep);
+	public abstract void synthetize_lpf (
+			Object lowSig , int lowOff , int lowLen , int lowStep , Object highSig ,
+			int highOff , int highLen , int highStep , Object outSig , int outOff , int outStep
+	);
 
 	/**
 	 * Reconstructs the output signal by the synthesis filter, recomposing the
@@ -202,6 +204,8 @@ public abstract class SynWTFilter implements WaveletFilter, Markers {
 	 * @param outStep  This is the step, or interleave factor, of the output samples
 	 *                 in the outSig array. See above.
 	 */
-	public abstract void synthetize_hpf(Object lowSig, int lowOff, int lowLen, int lowStep, Object highSig,
-										int highOff, int highLen, int highStep, Object outSig, int outOff, int outStep);
+	public abstract void synthetize_hpf (
+			Object lowSig , int lowOff , int lowLen , int lowStep , Object highSig ,
+			int highOff , int highLen , int highStep , Object outSig , int outOff , int outStep
+	);
 }

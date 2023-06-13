@@ -1,16 +1,16 @@
-/* 
+/*
  * CVS identifier:
- * 
+ *
  * $Id: TitleUpdater.java,v 1.8 2002/06/24 14:04:58 grosbois Exp $
- * 
+ *
  * Class:                   TitleUpdater
- * 
+ *
  * Description:             Thread to update display window title
- * 
- * 
- * 
+ *
+ *
+ *
  * COPYRIGHT:
- * 
+ *
  * This software module was originally developed by Rapha�l Grosbois and
  * Diego Santa Cruz (Swiss Federal Institute of Technology-EPFL); Joel
  * Askel�f (Ericsson Radio Systems AB); and Bertrand Berthelot, David
@@ -37,7 +37,7 @@
  * using this software module for non JPEG 2000 Standard conforming
  * products. This copyright notice must be included in all copies or
  * derivative works of this software module.
- * 
+ *
  * Copyright (c) 1999/2000 JJ2000 Partners.
  */
 package dev.zontreck.harbinger.thirdparty.jj2000.disp;
@@ -48,40 +48,39 @@ import java.awt.*;
  * This class should run as an independent thread to update tha main display
  * window title with current image scroll position and zoom.
  */
-public class TitleUpdater implements Runnable
-{
+public class TitleUpdater implements Runnable {
 
-	/** The update perion, in milliseconds: 100 */
+	/**
+	 * The update perion, in milliseconds: 100
+	 */
 	static final int UPDATE_T = 100;
-
-	/** The ImgScrollPane where the image is displayed */
-	ImgScrollPane isp;
-
-	/** The frame which title to update */
-	Frame win;
-
-	/** The base of the title */
-	String btitle;
-
-	/** The thread exits when this is true */
+	/**
+	 * The thread exits when this is true
+	 */
 	public volatile boolean done;
+	/**
+	 * The ImgScrollPane where the image is displayed
+	 */
+	ImgScrollPane isp;
+	/**
+	 * The frame which title to update
+	 */
+	Frame win;
+	/**
+	 * The base of the title
+	 */
+	String btitle;
 
 	/**
 	 * Instantiates the title updater. The title of 'win' will be regularly
 	 * updated with the current zoom and scroll point. The current zoom and
 	 * scroll point are added to the basic title given by 'btitle'.
-	 * 
-	 * @param isp
-	 *            Where the image is displayed
-	 * 
-	 * @param win
-	 *            The window which title to update
-	 * 
-	 * @param btitle
-	 *            The base of the title.
+	 *
+	 * @param isp    Where the image is displayed
+	 * @param win    The window which title to update
+	 * @param btitle The base of the title.
 	 */
-	public TitleUpdater(final ImgScrollPane isp, final Frame win, final String btitle)
-	{
+	public TitleUpdater ( final ImgScrollPane isp , final Frame win , final String btitle ) {
 		this.isp = isp;
 		this.win = win;
 		this.btitle = btitle;
@@ -94,30 +93,24 @@ public class TitleUpdater implements Runnable
 	 * title will be updated earlier and the cycle will continue.
 	 */
 	@Override
-	public void run()
-	{
+	public void run ( ) {
 		// Periodically update the window title
 		Point lsp, sp;
 		float lzf, zf;
-		lsp = this.isp.getScrollPosition();
-		lzf = this.isp.getZoom();
-		while (!this.done)
-		{
-			sp = this.isp.getScrollPosition();
-			zf = this.isp.getZoom();
+		lsp = this.isp.getScrollPosition ( );
+		lzf = this.isp.getZoom ( );
+		while ( ! this.done ) {
+			sp = this.isp.getScrollPosition ( );
+			zf = this.isp.getZoom ( );
 			// Update title only if necessary
-			if (zf != lzf || !sp.equals(lsp))
-			{
-				this.win.setTitle(this.btitle + " @ (" + (int) (sp.x / zf) + "," + (int) (sp.y / zf) + ") : " + this.isp.getZoom());
+			if ( zf != lzf || ! sp.equals ( lsp ) ) {
+				this.win.setTitle ( this.btitle + " @ (" + ( int ) ( sp.x / zf ) + "," + ( int ) ( sp.y / zf ) + ") : " + this.isp.getZoom ( ) );
 			}
 			lsp = sp;
 			lzf = zf;
-			try
-			{
-				Thread.sleep(TitleUpdater.UPDATE_T);
-			}
-			catch (final InterruptedException e)
-			{
+			try {
+				Thread.sleep ( TitleUpdater.UPDATE_T );
+			} catch ( final InterruptedException e ) {
 			}
 		}
 	}

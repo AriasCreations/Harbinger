@@ -103,7 +103,7 @@ public interface MsgLogger {
 	 * @param sev The message severity (LOG, INFO, etc.)
 	 * @param msg The message to display
 	 */
-	void printmsg(int sev, String msg);
+	void printmsg ( int sev , String msg );
 
 	/**
 	 * Prints the string 'str' to the output device, appending a line return.
@@ -119,10 +119,10 @@ public interface MsgLogger {
 	 * @param flind Indentation of the first line
 	 * @param ind   Indentation of any other lines.
 	 */
-	void println(String str, int flind, int ind);
+	void println ( String str , int flind , int ind );
 
 	/**
 	 * Writes any buffered data from the println() method to the device.
 	 */
-	void flush();
+	void flush ( );
 }

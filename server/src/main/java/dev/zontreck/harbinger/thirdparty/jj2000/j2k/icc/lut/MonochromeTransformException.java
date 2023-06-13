@@ -10,32 +10,28 @@ package dev.zontreck.harbinger.thirdparty.jj2000.j2k.icc.lut;
 
 /**
  * Exception thrown by MonochromeTransformTosRGB.
- * 
- * @see dev.zontreck.harbinger.thirdparty.jj2000.j2k.icc.lut.MonochromeTransformTosRGB
- * @version 1.0
+ *
  * @author Bruce A. Kern
+ * @version 1.0
+ * @see dev.zontreck.harbinger.thirdparty.jj2000.j2k.icc.lut.MonochromeTransformTosRGB
  */
 
-public class MonochromeTransformException extends Exception
-{
+public class MonochromeTransformException extends Exception {
 	private static final long serialVersionUID = 1L;
 
 	/**
 	 * Contruct with message
-	 * 
-	 * @param msg
-	 *            returned by getMessage()
+	 *
+	 * @param msg returned by getMessage()
 	 */
-	MonochromeTransformException(final String msg)
-	{
-		super(msg);
+	MonochromeTransformException ( final String msg ) {
+		super ( msg );
 	}
 
 	/**
 	 * Empty constructor
 	 */
-	MonochromeTransformException()
-	{
+	MonochromeTransformException ( ) {
 	}
 
 	/* end class MonochromeTransformException */

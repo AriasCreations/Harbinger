@@ -12,21 +12,18 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class Product {
-	public static AtomicLong SEQUENCE = new AtomicLong(0);
+	public static AtomicLong SEQUENCE = new AtomicLong ( 0 );
+	private static long Signature1;
+	private static long Signature2;
+	private static boolean init_done;
 	public String productName;
 	public Version versionNumber;
 	public String productItem;
 	public Server containingServer;
-
 	public UUID productID;
 
-	private static long Signature1;
-	private static long Signature2;
-
-	private static boolean init_done;
-
-	public static void loadSigs() {
-		if (Product.init_done) return;
+	public static void loadSigs ( ) {
+		if ( Product.init_done ) return;
 
 		Product.Signature1 = Persist.SIGNATURE.v1;
 		Product.Signature2 = Persist.SIGNATURE.v2;
@@ -35,9 +32,9 @@ public class Product {
 	}
 
 	@Subscribe
-	public static void onMemoryAltered(final MemoryAlteredEvent ev) {
+	public static void onMemoryAltered ( final MemoryAlteredEvent ev ) {
 		Product.init_done = false;
-		Product.loadSigs();
+		Product.loadSigs ( );
 	}
 
 	/**
@@ -47,38 +44,38 @@ public class Product {
 	 * @param ID2 The product identity or number
 	 * @return UUID with signature bit transforms applied.
 	 */
-	public static UUID makeProductID(long ID1, long ID2) {
+	public static UUID makeProductID ( long ID1 , long ID2 ) {
 		ID1 += Product.Signature1;
 		ID2 -= Product.Signature2;
 
-		return new UUID(ID1, ID2);
+		return new UUID ( ID1 , ID2 );
 	}
 
-	public Entry<List<Entry>> save() {
-		final Entry<List<Entry>> tag = Folder.getNew(this.productName);
-
-		tag.value.add(EntryUtils.mkStr("product", this.productName));
-		tag.value.add(this.versionNumber.save());
-		tag.value.add(EntryUtils.mkStr("item", this.productItem));
-		tag.value.add(EntryUtils.mkUUID("id", this.productID));
-
-		return tag;
-	}
-
-	public static Product deserialize(final Entry<List<Entry>> tag) {
+	public static Product deserialize ( final Entry<List<Entry>> tag ) {
 		try {
 
-			final Product p = new Product();
-			p.productName = EntryUtils.getStr(Folder.getEntry(tag, "product"));
-			p.versionNumber = new Version((Entry<int[]>) Folder.getEntry(tag, "ver"));
-			p.productItem = EntryUtils.getStr(Folder.getEntry(tag, "item"));
-			p.productID = EntryUtils.getUUID(Folder.getEntry(tag, "id"));
+			final Product p = new Product ( );
+			p.productName = EntryUtils.getStr ( Folder.getEntry ( tag , "product" ) );
+			p.versionNumber = new Version ( ( Entry<int[]> ) Folder.getEntry ( tag , "ver" ) );
+			p.productItem = EntryUtils.getStr ( Folder.getEntry ( tag , "item" ) );
+			p.productID = EntryUtils.getUUID ( Folder.getEntry ( tag , "id" ) );
 
 
 			return p;
-		} catch (final Exception e) {
+		} catch ( final Exception e ) {
 			return null;
 		}
+	}
+
+	public Entry<List<Entry>> save ( ) {
+		final Entry<List<Entry>> tag = Folder.getNew ( this.productName );
+
+		tag.value.add ( EntryUtils.mkStr ( "product" , this.productName ) );
+		tag.value.add ( this.versionNumber.save ( ) );
+		tag.value.add ( EntryUtils.mkStr ( "item" , this.productItem ) );
+		tag.value.add ( EntryUtils.mkUUID ( "id" , this.productID ) );
+
+		return tag;
 	}
 
 }

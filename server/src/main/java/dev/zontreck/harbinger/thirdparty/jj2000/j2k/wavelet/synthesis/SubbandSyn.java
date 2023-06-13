@@ -64,29 +64,41 @@ import dev.zontreck.harbinger.thirdparty.jj2000.j2k.wavelet.WaveletFilter;
  */
 public class SubbandSyn extends Subband {
 	/**
+	 * The horizontal analysis filter used to recompose this subband, from its
+	 * childs. This is applicable to "node" elements only. The default value is
+	 * null.
+	 */
+	public SynWTFilter hFilter;
+	/**
+	 * The vertical analysis filter used to decompose this subband, from its
+	 * childs. This is applicable to "node" elements only. The default value is
+	 * null.
+	 */
+	public SynWTFilter vFilter;
+	/**
+	 * The number of magnitude bits
+	 */
+	public int magbits;
+	/**
 	 * The reference to the parent of this subband. It is null for the root
 	 * element. It is null by default.
 	 */
 	private SubbandSyn parent;
-
 	/**
 	 * The reference to the LL subband resulting from the decomposition of this
 	 * subband. It is null by default.
 	 */
 	private SubbandSyn subb_LL;
-
 	/**
 	 * The reference to the HL subband (horizontal high-pass) resulting from the
 	 * decomposition of this subband. It is null by default.
 	 */
 	private SubbandSyn subb_HL;
-
 	/**
 	 * The reference to the LH subband (vertical high-pass) resulting from the
 	 * decomposition of this subband. It is null by default.
 	 */
 	private SubbandSyn subb_LH;
-
 	/**
 	 * The reference to the HH subband resulting from the decomposition of this
 	 * subband. It is null by default.
@@ -94,29 +106,10 @@ public class SubbandSyn extends Subband {
 	private SubbandSyn subb_HH;
 
 	/**
-	 * The horizontal analysis filter used to recompose this subband, from its
-	 * childs. This is applicable to "node" elements only. The default value is
-	 * null.
-	 */
-	public SynWTFilter hFilter;
-
-	/**
-	 * The vertical analysis filter used to decompose this subband, from its
-	 * childs. This is applicable to "node" elements only. The default value is
-	 * null.
-	 */
-	public SynWTFilter vFilter;
-
-	/**
-	 * The number of magnitude bits
-	 */
-	public int magbits;
-
-	/**
 	 * Creates a SubbandSyn element with all the default values. The dimensions
 	 * are (0,0) and the upper left corner is (0,0).
 	 */
-	public SubbandSyn() {
+	public SubbandSyn ( ) {
 	}
 
 	/**
@@ -138,11 +131,11 @@ public class SubbandSyn extends Subband {
 	 *                 level, starting at resolution level 0.
 	 * @param vfilters The vertical wavelet synthesis filters for each resolution
 	 *                 level, starting at resolution level 0.
-	 * @see Subband#Subband(int, int, int, int, int,
-	 * WaveletFilter[], WaveletFilter[])
+	 * @see Subband#Subband(int , int , int , int , int ,
+	 * WaveletFilter[] , WaveletFilter[])
 	 */
-	public SubbandSyn(final int w, final int h, final int ulcx, final int ulcy, final int lvls, final WaveletFilter[] hfilters, final WaveletFilter[] vfilters) {
-		super(w, h, ulcx, ulcy, lvls, hfilters, vfilters);
+	public SubbandSyn ( final int w , final int h , final int ulcx , final int ulcy , final int lvls , final WaveletFilter[] hfilters , final WaveletFilter[] vfilters ) {
+		super ( w , h , ulcx , ulcy , lvls , hfilters , vfilters );
 	}
 
 	/**
@@ -153,7 +146,7 @@ public class SubbandSyn extends Subband {
 	 * @return The parent subband, or null for the root one.
 	 */
 	@Override
-	public Subband getParent() {
+	public Subband getParent ( ) {
 		return this.parent;
 	}
 
@@ -163,7 +156,7 @@ public class SubbandSyn extends Subband {
 	 * @return The LL child subband, or null if there are no childs.
 	 */
 	@Override
-	public Subband getLL() {
+	public Subband getLL ( ) {
 		return this.subb_LL;
 	}
 
@@ -173,7 +166,7 @@ public class SubbandSyn extends Subband {
 	 * @return The HL child subband, or null if there are no childs.
 	 */
 	@Override
-	public Subband getHL() {
+	public Subband getHL ( ) {
 		return this.subb_HL;
 	}
 
@@ -183,7 +176,7 @@ public class SubbandSyn extends Subband {
 	 * @return The LH child subband, or null if there are no childs.
 	 */
 	@Override
-	public Subband getLH() {
+	public Subband getLH ( ) {
 		return this.subb_LH;
 	}
 
@@ -193,7 +186,7 @@ public class SubbandSyn extends Subband {
 	 * @return The HH child subband, or null if there are no childs.
 	 */
 	@Override
-	public Subband getHH() {
+	public Subband getHH ( ) {
 		return this.subb_HH;
 	}
 
@@ -214,22 +207,22 @@ public class SubbandSyn extends Subband {
 	 * @see Subband#initChilds
 	 */
 	@Override
-	protected Subband split(final WaveletFilter hfilter, final WaveletFilter vfilter) {
+	protected Subband split ( final WaveletFilter hfilter , final WaveletFilter vfilter ) {
 		// Test that this is a node
-		if (this.isNode) {
-			throw new IllegalArgumentException();
+		if ( this.isNode ) {
+			throw new IllegalArgumentException ( );
 		}
 
 		// Modify this element into a node and set the filters
 		this.isNode = true;
-		hFilter = (SynWTFilter) hfilter;
-		vFilter = (SynWTFilter) vfilter;
+		hFilter = ( SynWTFilter ) hfilter;
+		vFilter = ( SynWTFilter ) vfilter;
 
 		// Create childs
-		this.subb_LL = new SubbandSyn();
-		this.subb_LH = new SubbandSyn();
-		this.subb_HL = new SubbandSyn();
-		this.subb_HH = new SubbandSyn();
+		this.subb_LL = new SubbandSyn ( );
+		this.subb_LH = new SubbandSyn ( );
+		this.subb_HL = new SubbandSyn ( );
+		this.subb_HH = new SubbandSyn ( );
 
 		// Assign parent
 		this.subb_LL.parent = this;
@@ -238,7 +231,7 @@ public class SubbandSyn extends Subband {
 		this.subb_HH.parent = this;
 
 		// Initialize childs
-		this.initChilds();
+		this.initChilds ( );
 
 		// Return reference to LL subband
 		return this.subb_LL;
@@ -251,7 +244,7 @@ public class SubbandSyn extends Subband {
 	 * @return The horizontal wavelet filter
 	 */
 	@Override
-	public WaveletFilter getHorWFilter() {
+	public WaveletFilter getHorWFilter ( ) {
 		return this.hFilter;
 	}
 
@@ -262,7 +255,7 @@ public class SubbandSyn extends Subband {
 	 * @return The vertical wavelet filter
 	 */
 	@Override
-	public WaveletFilter getVerWFilter() {
+	public WaveletFilter getVerWFilter ( ) {
 		return this.hFilter;
 	}
 }

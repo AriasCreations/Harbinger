@@ -98,10 +98,10 @@ public abstract class InvWTAdapter implements InvWT {
 	 * @param src     From where to obtain the values to return
 	 * @param decSpec The decoder specifications
 	 */
-	protected InvWTAdapter(final MultiResImgData src, final DecoderSpecs decSpec) {
+	protected InvWTAdapter ( final MultiResImgData src , final DecoderSpecs decSpec ) {
 		this.mressrc = src;
 		this.decSpec = decSpec;
-		this.maxImgRes = decSpec.dls.getMin();
+		this.maxImgRes = decSpec.dls.getMin ( );
 	}
 
 	/**
@@ -126,9 +126,9 @@ public abstract class InvWTAdapter implements InvWT {
 	 * on the reference grid.
 	 */
 	@Override
-	public void setImgResLevel(final int rl) {
-		if (0 > rl) {
-			throw new IllegalArgumentException("Resolution level index cannot be negative.");
+	public void setImgResLevel ( final int rl ) {
+		if ( 0 > rl ) {
+			throw new IllegalArgumentException ( "Resolution level index cannot be negative." );
 		}
 		this.reslvl = rl;
 	}
@@ -145,19 +145,19 @@ public abstract class InvWTAdapter implements InvWT {
 	 * @return The total current tile's width in pixels.
 	 */
 	@Override
-	public int getTileWidth() {
+	public int getTileWidth ( ) {
 		// Retrieves the tile maximum resolution level index and request the
 		// width from the source module.
-		final int tIdx = this.getTileIdx();
+		final int tIdx = this.getTileIdx ( );
 		int rl = 10000;
 		int mrl;
-		final int nc = this.mressrc.getNumComps();
-		for (int c = 0; c < nc; c++) {
-			mrl = this.mressrc.getSynSubbandTree(tIdx, c).resLvl;
-			if (mrl < rl)
+		final int nc = this.mressrc.getNumComps ( );
+		for ( int c = 0 ; c < nc ; c++ ) {
+			mrl = this.mressrc.getSynSubbandTree ( tIdx , c ).resLvl;
+			if ( mrl < rl )
 				rl = mrl;
 		}
-		return this.mressrc.getTileWidth(rl);
+		return this.mressrc.getTileWidth ( rl );
 	}
 
 	/**
@@ -172,35 +172,35 @@ public abstract class InvWTAdapter implements InvWT {
 	 * @return The total current tile's height in pixels.
 	 */
 	@Override
-	public int getTileHeight() {
+	public int getTileHeight ( ) {
 		// Retrieves the tile maximum resolution level index and request the
 		// height from the source module.
-		final int tIdx = this.getTileIdx();
+		final int tIdx = this.getTileIdx ( );
 		int rl = 10000;
 		int mrl;
-		final int nc = this.mressrc.getNumComps();
-		for (int c = 0; c < nc; c++) {
-			mrl = this.mressrc.getSynSubbandTree(tIdx, c).resLvl;
-			if (mrl < rl)
+		final int nc = this.mressrc.getNumComps ( );
+		for ( int c = 0 ; c < nc ; c++ ) {
+			mrl = this.mressrc.getSynSubbandTree ( tIdx , c ).resLvl;
+			if ( mrl < rl )
 				rl = mrl;
 		}
-		return this.mressrc.getTileHeight(rl);
+		return this.mressrc.getTileHeight ( rl );
 	}
 
 	/**
 	 * Returns the nominal width of tiles
 	 */
 	@Override
-	public int getNomTileWidth() {
-		return this.mressrc.getNomTileWidth();
+	public int getNomTileWidth ( ) {
+		return this.mressrc.getNomTileWidth ( );
 	}
 
 	/**
 	 * Returns the nominal height of tiles
 	 */
 	@Override
-	public int getNomTileHeight() {
-		return this.mressrc.getNomTileHeight();
+	public int getNomTileHeight ( ) {
+		return this.mressrc.getNomTileHeight ( );
 	}
 
 	/**
@@ -210,8 +210,8 @@ public abstract class InvWTAdapter implements InvWT {
 	 * @return The total image's width in pixels.
 	 */
 	@Override
-	public int getImgWidth() {
-		return this.mressrc.getImgWidth(this.reslvl);
+	public int getImgWidth ( ) {
+		return this.mressrc.getImgWidth ( this.reslvl );
 	}
 
 	/**
@@ -221,8 +221,8 @@ public abstract class InvWTAdapter implements InvWT {
 	 * @return The total image's height in pixels.
 	 */
 	@Override
-	public int getImgHeight() {
-		return this.mressrc.getImgHeight(this.reslvl);
+	public int getImgHeight ( ) {
+		return this.mressrc.getImgHeight ( this.reslvl );
 	}
 
 	/**
@@ -231,8 +231,8 @@ public abstract class InvWTAdapter implements InvWT {
 	 * @return The number of components in the image.
 	 */
 	@Override
-	public int getNumComps() {
-		return this.mressrc.getNumComps();
+	public int getNumComps ( ) {
+		return this.mressrc.getNumComps ( );
 	}
 
 	/**
@@ -246,8 +246,8 @@ public abstract class InvWTAdapter implements InvWT {
 	 * @see dev.zontreck.harbinger.thirdparty.jj2000.j2k.image.ImgData
 	 */
 	@Override
-	public int getCompSubsX(final int c) {
-		return this.mressrc.getCompSubsX(c);
+	public int getCompSubsX ( final int c ) {
+		return this.mressrc.getCompSubsX ( c );
 	}
 
 	/**
@@ -261,8 +261,8 @@ public abstract class InvWTAdapter implements InvWT {
 	 * @see dev.zontreck.harbinger.thirdparty.jj2000.j2k.image.ImgData
 	 */
 	@Override
-	public int getCompSubsY(final int c) {
-		return this.mressrc.getCompSubsY(c);
+	public int getCompSubsY ( final int c ) {
+		return this.mressrc.getCompSubsY ( c );
 	}
 
 	/**
@@ -273,11 +273,11 @@ public abstract class InvWTAdapter implements InvWT {
 	 * @return The width in pixels of component <tt>n</tt> in tile <tt>t</tt>.
 	 */
 	@Override
-	public int getTileCompWidth(final int t, final int c) {
+	public int getTileCompWidth ( final int t , final int c ) {
 		// Retrieves the tile-component maximum resolution index and gets the
 		// width from the source.
-		final int rl = this.mressrc.getSynSubbandTree(t, c).resLvl;
-		return this.mressrc.getTileCompWidth(t, c, rl);
+		final int rl = this.mressrc.getSynSubbandTree ( t , c ).resLvl;
+		return this.mressrc.getTileCompWidth ( t , c , rl );
 	}
 
 	/**
@@ -292,11 +292,11 @@ public abstract class InvWTAdapter implements InvWT {
 	 * @return The height in pixels of component <tt>n</tt> in tile <tt>t</tt>.
 	 */
 	@Override
-	public int getTileCompHeight(final int t, final int c) {
+	public int getTileCompHeight ( final int t , final int c ) {
 		// Retrieves the tile-component maximum resolution index and gets the
 		// height from the source.
-		final int rl = this.mressrc.getSynSubbandTree(t, c).resLvl;
-		return this.mressrc.getTileCompHeight(t, c, rl);
+		final int rl = this.mressrc.getSynSubbandTree ( t , c ).resLvl;
+		return this.mressrc.getTileCompHeight ( t , c , rl );
 	}
 
 	/**
@@ -307,11 +307,11 @@ public abstract class InvWTAdapter implements InvWT {
 	 * @return The width in pixels of component <tt>c</tt> in the overall image.
 	 */
 	@Override
-	public int getCompImgWidth(final int c) {
+	public int getCompImgWidth ( final int c ) {
 		// Retrieves the component maximum resolution index and gets the width
 		// from the source module.
-		final int rl = this.decSpec.dls.getMinInComp(c);
-		return this.mressrc.getCompImgWidth(c, rl);
+		final int rl = this.decSpec.dls.getMinInComp ( c );
+		return this.mressrc.getCompImgWidth ( c , rl );
 	}
 
 	/**
@@ -327,11 +327,11 @@ public abstract class InvWTAdapter implements InvWT {
 	 * image.
 	 */
 	@Override
-	public int getCompImgHeight(final int c) {
+	public int getCompImgHeight ( final int c ) {
 		// Retrieves the component maximum resolution index and gets the
 		// height from the source module.
-		final int rl = this.decSpec.dls.getMinInComp(c);
-		return this.mressrc.getCompImgHeight(c, rl);
+		final int rl = this.decSpec.dls.getMinInComp ( c );
+		return this.mressrc.getCompImgHeight ( c , rl );
 	}
 
 	/**
@@ -347,8 +347,8 @@ public abstract class InvWTAdapter implements InvWT {
 	 * @returns The new tile index
 	 */
 	@Override
-	public int setTile(final int x, final int y) {
-		return this.mressrc.setTile(x, y);
+	public int setTile ( final int x , final int y ) {
+		return this.mressrc.setTile ( x , y );
 	}
 
 	/**
@@ -362,8 +362,8 @@ public abstract class InvWTAdapter implements InvWT {
 	 * @returns The new tile index
 	 */
 	@Override
-	public int nextTile() {
-		return this.mressrc.nextTile();
+	public int nextTile ( ) {
+		return this.mressrc.nextTile ( );
 	}
 
 	/**
@@ -378,8 +378,8 @@ public abstract class InvWTAdapter implements InvWT {
 	 * @return The current tile's indices (vertical and horizontal indexes).
 	 */
 	@Override
-	public Coord getTile(final Coord co) {
-		return this.mressrc.getTile(co);
+	public Coord getTile ( final Coord co ) {
+		return this.mressrc.getTile ( co );
 	}
 
 	/**
@@ -392,8 +392,8 @@ public abstract class InvWTAdapter implements InvWT {
 	 * @return The current tile's index (starts at 0).
 	 */
 	@Override
-	public int getTileIdx() {
-		return this.mressrc.getTileIdx();
+	public int getTileIdx ( ) {
+		return this.mressrc.getTileIdx ( );
 	}
 
 	/**
@@ -403,12 +403,12 @@ public abstract class InvWTAdapter implements InvWT {
 	 * @param c The component index.
 	 */
 	@Override
-	public int getCompULX(final int c) {
+	public int getCompULX ( final int c ) {
 		// Find tile-component maximum resolution index and gets information
 		// from the source module.
-		final int tIdx = this.getTileIdx();
-		final int rl = this.mressrc.getSynSubbandTree(tIdx, c).resLvl;
-		return this.mressrc.getResULX(c, rl);
+		final int tIdx = this.getTileIdx ( );
+		final int rl = this.mressrc.getSynSubbandTree ( tIdx , c ).resLvl;
+		return this.mressrc.getResULX ( c , rl );
 	}
 
 	/**
@@ -418,12 +418,12 @@ public abstract class InvWTAdapter implements InvWT {
 	 * @param c The component index.
 	 */
 	@Override
-	public int getCompULY(final int c) {
+	public int getCompULY ( final int c ) {
 		// Find tile-component maximum resolution index and gets information
 		// from the source module.
-		final int tIdx = this.getTileIdx();
-		final int rl = this.mressrc.getSynSubbandTree(tIdx, c).resLvl;
-		return this.mressrc.getResULY(c, rl);
+		final int tIdx = this.getTileIdx ( );
+		final int rl = this.mressrc.getSynSubbandTree ( tIdx , c ).resLvl;
+		return this.mressrc.getResULY ( c , rl );
 	}
 
 	/**
@@ -438,8 +438,8 @@ public abstract class InvWTAdapter implements InvWT {
 	 * system, on the reference grid.
 	 */
 	@Override
-	public int getImgULX() {
-		return this.mressrc.getImgULX(this.reslvl);
+	public int getImgULX ( ) {
+		return this.mressrc.getImgULX ( this.reslvl );
 	}
 
 	/**
@@ -454,24 +454,24 @@ public abstract class InvWTAdapter implements InvWT {
 	 * on the reference grid.
 	 */
 	@Override
-	public int getImgULY() {
-		return this.mressrc.getImgULY(this.reslvl);
+	public int getImgULY ( ) {
+		return this.mressrc.getImgULY ( this.reslvl );
 	}
 
 	/**
 	 * Returns the horizontal tile partition offset in the reference grid
 	 */
 	@Override
-	public int getTilePartULX() {
-		return this.mressrc.getTilePartULX();
+	public int getTilePartULX ( ) {
+		return this.mressrc.getTilePartULX ( );
 	}
 
 	/**
 	 * Returns the vertical tile partition offset in the reference grid
 	 */
 	@Override
-	public int getTilePartULY() {
-		return this.mressrc.getTilePartULY();
+	public int getTilePartULY ( ) {
+		return this.mressrc.getTilePartULY ( );
 	}
 
 	/**
@@ -486,8 +486,8 @@ public abstract class InvWTAdapter implements InvWT {
 	 * (Coord.y) directions.
 	 */
 	@Override
-	public Coord getNumTiles(final Coord co) {
-		return this.mressrc.getNumTiles(co);
+	public Coord getNumTiles ( final Coord co ) {
+		return this.mressrc.getNumTiles ( co );
 	}
 
 	/**
@@ -499,8 +499,8 @@ public abstract class InvWTAdapter implements InvWT {
 	 * @return The total number of tiles in the image.
 	 */
 	@Override
-	public int getNumTiles() {
-		return this.mressrc.getNumTiles();
+	public int getNumTiles ( ) {
+		return this.mressrc.getNumTiles ( );
 	}
 
 	/**
@@ -509,7 +509,7 @@ public abstract class InvWTAdapter implements InvWT {
 	 * @param t Tile index.
 	 * @param c Component index.
 	 */
-	public SubbandSyn getSynSubbandTree(final int t, final int c) {
-		return this.mressrc.getSynSubbandTree(t, c);
+	public SubbandSyn getSynSubbandTree ( final int t , final int c ) {
+		return this.mressrc.getSynSubbandTree ( t , c );
 	}
 }

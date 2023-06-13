@@ -2,19 +2,19 @@
  * Copyright (c) 2006-2014, openmetaverse.org
  * Copyright (c) 2009-2017, Frederick Martian
  * All rights reserved.
- *
+ * <p>
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ * <p>
  * - Redistributions of source code must retain the above copyright notice, this
- *   list of conditions and the following disclaimer.
+ * list of conditions and the following disclaimer.
  * - Redistributions in binary form must reproduce the above copyright notice,
- *   this list of conditions and the following disclaimer in the
- *   documentation and/or other materials provided with the distribution.
+ * this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
  * - Neither the name of the openmetaverse.org or dev.zontreck.harbinger.thirdparty.libomv-java project nor the
- *   names of its contributors may be used to endorse or promote products derived
- *   from this software without specific prior written permission.
- *
+ * names of its contributors may be used to endorse or promote products derived
+ * from this software without specific prior written permission.
+ * <p>
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -32,84 +32,27 @@ package dev.zontreck.harbinger.thirdparty.libomv.types;
 import dev.zontreck.harbinger.thirdparty.libomv.utils.Helpers;
 import dev.zontreck.harbinger.thirdparty.libomv.utils.RefObject;
 
-public final class NameValue
-{
-	/* Type of the value */
-	public enum ValueType
-	{
-		// Unknown
-		Unknown(-1),
-		// String value
-		String(0),
-
-		F32(1),
-
-		S32(2),
-
-		VEC3(3),
-
-		U32(4),
-		// Deprecated
-		CAMERA(5),
-		// String value, but designated as an asset
-		Asset(6),
-
-		U64(7);
-
-		public int val;
-
-		ValueType(final int val)
-		{
-			this.val = val;
-		}
-	}
-
-	public enum ClassType
-	{
-		Unknown(-1), ReadOnly(0), ReadWrite(1), Callback(2);
-
-		public int val;
-
-		ClassType(final int val)
-		{
-			this.val = val;
-		}
-	}
-
-	public enum SendtoType
-	{
-		Unknown(-1), Sim(0), DataSim(1), SimViewer(2), DataSimViewer(3);
-
-		public int val;
-
-		SendtoType(final int val)
-		{
-			this.val = val;
-		}
-	}
-
+public final class NameValue {
+	private static final String[] TypeStrings = { "STRING" , "F32" , "S32" , "VEC3" , "U32" , "ASSET" , "U64" };
+	private static final String[] ClassStrings = { "R" , "RW" , "CB" };
+	private static final String[] SendtoStrings = { "S" , "DS" , "SV" , "DSV" };
+	private static final char[] Separators = { ' ' , '\n' , '\t' , '\r' };
 	public String Name;
 	public ValueType Type;
 	public ClassType Class;
 	public SendtoType Sendto;
 	public Object Value;
 
-	private static final String[] TypeStrings = { "STRING", "F32", "S32", "VEC3", "U32", "ASSET", "U64" };
-	private static final String[] ClassStrings = { "R", "RW", "CB" };
-	private static final String[] SendtoStrings = { "S", "DS", "SV", "DSV" };
-	private static final char[] Separators = { ' ', '\n', '\t', '\r' };
-
 	/**
 	 * Constructor that takes all the fields as parameters
-	 * 
+	 *
 	 * @param name
 	 * @param valueType
 	 * @param classType
 	 * @param sendtoType
 	 * @param value
 	 */
-	public NameValue(final String name, final ValueType valueType, final ClassType classType, final SendtoType sendtoType, final Object value)
-	{
+	public NameValue ( final String name , final ValueType valueType , final ClassType classType , final SendtoType sendtoType , final Object value ) {
 		this.Name = name;
 		this.Type = valueType;
 		this.Class = classType;
@@ -119,17 +62,15 @@ public final class NameValue
 
 	/**
 	 * Constructor that takes a single line from a NameValue field
-	 * 
+	 *
 	 * @param data
 	 */
-	public NameValue(String data)
-	{
+	public NameValue ( String data ) {
 		int i;
 
 		// Name
-		i = Helpers.indexOfAny(data, NameValue.Separators);
-		if (1 > i)
-		{
+		i = Helpers.indexOfAny ( data , NameValue.Separators );
+		if ( 1 > i ) {
 			this.Name = Helpers.EmptyString;
 			this.Type = ValueType.Unknown;
 			this.Class = ClassType.Unknown;
@@ -137,29 +78,26 @@ public final class NameValue
 			this.Value = null;
 			return;
 		}
-		this.Name = data.substring(0, i);
-		data = data.substring(i + 1);
+		this.Name = data.substring ( 0 , i );
+		data = data.substring ( i + 1 );
 
 		// Type
-		i = Helpers.indexOfAny(data, NameValue.Separators);
-		if (0 < i)
-		{
-			this.Type = NameValue.getValueType(data.substring(0, i));
-			data = data.substring(i + 1);
+		i = Helpers.indexOfAny ( data , NameValue.Separators );
+		if ( 0 < i ) {
+			this.Type = NameValue.getValueType ( data.substring ( 0 , i ) );
+			data = data.substring ( i + 1 );
 
 			// Class
-			i = Helpers.indexOfAny(data, NameValue.Separators);
-			if (0 < i)
-			{
-				this.Class = NameValue.getClassType(data.substring(0, i));
-				data = data.substring(i + 1);
+			i = Helpers.indexOfAny ( data , NameValue.Separators );
+			if ( 0 < i ) {
+				this.Class = NameValue.getClassType ( data.substring ( 0 , i ) );
+				data = data.substring ( i + 1 );
 
 				// Sendto
-				i = Helpers.indexOfAny(data, NameValue.Separators);
-				if (0 < i)
-				{
-					this.Sendto = NameValue.getSendtoType(data.substring(0, 1));
-					data = data.substring(i + 1);
+				i = Helpers.indexOfAny ( data , NameValue.Separators );
+				if ( 0 < i ) {
+					this.Sendto = NameValue.getSendtoType ( data.substring ( 0 , 1 ) );
+					data = data.substring ( i + 1 );
 				}
 			}
 		}
@@ -169,70 +107,111 @@ public final class NameValue
 		this.Class = ClassType.ReadOnly;
 		this.Sendto = SendtoType.Sim;
 		this.Value = null;
-		this.setValue(data);
+		this.setValue ( data );
 	}
 
-	public static String NameValuesToString(final NameValue[] values)
-	{
-		if (null == values || 0 == values.length)
-		{
+	public static String NameValuesToString ( final NameValue[] values ) {
+		if ( null == values || 0 == values.length ) {
 			return "";
 		}
 
-		final StringBuilder output = new StringBuilder();
+		final StringBuilder output = new StringBuilder ( );
 
-		for (int i = 0; i < values.length; i++)
-		{
-			final NameValue value = values[i];
+		for ( int i = 0 ; i < values.length ; i++ ) {
+			final NameValue value = values[ i ];
 
-			if (null != value.Value)
-			{
-				final String newLine = (i < values.length - 1) ? "\n" : "";
-				output.append(String.format("%s %s %s %s %s%s", value.Name, NameValue.TypeStrings[value.Type.val],
-						NameValue.ClassStrings[value.Class.val], NameValue.SendtoStrings[value.Sendto.val], value.Value, newLine));
+			if ( null != value.Value ) {
+				final String newLine = ( i < values.length - 1 ) ? "\n" : "";
+				output.append ( String.format ( "%s %s %s %s %s%s" , value.Name , NameValue.TypeStrings[ value.Type.val ] ,
+						NameValue.ClassStrings[ value.Class.val ] , NameValue.SendtoStrings[ value.Sendto.val ] , value.Value , newLine
+				) );
 			}
 		}
 
-		return output.toString();
+		return output.toString ( );
 	}
 
-	private void setValue(final String value)
-	{
-		switch (this.Type)
-		{
+	private static ValueType getValueType ( final String value ) {
+		ValueType type = ValueType.Unknown;
+		final int i = 1;
+		for ( final String s : NameValue.TypeStrings ) {
+			if ( s.equals ( value ) ) {
+				type = ValueType.values ( )[ i ];
+				break;
+			}
+		}
+
+		if ( ValueType.Unknown == type ) {
+			type = ValueType.String;
+		}
+
+		return type;
+	}
+
+	private static ClassType getClassType ( final String value ) {
+		ClassType type = ClassType.Unknown;
+		final int i = 1;
+		for ( final String s : NameValue.ClassStrings ) {
+			if ( s.equals ( value ) ) {
+				type = ClassType.values ( )[ i ];
+				break;
+			}
+		}
+
+		if ( ClassType.Unknown == type ) {
+			type = ClassType.ReadOnly;
+		}
+
+		return type;
+	}
+
+	private static SendtoType getSendtoType ( final String value ) {
+		SendtoType type = SendtoType.Unknown;
+		final int i = 1;
+		for ( final String s : NameValue.SendtoStrings ) {
+			if ( s.equals ( value ) ) {
+				type = SendtoType.values ( )[ i ];
+				break;
+			}
+		}
+
+		if ( SendtoType.Unknown == type ) {
+			type = SendtoType.Sim;
+		}
+
+		return type;
+	}
+
+	private void setValue ( final String value ) {
+		switch ( this.Type ) {
 			case Asset:
 			case String:
 				this.Value = value;
 				break;
-			case F32:
-			{
-				final float temp = Helpers.TryParseFloat(value);
+			case F32: {
+				final float temp = Helpers.TryParseFloat ( value );
 				this.Value = temp;
 				break;
 			}
-			case S32:
-			{
+			case S32: {
 				final int temp;
-				temp = Helpers.TryParseInt(value);
+				temp = Helpers.TryParseInt ( value );
 				this.Value = temp;
 				break;
 			}
-			case U32:
-			{
-				final int temp = Helpers.TryParseInt(value);
+			case U32: {
+				final int temp = Helpers.TryParseInt ( value );
 				this.Value = temp;
 				break;
 			}
-			case U64:
-			{
-				final long temp = Helpers.TryParseLong(value);
+			case U64: {
+				final long temp = Helpers.TryParseLong ( value );
 				this.Value = temp;
 				break;
 			}
-			case VEC3:
-			{
-				final RefObject<Vector3> temp = new RefObject<Vector3>((Vector3) this.Value);
-				Vector3.TryParse(value, temp);
+			case VEC3: {
+				final RefObject<Vector3> temp = new RefObject<Vector3> ( ( Vector3 ) this.Value );
+				Vector3.TryParse ( value , temp );
 				break;
 			}
 			default:
@@ -241,63 +220,51 @@ public final class NameValue
 		}
 	}
 
-	private static ValueType getValueType(final String value)
-	{
-		ValueType type = ValueType.Unknown;
-		final int i = 1;
-		for (final String s : NameValue.TypeStrings)
-		{
-			if (s.equals(value)) {
-				type = ValueType.values()[i];
-				break;
-			}
-		}
+	/* Type of the value */
+	public enum ValueType {
+		// Unknown
+		Unknown ( - 1 ),
+		// String value
+		String ( 0 ),
 
-		if (ValueType.Unknown == type)
-		{
-			type = ValueType.String;
-		}
+		F32 ( 1 ),
 
-		return type;
+		S32 ( 2 ),
+
+		VEC3 ( 3 ),
+
+		U32 ( 4 ),
+		// Deprecated
+		CAMERA ( 5 ),
+		// String value, but designated as an asset
+		Asset ( 6 ),
+
+		U64 ( 7 );
+
+		public int val;
+
+		ValueType ( final int val ) {
+			this.val = val;
+		}
 	}
 
-	private static ClassType getClassType(final String value)
-	{
-		ClassType type = ClassType.Unknown;
-		final int i = 1;
-		for (final String s : NameValue.ClassStrings)
-		{
-			if (s.equals(value)) {
-				type = ClassType.values()[i];
-				break;
-			}
-		}
+	public enum ClassType {
+		Unknown ( - 1 ), ReadOnly ( 0 ), ReadWrite ( 1 ), Callback ( 2 );
 
-		if (ClassType.Unknown == type)
-		{
-			type = ClassType.ReadOnly;
-		}
+		public int val;
 
-		return type;
+		ClassType ( final int val ) {
+			this.val = val;
+		}
 	}
 
-	private static SendtoType getSendtoType(final String value)
-	{
-		SendtoType type = SendtoType.Unknown;
-		final int i = 1;
-		for (final String s : NameValue.SendtoStrings)
-		{
-			if (s.equals(value)) {
-				type = SendtoType.values()[i];
-				break;
-			}
-		}
+	public enum SendtoType {
+		Unknown ( - 1 ), Sim ( 0 ), DataSim ( 1 ), SimViewer ( 2 ), DataSimViewer ( 3 );
 
-		if (SendtoType.Unknown == type)
-		{
-			type = SendtoType.Sim;
-		}
+		public int val;
 
-		return type;
+		SendtoType ( final int val ) {
+			this.val = val;
+		}
 	}
 }

@@ -84,10 +84,10 @@ public abstract class ROIMaskGenerator {
 	 * @param rois The ROIs in the image
 	 * @param nrc  The number of components
 	 */
-	protected ROIMaskGenerator(final ROI[] rois, final int nrc) {
+	protected ROIMaskGenerator ( final ROI[] rois , final int nrc ) {
 		this.rois = rois;
 		this.nrc = nrc;
-		this.tileMaskMade = new boolean[nrc];
+		this.tileMaskMade = new boolean[ nrc ];
 	}
 
 	/**
@@ -95,7 +95,7 @@ public abstract class ROIMaskGenerator {
 	 *
 	 * @return The ROIs in the image
 	 */
-	public ROI[] getROIs() {
+	public ROI[] getROIs ( ) {
 		return this.rois;
 	}
 
@@ -111,7 +111,7 @@ public abstract class ROIMaskGenerator {
 	 * @param c       Component number
 	 * @return Whether or not a mask was needed for this tile
 	 */
-	public abstract boolean getROIMask(DataBlkInt db, Subband sb, int magbits, int c);
+	public abstract boolean getROIMask ( DataBlkInt db , Subband sb , int magbits , int c );
 
 	/**
 	 * This function generates the ROI mask for the entire tile. The mask is
@@ -122,15 +122,15 @@ public abstract class ROIMaskGenerator {
 	 * @param magbits The max number of magnitude bits in any code-block
 	 * @param n       component number
 	 */
-	public abstract void makeMask(Subband sb, int magbits, int n);
+	public abstract void makeMask ( Subband sb , int magbits , int n );
 
 	/**
 	 * This function is called every time the tile is changed to indicate that
 	 * there is need to make a new mask
 	 */
-	public void tileChanged() {
-		for (int i = 0; i < this.nrc; i++)
-			this.tileMaskMade[i] = false;
+	public void tileChanged ( ) {
+		for ( int i = 0 ; i < this.nrc ; i++ )
+			this.tileMaskMade[ i ] = false;
 	}
 
 }

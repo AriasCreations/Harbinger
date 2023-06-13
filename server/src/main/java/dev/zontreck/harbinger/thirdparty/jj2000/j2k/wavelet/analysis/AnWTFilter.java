@@ -94,16 +94,96 @@ public abstract class AnWTFilter implements WaveletFilter {
 	 * The list of parameters that is accepted for wavelet filters. Options for
 	 * wavelet filters start with a 'F'.
 	 */
-	private static final String[][] pinfo = {{
-			"Ffilters",
-			"[<tile-component idx>] <id> [ [<tile-component idx>] <id> ...]",
+	private static final String[][] pinfo = { {
+			"Ffilters" ,
+			"[<tile-component idx>] <id> [ [<tile-component idx>] <id> ...]" ,
 			"Specifies which filters to use for specified tile-component.\n"
 					+ "If this option is not used, the encoder choses the filters "
 					+ " of the tile-components according to their quantization  type."
 					+ " If this option is used, a component transformation is applied "
 					+ "to the three first components.\n<tile-component idx>: see general note\n"
 					+ "<id>: ',' separates horizontal and vertical filters, ':' separates"
-					+ " decomposition levels filters. JPEG 2000 part 1 only supports w5x3 and w9x7 filters.", null},};
+					+ " decomposition levels filters. JPEG 2000 part 1 only supports w5x3 and w9x7 filters." , null } , };
+
+	/**
+	 * Returns the signal resulting of upsampling (by 2) the input signal 'in'
+	 * and then convolving it with the time-reversed signal 'wf'. The returned
+	 * signal is of length l_in*2+l_wf-2, where l_in is the length of 'in', and
+	 * l_wf is the length of 'wf'.
+	 *
+	 * <p>
+	 * The 'wf' signal has to be already time-reversed, therefore only a
+	 * dot-product is performed (instead of a convolution). This is equivalent
+	 * to convolving with the non-time-reversed 'wf' signal.
+	 *
+	 * @param in  The signal to upsample and filter. If null it is considered to
+	 *            be a dirac.
+	 * @param wf  The time-reversed impulse response used for filtering.
+	 * @param out If non-null this array is used to store the resulting signal,
+	 *            it must be of length in.length*2+wf.length-2 at least. An
+	 *            IndexOutOfBoundsException is thrown if this is not the case.
+	 * @return The resulting signal, of length in.length*2+wf.length-2
+	 */
+	private static float[] upsampleAndConvolve ( float[] in , final float[] wf , float[] out ) {
+		// NOTE: the effective length of the signal 'in' upsampled by
+		// 2 is 2*in.length-1 (not 2*in.length), so the resulting signal
+		// (after convolution) is of length 2*in.length-1+wf.length-1,
+		// which is 2*in.length+wf.length-2
+
+		int i, k, j;
+		float tmp;
+		final int maxi;
+		int maxk;
+
+		// If in null, then simulate dirac
+		if ( null == in ) {
+			in = new float[ 1 ];
+			in[ 0 ] = 1.0f;
+		}
+
+		// Get output buffer if necessary
+		if ( null == out ) {
+			out = new float[ in.length * 2 + wf.length - 2 ];
+		}
+		// Convolve the signals
+		for ( i = 0 , maxi = in.length * 2 + wf.length - 2; i < maxi ; i++ ) {
+			tmp = 0.0f;
+
+			// Calculate limits of loop below
+			k = ( i - wf.length + 2 ) / 2;
+			if ( 0 > k )
+				k = 0;
+			maxk = i / 2 + 1;
+			if ( maxk > in.length )
+				maxk = in.length;
+
+			// Calculate dot-product with upsampling of 'in' by 2.
+			for ( j = 2 * k - i + wf.length - 1; k < maxk ; k++ , j += 2 ) {
+				tmp += in[ k ] * wf[ j ];
+			}
+			// Store result
+			out[ i ] = tmp;
+		}
+
+		return out;
+	}
+
+	/**
+	 * Returns the parameters that are used in this class and implementing
+	 * classes. It returns a 2D String array. Each of the 1D arrays is for a
+	 * different option, and they have 3 elements. The first element is the
+	 * option name, the second one is the synopsis, the third one is a long
+	 * description of what the parameter is and the fourth is its default value.
+	 * The synopsis or description may be 'null', in which case it is assumed
+	 * that there is no synopsis or description of the option, respectively.
+	 * Null may be returned if no options are supported.
+	 *
+	 * @return the options name, their synopsis and their explanation, or null
+	 * if no options are supported.
+	 */
+	public static String[][] getParameterInfo ( ) {
+		return AnWTFilter.pinfo;
+	}
 
 	/**
 	 * Filters the input signal by this analysis filter, decomposing it in a
@@ -179,8 +259,10 @@ public abstract class AnWTFilter implements WaveletFilter {
 	 *                 output samples in the highSig array. See above.
 	 * @see WaveletFilter#getDataType
 	 */
-	public abstract void analyze_lpf(Object inSig, int inOff, int inLen, int inStep, Object lowSig, int lowOff,
-									 int lowStep, Object highSig, int highOff, int highStep);
+	public abstract void analyze_lpf (
+			Object inSig , int inOff , int inLen , int inStep , Object lowSig , int lowOff ,
+			int lowStep , Object highSig , int highOff , int highStep
+	);
 
 	/**
 	 * Filters the input signal by this analysis filter, decomposing it in a
@@ -240,8 +322,10 @@ public abstract class AnWTFilter implements WaveletFilter {
 	 *                 output samples in the highSig array. See above.
 	 * @see WaveletFilter#getDataType
 	 */
-	public abstract void analyze_hpf(Object inSig, int inOff, int inLen, int inStep, Object lowSig, int lowOff,
-									 int lowStep, Object highSig, int highOff, int highStep);
+	public abstract void analyze_hpf (
+			Object inSig , int inOff , int inLen , int inStep , Object lowSig , int lowOff ,
+			int lowStep , Object highSig , int highOff , int highStep
+	);
 
 	/**
 	 * Returns the time-reversed low-pass synthesis waveform of the filter,
@@ -256,7 +340,7 @@ public abstract class AnWTFilter implements WaveletFilter {
 	 *
 	 * @return The time-reversed low-pass synthesis waveform of the filter.
 	 */
-	public abstract float[] getLPSynthesisFilter();
+	public abstract float[] getLPSynthesisFilter ( );
 
 	/**
 	 * Returns the time-reversed high-pass synthesis waveform of the filter,
@@ -271,7 +355,7 @@ public abstract class AnWTFilter implements WaveletFilter {
 	 *
 	 * @return The time-reversed high-pass synthesis waveform of the filter.
 	 */
-	public abstract float[] getHPSynthesisFilter();
+	public abstract float[] getHPSynthesisFilter ( );
 
 	/**
 	 * Returns the equivalent low-pass synthesis waveform of a cascade of
@@ -292,8 +376,8 @@ public abstract class AnWTFilter implements WaveletFilter {
 	 * @see #getSynLowNegSupport
 	 * @see #getSynLowPosSupport
 	 */
-	public float[] getLPSynWaveForm(final float[] in, final float[] out) {
-		return AnWTFilter.upsampleAndConvolve(in, this.getLPSynthesisFilter(), out);
+	public float[] getLPSynWaveForm ( final float[] in , final float[] out ) {
+		return AnWTFilter.upsampleAndConvolve ( in , this.getLPSynthesisFilter ( ) , out );
 	}
 
 	/**
@@ -315,71 +399,8 @@ public abstract class AnWTFilter implements WaveletFilter {
 	 * @see #getSynHighNegSupport
 	 * @see #getSynHighPosSupport
 	 */
-	public float[] getHPSynWaveForm(final float[] in, final float[] out) {
-		return AnWTFilter.upsampleAndConvolve(in, this.getHPSynthesisFilter(), out);
-	}
-
-	/**
-	 * Returns the signal resulting of upsampling (by 2) the input signal 'in'
-	 * and then convolving it with the time-reversed signal 'wf'. The returned
-	 * signal is of length l_in*2+l_wf-2, where l_in is the length of 'in', and
-	 * l_wf is the length of 'wf'.
-	 *
-	 * <p>
-	 * The 'wf' signal has to be already time-reversed, therefore only a
-	 * dot-product is performed (instead of a convolution). This is equivalent
-	 * to convolving with the non-time-reversed 'wf' signal.
-	 *
-	 * @param in  The signal to upsample and filter. If null it is considered to
-	 *            be a dirac.
-	 * @param wf  The time-reversed impulse response used for filtering.
-	 * @param out If non-null this array is used to store the resulting signal,
-	 *            it must be of length in.length*2+wf.length-2 at least. An
-	 *            IndexOutOfBoundsException is thrown if this is not the case.
-	 * @return The resulting signal, of length in.length*2+wf.length-2
-	 */
-	private static float[] upsampleAndConvolve(float[] in, final float[] wf, float[] out) {
-		// NOTE: the effective length of the signal 'in' upsampled by
-		// 2 is 2*in.length-1 (not 2*in.length), so the resulting signal
-		// (after convolution) is of length 2*in.length-1+wf.length-1,
-		// which is 2*in.length+wf.length-2
-
-		int i, k, j;
-		float tmp;
-		final int maxi;
-		int maxk;
-
-		// If in null, then simulate dirac
-		if (null == in) {
-			in = new float[1];
-			in[0] = 1.0f;
-		}
-
-		// Get output buffer if necessary
-		if (null == out) {
-			out = new float[in.length * 2 + wf.length - 2];
-		}
-		// Convolve the signals
-		for (i = 0, maxi = in.length * 2 + wf.length - 2; i < maxi; i++) {
-			tmp = 0.0f;
-
-			// Calculate limits of loop below
-			k = (i - wf.length + 2) / 2;
-			if (0 > k)
-				k = 0;
-			maxk = i / 2 + 1;
-			if (maxk > in.length)
-				maxk = in.length;
-
-			// Calculate dot-product with upsampling of 'in' by 2.
-			for (j = 2 * k - i + wf.length - 1; k < maxk; k++, j += 2) {
-				tmp += in[k] * wf[j];
-			}
-			// Store result
-			out[i] = tmp;
-		}
-
-		return out;
+	public float[] getHPSynWaveForm ( final float[] in , final float[] out ) {
+		return AnWTFilter.upsampleAndConvolve ( in , this.getHPSynthesisFilter ( ) , out );
 	}
 
 	/**
@@ -388,22 +409,5 @@ public abstract class AnWTFilter implements WaveletFilter {
 	 * @return The filter type.
 	 * @see FilterTypes
 	 */
-	public abstract int getFilterType();
-
-	/**
-	 * Returns the parameters that are used in this class and implementing
-	 * classes. It returns a 2D String array. Each of the 1D arrays is for a
-	 * different option, and they have 3 elements. The first element is the
-	 * option name, the second one is the synopsis, the third one is a long
-	 * description of what the parameter is and the fourth is its default value.
-	 * The synopsis or description may be 'null', in which case it is assumed
-	 * that there is no synopsis or description of the option, respectively.
-	 * Null may be returned if no options are supported.
-	 *
-	 * @return the options name, their synopsis and their explanation, or null
-	 * if no options are supported.
-	 */
-	public static String[][] getParameterInfo() {
-		return AnWTFilter.pinfo;
-	}
+	public abstract int getFilterType ( );
 }

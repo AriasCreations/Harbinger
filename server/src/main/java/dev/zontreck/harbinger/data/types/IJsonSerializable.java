@@ -4,5 +4,5 @@ import dev.zontreck.harbinger.exceptions.DiscordEmbedLimitsException;
 import org.json.JSONObject;
 
 public interface IJsonSerializable {
-	JSONObject serialize() throws DiscordEmbedLimitsException;
+	JSONObject serialize ( ) throws DiscordEmbedLimitsException;
 }

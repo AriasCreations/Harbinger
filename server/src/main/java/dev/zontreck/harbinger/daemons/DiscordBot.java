@@ -19,18 +19,18 @@ public enum DiscordBot {
 	private static JDA jda;
 
 	@Subscribe
-	public static void onBotSettingsUpdated(final DiscordBotTokenUpdatedEvent event) {
+	public static void onBotSettingsUpdated ( final DiscordBotTokenUpdatedEvent event ) {
 		// We cannot login to discord if the settings are null
-		if (Persist.discordSettings.BOT_TOKEN.isEmpty())
+		if ( Persist.discordSettings.BOT_TOKEN.isEmpty ( ) )
 			return;
-		if (null != jda) {
-			DiscordBot.jda.shutdownNow();
+		if ( null != jda ) {
+			DiscordBot.jda.shutdownNow ( );
 		}
-		DiscordBot.jda = JDABuilder.createDefault(Persist.discordSettings.BOT_TOKEN).build();
-		DiscordBot.jda.setAutoReconnect(true);
+		DiscordBot.jda = JDABuilder.createDefault ( Persist.discordSettings.BOT_TOKEN ).build ( );
+		DiscordBot.jda.setAutoReconnect ( true );
 	}
 
-	public static void onServerStopping(final ServerStoppingEvent event) {
-		DiscordBot.jda.shutdown();
+	public static void onServerStopping ( final ServerStoppingEvent event ) {
+		DiscordBot.jda.shutdown ( );
 	}
 }

@@ -14,11 +14,11 @@ public enum TimeUtils {
 	 * @param date The date and time to set
 	 * @return ISO-8601 timestamp
 	 */
-	public static String makeTimestamp(final Date date) {
+	public static String makeTimestamp ( final Date date ) {
 
-		final TimeZone tz = TimeZone.getTimeZone("UTC");
-		final DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'");
-		df.setTimeZone(tz);
-		return df.format(date);
+		final TimeZone tz = TimeZone.getTimeZone ( "UTC" );
+		final DateFormat df = new SimpleDateFormat ( "yyyy-MM-dd'T'HH:mm'Z'" );
+		df.setTimeZone ( tz );
+		return df.format ( date );
 	}
 }

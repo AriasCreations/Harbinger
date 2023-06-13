@@ -82,7 +82,7 @@ public abstract class MultiResImgDataAdapter implements MultiResImgData {
 	 *
 	 * @param src From where to obrtain the MultiResImgData values.
 	 */
-	protected MultiResImgDataAdapter(final MultiResImgData src) {
+	protected MultiResImgDataAdapter ( final MultiResImgData src ) {
 		this.mressrc = src;
 	}
 
@@ -98,8 +98,8 @@ public abstract class MultiResImgDataAdapter implements MultiResImgData {
 	 * @return The total current tile's width in pixels.
 	 */
 	@Override
-	public int getTileWidth(final int rl) {
-		return this.mressrc.getTileWidth(rl);
+	public int getTileWidth ( final int rl ) {
+		return this.mressrc.getTileWidth ( rl );
 	}
 
 	/**
@@ -114,24 +114,24 @@ public abstract class MultiResImgDataAdapter implements MultiResImgData {
 	 * @return The total current tile's height in pixels.
 	 */
 	@Override
-	public int getTileHeight(final int rl) {
-		return this.mressrc.getTileHeight(rl);
+	public int getTileHeight ( final int rl ) {
+		return this.mressrc.getTileHeight ( rl );
 	}
 
 	/**
 	 * Returns the nominal tiles width
 	 */
 	@Override
-	public int getNomTileWidth() {
-		return this.mressrc.getNomTileWidth();
+	public int getNomTileWidth ( ) {
+		return this.mressrc.getNomTileWidth ( );
 	}
 
 	/**
 	 * Returns the nominal tiles height
 	 */
 	@Override
-	public int getNomTileHeight() {
-		return this.mressrc.getNomTileHeight();
+	public int getNomTileHeight ( ) {
+		return this.mressrc.getNomTileHeight ( );
 	}
 
 	/**
@@ -146,8 +146,8 @@ public abstract class MultiResImgDataAdapter implements MultiResImgData {
 	 * @return The total image's width in pixels.
 	 */
 	@Override
-	public int getImgWidth(final int rl) {
-		return this.mressrc.getImgWidth(rl);
+	public int getImgWidth ( final int rl ) {
+		return this.mressrc.getImgWidth ( rl );
 	}
 
 	/**
@@ -162,8 +162,8 @@ public abstract class MultiResImgDataAdapter implements MultiResImgData {
 	 * @return The total image's height in pixels.
 	 */
 	@Override
-	public int getImgHeight(final int rl) {
-		return this.mressrc.getImgHeight(rl);
+	public int getImgHeight ( final int rl ) {
+		return this.mressrc.getImgHeight ( rl );
 	}
 
 	/**
@@ -175,8 +175,8 @@ public abstract class MultiResImgDataAdapter implements MultiResImgData {
 	 * @return The number of components in the image.
 	 */
 	@Override
-	public int getNumComps() {
-		return this.mressrc.getNumComps();
+	public int getNumComps ( ) {
+		return this.mressrc.getNumComps ( );
 	}
 
 	/**
@@ -193,8 +193,8 @@ public abstract class MultiResImgDataAdapter implements MultiResImgData {
 	 * @see dev.zontreck.harbinger.thirdparty.jj2000.j2k.image.ImgData
 	 */
 	@Override
-	public int getCompSubsX(final int c) {
-		return this.mressrc.getCompSubsX(c);
+	public int getCompSubsX ( final int c ) {
+		return this.mressrc.getCompSubsX ( c );
 	}
 
 	/**
@@ -211,8 +211,8 @@ public abstract class MultiResImgDataAdapter implements MultiResImgData {
 	 * @see dev.zontreck.harbinger.thirdparty.jj2000.j2k.image.ImgData
 	 */
 	@Override
-	public int getCompSubsY(final int c) {
-		return this.mressrc.getCompSubsY(c);
+	public int getCompSubsY ( final int c ) {
+		return this.mressrc.getCompSubsY ( c );
 	}
 
 	/**
@@ -229,8 +229,8 @@ public abstract class MultiResImgDataAdapter implements MultiResImgData {
 	 * for resolution level <tt>rl</tt>.
 	 */
 	@Override
-	public int getTileCompWidth(final int t, final int c, final int rl) {
-		return this.mressrc.getTileCompWidth(t, c, rl);
+	public int getTileCompWidth ( final int t , final int c , final int rl ) {
+		return this.mressrc.getTileCompWidth ( t , c , rl );
 	}
 
 	/**
@@ -246,8 +246,8 @@ public abstract class MultiResImgDataAdapter implements MultiResImgData {
 	 * @return The height in pixels of component <tt>c</tt> in tile <tt>t</tt>.
 	 */
 	@Override
-	public int getTileCompHeight(final int t, final int c, final int rl) {
-		return this.mressrc.getTileCompHeight(t, c, rl);
+	public int getTileCompHeight ( final int t , final int c , final int rl ) {
+		return this.mressrc.getTileCompHeight ( t , c , rl );
 	}
 
 	/**
@@ -262,8 +262,8 @@ public abstract class MultiResImgDataAdapter implements MultiResImgData {
 	 * @return The width in pixels of component <tt>c</tt> in the overall image.
 	 */
 	@Override
-	public int getCompImgWidth(final int c, final int rl) {
-		return this.mressrc.getCompImgWidth(c, rl);
+	public int getCompImgWidth ( final int c , final int rl ) {
+		return this.mressrc.getCompImgWidth ( c , rl );
 	}
 
 	/**
@@ -279,8 +279,8 @@ public abstract class MultiResImgDataAdapter implements MultiResImgData {
 	 * image.
 	 */
 	@Override
-	public int getCompImgHeight(final int c, final int rl) {
-		return this.mressrc.getCompImgHeight(c, rl);
+	public int getCompImgHeight ( final int c , final int rl ) {
+		return this.mressrc.getCompImgHeight ( c , rl );
 	}
 
 	/**
@@ -296,8 +296,8 @@ public abstract class MultiResImgDataAdapter implements MultiResImgData {
 	 * @return The new tile index
 	 */
 	@Override
-	public int setTile(final int x, final int y) {
-		this.tIdx = this.mressrc.setTile(x, y);
+	public int setTile ( final int x , final int y ) {
+		this.tIdx = this.mressrc.setTile ( x , y );
 		return this.tIdx;
 	}
 
@@ -312,8 +312,8 @@ public abstract class MultiResImgDataAdapter implements MultiResImgData {
 	 * @return The new tile index
 	 */
 	@Override
-	public int nextTile() {
-		this.tIdx = this.mressrc.nextTile();
+	public int nextTile ( ) {
+		this.tIdx = this.mressrc.nextTile ( );
 		return this.tIdx;
 	}
 
@@ -329,8 +329,8 @@ public abstract class MultiResImgDataAdapter implements MultiResImgData {
 	 * @return The current tile's indexes (vertical and horizontal indexes).
 	 */
 	@Override
-	public Coord getTile(final Coord co) {
-		return this.mressrc.getTile(co);
+	public Coord getTile ( final Coord co ) {
+		return this.mressrc.getTile ( co );
 	}
 
 	/**
@@ -343,8 +343,8 @@ public abstract class MultiResImgDataAdapter implements MultiResImgData {
 	 * @return The current tile's index (starts at 0).
 	 */
 	@Override
-	public int getTileIdx() {
-		return this.mressrc.getTileIdx();
+	public int getTileIdx ( ) {
+		return this.mressrc.getTileIdx ( );
 	}
 
 	/**
@@ -358,8 +358,8 @@ public abstract class MultiResImgDataAdapter implements MultiResImgData {
 	 * @param rl The resolution level index.
 	 */
 	@Override
-	public int getResULX(final int c, final int rl) {
-		return this.mressrc.getResULX(c, rl);
+	public int getResULX ( final int c , final int rl ) {
+		return this.mressrc.getResULX ( c , rl );
 	}
 
 	/**
@@ -373,24 +373,24 @@ public abstract class MultiResImgDataAdapter implements MultiResImgData {
 	 * @param rl The resolution level index.
 	 */
 	@Override
-	public int getResULY(final int c, final int rl) {
-		return this.mressrc.getResULY(c, rl);
+	public int getResULY ( final int c , final int rl ) {
+		return this.mressrc.getResULY ( c , rl );
 	}
 
 	/**
 	 * Returns the horizontal tile partition offset in the reference grid
 	 */
 	@Override
-	public int getTilePartULX() {
-		return this.mressrc.getTilePartULX();
+	public int getTilePartULX ( ) {
+		return this.mressrc.getTilePartULX ( );
 	}
 
 	/**
 	 * Returns the vertical tile partition offset in the reference grid
 	 */
 	@Override
-	public int getTilePartULY() {
-		return this.mressrc.getTilePartULY();
+	public int getTilePartULY ( ) {
+		return this.mressrc.getTilePartULY ( );
 	}
 
 	/**
@@ -406,8 +406,8 @@ public abstract class MultiResImgDataAdapter implements MultiResImgData {
 	 * system, on the reference grid.
 	 */
 	@Override
-	public int getImgULX(final int rl) {
-		return this.mressrc.getImgULX(rl);
+	public int getImgULX ( final int rl ) {
+		return this.mressrc.getImgULX ( rl );
 	}
 
 	/**
@@ -423,8 +423,8 @@ public abstract class MultiResImgDataAdapter implements MultiResImgData {
 	 * on the reference grid.
 	 */
 	@Override
-	public int getImgULY(final int rl) {
-		return this.mressrc.getImgULY(rl);
+	public int getImgULY ( final int rl ) {
+		return this.mressrc.getImgULY ( rl );
 	}
 
 	/**
@@ -439,8 +439,8 @@ public abstract class MultiResImgDataAdapter implements MultiResImgData {
 	 * (Coord.y) directions.
 	 */
 	@Override
-	public Coord getNumTiles(final Coord co) {
-		return this.mressrc.getNumTiles(co);
+	public Coord getNumTiles ( final Coord co ) {
+		return this.mressrc.getNumTiles ( co );
 	}
 
 	/**
@@ -452,7 +452,7 @@ public abstract class MultiResImgDataAdapter implements MultiResImgData {
 	 * @return The total number of tiles in the image.
 	 */
 	@Override
-	public int getNumTiles() {
-		return this.mressrc.getNumTiles();
+	public int getNumTiles ( ) {
+		return this.mressrc.getNumTiles ( );
 	}
 }

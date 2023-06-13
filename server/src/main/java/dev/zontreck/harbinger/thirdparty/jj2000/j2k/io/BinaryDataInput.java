@@ -43,193 +43,151 @@
  */
 package dev.zontreck.harbinger.thirdparty.jj2000.j2k.io;
 
-import java.io.*;
+import java.io.EOFException;
+import java.io.IOException;
 
 /**
  * This interface defines the input of binary data from streams and/or files.
- * 
+ *
  * <p>
  * Byte level input (i.e., for byte, int, long, float, etc.) should always be
  * byte aligned. For example, a request to read an <tt>int</tt> should always
  * realign the input at the byte level.
- * 
+ *
  * <p>
  * The implementation of this interface should clearly define if multi-byte
  * input data is read in little- or big-endian byte ordering (least significant
  * byte first or most significant byte first, respectively).
- * 
+ *
  * @see EndianType
  */
-public interface BinaryDataInput
-{
+public interface BinaryDataInput {
 	/**
 	 * Should read a signed byte (i.e., 8 bit) from the input. reading, the
 	 * input should be realigned at the byte level.
-	 * 
+	 *
 	 * @return The next byte-aligned signed byte (8 bit) from the input.
-	 * 
-	 * @exception EOFException
-	 *                If the end-of file was reached before getting all the
-	 *                necessary data.
-	 * 
-	 * @exception IOException
-	 *                If an I/O error occurred.
+	 * @throws EOFException If the end-of file was reached before getting all the
+	 *                      necessary data.
+	 * @throws IOException  If an I/O error occurred.
 	 */
-	byte readByte() throws IOException;
+	byte readByte ( ) throws IOException;
 
 	/**
 	 * Should read an unsigned byte (i.e., 8 bit) from the input. It is returned
 	 * as an <tt>int</tt> since Java does not have an unsigned byte type. Prior
 	 * to reading, the input should be realigned at the byte level.
-	 * 
+	 *
 	 * @return The next byte-aligned unsigned byte (8 bit) from the input, as an
-	 *         <tt>int</tt>.
-	 * 
-	 * @exception EOFException
-	 *                If the end-of file was reached before getting all the
-	 *                necessary data.
-	 * 
-	 * @exception IOException
-	 *                If an I/O error occurred.
+	 * <tt>int</tt>.
+	 * @throws EOFException If the end-of file was reached before getting all the
+	 *                      necessary data.
+	 * @throws IOException  If an I/O error occurred.
 	 */
-	int readUnsignedByte() throws IOException;
+	int readUnsignedByte ( ) throws IOException;
 
 	/**
 	 * Should read a signed short (i.e., 16 bit) from the input. Prior to
 	 * reading, the input should be realigned at the byte level.
-	 * 
+	 *
 	 * @return The next byte-aligned signed short (16 bit) from the input.
-	 * 
-	 * @exception EOFException
-	 *                If the end-of file was reached before getting all the
-	 *                necessary data.
-	 * 
-	 * @exception IOException
-	 *                If an I/O error occurred.
+	 * @throws EOFException If the end-of file was reached before getting all the
+	 *                      necessary data.
+	 * @throws IOException  If an I/O error occurred.
 	 */
-	short readShort() throws IOException;
+	short readShort ( ) throws IOException;
 
 	/**
 	 * Should read an unsigned short (i.e., 16 bit) from the input. It is
 	 * returned as an <tt>int</tt> since Java does not have an unsigned short
 	 * type. Prior to reading, the input should be realigned at the byte level.
-	 * 
+	 *
 	 * @return The next byte-aligned unsigned short (16 bit) from the input, as
-	 *         an <tt>int</tt>.
-	 * 
-	 * @exception EOFException
-	 *                If the end-of file was reached before getting all the
-	 *                necessary data.
-	 * 
-	 * @exception IOException
-	 *                If an I/O error occurred.
+	 * an <tt>int</tt>.
+	 * @throws EOFException If the end-of file was reached before getting all the
+	 *                      necessary data.
+	 * @throws IOException  If an I/O error occurred.
 	 */
-	int readUnsignedShort() throws IOException;
+	int readUnsignedShort ( ) throws IOException;
 
 	/**
 	 * Should read a signed int (i.e., 32 bit) from the input. Prior to reading,
 	 * the input should be realigned at the byte level.
-	 * 
+	 *
 	 * @return The next byte-aligned signed int (32 bit) from the input.
-	 * 
-	 * @exception EOFException
-	 *                If the end-of file was reached before getting all the
-	 *                necessary data.
-	 * 
-	 * @exception IOException
-	 *                If an I/O error occurred.
+	 * @throws EOFException If the end-of file was reached before getting all the
+	 *                      necessary data.
+	 * @throws IOException  If an I/O error occurred.
 	 */
-	int readInt() throws IOException;
+	int readInt ( ) throws IOException;
 
 	/**
 	 * Should read an unsigned int (i.e., 32 bit) from the input. It is returned
 	 * as a <tt>long</tt> since Java does not have an unsigned short type. Prior
 	 * to reading, the input should be realigned at the byte level.
-	 * 
+	 *
 	 * @return The next byte-aligned unsigned int (32 bit) from the input, as a
-	 *         <tt>long</tt>.
-	 * 
-	 * @exception EOFException
-	 *                If the end-of file was reached before getting all the
-	 *                necessary data.
-	 * 
-	 * @exception IOException
-	 *                If an I/O error occurred.
+	 * <tt>long</tt>.
+	 * @throws EOFException If the end-of file was reached before getting all the
+	 *                      necessary data.
+	 * @throws IOException  If an I/O error occurred.
 	 */
-	long readUnsignedInt() throws IOException;
+	long readUnsignedInt ( ) throws IOException;
 
 	/**
 	 * Should read a signed long (i.e., 64 bit) from the input. Prior to
 	 * reading, the input should be realigned at the byte level.
-	 * 
+	 *
 	 * @return The next byte-aligned signed long (64 bit) from the input.
-	 * 
-	 * @exception EOFException
-	 *                If the end-of file was reached before getting all the
-	 *                necessary data.
-	 * 
-	 * @exception IOException
-	 *                If an I/O error occurred.
+	 * @throws EOFException If the end-of file was reached before getting all the
+	 *                      necessary data.
+	 * @throws IOException  If an I/O error occurred.
 	 */
-	long readLong() throws IOException;
+	long readLong ( ) throws IOException;
 
 	/**
 	 * Should read an IEEE single precision (i.e., 32 bit) floating-point number
 	 * from the input. Prior to reading, the input should be realigned at the
 	 * byte level.
-	 * 
+	 *
 	 * @return The next byte-aligned IEEE float (32 bit) from the input.
-	 * 
-	 * @exception EOFException
-	 *                If the end-of file was reached before getting all the
-	 *                necessary data.
-	 * 
-	 * @exception IOException
-	 *                If an I/O error occurred.
+	 * @throws EOFException If the end-of file was reached before getting all the
+	 *                      necessary data.
+	 * @throws IOException  If an I/O error occurred.
 	 */
-	float readFloat() throws IOException;
+	float readFloat ( ) throws IOException;
 
 	/**
 	 * Should read an IEEE double precision (i.e., 64 bit) floating-point number
 	 * from the input. Prior to reading, the input should be realigned at the
 	 * byte level.
-	 * 
+	 *
 	 * @return The next byte-aligned IEEE double (64 bit) from the input.
-	 * 
-	 * @exception EOFException
-	 *                If the end-of file was reached before getting all the
-	 *                necessary data.
-	 * 
-	 * @exception IOException
-	 *                If an I/O error occurred.
+	 * @throws EOFException If the end-of file was reached before getting all the
+	 *                      necessary data.
+	 * @throws IOException  If an I/O error occurred.
 	 */
-	double readDouble() throws IOException;
+	double readDouble ( ) throws IOException;
 
 	/**
 	 * Returns the endianess (i.e., byte ordering) of the implementing class.
 	 * Note that an implementing class may implement only one type of endianness
 	 * or both, which would be decided at creatiuon time.
-	 * 
+	 *
 	 * @return Either <tt>EndianType.BIG_ENDIAN</tt> or
-	 *         <tt>EndianType.LITTLE_ENDIAN</tt>
-	 * 
+	 * <tt>EndianType.LITTLE_ENDIAN</tt>
 	 * @see EndianType
 	 */
-	int getByteOrdering();
+	int getByteOrdering ( );
 
 	/**
 	 * Skips <tt>n</tt> bytes from the input. Prior to skipping, the input
 	 * should be realigned at the byte level.
-	 * 
-	 * @param n
-	 *            The number of bytes to skip
-	 * 
-	 * @exception EOFException
-	 *                If the end-of file was reached before all the bytes could
-	 *                be skipped.
-	 * 
-	 * @exception IOException
-	 *                If an I/O error occurred.
+	 *
+	 * @param n The number of bytes to skip
+	 * @throws EOFException If the end-of file was reached before all the bytes could
+	 *                      be skipped.
+	 * @throws IOException  If an I/O error occurred.
 	 */
-	int skipBytes(int n) throws IOException;
+	int skipBytes ( int n ) throws IOException;
 }

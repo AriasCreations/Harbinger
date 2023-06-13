@@ -54,7 +54,7 @@ public class StringFormatException extends IllegalArgumentException {
 	/**
 	 * Creates the exception with an empty messgage.
 	 */
-	public StringFormatException() {
+	public StringFormatException ( ) {
 	}
 
 	/**
@@ -62,7 +62,7 @@ public class StringFormatException extends IllegalArgumentException {
 	 *
 	 * @param s The detail message
 	 */
-	public StringFormatException(final String s) {
-		super(s);
+	public StringFormatException ( final String s ) {
+		super ( s );
 	}
 }

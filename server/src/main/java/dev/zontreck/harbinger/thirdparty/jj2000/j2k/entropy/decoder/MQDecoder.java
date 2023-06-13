@@ -43,7 +43,7 @@
  */
 package dev.zontreck.harbinger.thirdparty.jj2000.j2k.entropy.decoder;
 
-import dev.zontreck.harbinger.thirdparty.jj2000.j2k.util.*;
+import dev.zontreck.harbinger.thirdparty.jj2000.j2k.util.ArrayUtil;
 
 /**
  * This class implements the MQ arithmetic decoder. It is implemented using the
@@ -59,86 +59,96 @@ import dev.zontreck.harbinger.thirdparty.jj2000.j2k.util.*;
 // nLPS tables. See the JPEG book, chapter 13. The decoded decision can be
 // calculated as (q>>>31).
 
-public class MQDecoder
-{
+public class MQDecoder {
 
-	/** The data structures containing the probabilities for the LPS */
-	static final int[] qe = { 0x5601, 0x3401, 0x1801, 0x0ac1, 0x0521, 0x0221, 0x5601, 0x5401, 0x4801, 0x3801, 0x3001,
-			0x2401, 0x1c01, 0x1601, 0x5601, 0x5401, 0x5101, 0x4801, 0x3801, 0x3401, 0x3001, 0x2801, 0x2401, 0x2201,
-			0x1c01, 0x1801, 0x1601, 0x1401, 0x1201, 0x1101, 0x0ac1, 0x09c1, 0x08a1, 0x0521, 0x0441, 0x02a1, 0x0221,
-			0x0141, 0x0111, 0x0085, 0x0049, 0x0025, 0x0015, 0x0009, 0x0005, 0x0001, 0x5601 };
+	/**
+	 * The data structures containing the probabilities for the LPS
+	 */
+	static final int[] qe = { 0x5601 , 0x3401 , 0x1801 , 0x0ac1 , 0x0521 , 0x0221 , 0x5601 , 0x5401 , 0x4801 , 0x3801 , 0x3001 ,
+			0x2401 , 0x1c01 , 0x1601 , 0x5601 , 0x5401 , 0x5101 , 0x4801 , 0x3801 , 0x3401 , 0x3001 , 0x2801 , 0x2401 , 0x2201 ,
+			0x1c01 , 0x1801 , 0x1601 , 0x1401 , 0x1201 , 0x1101 , 0x0ac1 , 0x09c1 , 0x08a1 , 0x0521 , 0x0441 , 0x02a1 , 0x0221 ,
+			0x0141 , 0x0111 , 0x0085 , 0x0049 , 0x0025 , 0x0015 , 0x0009 , 0x0005 , 0x0001 , 0x5601 };
 
-	/** The indexes of the next MPS */
-	static final int[] nMPS = { 1, 2, 3, 4, 5, 38, 7, 8, 9, 10, 11, 12, 13, 29, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24,
-			25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 45, 46 };
+	/**
+	 * The indexes of the next MPS
+	 */
+	static final int[] nMPS = { 1 , 2 , 3 , 4 , 5 , 38 , 7 , 8 , 9 , 10 , 11 , 12 , 13 , 29 , 15 , 16 , 17 , 18 , 19 , 20 , 21 , 22 , 23 , 24 ,
+			25 , 26 , 27 , 28 , 29 , 30 , 31 , 32 , 33 , 34 , 35 , 36 , 37 , 38 , 39 , 40 , 41 , 42 , 43 , 44 , 45 , 45 , 46 };
 
-	/** The indexes of the next LPS */
-	static final int[] nLPS = { 1, 6, 9, 12, 29, 33, 6, 14, 14, 14, 17, 18, 20, 21, 14, 14, 15, 16, 17, 18, 19, 19, 20,
-			21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 46 };
+	/**
+	 * The indexes of the next LPS
+	 */
+	static final int[] nLPS = { 1 , 6 , 9 , 12 , 29 , 33 , 6 , 14 , 14 , 14 , 17 , 18 , 20 , 21 , 14 , 14 , 15 , 16 , 17 , 18 , 19 , 19 , 20 ,
+			21 , 22 , 23 , 24 , 25 , 26 , 27 , 28 , 29 , 30 , 31 , 32 , 33 , 34 , 35 , 36 , 37 , 38 , 39 , 40 , 41 , 42 , 43 , 46 };
 
-	/** Whether LPS and MPS should be switched */
-	static final int[] switchLM = { 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-
-	/** The ByteInputBuffer used to read the compressed bit stream. */
-	ByteInputBuffer in;
-
-	/** The current most probable signal for each context */
-	int[] mPS;
-
-	/** The current index of each context */
-	int[] I;
-
-	/** The current bit code */
-	int c;
-
-	/** The bit code counter */
-	int cT;
-
-	/** The current interval */
-	int a;
-
-	/** The last byte read */
-	int b;
-
-	/** Flag indicating if a marker has been found */
-	boolean markerFound;
-
-	/** The initial state of each context */
+	/**
+	 * Whether LPS and MPS should be switched
+	 */
+	static final int[] switchLM = { 1 , 0 , 0 , 0 , 0 , 0 , 1 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 1 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 ,
+			0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 };
+	/**
+	 * The initial state of each context
+	 */
 	final int[] initStates;
+	/**
+	 * The ByteInputBuffer used to read the compressed bit stream.
+	 */
+	ByteInputBuffer in;
+	/**
+	 * The current most probable signal for each context
+	 */
+	int[] mPS;
+	/**
+	 * The current index of each context
+	 */
+	int[] I;
+	/**
+	 * The current bit code
+	 */
+	int c;
+	/**
+	 * The bit code counter
+	 */
+	int cT;
+	/**
+	 * The current interval
+	 */
+	int a;
+	/**
+	 * The last byte read
+	 */
+	int b;
+	/**
+	 * Flag indicating if a marker has been found
+	 */
+	boolean markerFound;
 
 	/**
 	 * Instantiates a new MQ-decoder, with the specified number of contexts and
 	 * initial states. The compressed bytestream is read from the 'iStream'
 	 * object.
-	 * 
-	 * @param iStream
-	 *            the stream that contains the coded bits
-	 * 
-	 * @param nrOfContexts
-	 *            The number of contexts used
-	 * 
-	 * @param initStates
-	 *            The initial state for each context. A reference is kept to
-	 *            this array to reinitialize the contexts whenever 'reset()' or
-	 *            'resetCtxts()' is called.
+	 *
+	 * @param iStream      the stream that contains the coded bits
+	 * @param nrOfContexts The number of contexts used
+	 * @param initStates   The initial state for each context. A reference is kept to
+	 *                     this array to reinitialize the contexts whenever 'reset()' or
+	 *                     'resetCtxts()' is called.
 	 */
-	public MQDecoder(final ByteInputBuffer iStream, final int nrOfContexts, final int[] initStates)
-	{
+	public MQDecoder ( final ByteInputBuffer iStream , final int nrOfContexts , final int[] initStates ) {
 		this.in = iStream;
 
 		// Default initialization of the statistics bins is MPS=0 and
 		// I=0
-		this.I = new int[nrOfContexts];
-		this.mPS = new int[nrOfContexts];
+		this.I = new int[ nrOfContexts ];
+		this.mPS = new int[ nrOfContexts ];
 		// Save the initial states
 		this.initStates = initStates;
 
 		// Initialize
-		this.init();
+		this.init ( );
 
 		// Set the contexts
-		this.resetCtxts();
+		this.resetCtxts ( );
 	}
 
 	/**
@@ -147,164 +157,144 @@ public class MQDecoder
 	 * speedup mode is used if Q (the LPS probability for 'ctxt' is low enough)
 	 * and the A and C registers permit decoding several MPS symbols without
 	 * renormalization.
-	 * 
-	 * <P>
+	 *
+	 * <p>
 	 * Speedup mode should be used when decoding long runs of MPS with high
 	 * probability with the same context.
-	 * 
-	 * <P>
+	 *
+	 * <p>
 	 * This methiod will return the decoded symbols differently if speedup mode
 	 * was used or not. If true is returned, then speedup mode was used and the
 	 * 'n' decoded symbols are all the same and it is returned ain bits[0] only.
 	 * If false is returned then speedup mode was not used, the decoded symbols
 	 * are probably not all the same and they are returned in bits[0], bits[1],
 	 * ... bits[n-1].
-	 * 
-	 * @param bits
-	 *            The array where to put the decoded symbols. Must be of length
-	 *            'n' or more.
-	 * 
-	 * @param ctxt
-	 *            The context to use in decoding the symbols.
-	 * 
-	 * @param n
-	 *            The number of symbols to decode.
-	 * 
+	 *
+	 * @param bits The array where to put the decoded symbols. Must be of length
+	 *             'n' or more.
+	 * @param ctxt The context to use in decoding the symbols.
+	 * @param n    The number of symbols to decode.
 	 * @return True if speedup mode was used, false if not. If speedup mode was
-	 *         used then all the decoded symbols are the same and its value is
-	 *         returned in 'bits[0]' only (not in bits[1], bits[2], etc.).
+	 * used then all the decoded symbols are the same and its value is
+	 * returned in 'bits[0]' only (not in bits[1], bits[2], etc.).
 	 */
-	public final boolean fastDecodeSymbols(final int[] bits, final int ctxt, final int n)
-	{
+	public final boolean fastDecodeSymbols ( final int[] bits , final int ctxt , final int n ) {
 		int q; // LPS probability for context
 		int idx; // Index of current state
 		int la; // cache for A register
 		int i; // counter
 
-		idx = this.I[ctxt];
-		q = MQDecoder.qe[idx];
+		idx = this.I[ ctxt ];
+		q = MQDecoder.qe[ idx ];
 
 		// This is a first attempt to implement speedup mode, it is probably
 		// not the most efficient way of doing it.
 
-		if ((0x4000 > q) && (n <= (this.a - (this.c >>> 16) - 1) / q) && (n <= (this.a - 0x8000) / q + 1))
-		{
+		if ( ( 0x4000 > q ) && ( n <= ( this.a - ( this.c >>> 16 ) - 1 ) / q ) && ( n <= ( this.a - 0x8000 ) / q + 1 ) ) {
 			// Q is small enough. There will be no modification of C that
 			// affects decoding, and Q can be substracted from A several
 			// times. We will decode all MPS.
 			this.a -= n * q;
-			if (0x8000 <= a)
-			{ // No renormalization needed
-				bits[0] = this.mPS[ctxt];
+			if ( 0x8000 <= a ) { // No renormalization needed
+				bits[ 0 ] = this.mPS[ ctxt ];
 				return true; // Done, used speedup mode
 			}
 
 			// renormalization needed
-			this.I[ctxt] = MQDecoder.nMPS[idx];
+			this.I[ ctxt ] = MQDecoder.nMPS[ idx ];
 			// Renormalize (MPS: no need for while loop)
-			if (0 == cT)
-				this.byteIn();
+			if ( 0 == cT )
+				this.byteIn ( );
 			this.a <<= 1;
 			this.c <<= 1;
 			this.cT--;
 			// End renormalization
-			bits[0] = this.mPS[ctxt];
+			bits[ 0 ] = this.mPS[ ctxt ];
 			return true; // Done, used speedup mode
 		}
 		// Normal mode
 		la = this.a; // cache A register
-		for (i = 0; i < n; i++)
-		{
+		for ( i = 0; i < n ; i++ ) {
 			la -= q;
-			if ((this.c >>> 16) < la)
-			{
-				if (0x8000 <= la)
-				{
-					bits[i] = this.mPS[ctxt];
+			if ( ( this.c >>> 16 ) < la ) {
+				if ( 0x8000 <= la ) {
+					bits[ i ] = this.mPS[ ctxt ];
 				}
-				else
-				{
+				else {
 					// -- MPS Exchange
-					if (la >= q)
-					{
-						bits[i] = this.mPS[ctxt];
-						idx = MQDecoder.nMPS[idx];
-						q = MQDecoder.qe[idx];
+					if ( la >= q ) {
+						bits[ i ] = this.mPS[ ctxt ];
+						idx = MQDecoder.nMPS[ idx ];
+						q = MQDecoder.qe[ idx ];
 						// I[ctxt] set at end of loop
 						// -- Renormalize (MPS: no need for while loop)
-						if (0 == cT)
-							this.byteIn();
+						if ( 0 == cT )
+							this.byteIn ( );
 						la <<= 1;
 						this.c <<= 1;
 						this.cT--;
 						// -- End renormalization
 					}
-					else
-					{
-						bits[i] = 1 - this.mPS[ctxt];
-						if (1 == switchLM[idx])
-							this.mPS[ctxt] = 1 - this.mPS[ctxt];
-						idx = MQDecoder.nLPS[idx];
-						q = MQDecoder.qe[idx];
+					else {
+						bits[ i ] = 1 - this.mPS[ ctxt ];
+						if ( 1 == switchLM[ idx ] )
+							this.mPS[ ctxt ] = 1 - this.mPS[ ctxt ];
+						idx = MQDecoder.nLPS[ idx ];
+						q = MQDecoder.qe[ idx ];
 						// I[ctxt] set at end of loop
 						// -- Renormalize
-						do
-						{
-							if (0 == cT)
-								this.byteIn();
+						do {
+							if ( 0 == cT )
+								this.byteIn ( );
 							la <<= 1;
 							this.c <<= 1;
 							this.cT--;
-						} while (0x8000 > la);
+						} while ( 0x8000 > la );
 						// -- End renormalization
 					}
 					// -- End MPS Exchange
 				}
 			}
-			else
-			{
-				this.c -= (la << 16);
+			else {
+				this.c -= ( la << 16 );
 				// -- LPS Exchange
-				if (la < q)
-				{
+				if ( la < q ) {
 					la = q;
-					bits[i] = this.mPS[ctxt];
-					idx = MQDecoder.nMPS[idx];
-					q = MQDecoder.qe[idx];
+					bits[ i ] = this.mPS[ ctxt ];
+					idx = MQDecoder.nMPS[ idx ];
+					q = MQDecoder.qe[ idx ];
 					// I[ctxt] set at end of loop
 					// -- Renormalize (MPS: no need for while loop)
-					if (0 == cT)
-						this.byteIn();
+					if ( 0 == cT )
+						this.byteIn ( );
 					la <<= 1;
 					this.c <<= 1;
 					this.cT--;
 					// -- End renormalization
 				}
-				else
-				{
+				else {
 					la = q;
-					bits[i] = 1 - this.mPS[ctxt];
-					if (1 == switchLM[idx])
-						this.mPS[ctxt] = 1 - this.mPS[ctxt];
-					idx = MQDecoder.nLPS[idx];
-					q = MQDecoder.qe[idx];
+					bits[ i ] = 1 - this.mPS[ ctxt ];
+					if ( 1 == switchLM[ idx ] )
+						this.mPS[ ctxt ] = 1 - this.mPS[ ctxt ];
+					idx = MQDecoder.nLPS[ idx ];
+					q = MQDecoder.qe[ idx ];
 					// I[ctxt] set at end of loop
 					// -- Renormalize
-					do
-					{
-						if (0 == cT)
-							this.byteIn();
+					do {
+						if ( 0 == cT )
+							this.byteIn ( );
 						la <<= 1;
 						this.c <<= 1;
 						this.cT--;
-					} while (0x8000 > la);
+					} while ( 0x8000 > la );
 					// -- End renormalization
 				}
 				// -- End LPS Exchange
 			}
 		}
 		this.a = la; // save cached A register
-		this.I[ctxt] = idx; // save current index for context
+		this.I[ ctxt ] = idx; // save current index for context
 		return false; // done, did not use speedup mode
 	} // End normal mode
 
@@ -312,24 +302,18 @@ public class MQDecoder
 	 * This function performs the arithmetic decoding. The function receives an
 	 * array in which to put the decoded symbols and an array of contexts with
 	 * which to decode them.
-	 * 
-	 * <P>
+	 *
+	 * <p>
 	 * Each context has a current MPS and an index describing what the current
 	 * probability is for the LPS. Each bit is decoded and if the probability of
 	 * the LPS exceeds .5, the MPS and LPS are switched.
-	 * 
-	 * @param bits
-	 *            The array where to place the decoded symbols. It should be
-	 *            long enough to contain 'n' elements.
-	 * 
-	 * @param cX
-	 *            The context to use in decoding each symbol.
-	 * 
-	 * @param n
-	 *            The number of symbols to decode
+	 *
+	 * @param bits The array where to place the decoded symbols. It should be
+	 *             long enough to contain 'n' elements.
+	 * @param cX   The context to use in decoding each symbol.
+	 * @param n    The number of symbols to decode
 	 */
-	public final void decodeSymbols(final int[] bits, final int[] cX, final int n)
-	{
+	public final void decodeSymbols ( final int[] bits , final int[] cX , final int n ) {
 		int q;
 		int ctxt;
 		int la; // cache for A register value
@@ -344,91 +328,80 @@ public class MQDecoder
 		// => one renormalization shift is enough for MPS
 		// => no need to do a renormalization while loop for MPS
 
-		for (i = 0; i < n; i++)
-		{
-			ctxt = cX[i];
+		for ( i = 0; i < n ; i++ ) {
+			ctxt = cX[ i ];
 
-			index = this.I[ctxt];
-			q = MQDecoder.qe[index];
+			index = this.I[ ctxt ];
+			q = MQDecoder.qe[ index ];
 
 			this.a -= q;
-			if ((this.c >>> 16) < this.a)
-			{
-				if (0x8000 <= a)
-				{
-					bits[i] = this.mPS[ctxt];
+			if ( ( this.c >>> 16 ) < this.a ) {
+				if ( 0x8000 <= a ) {
+					bits[ i ] = this.mPS[ ctxt ];
 				}
-				else
-				{
+				else {
 					la = this.a;
 					// -- MPS Exchange
-					if (la >= q)
-					{
-						bits[i] = this.mPS[ctxt];
-						this.I[ctxt] = MQDecoder.nMPS[index];
+					if ( la >= q ) {
+						bits[ i ] = this.mPS[ ctxt ];
+						this.I[ ctxt ] = MQDecoder.nMPS[ index ];
 						// -- Renormalize (MPS: no need for while loop)
-						if (0 == cT)
-							this.byteIn();
+						if ( 0 == cT )
+							this.byteIn ( );
 						la <<= 1;
 						this.c <<= 1;
 						this.cT--;
 						// -- End renormalization
 					}
-					else
-					{
-						bits[i] = 1 - this.mPS[ctxt];
-						if (1 == switchLM[index])
-							this.mPS[ctxt] = 1 - this.mPS[ctxt];
-						this.I[ctxt] = MQDecoder.nLPS[index];
+					else {
+						bits[ i ] = 1 - this.mPS[ ctxt ];
+						if ( 1 == switchLM[ index ] )
+							this.mPS[ ctxt ] = 1 - this.mPS[ ctxt ];
+						this.I[ ctxt ] = MQDecoder.nLPS[ index ];
 						// -- Renormalize
-						do
-						{
-							if (0 == cT)
-								this.byteIn();
+						do {
+							if ( 0 == cT )
+								this.byteIn ( );
 							la <<= 1;
 							this.c <<= 1;
 							this.cT--;
-						} while (0x8000 > la);
+						} while ( 0x8000 > la );
 						// -- End renormalization
 					}
 					// -- End MPS Exchange
 					this.a = la;
 				}
 			}
-			else
-			{
+			else {
 				la = this.a;
-				this.c -= (la << 16);
+				this.c -= ( la << 16 );
 				// -- LPS Exchange
-				if (la < q)
-				{
+				if ( la < q ) {
 					la = q;
-					bits[i] = this.mPS[ctxt];
-					this.I[ctxt] = MQDecoder.nMPS[index];
+					bits[ i ] = this.mPS[ ctxt ];
+					this.I[ ctxt ] = MQDecoder.nMPS[ index ];
 					// -- Renormalize (MPS: no need for while loop)
-					if (0 == cT)
-						this.byteIn();
+					if ( 0 == cT )
+						this.byteIn ( );
 					la <<= 1;
 					this.c <<= 1;
 					this.cT--;
 					// -- End renormalization
 				}
-				else
-				{
+				else {
 					la = q;
-					bits[i] = 1 - this.mPS[ctxt];
-					if (1 == switchLM[index])
-						this.mPS[ctxt] = 1 - this.mPS[ctxt];
-					this.I[ctxt] = MQDecoder.nLPS[index];
+					bits[ i ] = 1 - this.mPS[ ctxt ];
+					if ( 1 == switchLM[ index ] )
+						this.mPS[ ctxt ] = 1 - this.mPS[ ctxt ];
+					this.I[ ctxt ] = MQDecoder.nLPS[ index ];
 					// -- Renormalize
-					do
-					{
-						if (0 == cT)
-							this.byteIn();
+					do {
+						if ( 0 == cT )
+							this.byteIn ( );
 						la <<= 1;
 						this.c <<= 1;
 						this.cT--;
-					} while (0x8000 > la);
+					} while ( 0x8000 > la );
 					// -- End renormalization
 				}
 				// -- End LPS Exchange
@@ -441,26 +414,23 @@ public class MQDecoder
 	/**
 	 * Arithmetically decodes one symbol from the bit stream with the given
 	 * context and returns its decoded value.
-	 * 
-	 * <P>
+	 *
+	 * <p>
 	 * Each context has a current MPS and an index describing what the current
 	 * probability is for the LPS. Each bit is encoded and if the probability of
 	 * the LPS exceeds .5, the MPS and LPS are switched.
-	 * 
-	 * @param context
-	 *            The context to use in decoding the symbol
-	 * 
+	 *
+	 * @param context The context to use in decoding the symbol
 	 * @return The decoded symbol, 0 or 1.
 	 */
-	public final int decodeSymbol(final int context)
-	{
+	public final int decodeSymbol ( final int context ) {
 		final int q;
 		int la;
 		final int index;
 		final int decision;
 
-		index = this.I[context];
-		q = MQDecoder.qe[index];
+		index = this.I[ context ];
+		q = MQDecoder.qe[ index ];
 
 		// NOTE: (a < 0x8000) is equivalent to ((a & 0x8000)==0)
 		// since 'a' is always less than or equal to 0xFFFF
@@ -471,83 +441,73 @@ public class MQDecoder
 		// => no need to do a renormalization while loop for MPS
 
 		this.a -= q;
-		if ((this.c >>> 16) < this.a)
-		{
-			if (0x8000 <= a)
-			{
-				decision = this.mPS[context];
+		if ( ( this.c >>> 16 ) < this.a ) {
+			if ( 0x8000 <= a ) {
+				decision = this.mPS[ context ];
 			}
-			else
-			{
+			else {
 				la = this.a;
 				// -- MPS Exchange
-				if (la >= q)
-				{
-					decision = this.mPS[context];
-					this.I[context] = MQDecoder.nMPS[index];
+				if ( la >= q ) {
+					decision = this.mPS[ context ];
+					this.I[ context ] = MQDecoder.nMPS[ index ];
 					// -- Renormalize (MPS: no need for while loop)
-					if (0 == cT)
-						this.byteIn();
+					if ( 0 == cT )
+						this.byteIn ( );
 					la <<= 1;
 					this.c <<= 1;
 					this.cT--;
 					// -- End renormalization
 				}
-				else
-				{
-					decision = 1 - this.mPS[context];
-					if (1 == switchLM[index])
-						this.mPS[context] = 1 - this.mPS[context];
-					this.I[context] = MQDecoder.nLPS[index];
+				else {
+					decision = 1 - this.mPS[ context ];
+					if ( 1 == switchLM[ index ] )
+						this.mPS[ context ] = 1 - this.mPS[ context ];
+					this.I[ context ] = MQDecoder.nLPS[ index ];
 					// -- Renormalize
-					do
-					{
-						if (0 == cT)
-							this.byteIn();
+					do {
+						if ( 0 == cT )
+							this.byteIn ( );
 						la <<= 1;
 						this.c <<= 1;
 						this.cT--;
-					} while (0x8000 > la);
+					} while ( 0x8000 > la );
 					// -- End renormalization
 				}
 				// -- End MPS Exchange
 				this.a = la;
 			}
 		}
-		else
-		{
+		else {
 			la = this.a;
-			this.c -= (la << 16);
+			this.c -= ( la << 16 );
 			// -- LPS Exchange
-			if (la < q)
-			{
+			if ( la < q ) {
 				la = q;
-				decision = this.mPS[context];
-				this.I[context] = MQDecoder.nMPS[index];
+				decision = this.mPS[ context ];
+				this.I[ context ] = MQDecoder.nMPS[ index ];
 				// -- Renormalize (MPS: no need for while loop)
-				if (0 == cT)
-					this.byteIn();
+				if ( 0 == cT )
+					this.byteIn ( );
 				la <<= 1;
 				this.c <<= 1;
 				this.cT--;
 				// -- End renormalization
 			}
-			else
-			{
+			else {
 				la = q;
-				decision = 1 - this.mPS[context];
-				if (1 == switchLM[index])
-					this.mPS[context] = 1 - this.mPS[context];
-				this.I[context] = MQDecoder.nLPS[index];
+				decision = 1 - this.mPS[ context ];
+				if ( 1 == switchLM[ index ] )
+					this.mPS[ context ] = 1 - this.mPS[ context ];
+				this.I[ context ] = MQDecoder.nLPS[ index ];
 				// -- Renormalize
-				do
-				{
-					if (0 == cT)
-						this.byteIn();
+				do {
+					if ( 0 == cT )
+						this.byteIn ( );
 					la <<= 1;
 					this.c <<= 1;
 					this.cT--;
-				} while (0x8000 > la);
+				} while ( 0x8000 > la );
 				// -- End renormalization
 			}
 			// -- End LPS Exchange
@@ -565,39 +525,36 @@ public class MQDecoder
 	 * wrongly decoded or that the MQ terminated segment length is too long. If
 	 * no errors are detected it does not necessarily mean that the MQ bit
 	 * stream has been correctly decoded.
-	 * 
+	 *
 	 * @return True if errors are found, false otherwise.
 	 */
-	public boolean checkPredTerm()
-	{
+	public boolean checkPredTerm ( ) {
 		final int k; // Number of bits that where added in the termination process
 		final int q;
 
 		// 1) if everything has been OK, 'b' must be 0xFF if a terminating
 		// marker has not yet been found
-		if (0xFF != b && !this.markerFound)
+		if ( 0xFF != b && ! this.markerFound )
 			return true;
 
 		// 2) if cT is not 0, we must have already reached the terminating
 		// marker
-		if (0 != cT && !this.markerFound)
+		if ( 0 != cT && ! this.markerFound )
 			return true;
 
 		// 3) If cT is 1 there where no spare bits at the encoder, this is all
 		// that we can check
-		if (1 == cT)
+		if ( 1 == cT )
 			return false;
 
 		// 4) if cT is 0, then next byte must be the second byte of a
 		// terminating marker (i.e. larger than 0x8F) if the terminating
 		// marker has not been reached yet
-		if (0 == cT)
-		{
-			if (!this.markerFound)
-			{
+		if ( 0 == cT ) {
+			if ( ! this.markerFound ) {
 				// Get next byte and check
-				this.b = this.in.read() & 0xFF;
-				if (0x8F >= b)
+				this.b = this.in.read ( ) & 0xFF;
+				if ( 0x8F >= b )
 					return true;
 			}
 			// Adjust cT for last byte
@@ -620,27 +577,25 @@ public class MQDecoder
 
 		// Check that we can decode an LPS interval of probability 'q'
 		this.a -= q;
-		if ((this.c >>> 16) < this.a)
-		{
+		if ( ( this.c >>> 16 ) < this.a ) {
 			// Error: MPS interval decoded
 			return true;
 		}
 		// OK: LPS interval decoded
-		this.c -= (this.a << 16);
+		this.c -= ( this.a << 16 );
 		// -- LPS Exchange
 		// Here 'a' can not be smaller than 'q' because the minimum value
 		// for 'a' is 0x8000-0x4000=0x4000 and 'q' is set to a value equal
 		// to or smaller than that.
 		this.a = q;
 		// -- Renormalize
-		do
-		{
-			if (0 == cT)
-				this.byteIn();
+		do {
+			if ( 0 == cT )
+				this.byteIn ( );
 			this.a <<= 1;
 			this.c <<= 1;
 			this.cT--;
-		} while (0x8000 > a);
+		} while ( 0x8000 > a );
 		// -- End renormalization
 		// -- End LPS Exchange
 
@@ -655,35 +610,28 @@ public class MQDecoder
 	 * byte is added to c. If the byte is 0xFF and the next byte is greater than
 	 * 0x8F, the byte after 0xFF is a marker.
 	 */
-	private void byteIn()
-	{
-		if (!this.markerFound)
-		{
-			if (0xFF == b)
-			{
-				this.b = this.in.read() & 0xFF; // Convert EOFs (-1) to 0xFF
+	private void byteIn ( ) {
+		if ( ! this.markerFound ) {
+			if ( 0xFF == b ) {
+				this.b = this.in.read ( ) & 0xFF; // Convert EOFs (-1) to 0xFF
 
-				if (0x8F < b)
-				{
+				if ( 0x8F < b ) {
 					this.markerFound = true;
 					// software-convention decoder: c unchanged
 					this.cT = 8;
 				}
-				else
-				{
-					this.c += 0xFE00 - (this.b << 9);
+				else {
+					this.c += 0xFE00 - ( this.b << 9 );
 					this.cT = 7;
 				}
 			}
-			else
-			{
-				this.b = this.in.read() & 0xFF; // Convert EOFs (-1) to 0xFF
-				this.c += 0xFF00 - (this.b << 8);
+			else {
+				this.b = this.in.read ( ) & 0xFF; // Convert EOFs (-1) to 0xFF
+				this.c += 0xFF00 - ( this.b << 8 );
 				this.cT = 8;
 			}
 		}
-		else
-		{
+		else {
 			// software-convention decoder: c unchanged
 			this.cT = 8;
 		}
@@ -691,73 +639,61 @@ public class MQDecoder
 
 	/**
 	 * Returns the number of contexts in the arithmetic coder.
-	 * 
+	 *
 	 * @return The number of contexts
 	 */
-	public final int getNumCtxts()
-	{
+	public final int getNumCtxts ( ) {
 		return this.I.length;
 	}
 
 	/**
 	 * Resets a context to the original probability distribution.
-	 * 
-	 * @param c
-	 *            The number of the context (it starts at 0).
+	 *
+	 * @param c The number of the context (it starts at 0).
 	 */
-	public final void resetCtxt(final int c)
-	{
-		this.I[c] = this.initStates[c];
-		this.mPS[c] = 0;
+	public final void resetCtxt ( final int c ) {
+		this.I[ c ] = this.initStates[ c ];
+		this.mPS[ c ] = 0;
 	}
 
 	/**
 	 * Resets a context to the original probability distribution. The original
 	 * probability distribution depends on the actual implementation of the
 	 * arithmetic coder or decoder.
-	 * 
-	 * @param c
-	 *            The index of the context (it starts at 0).
+	 *
+	 * @param c The index of the context (it starts at 0).
 	 */
-	public final void resetCtxts()
-	{
-		System.arraycopy(this.initStates, 0, this.I, 0, this.I.length);
-		ArrayUtil.intArraySet(this.mPS, 0);
+	public final void resetCtxts ( ) {
+		System.arraycopy ( this.initStates , 0 , this.I , 0 , this.I.length );
+		ArrayUtil.intArraySet ( this.mPS , 0 );
 	}
 
 	/**
 	 * Resets the MQ decoder to start a new segment. This is like recreating a
 	 * new MQDecoder object with new input data.
-	 * 
-	 * @param buf
-	 *            The byte array containing the MQ encoded data. If null the
+	 *
+	 * @param buf The byte array containing the MQ encoded data. If null the
 	 *            current byte array is assumed.
-	 * 
-	 * @param off
-	 *            The index of the first element in 'buf' to be decoded. If
+	 * @param off The index of the first element in 'buf' to be decoded. If
 	 *            negative the byte just after the previous segment is assumed,
 	 *            only valid if 'buf' is null.
-	 * 
-	 * @param len
-	 *            The number of bytes in 'buf' to be decoded. Any subsequent
+	 * @param len The number of bytes in 'buf' to be decoded. Any subsequent
 	 *            bytes are taken to be 0xFF.
 	 */
-	public final void nextSegment(final byte[] buf, final int off, final int len)
-	{
+	public final void nextSegment ( final byte[] buf , final int off , final int len ) {
 		// Set the new input
-		this.in.setByteArray(buf, off, len);
+		this.in.setByteArray ( buf , off , len );
 		// Reinitialize MQ
-		this.init();
+		this.init ( );
 	}
 
 	/**
 	 * Returns the underlying 'ByteInputBuffer' from where the MQ coded input
 	 * bytes are read.
-	 * 
+	 *
 	 * @return The underlying ByteInputBuffer.
 	 */
-	public ByteInputBuffer getByteInputBuffer()
-	{
+	public ByteInputBuffer getByteInputBuffer ( ) {
 		return this.in;
 	}
 
@@ -765,22 +701,21 @@ public class MQDecoder
 	 * Initializes the state of the MQ coder, without modifying the current
 	 * context states. It sets the registers (A,C,B) and the "marker found"
 	 * state to the initial state, to start the decoding of a new segment.
-	 * 
-	 * <P>
+	 *
+	 * <p>
 	 * To have a complete reset of the MQ (as if a new MQDecoder object was
 	 * created) 'resetCtxts()' should be called after this method.
 	 */
-	private void init()
-	{
+	private void init ( ) {
 		// --- INITDEC
 		this.markerFound = false;
 
 		// Read first byte
-		this.b = this.in.read() & 0xFF;
+		this.b = this.in.read ( ) & 0xFF;
 
 		// Software conventions decoder
-		this.c = (this.b ^ 0xFF) << 16;
-		this.byteIn();
+		this.c = ( this.b ^ 0xFF ) << 16;
+		this.byteIn ( );
 		this.c = this.c << 7;
 		this.cT = this.cT - 7;
 		this.a = 0x8000;

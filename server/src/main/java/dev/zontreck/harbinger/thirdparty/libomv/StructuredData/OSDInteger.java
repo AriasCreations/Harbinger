@@ -2,19 +2,19 @@
  * Copyright (c) 2006-2014, openmetaverse.org
  * Copyright (c) 2009-2017, Frederick Martian
  * All rights reserved.
- *
+ * <p>
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ * <p>
  * - Redistributions of source code must retain the above copyright notice, this
- *   list of conditions and the following disclaimer.
+ * list of conditions and the following disclaimer.
  * - Redistributions in binary form must reproduce the above copyright notice,
- *   this list of conditions and the following disclaimer in the
- *   documentation and/or other materials provided with the distribution.
+ * this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
  * - Neither the name of the openmetaverse.org or dev.zontreck.harbinger.thirdparty.libomv-java project nor the
- *   names of its contributors may be used to endorse or promote products derived
- *   from this software without specific prior written permission.
- *
+ * names of its contributors may be used to endorse or promote products derived
+ * from this software without specific prior written permission.
+ * <p>
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -31,89 +31,74 @@ package dev.zontreck.harbinger.thirdparty.libomv.StructuredData;
 
 import dev.zontreck.harbinger.thirdparty.libomv.utils.Helpers;
 
-public class OSDInteger extends OSD
-{
+public class OSDInteger extends OSD {
 	private final int value;
 
-	@Override
-	public OSDType getType()
-	{
-		return OSDType.Integer;
-	}
-
-	public OSDInteger(final int value)
-	{
+	public OSDInteger ( final int value ) {
 		this.value = value;
 	}
 
 	@Override
-	public boolean AsBoolean()
-	{
+	public OSDType getType ( ) {
+		return OSDType.Integer;
+	}
+
+	@Override
+	public boolean AsBoolean ( ) {
 		return 0 != value;
 	}
 
 	@Override
-	public int AsInteger()
-	{
+	public int AsInteger ( ) {
 		return this.value;
 	}
 
 	@Override
-	public int AsUInteger()
-	{
-		return (this.value & 0xFFFFFFFF);
+	public int AsUInteger ( ) {
+		return ( this.value & 0xFFFFFFFF );
 	}
 
 	@Override
-	public long AsLong()
-	{
+	public long AsLong ( ) {
 		return this.value;
 	}
 
 	@Override
-	public long AsULong()
-	{
-		return (this.value & 0xFFFFFFFF);
+	public long AsULong ( ) {
+		return ( this.value & 0xFFFFFFFF );
 	}
 
 	@Override
-	public double AsReal()
-	{
+	public double AsReal ( ) {
 		return this.value;
 	}
 
 	@Override
-	public String AsString()
-	{
-		return ((Integer) this.value).toString();
+	public String AsString ( ) {
+		return ( ( Integer ) this.value ).toString ( );
 	}
 
 	@Override
-	public byte[] AsBinary()
-	{
-		return Helpers.Int32ToBytesB(this.value);
+	public byte[] AsBinary ( ) {
+		return Helpers.Int32ToBytesB ( this.value );
 	}
 
 	@Override
-	public int hashCode()
-	{
+	public int hashCode ( ) {
 		return this.value;
 	}
-	
+
 	@Override
-	public boolean equals(final Object obj)
-	{
-		return null != obj && obj instanceof OSD && this.equals((OSD)obj);
+	public boolean equals ( final Object obj ) {
+		return null != obj && obj instanceof OSD && this.equals ( ( OSD ) obj );
 	}
 
-	public boolean equals(final OSD osd)
-	{
-		return null != osd && osd.AsInteger() == this.value;
+	public boolean equals ( final OSD osd ) {
+		return null != osd && osd.AsInteger ( ) == this.value;
 	}
 
 	@Override
-	public String toString()
-	{
-		return this.AsString();
+	public String toString ( ) {
+		return this.AsString ( );
 	}
 }

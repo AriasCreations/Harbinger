@@ -78,7 +78,7 @@ public interface CBlkWTDataSrc extends ForwWTDataProps {
 	 * @return The position of the fixed-point, which is the same as the number
 	 * of fractional bits. For floating-point data 0 is returned.
 	 */
-	int getFixedPoint(int n);
+	int getFixedPoint ( int n );
 
 	/**
 	 * Return the data type of this CBlkWTDataSrc for the given component in the
@@ -90,7 +90,7 @@ public interface CBlkWTDataSrc extends ForwWTDataProps {
 	 * @param c Component index
 	 * @return Current data type
 	 */
-	int getDataType(int t, int c);
+	int getDataType ( int t , int c );
 
 	/**
 	 * Returns the next code-block in the current tile for the specified
@@ -128,7 +128,7 @@ public interface CBlkWTDataSrc extends ForwWTDataProps {
 	 * null if all code-blocks for the current tile have been returned.
 	 * @see CBlkWTData
 	 */
-	CBlkWTData getNextCodeBlock(int n, CBlkWTData cblk);
+	CBlkWTData getNextCodeBlock ( int n , CBlkWTData cblk );
 
 	/**
 	 * Returns the next code-block in the current tile for the specified
@@ -164,5 +164,5 @@ public interface CBlkWTDataSrc extends ForwWTDataProps {
 	 * null if all code-blocks for the current tile have been returned.
 	 * @see CBlkWTData
 	 */
-	CBlkWTData getNextInternCodeBlock(int n, CBlkWTData cblk);
+	CBlkWTData getNextInternCodeBlock ( int n , CBlkWTData cblk );
 }

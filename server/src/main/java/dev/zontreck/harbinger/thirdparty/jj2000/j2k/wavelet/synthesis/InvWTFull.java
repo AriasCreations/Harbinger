@@ -86,40 +86,33 @@ import java.security.InvalidParameterException;
  */
 public class InvWTFull extends InverseWT {
 	/**
-	 * Reference to the ProgressWatch instance if any
-	 */
-	private ProgressWatch pw;
-
-	/**
-	 * The total number of code-blocks to decode
-	 */
-	private int cblkToDecode;
-
-	/**
-	 * The number of already decoded code-blocks
-	 */
-	private int nDecCblk;
-
-	/**
 	 * the code-block buffer's source i.e. the quantizer
 	 */
 	private final CBlkWTDataSrcDec src;
-
-	/**
-	 * Current data type
-	 */
-	private int dtype;
-
 	/**
 	 * Block storing the reconstructed image for each component
 	 */
 	private final DataBlk[] reconstructedComps;
-
 	/**
 	 * Number of decomposition levels in each component
 	 */
 	private final int[] ndl;
-
+	/**
+	 * Reference to the ProgressWatch instance if any
+	 */
+	private final ProgressWatch pw;
+	/**
+	 * The total number of code-blocks to decode
+	 */
+	private int cblkToDecode;
+	/**
+	 * The number of already decoded code-blocks
+	 */
+	private int nDecCblk;
+	/**
+	 * Current data type
+	 */
+	private int dtype;
 	/**
 	 * The reversible flag for each component in each tile. The first index is
 	 * the tile index, the second one is the component index. The reversibility
@@ -134,13 +127,13 @@ public class InvWTFull extends InverseWT {
 	 * @param src     from where the wavelet coefficinets should be obtained.
 	 * @param decSpec The decoder specifications
 	 */
-	public InvWTFull(final CBlkWTDataSrcDec src, final DecoderSpecs decSpec) {
-		super(src, decSpec);
+	public InvWTFull ( final CBlkWTDataSrcDec src , final DecoderSpecs decSpec ) {
+		super ( src , decSpec );
 		this.src = src;
-		final int nc = src.getNumComps();
-		this.reconstructedComps = new DataBlk[nc];
-		this.ndl = new int[nc];
-		this.pw = FacilityManager.getProgressWatch();
+		final int nc = src.getNumComps ( );
+		this.reconstructedComps = new DataBlk[ nc ];
+		this.ndl = new int[ nc ];
+		this.pw = FacilityManager.getProgressWatch ( );
 	}
 
 	/**
@@ -153,13 +146,13 @@ public class InvWTFull extends InverseWT {
 	 * @return true if all the filters used to reconstruct the current subband
 	 * are reversible
 	 */
-	private boolean isSubbandReversible(final Subband subband) {
-		if (subband.isNode) {
+	private boolean isSubbandReversible ( final Subband subband ) {
+		if ( subband.isNode ) {
 			// It's reversible if the filters to obtain the 4 subbands are
 			// reversible and the ones for this one are reversible too.
-			return this.isSubbandReversible(subband.getLL()) && this.isSubbandReversible(subband.getHL())
-					&& this.isSubbandReversible(subband.getLH()) && this.isSubbandReversible(subband.getHH())
-					&& ((SubbandSyn) subband).hFilter.isReversible() && ((SubbandSyn) subband).vFilter.isReversible();
+			return this.isSubbandReversible ( subband.getLL ( ) ) && this.isSubbandReversible ( subband.getHL ( ) )
+					&& this.isSubbandReversible ( subband.getLH ( ) ) && this.isSubbandReversible ( subband.getHH ( ) )
+					&& ( ( SubbandSyn ) subband ).hFilter.isReversible ( ) && ( ( SubbandSyn ) subband ).vFilter.isReversible ( );
 		}
 		// Leaf subband. Reversibility of data depends on source, so say
 		// it's true
@@ -176,15 +169,15 @@ public class InvWTFull extends InverseWT {
 	 * @return true is the wavelet transform is reversible, false if not.
 	 */
 	@Override
-	public boolean isReversible(final int t, final int c) {
-		if (null == reversible[t]) {
+	public boolean isReversible ( final int t , final int c ) {
+		if ( null == reversible[ t ] ) {
 			// Reversibility not yet calculated for this tile
-			this.reversible[t] = new boolean[this.getNumComps()];
-			for (int i = this.reversible.length - 1; 0 <= i; i--) {
-				this.reversible[t][i] = this.isSubbandReversible(this.src.getSynSubbandTree(t, i));
+			this.reversible[ t ] = new boolean[ this.getNumComps ( ) ];
+			for ( int i = this.reversible.length - 1 ; 0 <= i ; i-- ) {
+				this.reversible[ t ][ i ] = this.isSubbandReversible ( this.src.getSynSubbandTree ( t , i ) );
 			}
 		}
-		return this.reversible[t][c];
+		return this.reversible[ t ][ c ];
 	}
 
 	/**
@@ -208,8 +201,8 @@ public class InvWTFull extends InverseWT {
 	 * data.
 	 */
 	@Override
-	public int getNomRangeBits(final int c) {
-		return this.src.getNomRangeBits(c);
+	public int getNomRangeBits ( final int c ) {
+		return this.src.getNomRangeBits ( c );
 	}
 
 	/**
@@ -230,8 +223,8 @@ public class InvWTFull extends InverseWT {
 	 * of fractional bits. For floating-point data 0 is returned.
 	 */
 	@Override
-	public int getFixedPoint(final int c) {
-		return this.src.getFixedPoint(c);
+	public int getFixedPoint ( final int c ) {
+		return this.src.getFixedPoint ( c );
 	}
 
 	/**
@@ -258,46 +251,49 @@ public class InvWTFull extends InverseWT {
 	 * @return The requested DataBlk
 	 */
 	@Override
-	public final DataBlk getInternCompData(DataBlk blk, final int c) {
-		final int tIdx = this.getTileIdx();
-		if (null == src.getSynSubbandTree(tIdx, c).getHorWFilter()) {
+	public final DataBlk getInternCompData ( DataBlk blk , final int c ) {
+		final int tIdx = this.getTileIdx ( );
+		if ( null == src.getSynSubbandTree ( tIdx , c ).getHorWFilter ( ) ) {
 			this.dtype = DataBlk.TYPE_INT;
-		} else {
-			this.dtype = this.src.getSynSubbandTree(tIdx, c).getHorWFilter().getDataType();
+		}
+		else {
+			this.dtype = this.src.getSynSubbandTree ( tIdx , c ).getHorWFilter ( ).getDataType ( );
 		}
 
 		// If the source image has not been decomposed
-		if (null == reconstructedComps[c]) {
+		if ( null == reconstructedComps[ c ] ) {
 			// Allocate component data buffer
-			switch (this.dtype) {
+			switch ( this.dtype ) {
 				case DataBlk.TYPE_FLOAT:
-					this.reconstructedComps[c] = new DataBlkFloat(0, 0, this.getTileCompWidth(tIdx, c),
-							this.getTileCompHeight(tIdx, c));
+					this.reconstructedComps[ c ] = new DataBlkFloat ( 0 , 0 , this.getTileCompWidth ( tIdx , c ) ,
+							this.getTileCompHeight ( tIdx , c )
+					);
 					break;
 				case DataBlk.TYPE_INT:
-					this.reconstructedComps[c] = new DataBlkInt(0, 0, this.getTileCompWidth(tIdx, c), this.getTileCompHeight(tIdx, c));
+					this.reconstructedComps[ c ] = new DataBlkInt ( 0 , 0 , this.getTileCompWidth ( tIdx , c ) , this.getTileCompHeight ( tIdx , c ) );
 					break;
 				default:
-					throw new InvalidParameterException("Invalid data block type: " + this.dtype);
+					throw new InvalidParameterException ( "Invalid data block type: " + this.dtype );
 			}
 			// Reconstruct source image
-			this.waveletTreeReconstruction(this.reconstructedComps[c], this.src.getSynSubbandTree(tIdx, c), c);
-			if (null != pw && c == this.src.getNumComps() - 1) {
-				this.pw.terminateProgressWatch();
+			this.waveletTreeReconstruction ( this.reconstructedComps[ c ] , this.src.getSynSubbandTree ( tIdx , c ) , c );
+			if ( null != pw && c == this.src.getNumComps ( ) - 1 ) {
+				this.pw.terminateProgressWatch ( );
 			}
 		}
 
-		if (blk.getDataType() != this.dtype) {
-			if (DataBlk.TYPE_INT == dtype) {
-				blk = new DataBlkInt(blk.ulx, blk.uly, blk.w, blk.h);
-			} else {
-				blk = new DataBlkFloat(blk.ulx, blk.uly, blk.w, blk.h);
+		if ( blk.getDataType ( ) != this.dtype ) {
+			if ( DataBlk.TYPE_INT == dtype ) {
+				blk = new DataBlkInt ( blk.ulx , blk.uly , blk.w , blk.h );
+			}
+			else {
+				blk = new DataBlkFloat ( blk.ulx , blk.uly , blk.w , blk.h );
 			}
 		}
 		// Set the reference to the internal buffer
-		blk.setData(this.reconstructedComps[c].getData());
-		blk.offset = this.reconstructedComps[c].w * blk.uly + blk.ulx;
-		blk.scanw = this.reconstructedComps[c].w;
+		blk.setData ( this.reconstructedComps[ c ].getData ( ) );
+		blk.offset = this.reconstructedComps[ c ].w * blk.uly + blk.ulx;
+		blk.scanw = this.reconstructedComps[ c ].w;
 		blk.progressive = false;
 		return blk;
 	}
@@ -335,7 +331,7 @@ public class InvWTFull extends InverseWT {
 	 * @return The requested DataBlk
 	 */
 	@Override
-	public DataBlk getCompData(DataBlk blk, final int c) {
+	public DataBlk getCompData ( DataBlk blk , final int c ) {
 		Object dst_data;
 		int[] dst_data_int;
 		float[] dst_data_float;
@@ -344,31 +340,31 @@ public class InvWTFull extends InverseWT {
 		dst_data = null;
 
 		// Ensure output buffer
-		switch (blk.getDataType()) {
+		switch ( blk.getDataType ( ) ) {
 			case DataBlk.TYPE_INT:
-				dst_data_int = (int[]) blk.getData();
-				if (null == dst_data_int || dst_data_int.length < blk.w * blk.h) {
-					dst_data_int = new int[blk.w * blk.h];
+				dst_data_int = ( int[] ) blk.getData ( );
+				if ( null == dst_data_int || dst_data_int.length < blk.w * blk.h ) {
+					dst_data_int = new int[ blk.w * blk.h ];
 				}
 				dst_data = dst_data_int;
 				break;
 			case DataBlk.TYPE_FLOAT:
-				dst_data_float = (float[]) blk.getData();
-				if (null == dst_data_float || dst_data_float.length < blk.w * blk.h) {
-					dst_data_float = new float[blk.w * blk.h];
+				dst_data_float = ( float[] ) blk.getData ( );
+				if ( null == dst_data_float || dst_data_float.length < blk.w * blk.h ) {
+					dst_data_float = new float[ blk.w * blk.h ];
 				}
 				dst_data = dst_data_float;
 				break;
 			default:
-				throw new InvalidParameterException("Invalid data block type: " + blk.getDataType());
+				throw new InvalidParameterException ( "Invalid data block type: " + blk.getDataType ( ) );
 		}
 
 		// Use getInternCompData() to get the data, since getInternCompData()
 		// returns reference to internal buffer, we must copy it.
-		blk = this.getInternCompData(blk, c);
+		blk = this.getInternCompData ( blk , c );
 
 		// Copy the data
-		blk.setData(dst_data);
+		blk.setData ( dst_data );
 		blk.offset = 0;
 		blk.scanw = blk.w;
 		return blk;
@@ -383,7 +379,7 @@ public class InvWTFull extends InverseWT {
 	 * @param sb The subband to reconstruct.
 	 * @param c  The index of the component to reconstruct
 	 */
-	private void wavelet2DReconstruction(final DataBlk db, final SubbandSyn sb, final int c) {
+	private void wavelet2DReconstruction ( final DataBlk db , final SubbandSyn sb , final int c ) {
 		final Object data;
 		Object buf;
 		final int ulx;
@@ -394,11 +390,11 @@ public class InvWTFull extends InverseWT {
 		int offset;
 
 		// If subband is empty (i.e. zero size) nothing to do
-		if (0 == sb.w || 0 == sb.h) {
+		if ( 0 == sb.w || 0 == sb.h ) {
 			return;
 		}
 
-		data = db.getData();
+		data = db.getData ( );
 
 		ulx = sb.ulx;
 		uly = sb.uly;
@@ -407,76 +403,81 @@ public class InvWTFull extends InverseWT {
 
 		buf = null; // To keep compiler happy
 
-		switch (sb.getHorWFilter().getDataType()) {
+		switch ( sb.getHorWFilter ( ).getDataType ( ) ) {
 			case DataBlk.TYPE_INT:
-				buf = new int[(w >= h) ? w : h];
+				buf = new int[ ( w >= h ) ? w : h ];
 				break;
 			case DataBlk.TYPE_FLOAT:
-				buf = new float[(w >= h) ? w : h];
+				buf = new float[ ( w >= h ) ? w : h ];
 				break;
 			default:
-				throw new InvalidParameterException("Invalid data block type: " + sb.getHorWFilter().getDataType());
+				throw new InvalidParameterException ( "Invalid data block type: " + sb.getHorWFilter ( ).getDataType ( ) );
 		}
 
 		// Perform the horizontal reconstruction
-		offset = (uly - db.uly) * db.w + ulx - db.ulx;
-		if (0 == sb.ulcx % 2) { // start index is even => use LPF
-			for (i = 0; i < h; i++, offset += db.w) {
-				System.arraycopy(data, offset, buf, 0, w);
-				sb.hFilter.synthetize_lpf(buf, 0, (w + 1) / 2, 1, buf, (w + 1) / 2, w / 2, 1, data, offset, 1);
+		offset = ( uly - db.uly ) * db.w + ulx - db.ulx;
+		if ( 0 == sb.ulcx % 2 ) { // start index is even => use LPF
+			for ( i = 0; i < h ; i++ , offset += db.w ) {
+				System.arraycopy ( data , offset , buf , 0 , w );
+				sb.hFilter.synthetize_lpf ( buf , 0 , ( w + 1 ) / 2 , 1 , buf , ( w + 1 ) / 2 , w / 2 , 1 , data , offset , 1 );
 			}
-		} else { // start index is odd => use HPF
-			for (i = 0; i < h; i++, offset += db.w) {
-				System.arraycopy(data, offset, buf, 0, w);
-				sb.hFilter.synthetize_hpf(buf, 0, w / 2, 1, buf, w / 2, (w + 1) / 2, 1, data, offset, 1);
+		}
+		else { // start index is odd => use HPF
+			for ( i = 0; i < h ; i++ , offset += db.w ) {
+				System.arraycopy ( data , offset , buf , 0 , w );
+				sb.hFilter.synthetize_hpf ( buf , 0 , w / 2 , 1 , buf , w / 2 , ( w + 1 ) / 2 , 1 , data , offset , 1 );
 			}
 		}
 
 		// Perform the vertical reconstruction
-		offset = (uly - db.uly) * db.w + ulx - db.ulx;
-		switch (sb.getVerWFilter().getDataType()) {
+		offset = ( uly - db.uly ) * db.w + ulx - db.ulx;
+		switch ( sb.getVerWFilter ( ).getDataType ( ) ) {
 			case DataBlk.TYPE_INT:
 				final int[] data_int;
 				final int[] buf_int;
-				data_int = (int[]) data;
-				buf_int = (int[]) buf;
-				if (0 == sb.ulcy % 2) { // start index is even => use LPF
-					for (j = 0; j < w; j++, offset++) {
-						for (i = h - 1, k = offset + i * db.w; 0 <= i; i--, k -= db.w)
-							buf_int[i] = data_int[k];
-						sb.vFilter.synthetize_lpf(buf, 0, (h + 1) / 2, 1, buf, (h + 1) / 2, h / 2, 1, data, offset,
-								db.w);
+				data_int = ( int[] ) data;
+				buf_int = ( int[] ) buf;
+				if ( 0 == sb.ulcy % 2 ) { // start index is even => use LPF
+					for ( j = 0; j < w ; j++ , offset++ ) {
+						for ( i = h - 1 , k = offset + i * db.w; 0 <= i ; i-- , k -= db.w )
+							buf_int[ i ] = data_int[ k ];
+						sb.vFilter.synthetize_lpf ( buf , 0 , ( h + 1 ) / 2 , 1 , buf , ( h + 1 ) / 2 , h / 2 , 1 , data , offset ,
+								db.w
+						);
 					}
-				} else { // start index is odd => use HPF
-					for (j = 0; j < w; j++, offset++) {
-						for (i = h - 1, k = offset + i * db.w; 0 <= i; i--, k -= db.w)
-							buf_int[i] = data_int[k];
-						sb.vFilter.synthetize_hpf(buf, 0, h / 2, 1, buf, h / 2, (h + 1) / 2, 1, data, offset, db.w);
+				}
+				else { // start index is odd => use HPF
+					for ( j = 0; j < w ; j++ , offset++ ) {
+						for ( i = h - 1 , k = offset + i * db.w; 0 <= i ; i-- , k -= db.w )
+							buf_int[ i ] = data_int[ k ];
+						sb.vFilter.synthetize_hpf ( buf , 0 , h / 2 , 1 , buf , h / 2 , ( h + 1 ) / 2 , 1 , data , offset , db.w );
 					}
 				}
 				break;
 			case DataBlk.TYPE_FLOAT:
 				final float[] data_float;
 				final float[] buf_float;
-				data_float = (float[]) data;
-				buf_float = (float[]) buf;
-				if (0 == sb.ulcy % 2) { // start index is even => use LPF
-					for (j = 0; j < w; j++, offset++) {
-						for (i = h - 1, k = offset + i * db.w; 0 <= i; i--, k -= db.w)
-							buf_float[i] = data_float[k];
-						sb.vFilter.synthetize_lpf(buf, 0, (h + 1) / 2, 1, buf, (h + 1) / 2, h / 2, 1, data, offset,
-								db.w);
+				data_float = ( float[] ) data;
+				buf_float = ( float[] ) buf;
+				if ( 0 == sb.ulcy % 2 ) { // start index is even => use LPF
+					for ( j = 0; j < w ; j++ , offset++ ) {
+						for ( i = h - 1 , k = offset + i * db.w; 0 <= i ; i-- , k -= db.w )
+							buf_float[ i ] = data_float[ k ];
+						sb.vFilter.synthetize_lpf ( buf , 0 , ( h + 1 ) / 2 , 1 , buf , ( h + 1 ) / 2 , h / 2 , 1 , data , offset ,
+								db.w
+						);
 					}
-				} else { // start index is odd => use HPF
-					for (j = 0; j < w; j++, offset++) {
-						for (i = h - 1, k = offset + i * db.w; 0 <= i; i--, k -= db.w)
-							buf_float[i] = data_float[k];
-						sb.vFilter.synthetize_hpf(buf, 0, h / 2, 1, buf, h / 2, (h + 1) / 2, 1, data, offset, db.w);
+				}
+				else { // start index is odd => use HPF
+					for ( j = 0; j < w ; j++ , offset++ ) {
+						for ( i = h - 1 , k = offset + i * db.w; 0 <= i ; i-- , k -= db.w )
+							buf_float[ i ] = data_float[ k ];
+						sb.vFilter.synthetize_hpf ( buf , 0 , h / 2 , 1 , buf , h / 2 , ( h + 1 ) / 2 , 1 , data , offset , db.w );
 					}
 				}
 				break;
 			default:
-				throw new InvalidParameterException("Invalid data block type: " + sb.getVerWFilter().getDataType());
+				throw new InvalidParameterException ( "Invalid data block type: " + sb.getVerWFilter ( ).getDataType ( ) );
 		}
 	}
 
@@ -491,59 +492,61 @@ public class InvWTFull extends InverseWT {
 	 * @param sb  The subband to reconstruct.
 	 * @param c   The index of the component to reconstruct
 	 */
-	private void waveletTreeReconstruction(final DataBlk img, final SubbandSyn sb, final int c) {
+	private void waveletTreeReconstruction ( final DataBlk img , final SubbandSyn sb , final int c ) {
 
 		DataBlk subbData;
 
 		// If the current subband is a leaf then get the data from the source
-		if (!sb.isNode) {
+		if ( ! sb.isNode ) {
 			int i, m, n;
 			Object src_data;
 			final Object dst_data;
 			final Coord ncblks;
 
-			if (0 == sb.w || 0 == sb.h) {
+			if ( 0 == sb.w || 0 == sb.h ) {
 				return; // If empty subband do nothing
 			}
 
 			// Get all code-blocks in subband
-			if (DataBlk.TYPE_INT == dtype) {
-				subbData = new DataBlkInt();
-			} else {
-				subbData = new DataBlkFloat();
+			if ( DataBlk.TYPE_INT == dtype ) {
+				subbData = new DataBlkInt ( );
+			}
+			else {
+				subbData = new DataBlkFloat ( );
 			}
 			ncblks = sb.numCb;
-			dst_data = img.getData();
-			for (m = 0; m < ncblks.y; m++) {
-				for (n = 0; n < ncblks.x; n++) {
-					subbData = this.src.getInternCodeBlock(c, m, n, sb, subbData);
-					src_data = subbData.getData();
-					if (null != pw) {
+			dst_data = img.getData ( );
+			for ( m = 0; m < ncblks.y ; m++ ) {
+				for ( n = 0; n < ncblks.x ; n++ ) {
+					subbData = this.src.getInternCodeBlock ( c , m , n , sb , subbData );
+					src_data = subbData.getData ( );
+					if ( null != pw ) {
 						this.nDecCblk++;
-						this.pw.updateProgressWatch(this.nDecCblk, null);
+						this.pw.updateProgressWatch ( this.nDecCblk , null );
 					}
 					// Copy the data line by line
-					for (i = subbData.h - 1; 0 <= i; i--) {
-						System.arraycopy(src_data, subbData.offset + i * subbData.scanw, dst_data, (subbData.uly + i)
-								* img.w + subbData.ulx, subbData.w);
+					for ( i = subbData.h - 1; 0 <= i ; i-- ) {
+						System.arraycopy ( src_data , subbData.offset + i * subbData.scanw , dst_data , ( subbData.uly + i )
+								* img.w + subbData.ulx , subbData.w );
 					}
 				}
 			}
-		} else if (sb.isNode) {
+		}
+		else if ( sb.isNode ) {
 			// Reconstruct the lower resolution levels if the current subbands
 			// is a node
 
 			// Perform the reconstruction of the LL subband
-			this.waveletTreeReconstruction(img, (SubbandSyn) sb.getLL(), c);
+			this.waveletTreeReconstruction ( img , ( SubbandSyn ) sb.getLL ( ) , c );
 
-			if (sb.resLvl <= this.reslvl - this.maxImgRes + this.ndl[c]) {
+			if ( sb.resLvl <= this.reslvl - this.maxImgRes + this.ndl[ c ] ) {
 				// Reconstruct the other subbands
-				this.waveletTreeReconstruction(img, (SubbandSyn) sb.getHL(), c);
-				this.waveletTreeReconstruction(img, (SubbandSyn) sb.getLH(), c);
-				this.waveletTreeReconstruction(img, (SubbandSyn) sb.getHH(), c);
+				this.waveletTreeReconstruction ( img , ( SubbandSyn ) sb.getHL ( ) , c );
+				this.waveletTreeReconstruction ( img , ( SubbandSyn ) sb.getLH ( ) , c );
+				this.waveletTreeReconstruction ( img , ( SubbandSyn ) sb.getHH ( ) , c );
 
 				// Perform the 2D wavelet decomposition of the current subband
-				this.wavelet2DReconstruction(img, sb, c);
+				this.wavelet2DReconstruction ( img , sb , c );
 			}
 		}
 	}
@@ -557,7 +560,7 @@ public class InvWTFull extends InverseWT {
 	 * @see WaveletTransform#WT_IMPL_FULL
 	 */
 	@Override
-	public int getImplementationType(final int c) {
+	public int getImplementationType ( final int c ) {
 		return WaveletTransform.WT_IMPL_FULL;
 	}
 
@@ -571,51 +574,52 @@ public class InvWTFull extends InverseWT {
 	 * @returns The new tile index
 	 */
 	@Override
-	public int setTile(final int x, final int y) {
+	public int setTile ( final int x , final int y ) {
 		// Change tile
-		super.setTile(x, y);
+		super.setTile ( x , y );
 
-		final int nc = this.src.getNumComps();
-		final int tIdx = this.src.getTileIdx();
-		for (int c = 0; c < nc; c++) {
-			this.ndl[c] = this.src.getSynSubbandTree(tIdx, c).resLvl;
+		final int nc = this.src.getNumComps ( );
+		final int tIdx = this.src.getTileIdx ( );
+		for ( int c = 0 ; c < nc ; c++ ) {
+			this.ndl[ c ] = this.src.getSynSubbandTree ( tIdx , c ).resLvl;
 		}
 
 		// Reset the decomposed component buffers.
-		if (null != reconstructedComps) {
-			for (int i = this.reconstructedComps.length - 1; 0 <= i; i--) {
-				this.reconstructedComps[i] = null;
+		if ( null != reconstructedComps ) {
+			for ( int i = this.reconstructedComps.length - 1 ; 0 <= i ; i-- ) {
+				this.reconstructedComps[ i ] = null;
 			}
 		}
 
 		this.cblkToDecode = 0;
 		SubbandSyn root, sb;
-		for (int c = 0; c < nc; c++) {
-			root = this.src.getSynSubbandTree(tIdx, c);
-			for (int r = 0; r <= this.reslvl - this.maxImgRes + root.resLvl; r++) {
-				if (0 == r) {
-					sb = (SubbandSyn) root.getSubbandByIdx(0, 0);
-					if (null != sb)
+		for ( int c = 0 ; c < nc ; c++ ) {
+			root = this.src.getSynSubbandTree ( tIdx , c );
+			for ( int r = 0 ; r <= this.reslvl - this.maxImgRes + root.resLvl ; r++ ) {
+				if ( 0 == r ) {
+					sb = ( SubbandSyn ) root.getSubbandByIdx ( 0 , 0 );
+					if ( null != sb )
 						this.cblkToDecode += sb.numCb.x * sb.numCb.y;
-				} else {
-					sb = (SubbandSyn) root.getSubbandByIdx(r, 1);
-					if (null != sb)
+				}
+				else {
+					sb = ( SubbandSyn ) root.getSubbandByIdx ( r , 1 );
+					if ( null != sb )
 						this.cblkToDecode += sb.numCb.x * sb.numCb.y;
-					sb = (SubbandSyn) root.getSubbandByIdx(r, 2);
-					if (null != sb)
+					sb = ( SubbandSyn ) root.getSubbandByIdx ( r , 2 );
+					if ( null != sb )
 						this.cblkToDecode += sb.numCb.x * sb.numCb.y;
-					sb = (SubbandSyn) root.getSubbandByIdx(r, 3);
-					if (null != sb)
+					sb = ( SubbandSyn ) root.getSubbandByIdx ( r , 3 );
+					if ( null != sb )
 						this.cblkToDecode += sb.numCb.x * sb.numCb.y;
 				}
 			} // Loop on resolution levels
 		} // Loop on components
 		this.nDecCblk = 0;
 
-		if (null != pw) {
-			this.pw.initProgressWatch(0, this.cblkToDecode, "Decoding tile " + tIdx + "...");
+		if ( null != pw ) {
+			this.pw.initProgressWatch ( 0 , this.cblkToDecode , "Decoding tile " + tIdx + "..." );
 		}
-		return getTileIdx();
+		return getTileIdx ( );
 	}
 
 	/**
@@ -626,22 +630,22 @@ public class InvWTFull extends InverseWT {
 	 * @returns The new tile index
 	 */
 	@Override
-	public int nextTile() {
+	public int nextTile ( ) {
 		// Change tile
-		super.nextTile();
+		super.nextTile ( );
 
-		final int nc = this.src.getNumComps();
-		final int tIdx = this.src.getTileIdx();
-		for (int c = 0; c < nc; c++) {
-			this.ndl[c] = this.src.getSynSubbandTree(tIdx, c).resLvl;
+		final int nc = this.src.getNumComps ( );
+		final int tIdx = this.src.getTileIdx ( );
+		for ( int c = 0 ; c < nc ; c++ ) {
+			this.ndl[ c ] = this.src.getSynSubbandTree ( tIdx , c ).resLvl;
 		}
 
 		// Reset the decomposed component buffers.
-		if (null != reconstructedComps) {
-			for (int i = this.reconstructedComps.length - 1; 0 <= i; i--) {
-				this.reconstructedComps[i] = null;
+		if ( null != reconstructedComps ) {
+			for ( int i = this.reconstructedComps.length - 1 ; 0 <= i ; i-- ) {
+				this.reconstructedComps[ i ] = null;
 			}
 		}
-		return getTileIdx();
+		return getTileIdx ( );
 	}
 }
