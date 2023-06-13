@@ -2,11 +2,8 @@ package dev.zontreck.harbinger.simulator.types;
 
 import dev.zontreck.ariaslib.events.EventBus;
 import dev.zontreck.harbinger.simulator.events.GridInfoGatherEvent;
-import libomv.StructuredData.LLSD.LLSDXml;
-import libomv.StructuredData.OSD;
-import libomv.StructuredData.OSDMap;
-import libomv.StructuredData.OSDString;
-import org.json.JSONObject;
+import dev.zontreck.harbinger.thirdparty.libomv.StructuredData.OSD;
+import dev.zontreck.harbinger.thirdparty.libomv.StructuredData.OSDMap;
 
 /**
  * Provides the grid_info.xml when requested from the Harbinger service.
