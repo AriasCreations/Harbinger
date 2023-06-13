@@ -66,6 +66,7 @@ public class GridInfo implements Cloneable {
 	}
 
 	public static GridInfo consume ( ) {
+
 		GridInfoGatherEvent gather = new GridInfoGatherEvent ( BLANK_INFO );
 		EventBus.BUS.post ( gather );
 

@@ -7,6 +7,10 @@ import dev.zontreck.harbinger.commands.CommandRegistry;
 import dev.zontreck.harbinger.data.Persist;
 import dev.zontreck.harbinger.events.MemoryAlteredEvent;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 
 public class SimulationCommands {
 
@@ -21,7 +25,7 @@ public class SimulationCommands {
 
 				CommandRegistry.LOGGER.info ( "\n{}" , usage );
 			} else {
-				SimSubCommand cmd = SimSubCommand.valueOf ( ev.arguments.get ( 0 ) );
+				SimSubCommand cmd = SimSubCommand.valueOfCommand ( ev.arguments.get ( 0 ) );
 
 				switch(cmd)
 				{
@@ -32,6 +36,30 @@ public class SimulationCommands {
 					}
 					case getBaseURL -> {
 						CommandRegistry.LOGGER.info ( "BASE URL -> " + Persist.simulatorSettings.BASE_URL );
+						break;
+					}
+					case setGridName -> {
+						List<String> sublist = new ArrayList<> (  );
+						for(int i = 1; i < ev.arguments.size (); i++)
+						{
+							sublist.add ( ev.arguments.get ( i ) );
+						}
+
+						Persist.simulatorSettings.GRID_NAME = String.join (" ", sublist );
+
+						EventBus.BUS.post ( new MemoryAlteredEvent () );
+						break;
+					}
+					case setGridNick -> {
+						List<String> sublist = new ArrayList<> (  );
+						for(int i = 1; i < ev.arguments.size (); i++)
+						{
+							sublist.add ( ev.arguments.get ( i ) );
+						}
+
+						Persist.simulatorSettings.GRID_NICK = String.join (" ", sublist );
+
+						EventBus.BUS.post ( new MemoryAlteredEvent () );
 						break;
 					}
 				}

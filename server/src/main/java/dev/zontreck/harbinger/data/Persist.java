@@ -74,6 +74,7 @@ public class Persist {
 		map.put ( HTTPServerSettings.TAG , serverSettings.save ( ) );
 		map.put ( Signature.TAG , SIGNATURE.save ( ) );
 		map.put ( DiscordSettings.TAG , discordSettings.save ( ) );
+		map.put ( SimulatorSettings.TAG , simulatorSettings.serialize ( ) );
 
 
 		LOGGER.info ( "Memory file saved" );
@@ -81,7 +82,7 @@ public class Persist {
 			String json = LLSDJson.serializeToString ( map , OSD.OSDFormat.Json );
 			FileWriter fw = new FileWriter ( FILE_NAME );
 			fw.write ( json );
-			fw.close ();
+			fw.close ( );
 		} catch ( FileNotFoundException e ) {
 			throw new RuntimeException ( e );
 		} catch ( IOException e ) {

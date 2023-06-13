@@ -5,7 +5,9 @@ public enum SimSubCommand {
 	setBaseURL ( "set_base_url" , "Sets the base URL for Harbinger. This is used when constructing Simulator Endpoints in responses." ),
 	getBaseURL ( "get_base_url" , "Returns the currently set base URL" ),
 	setGridStatus ( "set_grid" , "Arg [ bool ]:  Enables or disables the grid service" ),
-	setSimulator ( "set_sim" , "Arg [bool]: Enables or disables simulator functions" );
+	setSimulator ( "set_sim" , "Arg [bool]: Enables or disables simulator functions" ),
+	setGridName ("set_grid_name", "Sets the grid name"),
+	setGridNick("set_grid_nick", "Sets the grid nickname");
 
 
 	public String cmd;
@@ -16,7 +18,7 @@ public enum SimSubCommand {
 		this.usage = usage;
 	}
 
-	public SimSubCommand valueOfCommand(String commandText)
+	public static SimSubCommand valueOfCommand ( String commandText )
 	{
 		for (
 				SimSubCommand c :

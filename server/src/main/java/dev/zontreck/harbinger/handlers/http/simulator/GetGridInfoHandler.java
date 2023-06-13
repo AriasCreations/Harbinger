@@ -1,10 +1,10 @@
 package dev.zontreck.harbinger.handlers.http.simulator;
 
 import dev.zontreck.ariaslib.events.annotations.Subscribe;
+import dev.zontreck.harbinger.data.Persist;
 import dev.zontreck.harbinger.events.GenericRequestEvent;
+import dev.zontreck.harbinger.simulator.events.GridInfoGatherEvent;
 import dev.zontreck.harbinger.simulator.types.GridInfo;
-
-import java.nio.charset.StandardCharsets;
 
 public class GetGridInfoHandler {
 
@@ -20,5 +20,16 @@ public class GetGridInfoHandler {
 			GRE.responseText = info.toString ( );
 
 		}
+	}
+
+
+	@Subscribe
+	public static void onGatherGridInfo ( GridInfoGatherEvent ev ) {
+		ev.info.LoginURI = ev.info.LoginURI.replace ( "$SELF$", Persist.simulatorSettings.BASE_URL );
+		ev.info.Economy = ev.info.Economy.replace ( "$SELF$", Persist.simulatorSettings.BASE_URL );
+		ev.info.Register = ev.info.Register.replace ( "$SELF$", Persist.simulatorSettings.BASE_URL );
+
+		ev.info.GridName = Persist.simulatorSettings.GRID_NAME;
+		ev.info.GridNick = Persist.simulatorSettings.GRID_NICK;
 	}
 }
