@@ -12,31 +12,32 @@ import org.simpleframework.xml.core.Persister;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
 /**
  * Provides the grid_info.xml when requested from the Harbinger service.
  */
-@Root
+@Root(name = "gridinfo")
 public class GridInfo implements Cloneable {
 
 	private static final GridInfo BLANK_INFO = new GridInfo ( );
 	@Element(name = "platform")
-	public final String ServiceType = "Harbinger";
+	public String ServiceType = "Harbinger";
 
-	@Element
+	@Element(name = "gridname")
 	public String GridName;
 
-	@Element
+	@Element(name = "gridnick")
 	public String GridNick;
 
 	@Element(name = "login")
 	public String LoginURI;
 
-	@Element
+	@Element(name = "economy")
 	public String Economy;
 
-	@Element
+	@Element(name = "register")
 	public String Register;
 
 	private GridInfo ( ) {
@@ -45,6 +46,15 @@ public class GridInfo implements Cloneable {
 		LoginURI = "$SELF$/simulation/login";
 		Economy = "$SELF$/simulation/economy";
 		Register = "$SELF$/simulation/register";
+	}
+
+	public GridInfo( @Element(name = "gridname") String GridName, @Element(name = "gridnick") String GridNick, @Element(name = "login") String LoginURI, @Element(name = "economy") String Economy, @Element(name = "register") String Register)
+	{
+		this.GridNick = GridNick;
+		this.GridName = GridName;
+		this.LoginURI = LoginURI;
+		this.Economy = Economy;
+		this.Register = Register;
 	}
 
 	private GridInfo ( GridInfo base ) {
@@ -69,8 +79,9 @@ public class GridInfo implements Cloneable {
 			ByteArrayOutputStream baos = new ByteArrayOutputStream (  );
 			serial.write(this, baos);
 
-			return Arrays.toString ( baos.toByteArray () );
+			return new String(baos.toByteArray (), StandardCharsets.UTF_8);
 		} catch ( Exception e ) {
+			e.printStackTrace ();
 			return "";
 		}
 	}
