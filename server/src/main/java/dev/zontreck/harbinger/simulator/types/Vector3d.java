@@ -10,16 +10,16 @@ public class Vector3d implements Comparable {
 	public static final Vector3d Zero = new Vector3d();
 
 	/// <summary>A vector with a value of 1,1,1</summary>
-	public static final Vector3d One = new Vector3d(1f);
+	public static final Vector3d One = new Vector3d(1.0f);
 
 	/// <summary>A unit vector facing forward (X axis), value 1,0,0</summary>
-	public static final Vector3d UnitX = new Vector3d(1f, 0f, 0f);
+	public static final Vector3d UnitX = new Vector3d(1.0f, 0.0f, 0.0f);
 
 	/// <summary>A unit vector facing left (Y axis), value 0,1,0</summary>
-	public static final Vector3d UnitY = new Vector3d(0f, 1f, 0f);
+	public static final Vector3d UnitY = new Vector3d(0.0f, 1.0f, 0.0f);
 
 	/// <summary>A unit vector facing up (Z axis), value 0,0,1</summary>
-	public static final Vector3d UnitZ = new Vector3d(0f, 0f, 1f);
+	public static final Vector3d UnitZ = new Vector3d(0.0f, 0.0f, 1.0f);
 
 	public static final Vector3d MinValue = new Vector3d(Float.MIN_VALUE);
 	public static final Vector3d MaxValue = new Vector3d(Float.MAX_VALUE);
@@ -34,110 +34,110 @@ public class Vector3d implements Comparable {
 	public double Z;
 
 	public Vector3d() {
-		X = 0;
-		Y = 0;
-		Z = 0;
+		this.X = 0;
+		this.Y = 0;
+		this.Z = 0;
 	}
 
-	public Vector3d(double x, double y, double z) {
-		X = x;
-		Y = y;
-		Z = z;
+	public Vector3d(final double x, final double y, final double z) {
+		this.X = x;
+		this.Y = y;
+		this.Z = z;
 	}
 
-	public Vector3d(double value) {
-		X = value;
-		Y = value;
-		Z = value;
+	public Vector3d(final double value) {
+		this.X = value;
+		this.Y = value;
+		this.Z = value;
 	}
 
-	public Vector3d(Vector2 value, double z) {
-		X = value.X;
-		Y = value.Y;
-		Z = z;
+	public Vector3d(final Vector2 value, final double z) {
+		this.X = value.X;
+		this.Y = value.Y;
+		this.Z = z;
 	}
 
-	public Vector3d(Vector3d vector) {
-		X = vector.X;
-		Y = vector.Y;
-		Z = vector.Z;
+	public Vector3d(final Vector3d vector) {
+		this.X = vector.X;
+		this.Y = vector.Y;
+		this.Z = vector.Z;
 	}
 
-	public Vector3d(byte[] byteArray, int pos) {
-		X = SimUtils.BytesToFloatSafepos(byteArray, pos);
-		Y = SimUtils.BytesToFloatSafepos(byteArray, pos + 4);
-		Z = SimUtils.BytesToFloatSafepos(byteArray, pos + 8);
+	public Vector3d(final byte[] byteArray, final int pos) {
+		this.X = SimUtils.BytesToFloatSafepos(byteArray, pos);
+		this.Y = SimUtils.BytesToFloatSafepos(byteArray, pos + 4);
+		this.Z = SimUtils.BytesToFloatSafepos(byteArray, pos + 8);
 	}
 
 	public void Abs() {
-		if (X < 0)
-			X = -X;
-		if (Y < 0)
-			Y = -Y;
-		if (Z < 0)
-			Z = -Z;
+		if (0 > X)
+			this.X = -this.X;
+		if (0 > Y)
+			this.Y = -this.Y;
+		if (0 > Z)
+			this.Z = -this.Z;
 	}
 
-	public void Min(Vector3d v) {
-		if (v.X < X) X = v.X;
-		if (v.Y < Y) Y = v.Y;
-		if (v.Z < Z) Z = v.Z;
+	public void Min(final Vector3d v) {
+		if (v.X < this.X) this.X = v.X;
+		if (v.Y < this.Y) this.Y = v.Y;
+		if (v.Z < this.Z) this.Z = v.Z;
 	}
 
-	public void Max(Vector3d v) {
-		if (v.X > X) X = v.X;
-		if (v.Y > Y) Y = v.Y;
-		if (v.Z > Z) Z = v.Z;
+	public void Max(final Vector3d v) {
+		if (v.X > this.X) this.X = v.X;
+		if (v.Y > this.Y) this.Y = v.Y;
+		if (v.Z > this.Z) this.Z = v.Z;
 	}
 
-	public void Add(Vector3d v) {
-		X += v.X;
-		Y += v.Y;
-		Z += v.Z;
+	public void Add(final Vector3d v) {
+		this.X += v.X;
+		this.Y += v.Y;
+		this.Z += v.Z;
 	}
 
-	public void Sub(Vector3d v) {
-		X -= v.X;
-		Y -= v.Y;
-		Z -= v.Z;
+	public void Sub(final Vector3d v) {
+		this.X -= v.X;
+		this.Y -= v.Y;
+		this.Z -= v.Z;
 	}
 
-	public void Clamp(double min, double max) {
-		if (X > max)
-			X = max;
-		else if (X < min)
-			X = min;
+	public void Clamp(final double min, final double max) {
+		if (this.X > max)
+			this.X = max;
+		else if (this.X < min)
+			this.X = min;
 
-		if (Y > max)
-			Y = max;
-		else if (Y < min)
-			Y = min;
+		if (this.Y > max)
+			this.Y = max;
+		else if (this.Y < min)
+			this.Y = min;
 
-		if (Z > max)
-			Z = max;
-		else if (Z < min)
-			Z = min;
+		if (this.Z > max)
+			this.Z = max;
+		else if (this.Z < min)
+			this.Z = min;
 	}
 
 	public double Length() {
-		return Math.sqrt(X * X + Y * Y + Z * Z);
+		return Math.sqrt(this.X * this.X + this.Y * this.Y + this.Z * this.Z);
 	}
 
 	public double LengthSquared() {
-		return X * X + Y * Y + Z * Z;
+		return this.X * this.X + this.Y * this.Y + this.Z * this.Z;
 	}
 
 	public void Normalize() {
-		var factor = X * X + Y * Y + Z * Z;
-		if (factor > 1e-6f) {
-			factor = 1f / Math.sqrt(factor);
-			X *= factor;
-			Y *= factor;
-			Z *= factor;
+		var factor = this.X * this.X + this.Y * this.Y + this.Z * this.Z;
+		if (1.0e-6f < factor) {
+			factor = 1.0f / Math.sqrt(factor);
+			this.X *= factor;
+			this.Y *= factor;
+			this.Z *= factor;
 		} else {
-			X = 0;
-			Y = 0;
-			Z = 0;
+			this.X = 0;
+			this.Y = 0;
+			this.Z = 0;
 		}
 	}
 
@@ -154,8 +154,8 @@ public class Vector3d implements Comparable {
 	///     True if the magnitude of difference between the two vectors
 	///     is less than the given tolerance, otherwise false
 	/// </returns>
-	public boolean ApproxEquals(Vector3d vec, double tolerance) {
-		var diff = Subtract(this, vec);
+	public boolean ApproxEquals(final Vector3d vec, final double tolerance) {
+		final var diff = Vector3d.Subtract(this, vec);
 		return diff.LengthSquared() <= tolerance * tolerance;
 	}
 
@@ -164,7 +164,7 @@ public class Vector3d implements Comparable {
 	///     Test if this vector is composed of all finite numbers
 	/// </summary>
 	public boolean IsFinite() {
-		return SimUtils.IsFinite(X) && SimUtils.IsFinite(Y) && SimUtils.IsFinite(Z);
+		return SimUtils.IsFinite(this.X) && SimUtils.IsFinite(this.Y) && SimUtils.IsFinite(this.Z);
 	}
 
 
@@ -173,7 +173,7 @@ public class Vector3d implements Comparable {
 	/// </summary>
 	/// <returns>A 12 byte array containing X, Y, and Z</returns>
 	public byte[] GetBytes() {
-		var dest = new byte[12];
+		final var dest = new byte[12];
 
 		// TODO
 
@@ -182,173 +182,173 @@ public class Vector3d implements Comparable {
 
 
 	//quaternion must be normalized <0,0,z,w>
-	public void RotateByQZ(Quaternion rot) {
-		var z2 = rot.Z + rot.Z;
-		var zz2 = 1.0f - rot.Z * z2;
-		var wz2 = rot.W * z2;
+	public void RotateByQZ(final Quaternion rot) {
+		final var z2 = rot.Z + rot.Z;
+		final var zz2 = 1.0f - rot.Z * z2;
+		final var wz2 = rot.W * z2;
 
-		var ox = X;
-		var oy = Y;
+		final var ox = this.X;
+		final var oy = this.Y;
 
-		X = ox * zz2 - oy * wz2;
-		Y = ox * wz2 + oy * zz2;
+		this.X = ox * zz2 - oy * wz2;
+		this.Y = ox * wz2 + oy * zz2;
 	}
 
 	//quaternion must be normalized <0,0,z,w>
-	public void InverseRotateByQZ(Quaternion rot) {
-		var z2 = rot.Z + rot.Z;
-		var zz2 = 1.0f - rot.Z * z2;
-		var wz2 = rot.W * z2;
+	public void InverseRotateByQZ(final Quaternion rot) {
+		final var z2 = rot.Z + rot.Z;
+		final var zz2 = 1.0f - rot.Z * z2;
+		final var wz2 = rot.W * z2;
 
-		var ox = X;
-		var oy = Y;
+		final var ox = this.X;
+		final var oy = this.Y;
 
-		X = ox * zz2 + oy * wz2;
-		Y = oy * zz2 - ox * wz2;
+		this.X = ox * zz2 + oy * wz2;
+		this.Y = oy * zz2 - ox * wz2;
 	}
 
 	//shortQuaternion must be normalized <z,w>
-	public void RotateByShortQZ(Vector2 shortQuaternion) {
-		var z2 = shortQuaternion.X + shortQuaternion.X;
-		var zz2 = 1.0f - shortQuaternion.X * z2;
-		var wz2 = shortQuaternion.Y * z2;
+	public void RotateByShortQZ(final Vector2 shortQuaternion) {
+		final var z2 = shortQuaternion.X + shortQuaternion.X;
+		final var zz2 = 1.0f - shortQuaternion.X * z2;
+		final var wz2 = shortQuaternion.Y * z2;
 
-		var ox = X;
-		var oy = Y;
+		final var ox = this.X;
+		final var oy = this.Y;
 
-		X = ox * zz2 - oy * wz2;
-		Y = ox * wz2 + oy * zz2;
+		this.X = ox * zz2 - oy * wz2;
+		this.Y = ox * wz2 + oy * zz2;
 	}
 
 	//quaternion must be normalized <0,0,z,w>
-	public void InverseRotateByShortQZ(Vector2 shortQuaternion) {
-		var z2 = shortQuaternion.X + shortQuaternion.X;
-		var zz2 = 1.0f - shortQuaternion.X * z2;
-		var wz2 = shortQuaternion.Y * z2;
+	public void InverseRotateByShortQZ(final Vector2 shortQuaternion) {
+		final var z2 = shortQuaternion.X + shortQuaternion.X;
+		final var zz2 = 1.0f - shortQuaternion.X * z2;
+		final var wz2 = shortQuaternion.Y * z2;
 
-		var ox = X;
-		var oy = Y;
+		final var ox = this.X;
+		final var oy = this.Y;
 
-		X = ox * zz2 + oy * wz2;
-		Y = oy * zz2 - ox * wz2;
+		this.X = ox * zz2 + oy * wz2;
+		this.Y = oy * zz2 - ox * wz2;
 	}
 
-	public static Vector3d Add(Vector3d value1, Vector3d value2) {
+	public static Vector3d Add(final Vector3d value1, final Vector3d value2) {
 		return new Vector3d(value1.X + value2.X, value1.Y + value2.Y, value1.Z + value2.Z);
 	}
 
-	public static Vector3d Abs(Vector3d value1) {
+	public static Vector3d Abs(final Vector3d value1) {
 		return new Vector3d(Math.abs(value1.X), Math.abs(value1.Y), Math.abs(value1.Z));
 	}
 
-	public static Vector3d Clamp(Vector3d value1, double min, double max) {
+	public static Vector3d Clamp(final Vector3d value1, final double min, final double max) {
 		return new Vector3d(
 				MathF.Clamp(value1.X, min, max),
 				MathF.Clamp(value1.Y, min, max),
 				MathF.Clamp(value1.Z, min, max));
 	}
 
-	public static Vector3d Clamp(Vector3d value1, Vector3d min, Vector3d max) {
+	public static Vector3d Clamp(final Vector3d value1, final Vector3d min, final Vector3d max) {
 		return new Vector3d(
 				MathF.Clamp(value1.X, min.X, max.X),
 				MathF.Clamp(value1.Y, min.Y, max.Y),
 				MathF.Clamp(value1.Z, min.Z, max.Z));
 	}
 
-	public static Vector3d Cross(Vector3d value1, Vector3d value2) {
+	public static Vector3d Cross(final Vector3d value1, final Vector3d value2) {
 		return new Vector3d(
 				value1.Y * value2.Z - value2.Y * value1.Z,
 				value1.Z * value2.X - value2.Z * value1.X,
 				value1.X * value2.Y - value2.X * value1.Y);
 	}
 
-	public static double Distance(Vector3d value1, Vector3d value2) {
-		return Math.sqrt(DistanceSquared(value1, value2));
+	public static double Distance(final Vector3d value1, final Vector3d value2) {
+		return Math.sqrt(Vector3d.DistanceSquared(value1, value2));
 	}
 
-	public static double DistanceSquared(Vector3d value1, Vector3d value2) {
-		var x = value1.X - value2.X;
-		var y = value1.Y - value2.Y;
-		var z = value1.Z - value2.Z;
+	public static double DistanceSquared(final Vector3d value1, final Vector3d value2) {
+		final var x = value1.X - value2.X;
+		final var y = value1.Y - value2.Y;
+		final var z = value1.Z - value2.Z;
 
 		return x * x + y * y + z * z;
 	}
 
-	public static Vector3d Divide(Vector3d value1, Vector3d value2) {
+	public static Vector3d Divide(final Vector3d value1, final Vector3d value2) {
 		return new Vector3d(value1.X / value2.X, value1.Y / value2.Y, value1.Z / value2.Z);
 	}
 
-	public static Vector3d Divide(Vector3d value1, double value2) {
-		var factor = 1f / value2;
+	public static Vector3d Divide(final Vector3d value1, final double value2) {
+		final var factor = 1.0f / value2;
 		return new Vector3d(value1.X * factor, value1.Y * factor, value1.Z * factor);
 	}
 
-	public static Vector3d Lerp(Vector3d value1, Vector3d value2, double amount) {
+	public static Vector3d Lerp(final Vector3d value1, final Vector3d value2, final double amount) {
 		return new Vector3d(
 				SimUtils.Lerp(value1.X, value2.X, amount),
 				SimUtils.Lerp(value1.Y, value2.Y, amount),
 				SimUtils.Lerp(value1.Z, value2.Z, amount));
 	}
 
-	public static double Mag(Vector3d value) {
+	public static double Mag(final Vector3d value) {
 		return value.Length();
 	}
 
-	public static Vector3d Max(Vector3d value1, Vector3d value2) {
+	public static Vector3d Max(final Vector3d value1, final Vector3d value2) {
 		return new Vector3d(
 				Math.max(value1.X, value2.X),
 				Math.max(value1.Y, value2.Y),
 				Math.max(value1.Z, value2.Z));
 	}
 
-	public static Vector3d Min(Vector3d value1, Vector3d value2) {
+	public static Vector3d Min(final Vector3d value1, final Vector3d value2) {
 		return new Vector3d(
 				Math.min(value1.X, value2.X),
 				Math.min(value1.Y, value2.Y),
 				Math.min(value1.Z, value2.Z));
 	}
 
-	public static Vector3d Multiply(Vector3d value1, Vector3d value2) {
-		Vector3d M = new Vector3d(value1);
+	public static Vector3d Multiply(final Vector3d value1, final Vector3d value2) {
+		final Vector3d M = new Vector3d(value1);
 		M.Mul(value2);
 		return M;
 	}
 
-	public static Vector3d Multiply(Vector3d value1, double scaleFactor) {
-		return Multiply(value1, new Vector3d(scaleFactor));
+	public static Vector3d Multiply(final Vector3d value1, final double scaleFactor) {
+		return Vector3d.Multiply(value1, new Vector3d(scaleFactor));
 	}
 
-	public static Vector3d Negate(Vector3d value) {
+	public static Vector3d Negate(final Vector3d value) {
 		return new Vector3d(-value.X, -value.Y, -value.Z);
 	}
 
-	public static Vector3d Normalize(Vector3d value) {
+	public static Vector3d Normalize(final Vector3d value) {
 		var factor = value.LengthSquared();
-		if (factor > 1e-6f) {
-			factor = 1d / Math.sqrt(factor);
-			return Multiply(value, factor);
+		if (1.0e-6f < factor) {
+			factor = 1.0d / Math.sqrt(factor);
+			return Vector3d.Multiply(value, factor);
 		}
 
 		return new Vector3d();
 	}
 
-	public static Vector3d SmoothStep(Vector3d value1, Vector3d value2, double amount) {
+	public static Vector3d SmoothStep(final Vector3d value1, final Vector3d value2, final double amount) {
 		return new Vector3d(
 				SimUtils.SmoothStep(value1.X, value2.X, amount),
 				SimUtils.SmoothStep(value1.Y, value2.Y, amount),
 				SimUtils.SmoothStep(value1.Z, value2.Z, amount));
 	}
 
-	public static Vector3d Subtract(Vector3d value1, Vector3d value2) {
-		Vector3d n = new Vector3d(value1);
+	public static Vector3d Subtract(final Vector3d value1, final Vector3d value2) {
+		final Vector3d n = new Vector3d(value1);
 		n.Sub(value2);
 		return n;
 	}
 
-	public void Mul(Vector3d other) {
-		X *= other.X;
-		Y *= other.Y;
-		Z *= other.Z;
+	public void Mul(final Vector3d other) {
+		this.X *= other.X;
+		this.Y *= other.Y;
+		this.Z *= other.Z;
 	}
 
 	/*
@@ -397,69 +397,69 @@ public class Vector3d implements Comparable {
 			return Subtract(value1, value2);
 	}
 	*/
-	public static Vector3d Transform(Vector3d position, Matrix4 matrix) {
+	public static Vector3d Transform(final Vector3d position, final Matrix4 matrix) {
 		return new Vector3d(
 				position.X * matrix.M11 + position.Y * matrix.M21 + position.Z * matrix.M31 + matrix.M41,
 				position.X * matrix.M12 + position.Y * matrix.M22 + position.Z * matrix.M32 + matrix.M42,
 				position.X * matrix.M13 + position.Y * matrix.M23 + position.Z * matrix.M33 + matrix.M43);
 	}
 
-	public static Vector3d TransformNormal(Vector3d position, Matrix4 matrix) {
+	public static Vector3d TransformNormal(final Vector3d position, final Matrix4 matrix) {
 		return new Vector3d(
 				position.X * matrix.M11 + position.Y * matrix.M21 + position.Z * matrix.M31,
 				position.X * matrix.M12 + position.Y * matrix.M22 + position.Z * matrix.M32,
 				position.X * matrix.M13 + position.Y * matrix.M23 + position.Z * matrix.M33);
 	}
 
-	public static Vector3d UnitXRotated(Quaternion rot) {
-		var y2 = rot.Y + rot.Y;
-		var z2 = rot.Z + rot.Z;
+	public static Vector3d UnitXRotated(final Quaternion rot) {
+		final var y2 = rot.Y + rot.Y;
+		final var z2 = rot.Z + rot.Z;
 
-		var wy2 = rot.W * y2;
-		var wz2 = rot.W * z2;
-		var xy2 = rot.X * y2;
-		var xz2 = rot.X * z2;
-		var yy2 = rot.Y * y2;
-		var zz2 = rot.Z * z2;
+		final var wy2 = rot.W * y2;
+		final var wz2 = rot.W * z2;
+		final var xy2 = rot.X * y2;
+		final var xz2 = rot.X * z2;
+		final var yy2 = rot.Y * y2;
+		final var zz2 = rot.Z * z2;
 
 		return new Vector3d(1.0f - yy2 - zz2, xy2 + wz2, xz2 - wy2);
 	}
 
-	public static Vector3d UnitYRotated(Quaternion rot) {
-		var x2 = rot.X + rot.X;
-		var y2 = rot.Y + rot.Y;
-		var z2 = rot.Z + rot.Z;
+	public static Vector3d UnitYRotated(final Quaternion rot) {
+		final var x2 = rot.X + rot.X;
+		final var y2 = rot.Y + rot.Y;
+		final var z2 = rot.Z + rot.Z;
 
-		var wx2 = rot.W * x2;
-		var wz2 = rot.W * z2;
-		var xx2 = rot.X * x2;
-		var xy2 = rot.X * y2;
-		var yz2 = rot.Y * z2;
-		var zz2 = rot.Z * z2;
+		final var wx2 = rot.W * x2;
+		final var wz2 = rot.W * z2;
+		final var xx2 = rot.X * x2;
+		final var xy2 = rot.X * y2;
+		final var yz2 = rot.Y * z2;
+		final var zz2 = rot.Z * z2;
 
 		return new Vector3d(xy2 - wz2, 1.0f - xx2 - zz2, yz2 + wx2);
 	}
 
-	public static Vector3d UnitZRotated(Quaternion rot) {
-		var x2 = rot.X + rot.X;
-		var y2 = rot.Y + rot.Y;
-		var z2 = rot.Z + rot.Z;
+	public static Vector3d UnitZRotated(final Quaternion rot) {
+		final var x2 = rot.X + rot.X;
+		final var y2 = rot.Y + rot.Y;
+		final var z2 = rot.Z + rot.Z;
 
-		var wx2 = rot.W * x2;
-		var wy2 = rot.W * y2;
-		var xx2 = rot.X * x2;
-		var xz2 = rot.X * z2;
-		var yy2 = rot.Y * y2;
-		var yz2 = rot.Y * z2;
+		final var wx2 = rot.W * x2;
+		final var wy2 = rot.W * y2;
+		final var xx2 = rot.X * x2;
+		final var xz2 = rot.X * z2;
+		final var yy2 = rot.Y * y2;
+		final var yz2 = rot.Y * z2;
 
 		return new Vector3d(xz2 + wy2, yz2 - wx2, 1.0f - xx2 - yy2);
 	}
 
 	//quaternion must be normalized <0,0,z,w>
-	public static Vector3d RotateByQZ(Vector3d vec, Quaternion rot) {
-		var z2 = rot.Z + rot.Z;
-		var wz2 = rot.W * z2;
-		var zz2 = 1.0f - rot.Z * z2;
+	public static Vector3d RotateByQZ(final Vector3d vec, final Quaternion rot) {
+		final var z2 = rot.Z + rot.Z;
+		final var wz2 = rot.W * z2;
+		final var zz2 = 1.0f - rot.Z * z2;
 
 		return new Vector3d(
 				vec.X * zz2 - vec.Y * wz2,
@@ -469,10 +469,10 @@ public class Vector3d implements Comparable {
 	}
 
 	//quaternion must be normalized <0,0,z,w>
-	public static Vector3d InverseRotateByQZ(Vector3d vec, Quaternion rot) {
-		var z2 = rot.Z + rot.Z;
-		var wz2 = rot.W * z2;
-		var zz2 = 1.0f - rot.Z * z2;
+	public static Vector3d InverseRotateByQZ(final Vector3d vec, final Quaternion rot) {
+		final var z2 = rot.Z + rot.Z;
+		final var wz2 = rot.W * z2;
+		final var zz2 = 1.0f - rot.Z * z2;
 
 		return new Vector3d(
 				vec.X * zz2 + vec.Y * wz2,
@@ -481,10 +481,10 @@ public class Vector3d implements Comparable {
 	}
 
 	//shortQuaternion must be normalized <z,w>
-	public static Vector3d RotateByShortQZ(Vector3d vec, Vector2 shortQuaternion) {
-		var z2 = shortQuaternion.X + shortQuaternion.X;
-		var zz2 = 1.0f - shortQuaternion.X * z2;
-		var wz2 = shortQuaternion.Y * z2;
+	public static Vector3d RotateByShortQZ(final Vector3d vec, final Vector2 shortQuaternion) {
+		final var z2 = shortQuaternion.X + shortQuaternion.X;
+		final var zz2 = 1.0f - shortQuaternion.X * z2;
+		final var wz2 = shortQuaternion.Y * z2;
 
 		return new Vector3d(
 				vec.X * zz2 - vec.Y * wz2,
@@ -494,10 +494,10 @@ public class Vector3d implements Comparable {
 	}
 
 	//shortQuaternion must be normalized <z,w>
-	public static Vector3d InverseRotateByShortQZ(Vector3d vec, Vector2 shortQuaternion) {
-		var z2 = shortQuaternion.X + shortQuaternion.X;
-		var zz2 = 1.0f - shortQuaternion.X * z2;
-		var wz2 = shortQuaternion.Y * z2;
+	public static Vector3d InverseRotateByShortQZ(final Vector3d vec, final Vector2 shortQuaternion) {
+		final var z2 = shortQuaternion.X + shortQuaternion.X;
+		final var zz2 = 1.0f - shortQuaternion.X * z2;
+		final var wz2 = shortQuaternion.Y * z2;
 
 		return new Vector3d(
 				vec.X * zz2 + vec.Y * wz2,
@@ -506,7 +506,7 @@ public class Vector3d implements Comparable {
 	}
 
 	@Override
-	public int compareTo(@NotNull Object o) {
+	public int compareTo(@NotNull final Object o) {
 		return 0;
 	}
 }

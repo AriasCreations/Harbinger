@@ -10,13 +10,13 @@ public class DiscordEmbedProvider implements IJsonSerializable {
 
 	@Override
 	public JSONObject serialize() throws DiscordEmbedLimitsException {
-		JSONObject obj = new JSONObject();
+		final JSONObject obj = new JSONObject();
 
-		if (!name.isEmpty())
-			obj.put("name", name);
+		if (!this.name.isEmpty())
+			obj.put("name", this.name);
 
-		if (!url.isEmpty())
-			obj.put("url", url);
+		if (!this.url.isEmpty())
+			obj.put("url", this.url);
 
 		return obj;
 	}
@@ -24,8 +24,8 @@ public class DiscordEmbedProvider implements IJsonSerializable {
 	public DiscordEmbedProvider() {
 	}
 
-	public DiscordEmbedProvider(JSONObject obj) {
-		name = obj.getString("name");
-		url = obj.getString("url");
+	public DiscordEmbedProvider(final JSONObject obj) {
+		this.name = obj.getString("name");
+		this.url = obj.getString("url");
 	}
 }

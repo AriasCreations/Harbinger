@@ -4,7 +4,7 @@ import dev.zontreck.harbinger.utils.MathF;
 import dev.zontreck.harbinger.utils.SimUtils;
 
 public class Quaternion {
-	public static final Quaternion Identity = new Quaternion(0f, 0f, 0f, 1f);
+	public static final Quaternion Identity = new Quaternion(0.0f, 0.0f, 0.0f, 1.0f);
 	/// <summary>X value</summary>
 	public float X;
 
@@ -27,127 +27,127 @@ public class Quaternion {
 
 	}
 
-	public Quaternion(float x, float y, float z, float w) {
-		X = x;
-		Y = y;
-		Z = z;
-		W = w;
+	public Quaternion(final float x, final float y, final float z, final float w) {
+		this.X = x;
+		this.Y = y;
+		this.Z = z;
+		this.W = w;
 	}
 
-	public Quaternion(Vector3 vectorPart, float scalarPart) {
-		X = vectorPart.X;
-		Y = vectorPart.Y;
-		Z = vectorPart.Z;
-		W = scalarPart;
+	public Quaternion(final Vector3 vectorPart, final float scalarPart) {
+		this.X = vectorPart.X;
+		this.Y = vectorPart.Y;
+		this.Z = vectorPart.Z;
+		this.W = scalarPart;
 	}
 
-	public Quaternion(float x, float y, float z) {
-		X = x;
-		Y = y;
-		Z = z;
+	public Quaternion(final float x, final float y, final float z) {
+		this.X = x;
+		this.Y = y;
+		this.Z = z;
 
-		var xyzsum = 1f - X * X - Y * Y - Z * Z;
-		W = xyzsum > 1e-6f ? MathF.Sqrt(xyzsum) : 0;
+		final var xyzsum = 1.0f - this.X * this.X - this.Y * this.Y - this.Z * this.Z;
+		this.W = 1.0e-6f < xyzsum ? MathF.Sqrt(xyzsum) : 0;
 	}
 
-	public Quaternion(byte[] byteArray, int pos, boolean normalized) {
-		X = Y = Z = 0;
-		W = 1;
-		FromBytes(byteArray, pos, normalized);
+	public Quaternion(final byte[] byteArray, final int pos, final boolean normalized) {
+		this.X = this.Y = this.Z = 0;
+		this.W = 1;
+		this.FromBytes(byteArray, pos, normalized);
 	}
 
-	public Quaternion(Quaternion q) {
-		this.W = q.W;
-		this.X = q.X;
-		this.Z = q.Z;
-		this.Y = q.Y;
+	public Quaternion(final Quaternion q) {
+		W = q.W;
+		X = q.X;
+		Z = q.Z;
+		Y = q.Y;
 	}
 
-	public Quaternion(MainAxis BaseAxis, float angle) {
+	public Quaternion(final MainAxis BaseAxis, final float angle) {
 		switch (BaseAxis) {
 			case X:
-				W = MathF.Cos(0.5f * angle);
-				X = MathF.Sqrt(1.0f - W * W);
-				Y = 0;
-				Z = 0;
+				this.W = MathF.Cos(0.5f * angle);
+				this.X = MathF.Sqrt(1.0f - this.W * this.W);
+				this.Y = 0;
+				this.Z = 0;
 				break;
 			case Y:
-				W = MathF.Cos(0.5f * angle);
-				Y = MathF.Sqrt(1.0f - W * W);
-				X = 0;
-				Z = 0;
+				this.W = MathF.Cos(0.5f * angle);
+				this.Y = MathF.Sqrt(1.0f - this.W * this.W);
+				this.X = 0;
+				this.Z = 0;
 				break;
 			case Z:
-				W = MathF.Cos(0.5f * angle);
-				Z = MathF.Sqrt(1.0f - W * W);
-				X = 0;
-				Y = 0;
+				this.W = MathF.Cos(0.5f * angle);
+				this.Z = MathF.Sqrt(1.0f - this.W * this.W);
+				this.X = 0;
+				this.Y = 0;
 				break;
 			default: //error
-				X = 0;
-				Y = 0;
-				Z = 0;
-				W = 1;
+				this.X = 0;
+				this.Y = 0;
+				this.Z = 0;
+				this.W = 1;
 				break;
 		}
 	}
 
-	public final boolean ApproxEquals(Quaternion other) {
-		return ApproxEquals(other, 1e-6f);
+	public final boolean ApproxEquals(final Quaternion other) {
+		return this.ApproxEquals(other, 1.0e-6f);
 	}
 
-	public final boolean ApproxEquals(Quaternion other, float tolerance) {
-		return MathF.Abs(W - other.W) < tolerance &&
-				MathF.Abs(Z - other.Z) < tolerance &&
-				MathF.Abs(X - other.X) < tolerance;
+	public final boolean ApproxEquals(final Quaternion other, final float tolerance) {
+		return MathF.Abs(this.W - other.W) < tolerance &&
+				MathF.Abs(this.Z - other.Z) < tolerance &&
+				MathF.Abs(this.X - other.X) < tolerance;
 
 	}
 
 	public final boolean IsIdentity() {
-		return MathF.Abs(W) > 1.0f - 1e-6f;
+		return 1.0f - 1.0e-6f < MathF.Abs(W);
 	}
 
 	public final boolean IsIdentityOrZero() {
-		if (X != 0) return false;
-		if (Y != 0) return false;
-		return Z == 0;
+		if (0 != X) return false;
+		if (0 != Y) return false;
+		return 0 == Z;
 	}
 
 	@Override
 	public String toString() {
-		return String.format("<%f, %f, %f, %f>", X, Y, Z, W);
+		return String.format("<%f, %f, %f, %f>", this.X, this.Y, this.Z, this.W);
 	}
 
-	public final boolean Equals(Quaternion other) {
-		if (X != other.X)
+	public final boolean Equals(final Quaternion other) {
+		if (this.X != other.X)
 			return false;
-		if (Y != other.Y)
+		if (this.Y != other.Y)
 			return false;
-		if (Z != other.Z)
+		if (this.Z != other.Z)
 			return false;
-		return W == other.W;
+		return this.W == other.W;
 	}
 
-	public final boolean NotEqual(Quaternion other) {
-		return !Equals(other);
+	public final boolean NotEqual(final Quaternion other) {
+		return !this.Equals(other);
 	}
 
-	public final boolean Equals(Object obj) {
+	public final boolean Equals(final Object obj) {
 		if (obj instanceof Quaternion)
-			return Equals((Quaternion) obj);
+			return this.Equals((Quaternion) obj);
 		return false;
 	}
 
 
-	public void FromBytes(byte[] byteArray, int pos, boolean normalized) {
-		X = SimUtils.BytesToFloatSafepos(byteArray, pos);
-		Y = SimUtils.BytesToFloatSafepos(byteArray, pos + 4);
-		Z = SimUtils.BytesToFloatSafepos(byteArray, pos + 8);
+	public void FromBytes(final byte[] byteArray, final int pos, final boolean normalized) {
+		this.X = SimUtils.BytesToFloatSafepos(byteArray, pos);
+		this.Y = SimUtils.BytesToFloatSafepos(byteArray, pos + 4);
+		this.Z = SimUtils.BytesToFloatSafepos(byteArray, pos + 8);
 		if (normalized) {
-			var xyzsum = 1f - X * X - Y * Y - Z * Z;
-			W = xyzsum > 1e-6f ? MathF.Sqrt(xyzsum) : 0f;
+			final var xyzsum = 1.0f - this.X * this.X - this.Y * this.Y - this.Z * this.Z;
+			this.W = 1.0e-6f < xyzsum ? MathF.Sqrt(xyzsum) : 0.0f;
 		} else {
-			W = SimUtils.BytesToFloatSafepos(byteArray, pos + 12);
+			this.W = SimUtils.BytesToFloatSafepos(byteArray, pos + 12);
 		}
 	}
 }

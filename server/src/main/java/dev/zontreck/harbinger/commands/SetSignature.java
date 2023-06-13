@@ -9,31 +9,32 @@ import dev.zontreck.harbinger.data.Persist;
 import dev.zontreck.harbinger.data.types.Signature;
 import dev.zontreck.harbinger.events.MemoryAlteredEvent;
 
-public class SetSignature {
+public enum SetSignature {
+	;
 	public static final String SETSIG = "setsig";
 
 	@Subscribe
-	public static void onSetSignature(CommandEvent event) {
-		if (event.command.equals(SETSIG)) {
+	public static void onSetSignature(final CommandEvent event) {
+		if (event.command.equals(SetSignature.SETSIG)) {
 			event.setCancelled(true);
 
 			ConsolePrompt.console.printf("Generate a random signature? [Y/n] ");
-			String yn = ConsolePrompt.console.readLine();
+			final String yn = ConsolePrompt.console.readLine();
 
-			if (yn.equalsIgnoreCase("y") || yn.equals("")) {
-				Signature sig = Signature.makeNew();
+			if ("y".equalsIgnoreCase(yn) || "".equals(yn)) {
+				final Signature sig = Signature.makeNew();
 				Persist.SIGNATURE = sig;
 
 				EventBus.BUS.post(new MemoryAlteredEvent());
 
 			} else {
-				Signature sig = new Signature();
+				final Signature sig = new Signature();
 
 				ConsolePrompt.console.printf("Please enter the first signature: ");
-				String A1 = ConsolePrompt.console.readLine();
+				final String A1 = ConsolePrompt.console.readLine();
 
 				ConsolePrompt.console.printf("Please enter the second signature: ");
-				String A2 = ConsolePrompt.console.readLine();
+				final String A2 = ConsolePrompt.console.readLine();
 
 				sig.v1 = Long.parseLong(A1);
 				sig.v2 = Long.parseLong(A2);

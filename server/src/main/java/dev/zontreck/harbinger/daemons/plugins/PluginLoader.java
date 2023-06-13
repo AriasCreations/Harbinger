@@ -12,16 +12,17 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PluginLoader {
+public enum PluginLoader {
+	;
 	public static final Logger LOGGER = LoggerFactory.getLogger(PluginLoader.class.getSimpleName());
 
 	public static List<Path> JARS = new ArrayList<>();
 
 	public static void scan() throws MalformedURLException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-		ClassLoader loader = ClassLoader.getSystemClassLoader();
+		final ClassLoader loader = ClassLoader.getSystemClassLoader();
 
-		File[] lst = HarbingerServer.PLUGINS.toFile().listFiles();
-		boolean iNextJar = false;
+		final File[] lst = HarbingerServer.PLUGINS.toFile().listFiles();
+		final boolean iNextJar = false;
 		/*for(File f : lst)
 		{
 			URL jar = f.toURI().toURL();
@@ -40,26 +41,26 @@ public class PluginLoader {
 	}
 
 	public static void activate() {
-		Class<?> clazz = Plugin.class;
-		Class<?>[] cls = clazz.getClasses();
-		List<IPlugin> plugins = new ArrayList<>();
+		final Class<?> clazz = Plugin.class;
+		final Class<?>[] cls = clazz.getClasses();
+		final List<IPlugin> plugins = new ArrayList<>();
 
-		for (Class<?> C : cls) {
-			Plugin plug = C.getAnnotation(Plugin.class);
-			LOGGER.info("Activating plugin: " + plug.name());
+		for (final Class<?> C : cls) {
+			final Plugin plug = C.getAnnotation(Plugin.class);
+			PluginLoader.LOGGER.info("Activating plugin: {}", plug.name());
 
 			try {
-				Constructor<IPlugin> Construct = (Constructor<IPlugin>) C.getConstructor();
-				IPlugin plugin = Construct.newInstance();
+				final Constructor<IPlugin> Construct = (Constructor<IPlugin>) C.getConstructor();
+				final IPlugin plugin = Construct.newInstance();
 				plugins.add(plugin);
 
 				plugin.init();
 
-				LOGGER.info("Plugin activated [" + plug.name() + "]");
-			} catch (NoSuchMethodException |
-					 InvocationTargetException |
-					 InstantiationException |
-					 IllegalAccessException e) {
+				PluginLoader.LOGGER.info("Plugin activated [{}]", plug.name());
+			} catch (final NoSuchMethodException |
+						   InvocationTargetException |
+						   InstantiationException |
+						   IllegalAccessException e) {
 				throw new RuntimeException(e);
 			}
 		}

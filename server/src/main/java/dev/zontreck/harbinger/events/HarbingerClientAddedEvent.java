@@ -11,8 +11,8 @@ import dev.zontreck.harbinger.data.types.Server;
 public class HarbingerClientAddedEvent extends Event {
 	public Server server;
 
-	public HarbingerClientAddedEvent(Server x) {
-		server = x;
+	public HarbingerClientAddedEvent(final Server x) {
+		this.server = x;
 	}
 
 	@Override

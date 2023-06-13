@@ -16,9 +16,9 @@ public class Products {
 
 
 	public Entry<List<Entry>> write() {
-		Entry<List<Entry>> tag = Folder.getNew("products");
-		for (Product prod :
-				products) {
+		final Entry<List<Entry>> tag = Folder.getNew("products");
+		for (final Product prod :
+				this.products) {
 			tag.value.add(prod.save());
 		}
 		tag.value.add(EntryUtils.mkLong("sequence", Product.SEQUENCE.get()));
@@ -26,23 +26,23 @@ public class Products {
 
 	}
 
-	public boolean hasProduct(UUID prodID) {
-		return products.stream().filter(v -> v.productID.equals(prodID)).collect(Collectors.toList()).size() > 0;
+	public boolean hasProduct(final UUID prodID) {
+		return 0 < products.stream().filter(v -> v.productID.equals(prodID)).collect(Collectors.toList()).size();
 	}
 
 	public Products() {
 
 	}
 
-	public Products(Entry<List<Entry>> tag) {
+	public Products(final Entry<List<Entry>> tag) {
 		try {
 
-			for (Entry<?> E : tag.value) {
-				products.add(Product.deserialize((Entry<List<Entry>>) E));
+			for (final Entry<?> E : tag.value) {
+				this.products.add(Product.deserialize((Entry<List<Entry>>) E));
 			}
 			Product.SEQUENCE = new AtomicLong(EntryUtils.getInt(Folder.getEntry(tag, "sequence")));
-		} catch (Exception e) {
-			products = new ArrayList<>();
+		} catch (final Exception e) {
+			this.products = new ArrayList<>();
 		}
 	}
 }

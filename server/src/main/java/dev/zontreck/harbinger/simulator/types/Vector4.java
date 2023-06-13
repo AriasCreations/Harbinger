@@ -21,44 +21,44 @@ public class Vector4 implements Comparable<Vector4> {
 	/// <summary>W value</summary>
 	public float W;
 
-	public Vector4(float x, float y, float z, float w) {
-		X = x;
-		Y = y;
-		Z = z;
-		W = w;
+	public Vector4(final float x, final float y, final float z, final float w) {
+		this.X = x;
+		this.Y = y;
+		this.Z = z;
+		this.W = w;
 	}
 
-	public Vector4(Vector2 value, float z, float w) {
-		X = value.X;
-		Y = value.Y;
-		Z = z;
-		W = w;
+	public Vector4(final Vector2 value, final float z, final float w) {
+		this.X = value.X;
+		this.Y = value.Y;
+		this.Z = z;
+		this.W = w;
 	}
 
-	public Vector4(Vector3 value, float w) {
-		X = value.X;
-		Y = value.Y;
-		Z = value.Z;
-		W = w;
+	public Vector4(final Vector3 value, final float w) {
+		this.X = value.X;
+		this.Y = value.Y;
+		this.Z = value.Z;
+		this.W = w;
 	}
 
-	public Vector4(float value) {
-		X = value;
-		Y = value;
-		Z = value;
-		W = value;
+	public Vector4(final float value) {
+		this.X = value;
+		this.Y = value;
+		this.Z = value;
+		this.W = value;
 	}
 
 	public Vector4() {
-		initV4();
+		this.initV4();
 	}
 
 	private void initV4() {
 
-		X = 0;
-		Y = 0;
-		Z = 0;
-		W = 0;
+		this.X = 0;
+		this.Y = 0;
+		this.Z = 0;
+		this.W = 0;
 	}
 
 	/// <summary>
@@ -66,137 +66,133 @@ public class Vector4 implements Comparable<Vector4> {
 /// </summary>
 /// <param name="byteArray">Byte array containing four four-byte floats</param>
 /// <param name="pos">Beginning position in the byte array</param>
-	public Vector4(byte[] byteArray, int pos) {
-		X = SimUtils.BytesToFloatSafepos(byteArray, pos);
-		Y = SimUtils.BytesToFloatSafepos(byteArray, pos + 4);
-		Z = SimUtils.BytesToFloatSafepos(byteArray, pos + 8);
-		W = SimUtils.BytesToFloatSafepos(byteArray, pos + 12);
+	public Vector4(final byte[] byteArray, final int pos) {
+		this.X = SimUtils.BytesToFloatSafepos(byteArray, pos);
+		this.Y = SimUtils.BytesToFloatSafepos(byteArray, pos + 4);
+		this.Z = SimUtils.BytesToFloatSafepos(byteArray, pos + 8);
+		this.W = SimUtils.BytesToFloatSafepos(byteArray, pos + 12);
 	}
 
-	public Vector4(Vector4 value) {
-		X = value.X;
-		Y = value.Y;
-		Z = value.Z;
-		W = value.W;
+	public Vector4(final Vector4 value) {
+		this.X = value.X;
+		this.Y = value.Y;
+		this.Z = value.Z;
+		this.W = value.W;
 	}
 
 	public void Abs() {
-		X = MathF.Abs(X);
-		Y = MathF.Abs(Y);
-		Z = MathF.Abs(Z);
-		W = MathF.Abs(W);
+		this.X = MathF.Abs(this.X);
+		this.Y = MathF.Abs(this.Y);
+		this.Z = MathF.Abs(this.Z);
+		this.W = MathF.Abs(this.W);
 	}
 
-	public void Add(Vector4 v) {
-		X += v.X;
-		Y += v.Y;
-		Z += v.Z;
-		W += v.W;
+	public void Add(final Vector4 v) {
+		this.X += v.X;
+		this.Y += v.Y;
+		this.Z += v.Z;
+		this.W += v.W;
 	}
 
-	public void Sub(Vector4 v) {
-		X -= v.X;
-		Y -= v.Y;
-		Z -= v.Z;
-		W -= v.W;
+	public void Sub(final Vector4 v) {
+		this.X -= v.X;
+		this.Y -= v.Y;
+		this.Z -= v.Z;
+		this.W -= v.W;
 	}
 
-	public void Clamp(float min, float max) {
-		if (X < min) X = min;
-		else if (X > max) X = max;
+	public void Clamp(final float min, final float max) {
+		if (this.X < min) this.X = min;
+		else if (this.X > max) this.X = max;
 
-		if (Y < min) Y = min;
-		else if (Y > max) Y = max;
+		if (this.Y < min) this.Y = min;
+		else if (this.Y > max) this.Y = max;
 
-		if (Z < min) Z = min;
-		else if (Z > max) Z = max;
+		if (this.Z < min) this.Z = min;
+		else if (this.Z > max) this.Z = max;
 
-		if (W < min) W = min;
-		else if (W > max) W = max;
+		if (this.W < min) this.W = min;
+		else if (this.W > max) this.W = max;
 	}
 
-	public void Min(Vector4 v) {
-		if (v.X < X) X = v.X;
-		if (v.Y < Y) Y = v.Y;
-		if (v.Z < Z) Z = v.Z;
-		if (v.W < W) W = v.W;
+	public void Min(final Vector4 v) {
+		if (v.X < this.X) this.X = v.X;
+		if (v.Y < this.Y) this.Y = v.Y;
+		if (v.Z < this.Z) this.Z = v.Z;
+		if (v.W < this.W) this.W = v.W;
 	}
 
-	public void Max(Vector4 v) {
-		if (v.X > X) X = v.X;
-		if (v.Y > Y) Y = v.Y;
-		if (v.Z > Z) Z = v.Z;
-		if (v.W > W) W = v.W;
+	public void Max(final Vector4 v) {
+		if (v.X > this.X) this.X = v.X;
+		if (v.Y > this.Y) this.Y = v.Y;
+		if (v.Z > this.Z) this.Z = v.Z;
+		if (v.W > this.W) this.W = v.W;
 	}
 
 	public float Length() {
-		return MathF.Sqrt(X * X + Y * Y + Z * Z + W * W);
+		return MathF.Sqrt(this.X * this.X + this.Y * this.Y + this.Z * this.Z + this.W * this.W);
 	}
 
 	public float LengthSquared() {
-		return X * X + Y * Y + Z * Z + W * W;
+		return this.X * this.X + this.Y * this.Y + this.Z * this.Z + this.W * this.W;
 	}
 
 	public void Normalize() {
-		var factor = LengthSquared();
-		if (factor > 1e-6) {
-			factor = 1f / MathF.Sqrt(factor);
-			X *= factor;
-			Y *= factor;
-			Z *= factor;
-			W *= factor;
+		var factor = this.LengthSquared();
+		if (1.0e-6 < factor) {
+			factor = 1.0f / MathF.Sqrt(factor);
+			this.X *= factor;
+			this.Y *= factor;
+			this.Z *= factor;
+			this.W *= factor;
 		} else {
-			initV4();
+			this.initV4();
 		}
 	}
 
-	public boolean ApproxEquals(Vector4 vec, float tolerance) {
-		return SimUtils.ApproxEqual(X, vec.X, tolerance) &&
-				SimUtils.ApproxEqual(Y, vec.Y, tolerance) &&
-				SimUtils.ApproxEqual(Z, vec.Z, tolerance) &&
-				SimUtils.ApproxEqual(W, vec.W, tolerance);
+	public boolean ApproxEquals(final Vector4 vec, final float tolerance) {
+		return SimUtils.ApproxEqual(this.X, vec.X, tolerance) &&
+				SimUtils.ApproxEqual(this.Y, vec.Y, tolerance) &&
+				SimUtils.ApproxEqual(this.Z, vec.Z, tolerance) &&
+				SimUtils.ApproxEqual(this.W, vec.W, tolerance);
 	}
 
-	public boolean ApproxEquals(Vector4 vec) {
-		return SimUtils.ApproxEqual(X, vec.X) &&
-				SimUtils.ApproxEqual(Y, vec.Y) &&
-				SimUtils.ApproxEqual(Z, vec.Z) &&
-				SimUtils.ApproxEqual(W, vec.W);
+	public boolean ApproxEquals(final Vector4 vec) {
+		return SimUtils.ApproxEqual(this.X, vec.X) &&
+				SimUtils.ApproxEqual(this.Y, vec.Y) &&
+				SimUtils.ApproxEqual(this.Z, vec.Z) &&
+				SimUtils.ApproxEqual(this.W, vec.W);
 	}
 
 	public boolean IsZero() {
-		if (X != 0)
+		if (0 != X)
 			return false;
-		if (Y != 0)
+		if (0 != Y)
 			return false;
-		if (Z != 0)
+		if (0 != Z)
 			return false;
-		if (W != 0)
-			return false;
-		return true;
+		return 0 == W;
 	}
 
 	public boolean IsNotZero() {
-		if (X != 0)
+		if (0 != X)
 			return true;
-		if (Y != 0)
+		if (0 != Y)
 			return true;
-		if (Z != 0)
+		if (0 != Z)
 			return true;
-		if (W != 0)
-			return true;
-		return false;
+		return 0 != W;
 	}
 
-	public float Dot(Vector4 value2) {
-		return X * value2.X + Y * value2.Y + Z * value2.Z + W * value2.W;
+	public float Dot(final Vector4 value2) {
+		return this.X * value2.X + this.Y * value2.Y + this.Z * value2.Z + this.W * value2.W;
 	}
 
 	/// <summary>
 ///     Test if this vector is composed of all finite numbers
 /// </summary>
 	public boolean IsFinite() {
-		return SimUtils.IsFinite(X) && SimUtils.IsFinite(Y) && SimUtils.IsFinite(Z) && SimUtils.IsFinite(W);
+		return SimUtils.IsFinite(this.X) && SimUtils.IsFinite(this.Y) && SimUtils.IsFinite(this.Z) && SimUtils.IsFinite(this.W);
 	}
 
 	/// <summary>
@@ -204,11 +200,11 @@ public class Vector4 implements Comparable<Vector4> {
 /// </summary>
 /// <param name="byteArray">Byte array containing a 16 byte vector</param>
 /// <param name="pos">Beginning position in the byte array</param>
-	public void FromBytes(byte[] byteArray, int pos) {
-		X = SimUtils.BytesToFloatSafepos(byteArray, pos);
-		Y = SimUtils.BytesToFloatSafepos(byteArray, pos + 4);
-		Z = SimUtils.BytesToFloatSafepos(byteArray, pos + 8);
-		W = SimUtils.BytesToFloatSafepos(byteArray, pos + 12);
+	public void FromBytes(final byte[] byteArray, final int pos) {
+		this.X = SimUtils.BytesToFloatSafepos(byteArray, pos);
+		this.Y = SimUtils.BytesToFloatSafepos(byteArray, pos + 4);
+		this.Z = SimUtils.BytesToFloatSafepos(byteArray, pos + 8);
+		this.W = SimUtils.BytesToFloatSafepos(byteArray, pos + 12);
 	}
 
 	/// <summary>
@@ -216,20 +212,20 @@ public class Vector4 implements Comparable<Vector4> {
 /// </summary>
 /// <returns>A 16 byte array containing X, Y, Z, and W</returns>
 	public byte[] GetBytes() {
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		final ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		try {
-			baos.write(SimUtils.FloatToBytesSafepos(X));
-			baos.write(SimUtils.FloatToBytesSafepos(Y));
-			baos.write(SimUtils.FloatToBytesSafepos(Z));
-			baos.write(SimUtils.FloatToBytesSafepos(W));
-		} catch (IOException e) {
+			baos.write(SimUtils.FloatToBytesSafepos(this.X));
+			baos.write(SimUtils.FloatToBytesSafepos(this.Y));
+			baos.write(SimUtils.FloatToBytesSafepos(this.Z));
+			baos.write(SimUtils.FloatToBytesSafepos(this.W));
+		} catch (final IOException e) {
 			throw new RuntimeException(e);
 		}
 		return baos.toByteArray();
 	}
 
 
-	public static Vector4 Add(Vector4 value1, Vector4 value2) {
+	public static Vector4 Add(final Vector4 value1, final Vector4 value2) {
 		return new Vector4(
 				value1.W + value2.W,
 				value1.X + value2.X,
@@ -238,7 +234,7 @@ public class Vector4 implements Comparable<Vector4> {
 		);
 	}
 
-	public static Vector4 Clamp(Vector4 value1, float min, float max) {
+	public static Vector4 Clamp(final Vector4 value1, final float min, final float max) {
 		return new Vector4(
 				MathF.Clamp(value1.X, min, max),
 				MathF.Clamp(value1.Y, min, max),
@@ -246,7 +242,7 @@ public class Vector4 implements Comparable<Vector4> {
 				MathF.Clamp(value1.W, min, max));
 	}
 
-	public static Vector4 Clamp(Vector4 value1, Vector4 min, Vector4 max) {
+	public static Vector4 Clamp(final Vector4 value1, final Vector4 min, final Vector4 max) {
 		return new Vector4(
 				MathF.Clamp(value1.X, min.X, max.X),
 				MathF.Clamp(value1.Y, min.Y, max.Y),
@@ -254,11 +250,11 @@ public class Vector4 implements Comparable<Vector4> {
 				MathF.Clamp(value1.W, min.W, max.W));
 	}
 
-	public static float Distance(Vector4 value1, Vector4 value2) {
-		return MathF.Sqrt(DistanceSquared(value1, value2));
+	public static float Distance(final Vector4 value1, final Vector4 value2) {
+		return MathF.Sqrt(Vector4.DistanceSquared(value1, value2));
 	}
 
-	public static float DistanceSquared(Vector4 value1, Vector4 value2) {
+	public static float DistanceSquared(final Vector4 value1, final Vector4 value2) {
 		return
 				(value1.X - value2.X) * (value1.X - value2.X) +
 						(value1.Y - value2.Y) * (value1.Y - value2.Y) +
@@ -266,7 +262,7 @@ public class Vector4 implements Comparable<Vector4> {
 						(value1.W - value2.W) * (value1.W - value2.W);
 	}
 
-	public static Vector4 Divide(Vector4 value1, Vector4 value2) {
+	public static Vector4 Divide(final Vector4 value1, final Vector4 value2) {
 		return new Vector4(
 				value1.X / value2.X,
 				value1.Y / value2.Y,
@@ -275,8 +271,8 @@ public class Vector4 implements Comparable<Vector4> {
 		);
 	}
 
-	public static Vector4 Divide(Vector4 value1, float divider) {
-		var factor = 1f / divider;
+	public static Vector4 Divide(final Vector4 value1, final float divider) {
+		final var factor = 1.0f / divider;
 		return new Vector4(
 				value1.X * factor,
 				value1.Y * factor,
@@ -285,11 +281,11 @@ public class Vector4 implements Comparable<Vector4> {
 		);
 	}
 
-	public static float Dot(Vector4 vector1, Vector4 vector2) {
+	public static float Dot(final Vector4 vector1, final Vector4 vector2) {
 		return vector1.X * vector2.X + vector1.Y * vector2.Y + vector1.Z * vector2.Z + vector1.W * vector2.W;
 	}
 
-	public static Vector4 Lerp(Vector4 value1, Vector4 value2, float amount) {
+	public static Vector4 Lerp(final Vector4 value1, final Vector4 value2, final float amount) {
 		return new Vector4(
 				SimUtils.Lerp(value1.X, value2.X, amount),
 				SimUtils.Lerp(value1.Y, value2.Y, amount),
@@ -297,7 +293,7 @@ public class Vector4 implements Comparable<Vector4> {
 				SimUtils.Lerp(value1.W, value2.W, amount));
 	}
 
-	public static Vector4 Max(Vector4 value1, Vector4 value2) {
+	public static Vector4 Max(final Vector4 value1, final Vector4 value2) {
 		return new Vector4(
 				MathF.Max(value1.X, value2.X),
 				MathF.Max(value1.Y, value2.Y),
@@ -305,7 +301,7 @@ public class Vector4 implements Comparable<Vector4> {
 				MathF.Max(value1.W, value2.W));
 	}
 
-	public static Vector4 Min(Vector4 value1, Vector4 value2) {
+	public static Vector4 Min(final Vector4 value1, final Vector4 value2) {
 		return new Vector4(
 				MathF.Min(value1.X, value2.X),
 				MathF.Min(value1.Y, value2.Y),
@@ -313,7 +309,7 @@ public class Vector4 implements Comparable<Vector4> {
 				MathF.Min(value1.W, value2.W));
 	}
 
-	public static Vector4 Multiply(Vector4 value1, Vector4 value2) {
+	public static Vector4 Multiply(final Vector4 value1, final Vector4 value2) {
 		return new Vector4(
 				value1.X * value2.X,
 				value1.Y * value2.Y,
@@ -321,7 +317,7 @@ public class Vector4 implements Comparable<Vector4> {
 				value1.W * value2.W);
 	}
 
-	public static Vector4 Multiply(Vector4 value1, float scaleFactor) {
+	public static Vector4 Multiply(final Vector4 value1, final float scaleFactor) {
 		return new Vector4(
 				value1.X * scaleFactor,
 				value1.Y * scaleFactor,
@@ -329,7 +325,7 @@ public class Vector4 implements Comparable<Vector4> {
 				value1.W * scaleFactor);
 	}
 
-	public static Vector4 Negate(Vector4 value) {
+	public static Vector4 Negate(final Vector4 value) {
 		return new Vector4(
 				-value.X,
 				-value.Y,
@@ -337,10 +333,10 @@ public class Vector4 implements Comparable<Vector4> {
 				-value.W);
 	}
 
-	public static Vector4 Normalize(Vector4 vector) {
+	public static Vector4 Normalize(final Vector4 vector) {
 		var factor = vector.LengthSquared();
-		if (factor > 1e-6) {
-			factor = 1f / MathF.Sqrt(factor);
+		if (1.0e-6 < factor) {
+			factor = 1.0f / MathF.Sqrt(factor);
 			return new Vector4(
 					vector.X * factor,
 					vector.Y * factor,
@@ -348,10 +344,10 @@ public class Vector4 implements Comparable<Vector4> {
 					vector.W * factor);
 		}
 
-		return Zero;
+		return Vector4.Zero;
 	}
 
-	public static Vector4 SmoothStep(Vector4 value1, Vector4 value2, float amount) {
+	public static Vector4 SmoothStep(final Vector4 value1, final Vector4 value2, final float amount) {
 		return new Vector4(
 				SimUtils.SmoothStep(value1.X, value2.X, amount),
 				SimUtils.SmoothStep(value1.Y, value2.Y, amount),
@@ -359,7 +355,7 @@ public class Vector4 implements Comparable<Vector4> {
 				SimUtils.SmoothStep(value1.W, value2.W, amount));
 	}
 
-	public static Vector4 Subtract(Vector4 value1, Vector4 value2) {
+	public static Vector4 Subtract(final Vector4 value1, final Vector4 value2) {
 		return new Vector4(
 				value1.W - value2.W,
 				value1.X - value2.X,
@@ -367,7 +363,7 @@ public class Vector4 implements Comparable<Vector4> {
 				value1.Z - value2.Z);
 	}
 
-	public static Vector4 Transform(Vector2 position, Matrix4 matrix) {
+	public static Vector4 Transform(final Vector2 position, final Matrix4 matrix) {
 		return new Vector4(
 				position.X * matrix.M11 + position.Y * matrix.M21 + matrix.M41,
 				position.X * matrix.M12 + position.Y * matrix.M22 + matrix.M42,
@@ -375,7 +371,7 @@ public class Vector4 implements Comparable<Vector4> {
 				position.X * matrix.M14 + position.Y * matrix.M24 + matrix.M44);
 	}
 
-	public static Vector4 Transform(Vector3 position, Matrix4 matrix) {
+	public static Vector4 Transform(final Vector3 position, final Matrix4 matrix) {
 		return new Vector4(
 				position.X * matrix.M11 + position.Y * matrix.M21 + position.Z * matrix.M31 + matrix.M41,
 				position.X * matrix.M12 + position.Y * matrix.M22 + position.Z * matrix.M32 + matrix.M42,
@@ -383,7 +379,7 @@ public class Vector4 implements Comparable<Vector4> {
 				position.X * matrix.M14 + position.Y * matrix.M24 + position.Z * matrix.M34 + matrix.M44);
 	}
 
-	public static Vector4 Transform(Vector4 vector, Matrix4 matrix) {
+	public static Vector4 Transform(final Vector4 vector, final Matrix4 matrix) {
 		return new Vector4(
 				vector.X * matrix.M11 + vector.Y * matrix.M21 + vector.Z * matrix.M31 + vector.W * matrix.M41,
 				vector.X * matrix.M12 + vector.Y * matrix.M22 + vector.Z * matrix.M32 + vector.W * matrix.M42,
@@ -392,59 +388,52 @@ public class Vector4 implements Comparable<Vector4> {
 	}
 
 
-	public boolean Equals(Object obj) {
-		if (!(obj instanceof Vector4 other))
+	public boolean Equals(final Object obj) {
+		if (!(obj instanceof final Vector4 other))
 			return false;
 
-		if (X != other.X)
+		if (this.X != other.X)
 			return false;
-		if (Y != other.Y)
+		if (this.Y != other.Y)
 			return false;
-		if (Z != other.Z)
+		if (this.Z != other.Z)
 			return false;
-		if (W != other.W)
-			return false;
-		return true;
+		return this.W == other.W;
 	}
 
-	public boolean Equals(Vector4 other) {
-		if (X != other.X)
+	public boolean Equals(final Vector4 other) {
+		if (this.X != other.X)
 			return false;
-		if (Y != other.Y)
+		if (this.Y != other.Y)
 			return false;
-		if (Z != other.Z)
+		if (this.Z != other.Z)
 			return false;
-		if (W != other.W)
-			return false;
-		return true;
+		return this.W == other.W;
 	}
 
 
-	public boolean NotEqual(Vector4 other) {
-		if (X != other.X)
+	public boolean NotEqual(final Vector4 other) {
+		if (this.X != other.X)
 			return true;
-		if (Y != other.Y)
+		if (this.Y != other.Y)
 			return true;
-		if (Z != other.Z)
+		if (this.Z != other.Z)
 			return true;
-		if (W != other.W)
-			return true;
-		return false;
+		return this.W != other.W;
 	}
 
 	@Override
 	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append('<');
-		sb.append(X);
-		sb.append(", ");
-		sb.append(Y);
-		sb.append(", ");
-		sb.append(Z);
-		sb.append(", ");
-		sb.append(W);
-		sb.append('>');
-		return sb.toString();
+		final String sb = "<" +
+				this.X +
+				", " +
+				this.Y +
+				", " +
+				this.Z +
+				", " +
+				this.W +
+				'>';
+		return sb;
 	}
 
 
@@ -452,34 +441,34 @@ public class Vector4 implements Comparable<Vector4> {
 	public static final Vector4 Zero = new Vector4();
 
 	/// <summary>A vector with a value of 1,1,1,1</summary>
-	public static final Vector4 One = new Vector4(1f, 1f, 1f, 1f);
+	public static final Vector4 One = new Vector4(1.0f, 1.0f, 1.0f, 1.0f);
 
 	/// <summary>A vector with a value of 1,0,0,0</summary>
-	public static final Vector4 UnitX = new Vector4(1f, 0f, 0f, 0f);
+	public static final Vector4 UnitX = new Vector4(1.0f, 0.0f, 0.0f, 0.0f);
 
 	/// <summary>A vector with a value of 0,1,0,0</summary>
-	public static final Vector4 UnitY = new Vector4(0f, 1f, 0f, 0f);
+	public static final Vector4 UnitY = new Vector4(0.0f, 1.0f, 0.0f, 0.0f);
 
 	/// <summary>A vector with a value of 0,0,1,0</summary>
-	public static final Vector4 UnitZ = new Vector4(0f, 0f, 1f, 0f);
+	public static final Vector4 UnitZ = new Vector4(0.0f, 0.0f, 1.0f, 0.0f);
 
 	/// <summary>A vector with a value of 0,0,0,1</summary>
-	public static final Vector4 UnitW = new Vector4(0f, 0f, 0f, 1f);
+	public static final Vector4 UnitW = new Vector4(0.0f, 0.0f, 0.0f, 1.0f);
 
 	public static final Vector4 MinValue = new Vector4(Float.MIN_VALUE);
 	public static final Vector4 MaxValue = new Vector4(Float.MAX_VALUE);
 
 	@Override
-	public int compareTo(@NotNull Vector4 vector4) {
+	public int compareTo(@NotNull final Vector4 vector4) {
 
-		if (vector4.X > X) return 1;
-		else if (vector4.X < X) return -1;
-		if (vector4.Y > Y) return 1;
-		else if (vector4.Y < Y) return -1;
-		if (vector4.Z > Z) return 1;
-		else if (vector4.Z < Z) return -1;
-		if (vector4.W > W) return 1;
-		else if (vector4.W < W) return -1;
+		if (vector4.X > this.X) return 1;
+		else if (vector4.X < this.X) return -1;
+		if (vector4.Y > this.Y) return 1;
+		else if (vector4.Y < this.Y) return -1;
+		if (vector4.Z > this.Z) return 1;
+		else if (vector4.Z < this.Z) return -1;
+		if (vector4.W > this.W) return 1;
+		else if (vector4.W < this.W) return -1;
 
 
 		return 0;

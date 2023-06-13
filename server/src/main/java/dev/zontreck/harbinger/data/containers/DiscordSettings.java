@@ -16,10 +16,10 @@ public class DiscordSettings {
 	public Map<String, String> WEBHOOKS = new HashMap<>();
 
 	public Entry<List<Entry>> save() {
-		Entry<List<Entry>> tag = Folder.getNew("discord");
-		tag.value.add(EntryUtils.mkStr("token", BOT_TOKEN));
-		Entry<List<Entry>> hooks = Folder.getNew("hooks");
-		for (Map.Entry<String, String> e : WEBHOOKS.entrySet()) {
+		final Entry<List<Entry>> tag = Folder.getNew("discord");
+		tag.value.add(EntryUtils.mkStr("token", this.BOT_TOKEN));
+		final Entry<List<Entry>> hooks = Folder.getNew("hooks");
+		for (final Map.Entry<String, String> e : this.WEBHOOKS.entrySet()) {
 			hooks.value.add(EntryUtils.mkStr(e.getKey(), e.getValue()));
 		}
 		tag.value.add(hooks);
@@ -32,16 +32,16 @@ public class DiscordSettings {
 	public DiscordSettings() {
 	}
 
-	public DiscordSettings(Entry<List<Entry>> tag) {
+	public DiscordSettings(final Entry<List<Entry>> tag) {
 		try {
 
-			BOT_TOKEN = EntryUtils.getStr(Folder.getEntry(tag, "token"));
+			this.BOT_TOKEN = EntryUtils.getStr(Folder.getEntry(tag, "token"));
 
-			Entry<List<Entry>> hooks = Folder.getEntry(tag, "hooks");
-			for (Entry<String> e : hooks.value) {
-				WEBHOOKS.put(e.name, e.value);
+			final Entry<List<Entry>> hooks = Folder.getEntry(tag, "hooks");
+			for (final Entry<String> e : hooks.value) {
+				this.WEBHOOKS.put(e.name, e.value);
 			}
-		} catch (Exception e) {
+		} catch (final Exception e) {
 		}
 
 	}

@@ -10,7 +10,8 @@ import dev.zontreck.harbinger.daemons.HTTPServer;
 import dev.zontreck.harbinger.data.Persist;
 import dev.zontreck.harbinger.events.MemoryAlteredEvent;
 
-public class HTTPServerCommands {
+public enum HTTPServerCommands {
+	;
 	public static final String HTTPCommands = "httpserver";
 
 	public static final String SET_PORT = "setport";
@@ -19,16 +20,16 @@ public class HTTPServerCommands {
 
 
 	@Subscribe
-	public static void onCommand(CommandEvent ev) {
-		if (ev.command.equals(HTTPCommands)) {
-			if (ev.arguments.size() == 0) {
+	public static void onCommand(final CommandEvent ev) {
+		if (ev.command.equals(HTTPServerCommands.HTTPCommands)) {
+			if (0 == ev.arguments.size()) {
 				CommandRegistry.LOGGER.info("The following are the accepted subcommands: \n\n"
-						+ START + "\t\tStarts the server\n"
-						+ STOP + "\t\tStops the server\n"
-						+ SET_PORT + "\t\tSets the port number for the server"
+						+ HTTPServerCommands.START + "\t\tStarts the server\n"
+						+ HTTPServerCommands.STOP + "\t\tStops the server\n"
+						+ HTTPServerCommands.SET_PORT + "\t\tSets the port number for the server"
 				);
 			} else {
-				if (ev.arguments.get(0).equals(SET_PORT)) {
+				if (ev.arguments.get(0).equals(HTTPServerCommands.SET_PORT)) {
 					ev.setCancelled(true);
 
 					ConsolePrompt.console.printf("What should the port be changed to? [" + Persist.serverSettings.port + "] ");
@@ -36,7 +37,7 @@ public class HTTPServerCommands {
 					EventBus.BUS.post(new MemoryAlteredEvent());
 
 					Terminal.startTerminal();
-				} else if (ev.arguments.get(0).equals(START)) {
+				} else if (ev.arguments.get(0).equals(HTTPServerCommands.START)) {
 					CommandRegistry.LOGGER.info("Starting up server...");
 					if (Persist.serverSettings.enabled) {
 						CommandRegistry.LOGGER.info("Fatal: The server is already running");
@@ -45,7 +46,7 @@ public class HTTPServerCommands {
 					Persist.serverSettings.enabled = true;
 					HTTPServer.startServer();
 					EventBus.BUS.post(new MemoryAlteredEvent());
-				} else if (ev.arguments.get(0).equals(STOP)) {
+				} else if (ev.arguments.get(0).equals(HTTPServerCommands.STOP)) {
 					CommandRegistry.LOGGER.info("Stopping server...");
 					if (!Persist.serverSettings.enabled) {
 						CommandRegistry.LOGGER.info("Fatal: The server is already not running");

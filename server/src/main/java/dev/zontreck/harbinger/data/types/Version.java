@@ -13,26 +13,26 @@ public class Version {
 
 	public static final Logger LOGGER = LoggerFactory.getLogger(Version.class.getName());
 
-	public Version(String ver) {
-		String[] str = ver.split("\\.");
-		for (String string : str) {
-			versionDigits.add(Integer.parseInt(string));
+	public Version(final String ver) {
+		final String[] str = ver.split("\\.");
+		for (final String string : str) {
+			this.versionDigits.add(Integer.parseInt(string));
 		}
 	}
 
-	public Version(Entry<int[]> tag) {
-		versionDigits = Lists.newArrayList();
-		for (Integer integer : tag.value) {
-			versionDigits.add(integer);
+	public Version(final Entry<int[]> tag) {
+		this.versionDigits = Lists.newArrayList();
+		for (final Integer integer : tag.value) {
+			this.versionDigits.add(integer);
 		}
 	}
 
 	public Entry<int[]> save() {
 
-		int[] arr = new int[versionDigits.size()];
+		final int[] arr = new int[this.versionDigits.size()];
 
-		for (int i = 0; i < versionDigits.size(); i++) {
-			int integer = versionDigits.get(i);
+		for (int i = 0; i < this.versionDigits.size(); i++) {
+			final int integer = this.versionDigits.get(i);
 			arr[i] = integer;
 		}
 
@@ -43,7 +43,7 @@ public class Version {
 	public String toString() {
 		String ret = "";
 
-		Iterator<Integer> it = versionDigits.iterator();
+		final Iterator<Integer> it = this.versionDigits.iterator();
 		while (it.hasNext()) {
 			ret += it.next();
 
@@ -61,25 +61,25 @@ public class Version {
 	 * @param position
 	 * @return True if the number was incremented
 	 */
-	public boolean increment(int position) {
-		if (versionDigits.size() <= position) return false;
-		Integer it = versionDigits.get(position);
+	public boolean increment(final int position) {
+		if (this.versionDigits.size() <= position) return false;
+		Integer it = this.versionDigits.get(position);
 		it++;
-		versionDigits.set(position, it);
+		this.versionDigits.set(position, it);
 
 		return true;
 	}
 
 
-	public boolean isNewer(Version other) throws Exception {
-		if (other.versionDigits.size() != versionDigits.size()) {
-			LOGGER.error("Cannot proceed, the versions do not have the same number of digits");
+	public boolean isNewer(final Version other) throws Exception {
+		if (other.versionDigits.size() != this.versionDigits.size()) {
+			Version.LOGGER.error("Cannot proceed, the versions do not have the same number of digits");
 			return false;
 
 		} else {
-			for (int i = 0; i < versionDigits.size(); i++) {
-				int v1 = versionDigits.get(i);
-				int v2 = other.versionDigits.get(i);
+			for (int i = 0; i < this.versionDigits.size(); i++) {
+				final int v1 = this.versionDigits.get(i);
+				final int v2 = other.versionDigits.get(i);
 
 				if (v1 < v2) {
 					return true;
@@ -90,13 +90,13 @@ public class Version {
 		}
 	}
 
-	public boolean isSame(Version other) {
-		if (other.versionDigits.size() != versionDigits.size())
+	public boolean isSame(final Version other) {
+		if (other.versionDigits.size() != this.versionDigits.size())
 			return false;
 
-		for (int i = 0; i < versionDigits.size(); i++) {
-			int v1 = versionDigits.get(i);
-			int v2 = other.versionDigits.get(i);
+		for (int i = 0; i < this.versionDigits.size(); i++) {
+			final int v1 = this.versionDigits.get(i);
+			final int v2 = other.versionDigits.get(i);
 
 			if (v1 != v2) return false;
 		}

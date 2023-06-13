@@ -6,17 +6,18 @@ import dev.zontreck.harbinger.data.Persist;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 
 public class VersionCheckHandler implements HttpHandler {
 	@Override
-	public void handle(HttpExchange httpExchange) throws IOException {
-		String reply = Persist.HARBINGER_VERSION;
+	public void handle(final HttpExchange httpExchange) throws IOException {
+		final String reply = Persist.HARBINGER_VERSION;
 
 
-		byte[] bRep = reply.getBytes();
+		final byte[] bRep = reply.getBytes(StandardCharsets.UTF_8);
 		httpExchange.getResponseHeaders().add("Content-Type", "text/plain");
 		httpExchange.sendResponseHeaders(200, bRep.length);
-		OutputStream os = httpExchange.getResponseBody();
+		final OutputStream os = httpExchange.getResponseBody();
 		os.write(bRep);
 		os.close();
 	}

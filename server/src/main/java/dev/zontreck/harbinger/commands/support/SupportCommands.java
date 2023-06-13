@@ -13,41 +13,42 @@ import dev.zontreck.harbinger.events.MemoryAlteredEvent;
 
 import java.util.UUID;
 
-public class SupportCommands {
+public enum SupportCommands {
+	;
 	public static final String LIST_SUPPORT = "list";
 	public static final String SUPPORT_ADD = "add"; // Starts a interactive prompt
 	public static final String SUPPORT = "support";
 
 
 	@Subscribe
-	public static void onListSupport(CommandEvent ev) {
-		if (ev.command.equals(SUPPORT)) {
-			if (ev.arguments.size() == 0) {
+	public static void onListSupport(final CommandEvent ev) {
+		if (ev.command.equals(SupportCommands.SUPPORT)) {
+			if (0 == ev.arguments.size()) {
 				CommandRegistry.LOGGER.info("The following are the accepted subcommands\n \n" +
 
-						LIST_SUPPORT + "\t\t- Lists all support representatives\n" +
-						SUPPORT_ADD + "\t\t- Adds a new support rep\n"
+						SupportCommands.LIST_SUPPORT + "\t\t- Lists all support representatives\n" +
+						SupportCommands.SUPPORT_ADD + "\t\t- Adds a new support rep\n"
 				);
 			} else {
-				if (ev.arguments.get(0).equals(LIST_SUPPORT)) {
-					CommandRegistry.LOGGER.info("The following are the support reps: \n" + SupportReps.dump());
-				} else if (ev.arguments.get(0).equals(SUPPORT_ADD)) {
+				if (ev.arguments.get(0).equals(SupportCommands.LIST_SUPPORT)) {
+					CommandRegistry.LOGGER.info("The following are the support reps: \n{}", SupportReps.dump());
+				} else if (ev.arguments.get(0).equals(SupportCommands.SUPPORT_ADD)) {
 					ev.setCancelled(true);
 
 					ConsolePrompt.console.printf("\nPlease enter the Rep's UUID > ");
-					String input = ConsolePrompt.console.readLine();
+					final String input = ConsolePrompt.console.readLine();
 					ConsolePrompt.console.printf("\nPlease enter the Rep's Second Life User Name (Not display) > ");
-					String name = ConsolePrompt.console.readLine();
+					final String name = ConsolePrompt.console.readLine();
 					ConsolePrompt.console.printf("\nWhat level is this user? \n");
-					for (PermissionLevel lPermissionLevel : PermissionLevel.values()) {
+					for (final PermissionLevel lPermissionLevel : PermissionLevel.values()) {
 						System.out.println(lPermissionLevel.getFlag() + "\t\t-\t" + lPermissionLevel.name());
 
 					}
 					ConsolePrompt.console.printf("\nChoose a level > ");
-					String lvl = ConsolePrompt.console.readLine();
-					PermissionLevel perm = PermissionLevel.of(Integer.parseInt(lvl));
+					final String lvl = ConsolePrompt.console.readLine();
+					final PermissionLevel perm = PermissionLevel.of(Integer.parseInt(lvl));
 
-					Person p = new Person(UUID.fromString(input), name, perm);
+					final Person p = new Person(UUID.fromString(input), name, perm);
 					SupportReps.add(p);
 
 					Terminal.startTerminal();

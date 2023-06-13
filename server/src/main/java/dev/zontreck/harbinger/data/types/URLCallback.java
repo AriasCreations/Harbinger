@@ -16,21 +16,21 @@ public class URLCallback {
 	public JSONObject forwarded;
 	public Server serverForRequest;
 
-	public URLCallback(String request) {
-		forwarded = new JSONObject(request);
+	public URLCallback(final String request) {
+		this.forwarded = new JSONObject(request);
 
-		String product = forwarded.getString("product");
-		Product p = Persist.products.products.stream().filter(v -> v.productName.equals(product)).collect(Collectors.toList()).get(0);
-		serverForRequest = p.containingServer;
-		forwarded.put("product", p.productItem);
+		final String product = this.forwarded.getString("product");
+		final Product p = Persist.products.products.stream().filter(v -> v.productName.equals(product)).collect(Collectors.toList()).get(0);
+		this.serverForRequest = p.containingServer;
+		this.forwarded.put("product", p.productItem);
 	}
 
 	/**
 	 * Actioning will submit the request
 	 */
 	public void actionIt() throws URISyntaxException, IOException, InterruptedException {
-		HttpRequest request = HttpRequest.newBuilder(new URI(serverForRequest.serverURL)).POST(HttpRequest.BodyPublishers.ofString(forwarded.toString())).build();
-		HttpClient client = HttpClient.newBuilder().build();
+		final HttpRequest request = HttpRequest.newBuilder(new URI(this.serverForRequest.serverURL)).POST(HttpRequest.BodyPublishers.ofString(this.forwarded.toString())).build();
+		final HttpClient client = HttpClient.newBuilder().build();
 		client.send(request, HttpResponse.BodyHandlers.discarding());
 	}
 }

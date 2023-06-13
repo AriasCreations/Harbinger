@@ -9,14 +9,15 @@ import dev.zontreck.harbinger.daemons.HTTPServer;
 import dev.zontreck.harbinger.events.MemoryAlteredEvent;
 import dev.zontreck.harbinger.events.ServerStoppingEvent;
 
-public class StopCommand {
+public enum StopCommand {
+	;
 	public static final String Stop = "stop";
 	public static final String Save = "save";
 
 
 	@Subscribe
-	public static void onStop(CommandEvent event) {
-		if (event.command.equals(Stop)) {
+	public static void onStop(final CommandEvent event) {
+		if (event.command.equals(StopCommand.Stop)) {
 			HTTPServer.stopServer();
 			CommandRegistry.LOGGER.info("Server is stopping...");
 			Terminal.setRunning(false);
@@ -24,7 +25,7 @@ public class StopCommand {
 			EventBus.BUS.post(new ServerStoppingEvent());
 
 			event.setCancelled(true);
-		} else if (event.command.equals("save")) {
+		} else if ("save".equals(event.command)) {
 			CommandRegistry.LOGGER.info("Saving data...");
 			EventBus.BUS.post(new MemoryAlteredEvent());
 			CommandRegistry.LOGGER.info("Save completed");

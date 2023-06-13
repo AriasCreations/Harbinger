@@ -13,7 +13,8 @@ import org.slf4j.LoggerFactory;
 import java.nio.file.Path;
 import java.util.List;
 
-public class Persist {
+public enum Persist {
+	;
 	public static final Logger LOGGER = LoggerFactory.getLogger(Persist.class.getSimpleName());
 	public static final Path FILE_NAME = AriaIO.resolveDataFile("main");
 
@@ -31,43 +32,43 @@ public class Persist {
 	static {
 		try {
 
-			MEMORY = (Entry<List<Entry>>) AriaIO.read(FILE_NAME);
+			Persist.MEMORY = (Entry<List<Entry>>) AriaIO.read(Persist.FILE_NAME);
 
-			products = new Products(Folder.getEntry(MEMORY, "products"));
+			Persist.products = new Products(Folder.getEntry(Persist.MEMORY, "products"));
 
-			servers = Servers.deserialize(Folder.getEntry(MEMORY, "servers"));
-			SupportReps.load(Folder.getEntry(MEMORY, "support"));
+			Persist.servers = Servers.deserialize(Folder.getEntry(Persist.MEMORY, "servers"));
+			SupportReps.load(Folder.getEntry(Persist.MEMORY, "support"));
 
-			serverSettings = new HTTPServerSettings(Folder.getEntry(MEMORY, HTTPServerSettings.TAG_NAME));
+			Persist.serverSettings = new HTTPServerSettings(Folder.getEntry(Persist.MEMORY, HTTPServerSettings.TAG_NAME));
 
-			SIGNATURE = new Signature(Folder.getEntry(MEMORY, "sig"));
+			Persist.SIGNATURE = new Signature(Folder.getEntry(Persist.MEMORY, "sig"));
 
-			discordSettings = new DiscordSettings(Folder.getEntry(MEMORY, "discord"));
+			Persist.discordSettings = new DiscordSettings(Folder.getEntry(Persist.MEMORY, "discord"));
 
-			LOGGER.info("Memory file loaded");
-		} catch (Exception e) {
+			Persist.LOGGER.info("Memory file loaded");
+		} catch (final Exception e) {
 			//e.printStackTrace();
 		}
 
 	}
 
 	@Subscribe
-	public static void onMemoryAltered(MemoryAlteredEvent ev) {
-		save();
+	public static void onMemoryAltered(final MemoryAlteredEvent ev) {
+		Persist.save();
 	}
 
 	private static void save() {
-		MEMORY = Folder.getNew("root");
-		MEMORY.value.add(products.write());
-		MEMORY.value.add(servers.save());
-		MEMORY.value.add(SupportReps.save());
-		MEMORY.value.add(serverSettings.save());
-		MEMORY.value.add(SIGNATURE.save());
-		MEMORY.value.add(discordSettings.save());
+		Persist.MEMORY = Folder.getNew("root");
+		Persist.MEMORY.value.add(Persist.products.write());
+		Persist.MEMORY.value.add(Persist.servers.save());
+		Persist.MEMORY.value.add(SupportReps.save());
+		Persist.MEMORY.value.add(Persist.serverSettings.save());
+		Persist.MEMORY.value.add(Persist.SIGNATURE.save());
+		Persist.MEMORY.value.add(Persist.discordSettings.save());
 
 
-		LOGGER.info("Memory file saved");
+		Persist.LOGGER.info("Memory file saved");
 
-		AriaIO.write(FILE_NAME, MEMORY);
+		AriaIO.write(Persist.FILE_NAME, Persist.MEMORY);
 	}
 }

@@ -29,25 +29,26 @@ import java.nio.file.Path;
 import java.util.UUID;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 
-public class HarbingerServer {
+public enum HarbingerServer {
+	;
 	private static final Logger LOGGER = LoggerFactory.getLogger(HarbingerServer.class.getSimpleName());
 	public static final Path PLUGINS;
 
 	static {
 		PLUGINS = Path.of("plugins");
 
-		if (!PLUGINS.toFile().exists()) {
-			PLUGINS.toFile().mkdir();
+		if (!HarbingerServer.PLUGINS.toFile().exists()) {
+			HarbingerServer.PLUGINS.toFile().mkdir();
 		}
 	}
 
-	public static void main(String[] args) {
+	public static void main(final String[] args) {
 
-		UUID ID = Product.makeProductID(1, 59);
+		final UUID ID = Product.makeProductID(1, 59);
 
-		LOGGER.info("We are Harbinger");
+		HarbingerServer.LOGGER.info("We are Harbinger");
 
-		ScheduledThreadPoolExecutor exec;
+		final ScheduledThreadPoolExecutor exec;
 		DelayedExecutorService.start();
 
 		exec = DelayedExecutorService.getExecutor();
@@ -72,7 +73,7 @@ public class HarbingerServer {
 				CommandRegistry.register(EventBus.BUS);
 				EventBus.BUS.register(DiscordBot.class);
 
-				Task run = new Task("server-tick", true) {
+				final Task run = new Task("server-tick", true) {
 					@Override
 					public void run() {
 						EventBus.BUS.post(new ServerTickEvent());
@@ -81,15 +82,15 @@ public class HarbingerServer {
 				DelayedExecutorService.getInstance().scheduleRepeating(run, ServerTickEvent.FREQUENCY);
 
 
-				setSuccess();
+				this.setSuccess();
 			}
 		});
 
 		// Start up the server
 		// Read the NBT Files for the database
 		// This is designed to work without mysql
-		if (Folder.size(Persist.MEMORY) == 0) {
-			LOGGER.info("No settings exist yet!");
+		if (0 == Folder.size(Persist.MEMORY)) {
+			HarbingerServer.LOGGER.info("No settings exist yet!");
 
 		}
 
@@ -98,8 +99,8 @@ public class HarbingerServer {
 			@Override
 			public void run() {
 				if (HTTPServer.startServer()) {
-					setSuccess();
-				} else setFail();
+					this.setSuccess();
+				} else this.setFail();
 
 			}
 		});
@@ -109,9 +110,9 @@ public class HarbingerServer {
 			public void run() {
 				try {
 					PluginLoader.scan();
-					setSuccess();
-				} catch (Exception E) {
-					setFail();
+					this.setSuccess();
+				} catch (final Exception E) {
+					this.setFail();
 				}
 			}
 		});
@@ -120,16 +121,16 @@ public class HarbingerServer {
 			@Override
 			public void run() {
 				PluginLoader.activate();
-				setSuccess();
+				this.setSuccess();
 			}
 		});
 
 		TaskBus.tasks.add(new Task("Load Version from Jar") {
 			@Override
 			public void run() {
-				Persist.HARBINGER_VERSION = this.getClass().getPackage().getImplementationVersion();
+				Persist.HARBINGER_VERSION = getClass().getPackage().getImplementationVersion();
 
-				setSuccess();
+				this.setSuccess();
 			}
 		});
 
@@ -139,7 +140,7 @@ public class HarbingerServer {
 
 				Terminal.PREFIX = "HARBINGER";
 				Terminal.startTerminal();
-				LOGGER.info("Server is running");
+				HarbingerServer.LOGGER.info("Server is running");
 			}
 		});
 
@@ -147,11 +148,11 @@ public class HarbingerServer {
 
 		try {
 			exec.wait();
-		} catch (InterruptedException e) {
+		} catch (final InterruptedException e) {
 			throw new RuntimeException(e);
 		}
 
-		LOGGER.info("Saving...");
+		HarbingerServer.LOGGER.info("Saving...");
 
 		EventBus.BUS.post(new MemoryAlteredEvent());
 	}

@@ -23,21 +23,21 @@ public class Product {
 	private static long Signature1;
 	private static long Signature2;
 
-	private static boolean init_done = false;
+	private static boolean init_done;
 
 	public static void loadSigs() {
-		if (init_done) return;
+		if (Product.init_done) return;
 
-		Signature1 = Persist.SIGNATURE.v1;
-		Signature2 = Persist.SIGNATURE.v2;
+		Product.Signature1 = Persist.SIGNATURE.v1;
+		Product.Signature2 = Persist.SIGNATURE.v2;
 
-		init_done = true;
+		Product.init_done = true;
 	}
 
 	@Subscribe
-	public static void onMemoryAltered(MemoryAlteredEvent ev) {
-		init_done = false;
-		loadSigs();
+	public static void onMemoryAltered(final MemoryAlteredEvent ev) {
+		Product.init_done = false;
+		Product.loadSigs();
 	}
 
 	/**
@@ -48,27 +48,27 @@ public class Product {
 	 * @return UUID with signature bit transforms applied.
 	 */
 	public static UUID makeProductID(long ID1, long ID2) {
-		ID1 += Signature1;
-		ID2 -= Signature2;
+		ID1 += Product.Signature1;
+		ID2 -= Product.Signature2;
 
 		return new UUID(ID1, ID2);
 	}
 
 	public Entry<List<Entry>> save() {
-		Entry<List<Entry>> tag = Folder.getNew(productName);
+		final Entry<List<Entry>> tag = Folder.getNew(this.productName);
 
-		tag.value.add(EntryUtils.mkStr("product", productName));
-		tag.value.add(versionNumber.save());
-		tag.value.add(EntryUtils.mkStr("item", productItem));
-		tag.value.add(EntryUtils.mkUUID("id", productID));
+		tag.value.add(EntryUtils.mkStr("product", this.productName));
+		tag.value.add(this.versionNumber.save());
+		tag.value.add(EntryUtils.mkStr("item", this.productItem));
+		tag.value.add(EntryUtils.mkUUID("id", this.productID));
 
 		return tag;
 	}
 
-	public static Product deserialize(Entry<List<Entry>> tag) {
+	public static Product deserialize(final Entry<List<Entry>> tag) {
 		try {
 
-			Product p = new Product();
+			final Product p = new Product();
 			p.productName = EntryUtils.getStr(Folder.getEntry(tag, "product"));
 			p.versionNumber = new Version((Entry<int[]>) Folder.getEntry(tag, "ver"));
 			p.productItem = EntryUtils.getStr(Folder.getEntry(tag, "item"));
@@ -76,7 +76,7 @@ public class Product {
 
 
 			return p;
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			return null;
 		}
 	}

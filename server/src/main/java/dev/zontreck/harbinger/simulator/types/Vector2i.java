@@ -22,179 +22,179 @@ public class Vector2i {
 	public static final Vector2i MaxValue = new Vector2i(Integer.MAX_VALUE, Integer.MAX_VALUE);
 
 	public Vector2i() {
-		X = 0;
-		Y = 0;
+		this.X = 0;
+		this.Y = 0;
 	}
 
-	public Vector2i(int x, int y) {
-		X = x;
-		Y = y;
+	public Vector2i(final int x, final int y) {
+		this.X = x;
+		this.Y = y;
 	}
 
-	public Vector2i(int val) {
-		X = val;
-		Y = val;
+	public Vector2i(final int val) {
+		this.X = val;
+		this.Y = val;
 	}
 
-	public Vector2i(Vector2i other) {
-		X = other.X;
-		Y = other.Y;
+	public Vector2i(final Vector2i other) {
+		this.X = other.X;
+		this.Y = other.Y;
 	}
 
 	public void Abs() {
-		if (X < 0) X = -X;
-		if (Y < 0) Y = -Y;
+		if (0 > X) this.X = -this.X;
+		if (0 > Y) this.Y = -this.Y;
 	}
 
-	public void Min(Vector2i v) {
-		if (v.X < X) X = v.X;
-		if (v.Y < Y) Y = v.Y;
+	public void Min(final Vector2i v) {
+		if (v.X < this.X) this.X = v.X;
+		if (v.Y < this.Y) this.Y = v.Y;
 	}
 
-	public void Max(Vector2i v) {
-		if (v.X > X) X = v.X;
-		if (v.Y > Y) Y = v.Y;
+	public void Max(final Vector2i v) {
+		if (v.X > this.X) this.X = v.X;
+		if (v.Y > this.Y) this.Y = v.Y;
 	}
 
-	public void Add(Vector2i v) {
-		X += v.X;
-		Y += v.Y;
+	public void Add(final Vector2i v) {
+		this.X += v.X;
+		this.Y += v.Y;
 	}
 
-	public void Sub(Vector2i v) {
-		X -= v.X;
-		Y -= v.Y;
+	public void Sub(final Vector2i v) {
+		this.X -= v.X;
+		this.Y -= v.Y;
 	}
 
-	public boolean ApproxEquals(Vector2i vec, float tolerance) {
-		return SimUtils.ApproxEqual(X, vec.X, tolerance) &&
-				SimUtils.ApproxEqual(Y, vec.Y, tolerance);
+	public boolean ApproxEquals(final Vector2i vec, final float tolerance) {
+		return SimUtils.ApproxEqual(this.X, vec.X, tolerance) &&
+				SimUtils.ApproxEqual(this.Y, vec.Y, tolerance);
 	}
 
-	public boolean ApproxEquals(Vector2i vec) {
-		return SimUtils.ApproxEqual(X, vec.X) &&
-				SimUtils.ApproxEqual(Y, vec.Y);
+	public boolean ApproxEquals(final Vector2i vec) {
+		return SimUtils.ApproxEqual(this.X, vec.X) &&
+				SimUtils.ApproxEqual(this.Y, vec.Y);
 	}
 
 	public boolean ApproxZero() {
-		if (!SimUtils.ApproxZero(X))
+		if (!SimUtils.ApproxZero(this.X))
 			return false;
-		return SimUtils.ApproxZero(Y);
+		return SimUtils.ApproxZero(this.Y);
 	}
 
-	public boolean ApproxZero(float tolerance) {
-		if (!SimUtils.ApproxZero(X, tolerance))
+	public boolean ApproxZero(final float tolerance) {
+		if (!SimUtils.ApproxZero(this.X, tolerance))
 			return false;
-		return SimUtils.ApproxZero(Y, tolerance);
+		return SimUtils.ApproxZero(this.Y, tolerance);
 	}
 
 	public boolean IsZero() {
-		if (X != 0)
+		if (0 != X)
 			return false;
-		return Y == 0;
+		return 0 == Y;
 	}
 
 	public boolean IsNotZero() {
-		return !IsZero();
+		return !this.IsZero();
 	}
 
 	public boolean IsFinite() {
-		return SimUtils.IsFinite(X) && SimUtils.IsFinite(Y);
+		return SimUtils.IsFinite(this.X) && SimUtils.IsFinite(this.Y);
 	}
 
 	public float Length() {
-		return MathF.Sqrt(X * X + Y * Y);
+		return MathF.Sqrt(this.X * this.X + this.Y * this.Y);
 	}
 
 	public int LengthSquared() {
-		return X * X + Y * Y;
+		return this.X * this.X + this.Y * this.Y;
 	}
 
 	public void Normalize() {
-		var factor = LengthSquared();
-		if (factor > 1e-6) {
+		var factor = this.LengthSquared();
+		if (1.0e-6 < factor) {
 			factor = 1 / MathF.Sqrt(factor);
-			X *= factor;
-			Y *= factor;
+			this.X *= factor;
+			this.Y *= factor;
 		} else {
-			X = 0;
-			Y = 0;
+			this.X = 0;
+			this.Y = 0;
 		}
 	}
 
 
-	public static Vector2i Add(Vector2i value1, Vector2i value2) {
+	public static Vector2i Add(final Vector2i value1, final Vector2i value2) {
 		return new Vector2i(value1.X + value2.X, value1.Y + value2.Y);
 	}
 
-	public static Vector2i Clamp(Vector2i value1, int min, int max) {
+	public static Vector2i Clamp(final Vector2i value1, final int min, final int max) {
 		return new Vector2i(
 				MathF.Clamp(value1.X, min, max),
 				MathF.Clamp(value1.Y, min, max));
 	}
 
-	public static Vector2i Clamp(Vector2i value1, Vector2i min, Vector2i max) {
+	public static Vector2i Clamp(final Vector2i value1, final Vector2i min, final Vector2i max) {
 		return new Vector2i(
 				MathF.Clamp(value1.X, min.X, max.X),
 				MathF.Clamp(value1.Y, min.Y, max.Y));
 	}
 
-	public static float Distance(Vector2i value1, Vector2i value2) {
-		return MathF.Sqrt(DistanceSquared(value1, value2));
+	public static float Distance(final Vector2i value1, final Vector2i value2) {
+		return MathF.Sqrt(Vector2i.DistanceSquared(value1, value2));
 	}
 
-	public static float DistanceSquared(Vector2i value1, Vector2i value2) {
+	public static float DistanceSquared(final Vector2i value1, final Vector2i value2) {
 		return
 				(value1.X - value2.X) * (value1.X - value2.X) +
 						(value1.Y - value2.Y) * (value1.Y - value2.Y);
 	}
 
-	public static Vector2i Divide(Vector2i value1, Vector2i value2) {
+	public static Vector2i Divide(final Vector2i value1, final Vector2i value2) {
 		return new Vector2i(value1.X / value2.X, value1.Y / value2.Y);
 	}
 
-	public static Vector2i Divide(Vector2i value1, int divider) {
-		var factor = 1 / divider;
+	public static Vector2i Divide(final Vector2i value1, final int divider) {
+		final var factor = 1 / divider;
 		return new Vector2i(value1.X * factor, value1.Y * factor);
 	}
 
-	public static float Dot(Vector2i value1, Vector2i value2) {
+	public static float Dot(final Vector2i value1, final Vector2i value2) {
 		return value1.X * value2.X + value1.Y * value2.Y;
 	}
 
-	public static Vector2i Lerp(Vector2i value1, Vector2i value2, int amount) {
+	public static Vector2i Lerp(final Vector2i value1, final Vector2i value2, final int amount) {
 		return new Vector2i(
 				SimUtils.Lerp(value1.X, value2.X, amount),
 				SimUtils.Lerp(value1.Y, value2.Y, amount));
 	}
 
-	public static Vector2i Max(Vector2i value1, Vector2i value2) {
+	public static Vector2i Max(final Vector2i value1, final Vector2i value2) {
 		return new Vector2i(
 				MathF.Max(value1.X, value2.X),
 				MathF.Max(value1.Y, value2.Y));
 	}
 
-	public static Vector2i Min(Vector2i value1, Vector2i value2) {
+	public static Vector2i Min(final Vector2i value1, final Vector2i value2) {
 		return new Vector2i(
 				MathF.Min(value1.X, value2.X),
 				MathF.Min(value1.Y, value2.Y));
 	}
 
-	public static Vector2i Multiply(Vector2i value1, Vector2i value2) {
+	public static Vector2i Multiply(final Vector2i value1, final Vector2i value2) {
 		return new Vector2i(value1.X * value2.X, value1.Y * value2.Y);
 	}
 
-	public static Vector2i Multiply(Vector2i value1, int scaleFactor) {
+	public static Vector2i Multiply(final Vector2i value1, final int scaleFactor) {
 		return new Vector2i(value1.X * scaleFactor, value1.Y * scaleFactor);
 	}
 
-	public static Vector2i Negate(Vector2i value) {
+	public static Vector2i Negate(final Vector2i value) {
 		return new Vector2i(-value.X, -value.Y);
 	}
 
-	public static Vector2i Normalize(Vector2i value) {
+	public static Vector2i Normalize(final Vector2i value) {
 		var factor = value.LengthSquared();
-		if (factor > 1e-6) {
+		if (1.0e-6 < factor) {
 			factor = 1 / MathF.Sqrt(factor);
 			return new Vector2i(value.X * factor, value.Y * factor);
 		}
@@ -206,13 +206,13 @@ public class Vector2i {
 	/// <summary>
 	///     Interpolates between two vectors using a cubic equation
 	/// </summary>
-	public static Vector2i SmoothStep(Vector2i value1, Vector2i value2, int amount) {
+	public static Vector2i SmoothStep(final Vector2i value1, final Vector2i value2, final int amount) {
 		return new Vector2i(
 				SimUtils.SmoothStep(value1.X, value2.X, amount),
 				SimUtils.SmoothStep(value1.Y, value2.Y, amount));
 	}
 
-	public static Vector2i Subtract(Vector2i value1, Vector2i value2) {
+	public static Vector2i Subtract(final Vector2i value1, final Vector2i value2) {
 		return new Vector2i(value1.X - value2.X, value1.Y - value2.Y);
 	}
 

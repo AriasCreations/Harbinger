@@ -6,19 +6,20 @@ import dev.zontreck.ariaslib.events.EventBus;
 import dev.zontreck.harbinger.events.GenericRequestEvent;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 public class GenericRequestHandler implements HttpHandler {
 
 	@Override
-	public void handle(HttpExchange httpExchange) throws IOException {
-		GenericRequestEvent GRE = new GenericRequestEvent(httpExchange.getRequestURI().getPath(), httpExchange.getRequestMethod(), httpExchange.getRequestBody().readAllBytes());
+	public void handle(final HttpExchange httpExchange) throws IOException {
+		final GenericRequestEvent GRE = new GenericRequestEvent(httpExchange.getRequestURI().getPath(), httpExchange.getRequestMethod(), httpExchange.getRequestBody().readAllBytes());
 		EventBus.BUS.post(GRE);
 
-		byte[] response;
+		final byte[] response;
 		if (GRE.responseIsBinary) {
 			response = GRE.response;
 		} else {
-			response = GRE.responseText.getBytes();
+			response = GRE.responseText.getBytes(StandardCharsets.UTF_8);
 		}
 
 		httpExchange.getResponseHeaders().add("Content-Type", GRE.contentType);

@@ -11,18 +11,18 @@ public enum PermissionLevel {
 	private final int flag;
 
 	public int getFlag() {
-		return flag;
+		return this.flag;
 	}
 
-	PermissionLevel(int value) {
-		flag = value;
+	PermissionLevel(final int value) {
+		this.flag = value;
 	}
 
-	public static PermissionLevel of(int flags) {
-		PermissionLevel p = PermissionLevel.NONE;
+	public static PermissionLevel of(final int flags) {
+		final PermissionLevel p = NONE;
 
-		for (PermissionLevel lvl :
-				values()) {
+		for (final PermissionLevel lvl :
+				PermissionLevel.values()) {
 			if (lvl.flag == flags) {
 				return lvl;
 			}

@@ -24,50 +24,50 @@ public class HTTPServer {
 
 	private static final HTTPServer instance = new HTTPServer();
 
-	public boolean running = false;
+	public boolean running;
 	public HttpServer server;
 
 	public static boolean startServer() {
-		if (instance.running) {
+		if (HTTPServer.instance.running) {
 			// Server is already running
-			LOGGER.info("Server is already running");
+			HTTPServer.LOGGER.info("Server is already running");
 			return true;
 		} else {
 			if (Persist.serverSettings.enabled) {
 				// Start up server
-				LOGGER.info("Starting server");
+				HTTPServer.LOGGER.info("Starting server");
 				try {
-					instance.server = HttpServer.create(new InetSocketAddress(Persist.serverSettings.port), 60);
-					HTTPStartingEvent HSE = new HTTPStartingEvent(Persist.serverSettings.port);
+					HTTPServer.instance.server = HttpServer.create(new InetSocketAddress(Persist.serverSettings.port), 60);
+					final HTTPStartingEvent HSE = new HTTPStartingEvent(Persist.serverSettings.port);
 					EventBus.BUS.post(HSE);
 
-					for (Map.Entry<String, HttpHandler> entry : HSE.contexts.entrySet()) {
-						instance.server.createContext(entry.getKey(), entry.getValue());
+					for (final Map.Entry<String, HttpHandler> entry : HSE.contexts.entrySet()) {
+						HTTPServer.instance.server.createContext(entry.getKey(), entry.getValue());
 					}
-					instance.server.setExecutor(new ScheduledThreadPoolExecutor(1024));
-					instance.server.start();
-					instance.running = true;
+					HTTPServer.instance.server.setExecutor(new ScheduledThreadPoolExecutor(1024));
+					HTTPServer.instance.server.start();
+					HTTPServer.instance.running = true;
 					return true;
 
-				} catch (IOException e) {
+				} catch (final IOException e) {
 					return false;
 				}
 			} else {
-				LOGGER.warn("HTTP Server cannot be started because it is disabled");
+				HTTPServer.LOGGER.warn("HTTP Server cannot be started because it is disabled");
 				return false;
 			}
 		}
 	}
 
 	public static void stopServer() {
-		if (!instance.running) {
+		if (!HTTPServer.instance.running) {
 			// Server is already stopped
-			LOGGER.info("Server is already stopped!");
+			HTTPServer.LOGGER.info("Server is already stopped!");
 		} else {
-			LOGGER.info("Stopping server in 1 seconds");
-			instance.server.stop(1);
-			instance.running = false;
-			instance.server = null;
+			HTTPServer.LOGGER.info("Stopping server in 1 seconds");
+			HTTPServer.instance.server.stop(1);
+			HTTPServer.instance.running = false;
+			HTTPServer.instance.server = null;
 		}
 	}
 

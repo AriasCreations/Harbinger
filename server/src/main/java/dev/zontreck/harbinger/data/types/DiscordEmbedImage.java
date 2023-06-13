@@ -10,16 +10,16 @@ public class DiscordEmbedImage implements IJsonSerializable {
 
 	@Override
 	public JSONObject serialize() {
-		JSONObject obj = new JSONObject();
+		final JSONObject obj = new JSONObject();
 
-		if (!url.isEmpty())
-			obj.put("url", url);
+		if (!this.url.isEmpty())
+			obj.put("url", this.url);
 
-		if (!proxy_url.isEmpty())
-			obj.put("proxy_url", proxy_url);
+		if (!this.proxy_url.isEmpty())
+			obj.put("proxy_url", this.proxy_url);
 
-		obj.put("height", height);
-		obj.put("width", width);
+		obj.put("height", this.height);
+		obj.put("width", this.width);
 
 		return obj;
 	}
@@ -27,11 +27,11 @@ public class DiscordEmbedImage implements IJsonSerializable {
 	public DiscordEmbedImage() {
 	}
 
-	public DiscordEmbedImage(JSONObject obj) {
+	public DiscordEmbedImage(final JSONObject obj) {
 
-		url = obj.getString("url");
-		proxy_url = obj.getString("proxy_url");
-		height = obj.getInt("height");
-		width = obj.getInt("width");
+		this.url = obj.getString("url");
+		this.proxy_url = obj.getString("proxy_url");
+		this.height = obj.getInt("height");
+		this.width = obj.getInt("width");
 	}
 }

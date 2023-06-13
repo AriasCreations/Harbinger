@@ -9,8 +9,8 @@ import dev.zontreck.harbinger.data.types.Server;
 public class HarbingerClientRemovedEvent extends Event {
 	public Server server;
 
-	public HarbingerClientRemovedEvent(Server s) {
-		server = s;
+	public HarbingerClientRemovedEvent(final Server s) {
+		this.server = s;
 	}
 
 	@Override

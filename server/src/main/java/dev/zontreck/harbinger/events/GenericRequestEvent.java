@@ -11,12 +11,12 @@ public class GenericRequestEvent extends Event {
 	public byte[] response;
 	public String responseText;
 
-	public boolean responseIsBinary = false;
+	public boolean responseIsBinary;
 
 	public String contentType = "text/html";
 	public int responseCode = 404;
 
-	public GenericRequestEvent(String path, String method, byte[] body) {
+	public GenericRequestEvent(final String path, final String method, final byte[] body) {
 		this.path = path;
 		this.method = method;
 		this.body = body;

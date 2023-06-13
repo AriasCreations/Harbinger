@@ -21,29 +21,29 @@ public class Signature {
 	public long v2;
 
 	public Signature() {
-		v1 = 0;
-		v2 = 0;
+		this.v1 = 0;
+		this.v2 = 0;
 	}
 
 	public static Signature makeNew() {
 		Random rng = new Random();
 		rng = new Random(rng.nextLong());
-		Signature sig = new Signature();
+		final Signature sig = new Signature();
 		sig.v1 = rng.nextLong();
 		sig.v2 = rng.nextLong();
 
 		return sig;
 	}
 
-	public Signature(Entry<List<Entry>> entry) {
-		v1 = EntryUtils.getLong(Folder.getEntry(entry, "a"));
-		v2 = EntryUtils.getLong(Folder.getEntry(entry, "b"));
+	public Signature(final Entry<List<Entry>> entry) {
+		this.v1 = EntryUtils.getLong(Folder.getEntry(entry, "a"));
+		this.v2 = EntryUtils.getLong(Folder.getEntry(entry, "b"));
 	}
 
 	public Entry<?> save() {
-		Entry<List<Entry>> e = Folder.getNew(TAG_NAME);
-		e.value.add(EntryUtils.mkLong("a", v1));
-		e.value.add(EntryUtils.mkLong("b", v2));
+		final Entry<List<Entry>> e = Folder.getNew(Signature.TAG_NAME);
+		e.value.add(EntryUtils.mkLong("a", this.v1));
+		e.value.add(EntryUtils.mkLong("b", this.v2));
 
 		return e;
 

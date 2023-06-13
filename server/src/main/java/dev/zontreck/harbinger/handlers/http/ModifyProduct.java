@@ -8,10 +8,12 @@ import org.json.JSONObject;
 
 import java.util.UUID;
 
-public class ModifyProduct {
+public enum ModifyProduct {
+	;
+
 	@Subscribe
-	public static void onAPIRequest(APIRequestEvent event) {
-		if (event.request_object.getString("type").equals("modify_product")) {
+	public static void onAPIRequest(final APIRequestEvent event) {
+		if ("modify_product".equals(event.request_object.getString("type"))) {
 			switch (event.request_object.getString("action")) {
 				case "update": {
 					if (Persist.products.hasProduct(UUID.fromString(event.request_object.getString("product")))) {
@@ -19,9 +21,9 @@ public class ModifyProduct {
 					break;
 				}
 				case "make": {
-					long prod_num = Product.SEQUENCE.getAndIncrement();
-					UUID ID = Product.makeProductID(event.request_object.getLong("group"), prod_num);
-					JSONObject resp = new JSONObject();
+					final long prod_num = Product.SEQUENCE.getAndIncrement();
+					final UUID ID = Product.makeProductID(event.request_object.getLong("group"), prod_num);
+					final JSONObject resp = new JSONObject();
 					resp.put("product", prod_num);
 
 					break;

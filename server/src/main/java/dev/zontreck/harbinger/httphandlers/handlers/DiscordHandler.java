@@ -19,6 +19,7 @@ import java.net.URISyntaxException;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
 /**
@@ -29,19 +30,19 @@ import java.util.ArrayList;
  */
 public class DiscordHandler implements HttpHandler {
 	@Override
-	public void handle(HttpExchange httpExchange) throws IOException {
+	public void handle(final HttpExchange httpExchange) throws IOException {
 
-		JSONObject replyObj = new JSONObject();
+		final JSONObject replyObj = new JSONObject();
 
 		// Validate PSK
-		JSONObject request = new JSONObject(new String(httpExchange.getRequestBody().readAllBytes()));
+		final JSONObject request = new JSONObject(new String(httpExchange.getRequestBody().readAllBytes(), StandardCharsets.UTF_8));
 
 		if (!Persist.serverSettings.PSK.validate(request.getString("psk"))) {
 			replyObj.put("result", "DENY");
 		} else {
 			// Process request here
 			replyObj.put("result", "ACCEPT");
-			String operation = request.getString("type");
+			final String operation = request.getString("type");
 			switch (operation) {
 				case "update_token": {
 					replyObj.put("token", "updated");
@@ -66,28 +67,29 @@ public class DiscordHandler implements HttpHandler {
 				}
 				case "send_webhook": {
 					// Send a stylized message
-					DiscordEmbed emb = new DiscordEmbed(request.getString("title"), request.getString("desc"));
+					final DiscordEmbed emb = new DiscordEmbed(request.getString("title"), request.getString("desc"));
 					emb.color = DiscordEmbedColor.valueOf(request.getString("color"));
-					DiscordWebhookMessage msg = new DiscordWebhookMessage();
+					final DiscordWebhookMessage msg = new DiscordWebhookMessage();
 					msg.embeds = new ArrayList<>();
 					msg.embeds.add(emb);
 					String embMsg = null;
 					try {
 						embMsg = msg.serialize().toString();
 					} catch (
+							final
 							DiscordEmbedLimitsException e) {
 						throw new RuntimeException(e);
 					}
 
 					// Get the URL of the target hook
-					String hookURL = Persist.discordSettings.WEBHOOKS.get(request.getString("nick"));
-					HttpClient cli = HttpClient.newHttpClient();
+					final String hookURL = Persist.discordSettings.WEBHOOKS.get(request.getString("nick"));
+					final HttpClient cli = HttpClient.newHttpClient();
 					try {
-						HttpRequest req = HttpRequest.newBuilder(new URI(hookURL)).POST(HttpRequest.BodyPublishers.ofString(embMsg)).setHeader("Content-Type", "application/json").build();
+						final HttpRequest req = HttpRequest.newBuilder(new URI(hookURL)).POST(HttpRequest.BodyPublishers.ofString(embMsg)).setHeader("Content-Type", "application/json").build();
 						cli.send(req, HttpResponse.BodyHandlers.discarding());
-					} catch (URISyntaxException e) {
+					} catch (final URISyntaxException e) {
 						throw new RuntimeException(e);
-					} catch (InterruptedException e) {
+					} catch (final InterruptedException e) {
 						throw new RuntimeException(e);
 					}
 
@@ -96,12 +98,12 @@ public class DiscordHandler implements HttpHandler {
 			}
 		}
 
-		String reply = replyObj.toString();
-		byte[] replyBytes = reply.getBytes();
+		final String reply = replyObj.toString();
+		final byte[] replyBytes = reply.getBytes(StandardCharsets.UTF_8);
 		httpExchange.getResponseHeaders().add("Content-Type", "application/json");
 		httpExchange.sendResponseHeaders(200, replyBytes.length);
 
-		DataOutputStream dos = new DataOutputStream(httpExchange.getResponseBody());
+		final DataOutputStream dos = new DataOutputStream(httpExchange.getResponseBody());
 		dos.write(replyBytes);
 		dos.close();
 	}

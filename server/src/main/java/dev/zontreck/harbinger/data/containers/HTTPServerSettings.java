@@ -13,7 +13,7 @@ import java.util.List;
 public class HTTPServerSettings {
 	public static final String TAG_NAME = "http_server";
 
-	public boolean enabled = false;
+	public boolean enabled;
 	public int port = 7768;
 
 	public PresharedKey PSK;
@@ -21,16 +21,16 @@ public class HTTPServerSettings {
 	public HTTPServerSettings() {
 	}
 
-	public HTTPServerSettings(Entry<List<Entry>> tag) {
-		enabled = EntryUtils.getBool(Folder.getEntry(tag, "enable"));
-		port = EntryUtils.getInt(Folder.getEntry(tag, "port"));
+	public HTTPServerSettings(final Entry<List<Entry>> tag) {
+		this.enabled = EntryUtils.getBool(Folder.getEntry(tag, "enable"));
+		this.port = EntryUtils.getInt(Folder.getEntry(tag, "port"));
 
-		if (Folder.getEntry(tag, "psk").type == EntryType.FOLDER)
-			PSK = new PresharedKey(Folder.getEntry(tag, "psk"));
+		if (EntryType.FOLDER == Folder.getEntry(tag, "psk").type)
+			this.PSK = new PresharedKey(Folder.getEntry(tag, "psk"));
 		else {
 			try {
-				PSK = Key.computeSecuredKey("change_me");
-			} catch (NoSuchAlgorithmException e) {
+				this.PSK = Key.computeSecuredKey("change_me");
+			} catch (final NoSuchAlgorithmException e) {
 				throw new RuntimeException(e);
 			}
 		}
@@ -38,10 +38,10 @@ public class HTTPServerSettings {
 
 
 	public Entry<?> save() {
-		Entry<List<Entry>> tag = Folder.getNew(TAG_NAME);
-		tag.value.add(EntryUtils.mkBool("enable", enabled));
-		tag.value.add(EntryUtils.mkInt("port", port));
-		tag.value.add(PSK.save());
+		final Entry<List<Entry>> tag = Folder.getNew(HTTPServerSettings.TAG_NAME);
+		tag.value.add(EntryUtils.mkBool("enable", this.enabled));
+		tag.value.add(EntryUtils.mkInt("port", this.port));
+		tag.value.add(this.PSK.save());
 		return tag;
 	}
 }

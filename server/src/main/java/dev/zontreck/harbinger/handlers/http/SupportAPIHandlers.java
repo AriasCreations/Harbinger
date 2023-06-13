@@ -12,15 +12,17 @@ import org.json.JSONObject;
 
 import java.util.UUID;
 
-public class SupportAPIHandlers {
+public enum SupportAPIHandlers {
+	;
+
 	@Subscribe
-	public static void onSupport(APIRequestEvent event) {
-		if (event.request_object.getString("type").equals("support")) {
-			JSONObject response = new JSONObject();
+	public static void onSupport(final APIRequestEvent event) {
+		if ("support".equals(event.request_object.getString("type"))) {
+			final JSONObject response = new JSONObject();
 			// Validate PSK
-			boolean auth = Persist.serverSettings.PSK.validate(event.request_object.getString("psk")); // This is to control if tasks that require admin should be executed or not
+			final boolean auth = Persist.serverSettings.PSK.validate(event.request_object.getString("psk")); // This is to control if tasks that require admin should be executed or not
 			event.setCancelled(true);
-			UUID ID = UUID.fromString(event.request_object.getString("id"));
+			final UUID ID = UUID.fromString(event.request_object.getString("id"));
 
 			switch (event.request_object.getString("sub_command")) {
 				case "delete": {
@@ -40,7 +42,7 @@ public class SupportAPIHandlers {
 				case "get": {
 					// Gets the support level
 					if (SupportReps.hasID(ID)) {
-						Person p = SupportReps.get(ID);
+						final Person p = SupportReps.get(ID);
 						response.put("result", "Found");
 						response.put("level", p.Permissions.getFlag());
 						response.put("level_id", p.Permissions.name());
@@ -59,7 +61,7 @@ public class SupportAPIHandlers {
 						response.put("result", "Admin access required");
 						break;
 					}
-					Person rep = new Person(ID, event.request_object.getString("name"), PermissionLevel.valueOf(event.request_object.getString("level")));
+					final Person rep = new Person(ID, event.request_object.getString("name"), PermissionLevel.valueOf(event.request_object.getString("level")));
 					if (SupportReps.hasID(ID))
 						SupportReps.remove(SupportReps.get(ID));
 

@@ -14,22 +14,23 @@ import net.dv8tion.jda.api.JDABuilder;
  *
  * @see dev.zontreck.harbinger.data.Persist#discordSettings
  */
-public class DiscordBot {
+public enum DiscordBot {
+	;
 	private static JDA jda;
 
 	@Subscribe
-	public static void onBotSettingsUpdated(DiscordBotTokenUpdatedEvent event) {
+	public static void onBotSettingsUpdated(final DiscordBotTokenUpdatedEvent event) {
 		// We cannot login to discord if the settings are null
 		if (Persist.discordSettings.BOT_TOKEN.isEmpty())
 			return;
-		if (jda != null) {
-			jda.shutdownNow();
+		if (null != jda) {
+			DiscordBot.jda.shutdownNow();
 		}
-		jda = JDABuilder.createDefault(Persist.discordSettings.BOT_TOKEN).build();
-		jda.setAutoReconnect(true);
+		DiscordBot.jda = JDABuilder.createDefault(Persist.discordSettings.BOT_TOKEN).build();
+		DiscordBot.jda.setAutoReconnect(true);
 	}
 
-	public static void onServerStopping(ServerStoppingEvent event) {
-		jda.shutdown();
+	public static void onServerStopping(final ServerStoppingEvent event) {
+		DiscordBot.jda.shutdown();
 	}
 }

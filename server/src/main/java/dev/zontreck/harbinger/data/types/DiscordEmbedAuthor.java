@@ -12,22 +12,22 @@ public class DiscordEmbedAuthor implements IJsonSerializable {
 
 	@Override
 	public JSONObject serialize() throws DiscordEmbedLimitsException {
-		JSONObject obj = new JSONObject();
+		final JSONObject obj = new JSONObject();
 
-		if (!name.isEmpty()) {
-			if (name.length() > 256)
+		if (!this.name.isEmpty()) {
+			if (256 < name.length())
 				throw new DiscordEmbedLimitsException("The author name is limited to 256 characters");
-			obj.put("name", name);
+			obj.put("name", this.name);
 		}
 
-		if (!url.isEmpty())
-			obj.put("url", url);
+		if (!this.url.isEmpty())
+			obj.put("url", this.url);
 
-		if (!icon_url.isEmpty())
-			obj.put("icon_url", icon_url);
+		if (!this.icon_url.isEmpty())
+			obj.put("icon_url", this.icon_url);
 
-		if (!proxy_icon_url.isEmpty())
-			obj.put("proxy_icon_url", proxy_icon_url);
+		if (!this.proxy_icon_url.isEmpty())
+			obj.put("proxy_icon_url", this.proxy_icon_url);
 
 		return obj;
 	}
@@ -35,10 +35,10 @@ public class DiscordEmbedAuthor implements IJsonSerializable {
 	public DiscordEmbedAuthor() {
 	}
 
-	public DiscordEmbedAuthor(JSONObject obj) {
-		name = obj.getString("name");
-		url = obj.getString("url");
-		icon_url = obj.getString("icon_url");
-		proxy_icon_url = obj.getString("proxy_icon_url");
+	public DiscordEmbedAuthor(final JSONObject obj) {
+		this.name = obj.getString("name");
+		this.url = obj.getString("url");
+		this.icon_url = obj.getString("icon_url");
+		this.proxy_icon_url = obj.getString("proxy_icon_url");
 	}
 }

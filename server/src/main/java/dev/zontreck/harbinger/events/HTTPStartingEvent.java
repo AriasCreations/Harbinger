@@ -10,12 +10,12 @@ import java.util.Map;
  * Registers context paths with handlers
  */
 public class HTTPStartingEvent extends Event {
-	public int port = 0x00;
+	public int port;
 	public Map<String, HttpHandler> contexts;
 
-	public HTTPStartingEvent(int port) {
+	public HTTPStartingEvent(final int port) {
 		this.port = port;
-		this.contexts = new HashMap<>();
+		contexts = new HashMap<>();
 	}
 
 	@Override

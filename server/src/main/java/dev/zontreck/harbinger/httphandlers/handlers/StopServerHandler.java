@@ -10,26 +10,27 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 
 public class StopServerHandler implements HttpHandler {
 	@Override
-	public void handle(HttpExchange httpExchange) throws IOException {
+	public void handle(final HttpExchange httpExchange) throws IOException {
 
-		InputStream IS = httpExchange.getRequestBody();
-		String reqJson = new String(IS.readAllBytes());
+		final InputStream IS = httpExchange.getRequestBody();
+		final String reqJson = new String(IS.readAllBytes(), StandardCharsets.UTF_8);
 
-		JSONObject obj = new JSONObject(reqJson);
+		final JSONObject obj = new JSONObject(reqJson);
 		String reply = "Stop;;";
 		if (Persist.serverSettings.PSK.validate(obj.getString("psk"))) {
 			reply += "OK";
-			CommandEvent ce = new CommandEvent("stop");
+			final CommandEvent ce = new CommandEvent("stop");
 			EventBus.BUS.post(ce);
 		} else reply += "FAIL";
 
-		byte[] bRep = reply.getBytes();
+		final byte[] bRep = reply.getBytes(StandardCharsets.UTF_8);
 		httpExchange.getResponseHeaders().add("Content-Type", "text/plain");
 		httpExchange.sendResponseHeaders(200, bRep.length);
-		OutputStream os = httpExchange.getResponseBody();
+		final OutputStream os = httpExchange.getResponseBody();
 		os.write(bRep);
 		os.close();
 	}

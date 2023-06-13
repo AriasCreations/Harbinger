@@ -5,20 +5,21 @@ import dev.zontreck.harbinger.data.types.URLCallback;
 import java.util.ArrayList;
 import java.util.List;
 
-public class URLCallbacks {
+public enum URLCallbacks {
+	;
 	private static final List<URLCallback> callbacks = new ArrayList<>();
 
-	public static void add(URLCallback cb) {
-		callbacks.add(cb);
+	public static void add(final URLCallback cb) {
+		URLCallbacks.callbacks.add(cb);
 	}
 
 	public static boolean hasCallback() {
-		return (callbacks.size() > 0);
+		return (0 < callbacks.size());
 	}
 
 	public static URLCallback getNext() {
-		URLCallback cb = callbacks.get(0);
-		callbacks.remove(0);
+		final URLCallback cb = URLCallbacks.callbacks.get(0);
+		URLCallbacks.callbacks.remove(0);
 
 		return cb;
 	}

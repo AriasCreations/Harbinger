@@ -12,15 +12,15 @@ public class Server {
 
 
 	public Entry<List<Entry>> save() {
-		Entry<List<Entry>> tag = Folder.getNew(serverNick);
-		tag.value.add(EntryUtils.mkStr("nick", serverNick));
-		tag.value.add(EntryUtils.mkStr("url", serverURL));
+		final Entry<List<Entry>> tag = Folder.getNew(this.serverNick);
+		tag.value.add(EntryUtils.mkStr("nick", this.serverNick));
+		tag.value.add(EntryUtils.mkStr("url", this.serverURL));
 
 		return tag;
 	}
 
-	public static Server deserialize(Entry<List<Entry>> tag) {
-		Server serv = new Server();
+	public static Server deserialize(final Entry<List<Entry>> tag) {
+		final Server serv = new Server();
 		serv.serverNick = EntryUtils.getStr(Folder.getEntry(tag, "nick"));
 		serv.serverURL = EntryUtils.getStr(Folder.getEntry(tag, "url"));
 

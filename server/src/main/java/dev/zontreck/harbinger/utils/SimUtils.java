@@ -11,10 +11,11 @@ import java.time.Instant;
 import java.util.Arrays;
 import java.util.Random;
 
-public class SimUtils {
+public enum SimUtils {
+	;
 
-	public static final boolean LITTLE_ENDIAN = !IsBigEndian();
-	public static final boolean BIG_ENDIAN = IsBigEndian();
+	public static final boolean LITTLE_ENDIAN = !SimUtils.IsBigEndian();
+	public static final boolean BIG_ENDIAN = SimUtils.IsBigEndian();
 
 	private static final byte ASCIIzero = (byte) '0';
 	private static final byte ASCIIminus = (byte) '-';
@@ -23,11 +24,11 @@ public class SimUtils {
 
 
 	public static boolean IsBigEndian() {
-		return !((ByteOrder.nativeOrder()) == ByteOrder.LITTLE_ENDIAN);
+		return (ByteOrder.nativeOrder()) != ByteOrder.LITTLE_ENDIAN;
 	}
 
-	public static boolean ApproxEqual(float a, float b, float tolerance) {
-		float diff = Math.abs(a - b);
+	public static boolean ApproxEqual(float a, float b, final float tolerance) {
+		final float diff = Math.abs(a - b);
 		if (diff <= tolerance)
 			return true;
 
@@ -39,37 +40,37 @@ public class SimUtils {
 		return diff <= a;
 	}
 
-	public static boolean ApproxZero(float a, float tolerance) {
+	public static boolean ApproxZero(final float a, final float tolerance) {
 		return Math.abs(a) <= tolerance;
 	}
 
-	public static boolean ApproxZero(float a) {
-		return Math.abs(a) <= 1e-6;
+	public static boolean ApproxZero(final float a) {
+		return 1.0e-6 >= Math.abs(a);
 	}
 
-	public static boolean ApproxEqual(float a, float b) {
-		return ApproxEqual(a, b, 1e-6f);
+	public static boolean ApproxEqual(final float a, final float b) {
+		return SimUtils.ApproxEqual(a, b, 1.0e-6f);
 	}
 
-	public static int CombineHash(int a, int b) {
+	public static int CombineHash(final int a, final int b) {
 		return 65599 * a + b;
 	}
 
-	public static short BytesToInt16(byte[] bytes) {
+	public static short BytesToInt16(final byte[] bytes) {
 		//if (bytes.Length < 2 ) return 0;
 		return (short) (bytes[0] | (bytes[1] << 8));
 	}
 
-	public static String IntToHexString(int i) {
+	public static String IntToHexString(final int i) {
 		return String.format("%08x", i);
 	}
 
-	public static String BytesToString(byte[] arr) {
-		return BytesToString(arr, 0, arr.length);
+	public static String BytesToString(final byte[] arr) {
+		return SimUtils.BytesToString(arr, 0, arr.length);
 	}
 
-	public static float BytesToFloatSafepos(byte[] arr, int pos) {
-		float fTotal = 0f;
+	public static float BytesToFloatSafepos(final byte[] arr, final int pos) {
+		float fTotal = 0.0f;
 		for (int i = pos; i < arr.length; i++) {
 			fTotal += arr[i];
 		}
@@ -77,36 +78,36 @@ public class SimUtils {
 		return fTotal;
 	}
 
-	public static String BytesToString(byte[] arr, int index, int count) {
+	public static String BytesToString(final byte[] arr, final int index, final int count) {
 		int ptr = 0;
-		byte[] splice = new byte[count];
+		final byte[] splice = new byte[count];
 		for (int i = index; i < count; i++) {
 			splice[i] = arr[ptr];
 
 			ptr++;
 		}
-		return new String(splice);
+		return new String(splice, StandardCharsets.UTF_8);
 	}
 
-	public static String BytesToHexString(byte[] arr, String field) {
-		return BytesToHexString(arr, arr.length, field);
+	public static String BytesToHexString(final byte[] arr, final String field) {
+		return SimUtils.BytesToHexString(arr, arr.length, field);
 	}
 
-	public static String BytesToHexString(byte[] arr, int len, String field) {
-		StringBuilder builder = new StringBuilder();
+	public static String BytesToHexString(final byte[] arr, final int len, final String field) {
+		final StringBuilder builder = new StringBuilder();
 
 		for (int i = 0; i < len; i += 16) {
-			if (i != 0) builder.append("\n");
+			if (0 != i) builder.append("\n");
 
-			if (field == null || field.isEmpty()) {
+			if (null == field || field.isEmpty()) {
 				builder.append(field);
 				builder.append(": ");
 			}
 
-			for (int j = 0, k = i; j < 16; ++j, ++k) {
+			for (int j = 0, k = i; 16 > j; ++j, ++k) {
 				if (k >= len) break;
 
-				if (j != 0) builder.append(" ");
+				if (0 != j) builder.append(" ");
 
 				builder.append(String.format("%02X", arr[k]));
 			}
@@ -115,33 +116,33 @@ public class SimUtils {
 		return builder.toString();
 	}
 
-	public static byte[] StringToBytesNoTerm(String str) {
-		return StringToBytesNoTerm(str, str.length());
+	public static byte[] StringToBytesNoTerm(final String str) {
+		return SimUtils.StringToBytesNoTerm(str, str.length());
 	}
 
-	public static byte[] StringToBytesNoTerm(String str, int max) {
-		if (str == null || str.isEmpty())
+	public static byte[] StringToBytesNoTerm(final String str, final int max) {
+		if (null == str || str.isEmpty())
 			return new byte[0];
 
-		osUTF8ByteCount Bytes = osUTF8GetBytesCount(str);
-		if (Bytes.length == 0) return new byte[0];
+		final osUTF8ByteCount Bytes = SimUtils.osUTF8GetBytesCount(str);
+		if (0 == Bytes.length) return new byte[0];
 
-		byte[] dest = osUTF8GetBytes(str, Bytes.srcLen);
+		final byte[] dest = SimUtils.osUTF8GetBytes(str, Bytes.srcLen);
 		return dest;
 	}
 
-	public static osUTF8ByteCount osUTF8GetBytesCount(String str) {
-		return osUTF8GetBytesCount(str, str.length());
+	public static osUTF8ByteCount osUTF8GetBytesCount(final String str) {
+		return SimUtils.osUTF8GetBytesCount(str, str.length());
 	}
 
-	public static osUTF8ByteCount osUTF8GetBytesCount(String str, int max) {
-		osUTF8ByteCount count = new osUTF8ByteCount();
-		count.length = osUTF8GetBytes(str, str.length()).length;
+	public static osUTF8ByteCount osUTF8GetBytesCount(final String str, final int max) {
+		final osUTF8ByteCount count = new osUTF8ByteCount();
+		count.length = SimUtils.osUTF8GetBytes(str, str.length()).length;
 		count.srcLen = max;
 		return count;
 	}
 
-	public static byte[] osUTF8GetBytes(String src, int strLen) {
+	public static byte[] osUTF8GetBytes(final String src, final int strLen) {
 		byte[] arr = new byte[0];
 		arr = src.substring(0, strLen).getBytes(StandardCharsets.UTF_8);
 
@@ -150,23 +151,23 @@ public class SimUtils {
 
 	public static byte[] UIntToStrBytes_reversed(int v) {
 		int n = 0;
-		byte[] arr = new byte[32];
+		final byte[] arr = new byte[32];
 		do {
-			byte a = ASCIIzero;
+			byte a = SimUtils.ASCIIzero;
 			a += (byte) (v % 10);
 			arr[n] = a;
 			n++;
 			v /= 10;
-		} while (v > 0);
+		} while (0 < v);
 
 		return Arrays.copyOf(arr, n);
 	}
 
-	public static byte[] IntToByteString(int v) {
-		byte[] tmp = UIntToStrBytes_reversed(((v > 0) ? v : -v));
-		byte[] dst = new byte[16];
+	public static byte[] IntToByteString(final int v) {
+		final byte[] tmp = SimUtils.UIntToStrBytes_reversed(((0 < v) ? v : -v));
+		final byte[] dst = new byte[16];
 
-		if (v > 0) {
+		if (0 < v) {
 			for (int i = 0, j = tmp.length - 1; i < tmp.length; i++, j--) {
 				dst[i] = tmp[j];
 			}
@@ -179,126 +180,138 @@ public class SimUtils {
 		return dst;
 	}
 
-	public static boolean IsFinite(float value) {
+	public static boolean IsFinite(final float value) {
 		return Float.isFinite(value);
 	}
-	public static boolean IsFinite(double value) {
+	public static boolean IsFinite(final double value) {
 		return Double.isFinite(value);
 	}
 
-	public static float Distance(float value1, float value2) {
+	public static float Distance(final float value1, final float value2) {
 		return MathF.Abs(value1 - value2);
 	}
 
 
-	public static float Hermite(float value1, float tangent1, float value2, float tangent2, float amount) {
-		if (amount <= 0f)
+	public static float Hermite(final float value1, final float tangent1, final float value2, final float tangent2, final float amount) {
+		if (0.0f >= amount)
 			return value1;
-		if (amount >= 1f)
+		if (1.0f <= amount)
 			return value2;
 
 		// All transformed to double not to lose precission
 		// Otherwise, for high numbers of param:amount the result is NaN instead of Infinity
-		double v1 = value1, v2 = value2, t1 = tangent1, t2 = tangent2, s = amount;
-		var sSquared = s * s;
-		var sCubed = sSquared * s;
+		final double v1 = value1;
+		final double v2 = value2;
+		final double t1 = tangent1;
+		final double t2 = tangent2;
+		final double s = amount;
+		final var sSquared = s * s;
+		final var sCubed = sSquared * s;
 
-		return (float) ((2d * v1 - 2d * v2 + t2 + t1) * sCubed +
-				(3d * v2 - 3d * v1 - 2d * t1 - t2) * sSquared +
+		return (float) ((2.0d * v1 - 2.0d * v2 + t2 + t1) * sCubed +
+				(3.0d * v2 - 3.0d * v1 - 2.0d * t1 - t2) * sSquared +
 				t1 * s + v1);
 	}
 
-	public static int Hermite(int value1, int tangent1, int value2, int tangent2, int amount) {
-		if (amount <= 0)
+	public static int Hermite(final int value1, final int tangent1, final int value2, final int tangent2, final int amount) {
+		if (0 >= amount)
 			return value1;
-		if (amount >= 1)
+		if (1 <= amount)
 			return value2;
 
 		// All transformed to double not to lose precission
 		// Otherwise, for high numbers of param:amount the result is NaN instead of Infinity
-		double v1 = value1, v2 = value2, t1 = tangent1, t2 = tangent2, s = amount;
-		var sSquared = s * s;
-		var sCubed = sSquared * s;
+		final double v1 = value1;
+		final double v2 = value2;
+		final double t1 = tangent1;
+		final double t2 = tangent2;
+		final double s = amount;
+		final var sSquared = s * s;
+		final var sCubed = sSquared * s;
 
 		return (int) ((2 * v1 - 2 * v2 + t2 + t1) * sCubed +
 				(3 * v2 - 3 * v1 - 2 * t1 - t2) * sSquared +
 				t1 * s + v1);
 	}
 
-	public static double Hermite(double value1, double tangent1, double value2, double tangent2, double amount) {
-		if (amount <= 0d)
+	public static double Hermite(final double value1, final double tangent1, final double value2, final double tangent2, final double amount) {
+		if (0.0d >= amount)
 			return value1;
-		if (amount >= 1f)
+		if (1.0f <= amount)
 			return value2;
 
 		// All transformed to double not to lose precission
 		// Otherwise, for high numbers of param:amount the result is NaN instead of Infinity
-		double v1 = value1, v2 = value2, t1 = tangent1, t2 = tangent2, s = amount;
-		var sSquared = s * s;
-		var sCubed = sSquared * s;
+		final double v1 = value1;
+		final double v2 = value2;
+		final double t1 = tangent1;
+		final double t2 = tangent2;
+		final double s = amount;
+		final var sSquared = s * s;
+		final var sCubed = sSquared * s;
 
-		return (2d * v1 - 2d * v2 + t2 + t1) * sCubed +
-				(3d * v2 - 3d * v1 - 2d * t1 - t2) * sSquared +
+		return (2.0d * v1 - 2.0d * v2 + t2 + t1) * sCubed +
+				(3.0d * v2 - 3.0d * v1 - 2.0d * t1 - t2) * sSquared +
 				t1 * s + v1;
 	}
 
-	public static float Lerp(float value1, float value2, float amount) {
+	public static float Lerp(final float value1, final float value2, final float amount) {
 		return value1 + (value2 - value1) * amount;
 	}
 
-	public static int Lerp(int value1, int value2, int amount) {
+	public static int Lerp(final int value1, final int value2, final int amount) {
 		return value1 + (value2 - value1) * amount;
 	}
 
-	public static double Lerp(double value1, double value2, double amount) {
+	public static double Lerp(final double value1, final double value2, final double amount) {
 		return value1 + (value2 - value1) * amount;
 	}
 
-	public static float SmoothStep(float value1, float value2, float amount) {
-		return Hermite(value1, 0f, value2, 0f, amount);
+	public static float SmoothStep(final float value1, final float value2, final float amount) {
+		return SimUtils.Hermite(value1, 0.0f, value2, 0.0f, amount);
 	}
 
-	public static int SmoothStep(int value1, int value2, int amount) {
-		return Hermite(value1, 0, value2, 0, amount);
+	public static int SmoothStep(final int value1, final int value2, final int amount) {
+		return SimUtils.Hermite(value1, 0, value2, 0, amount);
 	}
 
-	public static double SmoothStep(double value1, double value2, double amount) {
-		return Hermite(value1, 0f, value2, 0f, amount);
+	public static double SmoothStep(final double value1, final double value2, final double amount) {
+		return SimUtils.Hermite(value1, 0.0f, value2, 0.0f, amount);
 	}
 
-	public static float ToDegrees(float radians) {
+	public static float ToDegrees(final float radians) {
 		// This method uses double precission internally,
 		// though it returns single float
 		// Factor = 180 / pi
 		return (float) (radians * 57.295779513082320876798154814105);
 	}
 
-	public static float ToRadians(float degrees) {
+	public static float ToRadians(final float degrees) {
 		// This method uses double precission internally,
 		// though it returns single float
 		// Factor = pi / 180
 		return (float) (degrees * 0.017453292519943295769236907684886);
 	}
 
-	public static byte[] MakeHash(String algo, byte[] data) throws NoSuchAlgorithmException {
-		MessageDigest md = MessageDigest.getInstance(algo);
+	public static byte[] MakeHash(final String algo, final byte[] data) throws NoSuchAlgorithmException {
+		final MessageDigest md = MessageDigest.getInstance(algo);
 		md.update(data);
 		return md.digest();
 	}
 
-	public static byte[] MD5(byte[] data) throws NoSuchAlgorithmException {
-		return MakeHash("MD5", data);
+	public static byte[] MD5(final byte[] data) throws NoSuchAlgorithmException {
+		return SimUtils.MakeHash("MD5", data);
 
 	}
 
-	public static byte[] SHA1(byte[] data) throws NoSuchAlgorithmException {
-		return MakeHash("SHA1", data);
+	public static byte[] SHA1(final byte[] data) throws NoSuchAlgorithmException {
+		return SimUtils.MakeHash("SHA1", data);
 	}
 
-	public static String HexString(byte[] arr) {
+	public static String HexString(final byte[] arr) {
 
 		String finalStr = "";
-		for (byte b :
+		for (final byte b :
 				arr) {
 			finalStr += String.format("%02x", b);
 		}
@@ -306,55 +319,55 @@ public class SimUtils {
 		return finalStr;
 	}
 
-	public static String SHA1String(String value) {
+	public static String SHA1String(final String value) {
 		try {
-			byte[] arr = SHA1(value.getBytes());
-			return HexString(arr);
-		} catch (NoSuchAlgorithmException e) {
+			final byte[] arr = SimUtils.SHA1(value.getBytes(StandardCharsets.UTF_8));
+			return SimUtils.HexString(arr);
+		} catch (final NoSuchAlgorithmException e) {
 			throw new RuntimeException(e);
 		}
 	}
 
-	public static byte[] SHA256(byte[] data) throws NoSuchAlgorithmException {
-		return MakeHash("SHA256", data);
+	public static byte[] SHA256(final byte[] data) throws NoSuchAlgorithmException {
+		return SimUtils.MakeHash("SHA256", data);
 	}
 
-	public static String SHA256String(String value) {
+	public static String SHA256String(final String value) {
 		try {
-			byte[] arr = SHA256(value.getBytes());
-			return HexString(arr);
-		} catch (Exception e) {
+			final byte[] arr = SimUtils.SHA256(value.getBytes(StandardCharsets.UTF_8));
+			return SimUtils.HexString(arr);
+		} catch (final Exception e) {
 			throw new RuntimeException();
 		}
 	}
 
 	/// $1$???
-	public static String MD5(String password) {
+	public static String MD5(final String password) {
 		try {
-			byte[] arr = MD5(password.getBytes());
-			return "$1$" + HexString(arr);
-		} catch (Exception e) {
+			final byte[] arr = SimUtils.MD5(password.getBytes(StandardCharsets.UTF_8));
+			return "$1$" + SimUtils.HexString(arr);
+		} catch (final Exception e) {
 			throw new RuntimeException();
 		}
 	}
 
-	public static String MD5String(String value) {
+	public static String MD5String(final String value) {
 		try {
-			byte[] arr = MD5(value.getBytes());
-			return HexString(arr);
-		} catch (Exception e) {
+			final byte[] arr = SimUtils.MD5(value.getBytes(StandardCharsets.UTF_8));
+			return SimUtils.HexString(arr);
+		} catch (final Exception e) {
 			throw new RuntimeException();
 		}
 	}
 
 	public static double RandomDouble() {
-		Random rng = new Random();
+		final Random rng = new Random();
 		return rng.nextDouble();
 	}
 
-	public static byte[] IntToBytesBig(int value)
+	public static byte[] IntToBytesBig(final int value)
 	{
-		var bytes = new byte[4];
+		final var bytes = new byte[4];
 
 		bytes[0] = (byte)(value >> 24);
 		bytes[1] = (byte)(value >> 16);
@@ -364,30 +377,30 @@ public class SimUtils {
 		return bytes;
 	}
 
-	public static byte FloatZeroOneToByte(float val)
+	public static byte FloatZeroOneToByte(final float val)
 	{
-		if (val <= 0)
+		if (0 >= val)
 			return 0;
-		if (val >= 1.0f)
+		if (1.0f <= val)
 			return (byte)255;
 
 		return (byte)(255 * val);
 	}
 
-	public static byte[] FloatToBytesSafepos(float value)
+	public static byte[] FloatToBytesSafepos(final float value)
 	{
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		DataOutputStream dos = new DataOutputStream(baos);
+		final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		final DataOutputStream dos = new DataOutputStream(baos);
 
 		try {
 			dos.writeFloat(value);
 			return baos.toByteArray();
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
 
-	public static int BytesToIntBig(byte[] bytes)
+	public static int BytesToIntBig(final byte[] bytes)
 	{
 		return (bytes[0] << 24) |
 				(bytes[1] << 16) |
@@ -395,31 +408,31 @@ public class SimUtils {
 				bytes[3];
 	}
 
-	public static double BytesToDouble(byte[] bytes)
+	public static double BytesToDouble(final byte[] bytes)
 	{
-		ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
-		var dis = new DataInputStream(bis);
+		final ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
+		final var dis = new DataInputStream(bis);
 
 		try {
 			return dis.readDouble();
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
 
-	public static double BytesToDoubleBig(byte[] bytes){
-		return BytesToDouble(bytes);
+	public static double BytesToDoubleBig(final byte[] bytes){
+		return SimUtils.BytesToDouble(bytes);
 	}
 
-	public static long BytesToLong(byte[] arr)
+	public static long BytesToLong(final byte[] arr)
 	{
 
-		ByteArrayInputStream bis = new ByteArrayInputStream(arr);
-		var dis = new DataInputStream(bis);
+		final ByteArrayInputStream bis = new ByteArrayInputStream(arr);
+		final var dis = new DataInputStream(bis);
 
 		try {
 			return dis.readLong();
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			throw new RuntimeException(e);
 		}
 	}

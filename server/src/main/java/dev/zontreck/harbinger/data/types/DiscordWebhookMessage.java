@@ -26,27 +26,27 @@ public class DiscordWebhookMessage implements IJsonSerializable {
 	 */
 	public Object components;
 
-	public int flags = 0;
+	public int flags;
 
 
 	@Override
 	public JSONObject serialize() throws DiscordEmbedLimitsException {
-		JSONObject obj = new JSONObject();
+		final JSONObject obj = new JSONObject();
 
-		if (!content.isEmpty()) {
-			if (content.length() > 2000)
+		if (!this.content.isEmpty()) {
+			if (2000 < content.length())
 				throw new DiscordEmbedLimitsException("Content length cannot be greater than 2000 characters");
-			obj.put("content", content);
+			obj.put("content", this.content);
 		}
 
-		if (!username.isEmpty())
-			obj.put("username", username);
-		if (!avatar_url.isEmpty())
-			obj.put("avatar_url", avatar_url);
-		obj.put("tts", tts);
-		if (embeds != null) {
-			JSONArray arr = new JSONArray();
-			for (DiscordEmbed embed : embeds) {
+		if (!this.username.isEmpty())
+			obj.put("username", this.username);
+		if (!this.avatar_url.isEmpty())
+			obj.put("avatar_url", this.avatar_url);
+		obj.put("tts", this.tts);
+		if (null != embeds) {
+			final JSONArray arr = new JSONArray();
+			for (final DiscordEmbed embed : this.embeds) {
 				arr.put(embed.serialize());
 			}
 			obj.put("embeds", arr);

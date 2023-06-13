@@ -9,10 +9,10 @@ import java.util.Date;
 import java.util.List;
 
 public class DiscordEmbed implements IJsonSerializable {
-	public DiscordEmbed(String title, String description) {
+	public DiscordEmbed(final String title, final String description) {
 		this.title = title;
 		this.description = description;
-		this.timestamp = TimeUtils.makeTimestamp(new Date());
+		timestamp = TimeUtils.makeTimestamp(new Date());
 	}
 
 	public String title;
@@ -32,47 +32,47 @@ public class DiscordEmbed implements IJsonSerializable {
 
 	@Override
 	public JSONObject serialize() throws DiscordEmbedLimitsException {
-		JSONObject obj = new JSONObject();
+		final JSONObject obj = new JSONObject();
 
-		if (!title.isEmpty()) {
-			if (title.length() > 256)
+		if (!this.title.isEmpty()) {
+			if (256 < title.length())
 				throw new DiscordEmbedLimitsException("Embed title must not be greater than 256 characters");
-			obj.put("title", title);
+			obj.put("title", this.title);
 		}
 
-		obj.put("type", type);
+		obj.put("type", this.type);
 
-		if (!description.isEmpty()) {
-			if (description.length() > 4096)
+		if (!this.description.isEmpty()) {
+			if (4096 < description.length())
 				throw new DiscordEmbedLimitsException("Embed description cannot be greater than 4096 characters");
-			obj.put("description", description);
+			obj.put("description", this.description);
 		}
 
-		if (!url.isEmpty()) obj.put("url", url);
-		if (!timestamp.isEmpty())
-			obj.put("timestamp", timestamp);
+		if (!this.url.isEmpty()) obj.put("url", this.url);
+		if (!this.timestamp.isEmpty())
+			obj.put("timestamp", this.timestamp);
 
-		obj.put("color", color.getCode());
+		obj.put("color", this.color.getCode());
 
-		if (footer != null)
-			obj.put("footer", footer.serialize());
-		if (image != null)
-			obj.put("image", image.serialize());
-		if (thumbnail != null)
-			obj.put("thumbnail", thumbnail.serialize());
-		if (video != null)
-			obj.put("video", video.serialize());
-		if (provider != null)
-			obj.put("provider", provider.serialize());
-		if (author != null)
-			obj.put("author", author.serialize());
+		if (null != footer)
+			obj.put("footer", this.footer.serialize());
+		if (null != image)
+			obj.put("image", this.image.serialize());
+		if (null != thumbnail)
+			obj.put("thumbnail", this.thumbnail.serialize());
+		if (null != video)
+			obj.put("video", this.video.serialize());
+		if (null != provider)
+			obj.put("provider", this.provider.serialize());
+		if (null != author)
+			obj.put("author", this.author.serialize());
 
-		if (fields != null) {
-			if (fields.size() > 25)
+		if (null != fields) {
+			if (25 < fields.size())
 				throw new DiscordEmbedLimitsException("Fields cannot exceed 25 in a single embed");
 
-			JSONArray arr = new JSONArray();
-			for (DiscordEmbedField field : fields) {
+			final JSONArray arr = new JSONArray();
+			for (final DiscordEmbedField field : this.fields) {
 				arr.put(field.serialize());
 			}
 			obj.put("fields", arr);

@@ -11,21 +11,21 @@ public class DiscordEmbedField implements IJsonSerializable {
 
 	@Override
 	public JSONObject serialize() throws DiscordEmbedLimitsException {
-		JSONObject obj = new JSONObject();
+		final JSONObject obj = new JSONObject();
 
-		if (!name.isEmpty()) {
-			if (name.length() > 256)
+		if (!this.name.isEmpty()) {
+			if (256 < name.length())
 				throw new DiscordEmbedLimitsException("Field name must be less than 256 characters");
-			obj.put("name", name);
+			obj.put("name", this.name);
 		}
 
-		if (!value.isEmpty()) {
-			if (value.length() > 4096)
+		if (!this.value.isEmpty()) {
+			if (4096 < value.length())
 				throw new DiscordEmbedLimitsException("Field value must be less than 4096 characters");
-			obj.put("value", value);
+			obj.put("value", this.value);
 		}
 
-		obj.put("inline", inline);
+		obj.put("inline", this.inline);
 
 		return obj;
 	}
@@ -33,9 +33,9 @@ public class DiscordEmbedField implements IJsonSerializable {
 	public DiscordEmbedField() {
 	}
 
-	public DiscordEmbedField(JSONObject obj) {
-		name = obj.getString("name");
-		value = obj.getString("value");
-		inline = obj.getBoolean("inline");
+	public DiscordEmbedField(final JSONObject obj) {
+		this.name = obj.getString("name");
+		this.value = obj.getString("value");
+		this.inline = obj.getBoolean("inline");
 	}
 }

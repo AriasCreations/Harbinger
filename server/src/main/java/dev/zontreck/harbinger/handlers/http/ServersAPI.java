@@ -9,11 +9,13 @@ import dev.zontreck.harbinger.events.HarbingerClientAddedEvent;
 import dev.zontreck.harbinger.events.HarbingerClientRemovedEvent;
 import dev.zontreck.harbinger.events.MemoryAlteredEvent;
 
-public class ServersAPI {
+public enum ServersAPI {
+	;
+
 	@Subscribe
-	public static void onServersRequest(APIRequestEvent event) {
-		if (event.request_object.getString("type").equals("servers")) {
-			String subcmd = event.request_object.getString("sub_command");
+	public static void onServersRequest(final APIRequestEvent event) {
+		if ("servers".equals(event.request_object.getString("type"))) {
+			final String subcmd = event.request_object.getString("sub_command");
 			event.setCancelled(true);
 			switch (subcmd) {
 				case "register": {
@@ -22,9 +24,9 @@ public class ServersAPI {
 						event.response_object.put("success", false);
 						return;
 					}
-					String srvName = event.request_object.getString("name");
-					String srvUrl = event.request_object.getString("url");
-					Server srv = new Server();
+					final String srvName = event.request_object.getString("name");
+					final String srvUrl = event.request_object.getString("url");
+					final Server srv = new Server();
 					srv.serverURL = srvUrl;
 					srv.serverNick = srvName;
 
@@ -51,7 +53,7 @@ public class ServersAPI {
 						return;
 					}
 
-					Server srv = Persist.servers.retrieve(event.request_object.getString("name"));
+					final Server srv = Persist.servers.retrieve(event.request_object.getString("name"));
 
 					EventBus.BUS.post(new HarbingerClientRemovedEvent(srv));
 

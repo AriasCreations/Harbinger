@@ -15,31 +15,31 @@ public class SupportReps {
 	}
 
 
-	public static void add(Person rep) {
-		REPS.add(rep);
+	public static void add(final Person rep) {
+		SupportReps.REPS.add(rep);
 	}
 
-	public static void remove(Person rep) {
-		REPS.remove(rep);
+	public static void remove(final Person rep) {
+		SupportReps.REPS.remove(rep);
 	}
 
-	public static boolean contains(Person rep) {
-		return REPS.contains(rep);
+	public static boolean contains(final Person rep) {
+		return SupportReps.REPS.contains(rep);
 	}
 
-	public static boolean hasID(UUID id) {
-		return REPS.stream().filter(m -> m.ID.equals(id)).count() > 0;
+	public static boolean hasID(final UUID id) {
+		return 0 < REPS.stream().filter(m -> m.ID.equals(id)).count();
 
 	}
 
-	public static Person get(UUID ID) {
-		if (!hasID(ID)) return null;
-		return REPS.stream().filter(m -> m.ID.equals(ID)).toList().get(0);
+	public static Person get(final UUID ID) {
+		if (!SupportReps.hasID(ID)) return null;
+		return SupportReps.REPS.stream().filter(m -> m.ID.equals(ID)).toList().get(0);
 	}
 
 	public static Entry<List<Entry>> save() {
-		Entry<List<Entry>> tag = Folder.getNew("support");
-		for (Person person : REPS) {
+		final Entry<List<Entry>> tag = Folder.getNew("support");
+		for (final Person person : SupportReps.REPS) {
 			tag.value.add(person.save());
 		}
 
@@ -48,10 +48,10 @@ public class SupportReps {
 
 	public static String dump() {
 		String s = "[\n";
-		for (int i = 0; i < REPS.size(); i++) {
-			Person p = REPS.get(i);
+		for (int i = 0; i < SupportReps.REPS.size(); i++) {
+			final Person p = SupportReps.REPS.get(i);
 			s += p.print(1);
-			if ((i + 1) == REPS.size()) {
+			if ((i + 1) == SupportReps.REPS.size()) {
 				s += ",\n";
 			} else s += "\n";
 		}
@@ -63,13 +63,13 @@ public class SupportReps {
 	}
 
 
-	public static void load(Entry<List<Entry>> tag) {
+	public static void load(final Entry<List<Entry>> tag) {
 		try {
 
 			for (int i = 0; i < tag.value.size(); i++) {
-				REPS.add(Person.deserialize((Entry<List<Entry>>) tag.value.get(i)));
+				SupportReps.REPS.add(Person.deserialize((Entry<List<Entry>>) tag.value.get(i)));
 			}
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 			//REPS = new ArrayList<>();
 		}

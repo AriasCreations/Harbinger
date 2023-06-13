@@ -19,10 +19,10 @@ public enum DiscordEmbedColor {
 	private final int code;
 
 	public int getCode() {
-		return code;
+		return this.code;
 	}
 
-	DiscordEmbedColor(int code) {
+	DiscordEmbedColor(final int code) {
 		this.code = code;
 	}
 
