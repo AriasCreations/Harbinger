@@ -1,7 +1,7 @@
 package dev.zontreck.harbinger.simulator.types;
 
-public enum osUTF8Consts {
-	;
+public class osUTF8Consts {
+
 	public static final byte[] XMLundef = osUTF8.GetASCIIBytes ( "<undef/>" );
 	public static final byte[] XMLfullbooleanOne = osUTF8.GetASCIIBytes ( "<boolean>1</boolean>" );
 	public static final byte[] XMLfullbooleanZero = osUTF8.GetASCIIBytes ( "<boolean>0</boolean>" );

@@ -5,8 +5,8 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 
-public enum DigestUtils {
-	;
+public class DigestUtils {
+
 
 	public static String md5hex ( final byte[] toHash ) {
 		try {

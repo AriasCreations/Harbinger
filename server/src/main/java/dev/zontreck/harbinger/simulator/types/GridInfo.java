@@ -2,8 +2,11 @@ package dev.zontreck.harbinger.simulator.types;
 
 import dev.zontreck.ariaslib.events.EventBus;
 import dev.zontreck.harbinger.simulator.events.GridInfoGatherEvent;
+import dev.zontreck.harbinger.thirdparty.libomv.StructuredData.LLSD.LLSDXml;
 import dev.zontreck.harbinger.thirdparty.libomv.StructuredData.OSD;
 import dev.zontreck.harbinger.thirdparty.libomv.StructuredData.OSDMap;
+
+import java.io.IOException;
 
 /**
  * Provides the grid_info.xml when requested from the Harbinger service.
@@ -55,7 +58,11 @@ public class GridInfo implements Cloneable {
 
 	@Override
 	public String toString ( ) {
-		return buildOSD ( ).toString ( );
+		try {
+			return LLSDXml.serializeToString ( buildOSD (), OSD.OSDFormat.Xml, false );
+		} catch ( IOException e ) {
+			return "";
+		}
 	}
 
 	@Override

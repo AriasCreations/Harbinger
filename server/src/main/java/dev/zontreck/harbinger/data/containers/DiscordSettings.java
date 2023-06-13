@@ -1,17 +1,16 @@
 package dev.zontreck.harbinger.data.containers;
 
-import dev.zontreck.ariaslib.file.Entry;
-import dev.zontreck.ariaslib.file.EntryUtils;
-import dev.zontreck.ariaslib.file.Folder;
+import dev.zontreck.harbinger.thirdparty.libomv.StructuredData.OSD;
+import dev.zontreck.harbinger.thirdparty.libomv.StructuredData.OSDMap;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
  * Contains the settings for the Harbinger Discord Bot
  */
 public class DiscordSettings {
+	public static final String TAG = "discord";
 	public String BOT_TOKEN = "";
 	public Map<String, String> WEBHOOKS = new HashMap<> ( );
 
@@ -19,30 +18,30 @@ public class DiscordSettings {
 	}
 
 
-	public DiscordSettings ( final Entry<List<Entry>> tag ) {
-		try {
-
-			this.BOT_TOKEN = EntryUtils.getStr ( Folder.getEntry ( tag , "token" ) );
-
-			final Entry<List<Entry>> hooks = Folder.getEntry ( tag , "hooks" );
-			for ( final Entry<String> e : hooks.value ) {
-				this.WEBHOOKS.put ( e.name , e.value );
+	public DiscordSettings ( final OSD tag ) {
+		if ( tag instanceof OSDMap map ) {
+			BOT_TOKEN = map.get ( "token" ).AsString ( );
+			OSDMap hooks = ( OSDMap ) map.get ( "hooks" );
+			for (
+					Map.Entry<String, OSD> entry :
+					hooks.entrySet ( )
+			) {
+				WEBHOOKS.put ( entry.getKey ( ) , entry.getValue ( ).AsString ( ) );
 			}
-		} catch ( final Exception e ) {
 		}
-
 	}
 
-	public Entry<List<Entry>> save ( ) {
-		final Entry<List<Entry>> tag = Folder.getNew ( "discord" );
-		tag.value.add ( EntryUtils.mkStr ( "token" , this.BOT_TOKEN ) );
-		final Entry<List<Entry>> hooks = Folder.getNew ( "hooks" );
-		for ( final Map.Entry<String, String> e : this.WEBHOOKS.entrySet ( ) ) {
-			hooks.value.add ( EntryUtils.mkStr ( e.getKey ( ) , e.getValue ( ) ) );
+	public OSD save ( ) {
+		OSDMap map = new OSDMap ( );
+		OSDMap hooks = new OSDMap ( );
+		map.put ( "token" , OSD.FromString ( BOT_TOKEN ) );
+		for (
+				Map.Entry<String, String> entry :
+				WEBHOOKS.entrySet ( )
+		) {
+			hooks.put ( entry.getKey ( ) , OSD.FromString ( entry.getValue ( ) ) );
 		}
-		tag.value.add ( hooks );
-
-
-		return tag;
+		map.put ( "hooks" , hooks );
+		return map;
 	}
 }

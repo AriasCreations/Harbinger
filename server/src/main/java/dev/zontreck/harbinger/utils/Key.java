@@ -4,8 +4,8 @@ import dev.zontreck.harbinger.data.types.PresharedKey;
 
 import java.security.NoSuchAlgorithmException;
 
-public enum Key {
-	;
+public class Key {
+
 
 	/**
 	 * Secures a key for safely storing in a data file

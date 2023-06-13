@@ -11,8 +11,8 @@ import java.time.Instant;
 import java.util.Arrays;
 import java.util.Random;
 
-public enum SimUtils {
-	;
+public class SimUtils {
+
 
 	public static final boolean LITTLE_ENDIAN = ! SimUtils.IsBigEndian ( );
 	public static final boolean BIG_ENDIAN = SimUtils.IsBigEndian ( );

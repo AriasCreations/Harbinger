@@ -3,8 +3,8 @@ package dev.zontreck.harbinger.handlers.http;
 import dev.zontreck.ariaslib.events.annotations.Subscribe;
 import dev.zontreck.harbinger.events.APIRequestEvent;
 
-public enum ProductsAPIHandlers {
-	;
+public class ProductsAPIHandlers {
+
 
 	@Subscribe
 	public static void onProductsEndpoint ( final APIRequestEvent event ) {

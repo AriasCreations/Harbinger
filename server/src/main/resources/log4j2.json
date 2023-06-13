@@ -4,7 +4,7 @@
       "name": "Harbinger",
       "packages": "dev.zontreck",
       "ThresholdFilter": {
-          "level": "debug"
+          "level": "info"
       },
       "appenders": {
           "Console": {

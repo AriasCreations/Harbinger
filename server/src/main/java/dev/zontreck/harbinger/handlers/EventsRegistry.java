@@ -6,8 +6,8 @@ import dev.zontreck.harbinger.handlers.http.ServersAPI;
 import dev.zontreck.harbinger.handlers.http.SupportAPIHandlers;
 import dev.zontreck.harbinger.handlers.http.simulator.GetGridInfoHandler;
 
-public enum EventsRegistry {
-	;
+public class EventsRegistry {
+
 
 	public static void register ( final EventBus bus ) {
 		bus.register ( ProductsAPIHandlers.class );

@@ -3,6 +3,8 @@ package dev.zontreck.harbinger.data.types;
 import dev.zontreck.ariaslib.file.Entry;
 import dev.zontreck.ariaslib.file.EntryUtils;
 import dev.zontreck.ariaslib.file.Folder;
+import dev.zontreck.harbinger.thirdparty.libomv.StructuredData.OSD;
+import dev.zontreck.harbinger.thirdparty.libomv.StructuredData.OSDMap;
 import dev.zontreck.harbinger.utils.DigestUtils;
 
 import java.nio.charset.StandardCharsets;
@@ -18,9 +20,14 @@ public class PresharedKey {
 		this.hash = DigestUtils.md5hex ( ( key + ":" + this.salt ).getBytes ( StandardCharsets.UTF_8 ) );
 	}
 
-	public PresharedKey ( final Entry<List<Entry>> tag ) {
-		this.salt = EntryUtils.getStr ( Folder.getEntry ( tag , "salt" ) );
-		this.hash = EntryUtils.getStr ( Folder.getEntry ( tag , "hash" ) );
+	public PresharedKey ( final OSD tag ) {
+		if(tag instanceof OSDMap map )
+		{
+			salt = map.get("salt").AsString ();
+			hash = map.get("hash").AsString ();
+		}else {
+			throw new IllegalArgumentException ( "Must be OSDMap" );
+		}
 	}
 
 	public boolean validate ( final String key ) {
@@ -28,11 +35,10 @@ public class PresharedKey {
 		return hsh.equals ( this.hash );
 	}
 
-	public Entry<List<Entry>> save ( ) {
-		final Entry<List<Entry>> entries = Folder.getNew ( "psk" );
-		entries.value.add ( EntryUtils.mkStr ( "hash" , this.hash ) );
-		entries.value.add ( EntryUtils.mkStr ( "salt" , this.salt ) );
-
-		return entries;
+	public OSD save ( ) {
+		OSDMap map = new OSDMap (  );
+		map.put("hash", OSD.FromString ( hash ));
+		map.put("salt", OSD.FromString ( salt ));
+		return map;
 	}
 }

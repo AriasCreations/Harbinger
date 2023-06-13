@@ -29,8 +29,8 @@ import java.nio.file.Path;
 import java.util.UUID;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 
-public enum HarbingerServer {
-	;
+public class HarbingerServer {
+
 	public static final Path PLUGINS;
 	private static final Logger LOGGER = LoggerFactory.getLogger ( HarbingerServer.class.getSimpleName ( ) );
 
@@ -89,7 +89,7 @@ public enum HarbingerServer {
 		// Start up the server
 		// Read the NBT Files for the database
 		// This is designed to work without mysql
-		if ( 0 == Folder.size ( Persist.MEMORY ) ) {
+		if ( 0 == Persist.MEMORY.size () ) {
 			HarbingerServer.LOGGER.info ( "No settings exist yet!" );
 
 		}

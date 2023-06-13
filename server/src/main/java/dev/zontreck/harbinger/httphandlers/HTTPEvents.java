@@ -4,8 +4,8 @@ import dev.zontreck.ariaslib.events.annotations.Subscribe;
 import dev.zontreck.harbinger.events.HTTPStartingEvent;
 import dev.zontreck.harbinger.httphandlers.handlers.*;
 
-public enum HTTPEvents {
-	;
+public class HTTPEvents {
+
 
 	@Subscribe
 	public static void onHttpServerStarting ( final HTTPStartingEvent hse ) {

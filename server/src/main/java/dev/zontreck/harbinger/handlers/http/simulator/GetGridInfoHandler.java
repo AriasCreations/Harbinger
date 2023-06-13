@@ -6,18 +6,19 @@ import dev.zontreck.harbinger.simulator.types.GridInfo;
 
 import java.nio.charset.StandardCharsets;
 
-public enum GetGridInfoHandler {
-	;
+public class GetGridInfoHandler {
+
 
 	@Subscribe
 	public static void onRequest ( final GenericRequestEvent GRE ) {
 		if ( "/get_grid_info".equalsIgnoreCase ( GRE.path ) ) {
 			GRE.responseIsBinary = false;
 			GRE.responseCode = 200;
-			GRE.contentType = "application/xml";
+			GRE.contentType = "text/plain";
 			GridInfo info = GridInfo.consume ( );
 
-			GRE.response = info.toString ( ).getBytes ( StandardCharsets.UTF_8 );
+			GRE.responseText = info.toString ( );
+
 		}
 	}
 }

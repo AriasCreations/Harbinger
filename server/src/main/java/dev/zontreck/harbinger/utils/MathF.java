@@ -1,7 +1,7 @@
 package dev.zontreck.harbinger.utils;
 
-public enum MathF {
-	;
+public class MathF {
+
 
 	public static float Sqrt ( final float f ) {
 		return ( float ) Math.sqrt ( f );

@@ -5,8 +5,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
 
-public enum TimeUtils {
-	;
+public class TimeUtils {
+
 
 	/**
 	 * Formats a date and time in the ISO8601 format

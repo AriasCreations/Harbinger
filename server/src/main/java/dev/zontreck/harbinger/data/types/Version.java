@@ -1,10 +1,12 @@
 package dev.zontreck.harbinger.data.types;
 
 import com.google.common.collect.Lists;
-import dev.zontreck.ariaslib.file.Entry;
+import dev.zontreck.harbinger.thirdparty.libomv.StructuredData.OSD;
+import dev.zontreck.harbinger.thirdparty.libomv.StructuredData.OSDArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -19,23 +21,27 @@ public class Version {
 		}
 	}
 
-	public Version ( final Entry<int[]> tag ) {
-		this.versionDigits = Lists.newArrayList ( );
-		for ( final Integer integer : tag.value ) {
-			this.versionDigits.add ( integer );
+	public Version ( OSD entry ) {
+		if ( entry instanceof OSDArray map ) {
+			versionDigits = new ArrayList<> ( );
+			Iterator<OSD> it = map.iterator ( );
+			while ( it.hasNext ( ) ) {
+				OSD item = it.next ( );
+				versionDigits.add ( item.AsInteger ( ) );
+			}
 		}
 	}
 
-	public Entry<int[]> save ( ) {
-
-		final int[] arr = new int[ this.versionDigits.size ( ) ];
-
-		for ( int i = 0 ; i < this.versionDigits.size ( ) ; i++ ) {
-			final int integer = this.versionDigits.get ( i );
-			arr[ i ] = integer;
+	public OSD save ( ) {
+		OSDArray arr = new OSDArray ( );
+		for (
+				int x :
+				versionDigits
+		) {
+			arr.add ( OSD.FromInteger ( x ) );
 		}
 
-		return new Entry<int[]> ( arr , "version" );
+		return arr;
 	}
 
 	@Override

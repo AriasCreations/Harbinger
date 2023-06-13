@@ -1,13 +1,11 @@
 package dev.zontreck.harbinger.data.types;
 
 import dev.zontreck.ariaslib.events.annotations.Subscribe;
-import dev.zontreck.ariaslib.file.Entry;
-import dev.zontreck.ariaslib.file.EntryUtils;
-import dev.zontreck.ariaslib.file.Folder;
 import dev.zontreck.harbinger.data.Persist;
 import dev.zontreck.harbinger.events.MemoryAlteredEvent;
+import dev.zontreck.harbinger.thirdparty.libomv.StructuredData.OSD;
+import dev.zontreck.harbinger.thirdparty.libomv.StructuredData.OSDMap;
 
-import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -51,31 +49,24 @@ public class Product {
 		return new UUID ( ID1 , ID2 );
 	}
 
-	public static Product deserialize ( final Entry<List<Entry>> tag ) {
-		try {
-
-			final Product p = new Product ( );
-			p.productName = EntryUtils.getStr ( Folder.getEntry ( tag , "product" ) );
-			p.versionNumber = new Version ( ( Entry<int[]> ) Folder.getEntry ( tag , "ver" ) );
-			p.productItem = EntryUtils.getStr ( Folder.getEntry ( tag , "item" ) );
-			p.productID = EntryUtils.getUUID ( Folder.getEntry ( tag , "id" ) );
-
-
-			return p;
-		} catch ( final Exception e ) {
-			return null;
+	public Product ( OSD entry ) {
+		if ( entry instanceof OSDMap map ) {
+			productName = map.get ( "product" ).AsString ( );
+			versionNumber = new Version ( map.get ( "version" ) );
+			productItem = map.get ( "item" ).AsString ( );
+			productID = OSDID.loadUUID ( map.get ( "id" ) );
 		}
 	}
 
-	public Entry<List<Entry>> save ( ) {
-		final Entry<List<Entry>> tag = Folder.getNew ( this.productName );
+	public OSD save ( ) {
+		OSDMap map = new OSDMap ( );
+		map.put ( "product" , OSD.FromString ( productName ) );
+		map.put ( "version" , versionNumber.save ( ) );
+		map.put ( "item" , OSD.FromString ( productItem ) );
+		map.put ( "id" , OSDID.saveUUID ( productID ) );
 
-		tag.value.add ( EntryUtils.mkStr ( "product" , this.productName ) );
-		tag.value.add ( this.versionNumber.save ( ) );
-		tag.value.add ( EntryUtils.mkStr ( "item" , this.productItem ) );
-		tag.value.add ( EntryUtils.mkUUID ( "id" , this.productID ) );
 
-		return tag;
+		return map;
 	}
 
 }

@@ -1,17 +1,19 @@
 package dev.zontreck.harbinger.data.containers;
 
-import dev.zontreck.ariaslib.file.Entry;
-import dev.zontreck.ariaslib.file.EntryUtils;
-import dev.zontreck.ariaslib.file.Folder;
 import dev.zontreck.harbinger.data.types.Product;
+import dev.zontreck.harbinger.thirdparty.libomv.StructuredData.OSD;
+import dev.zontreck.harbinger.thirdparty.libomv.StructuredData.OSDArray;
+import dev.zontreck.harbinger.thirdparty.libomv.StructuredData.OSDMap;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 public class Products {
+	public static final String TAG = "products";
 	public List<Product> products = new ArrayList<> ( );
 
 
@@ -19,26 +21,31 @@ public class Products {
 
 	}
 
-	public Products ( final Entry<List<Entry>> tag ) {
-		try {
-
-			for ( final Entry<?> E : tag.value ) {
-				this.products.add ( Product.deserialize ( ( Entry<List<Entry>> ) E ) );
+	public Products ( OSD tag ) {
+		if ( tag instanceof OSDMap map ) {
+			Product.SEQUENCE = new AtomicLong ( map.get ( "seq" ).AsLong ( ) );
+			OSDArray entries = ( OSDArray ) map.get ( "entries" );
+			products = new ArrayList<> ( );
+			Iterator<OSD> it = entries.iterator ( );
+			while ( it.hasNext ( ) ) {
+				OSDMap mapx = ( OSDMap ) it.next ( );
+				products.add ( new Product ( mapx ) );
 			}
-			Product.SEQUENCE = new AtomicLong ( EntryUtils.getInt ( Folder.getEntry ( tag , "sequence" ) ) );
-		} catch ( final Exception e ) {
-			this.products = new ArrayList<> ( );
 		}
 	}
 
-	public Entry<List<Entry>> write ( ) {
-		final Entry<List<Entry>> tag = Folder.getNew ( "products" );
-		for ( final Product prod :
-				this.products ) {
-			tag.value.add ( prod.save ( ) );
+	public OSD write ( ) {
+		OSDMap prods = new OSDMap ( );
+		prods.put ( "seq" , OSD.FromLong ( Product.SEQUENCE.get ( ) ) );
+		OSDArray arrr = new OSDArray ( );
+		for (
+				Product p :
+				products
+		) {
+			arrr.add ( p.save ( ) );
 		}
-		tag.value.add ( EntryUtils.mkLong ( "sequence" , Product.SEQUENCE.get ( ) ) );
-		return tag;
+		prods.put ( "entries" , arrr );
+		return prods;
 
 	}
 

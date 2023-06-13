@@ -9,8 +9,8 @@ import dev.zontreck.harbinger.events.HarbingerClientAddedEvent;
 import dev.zontreck.harbinger.events.HarbingerClientRemovedEvent;
 import dev.zontreck.harbinger.events.MemoryAlteredEvent;
 
-public enum ServersAPI {
-	;
+public class ServersAPI {
+
 
 	@Subscribe
 	public static void onServersRequest ( final APIRequestEvent event ) {

@@ -12,8 +12,8 @@ import org.json.JSONObject;
 
 import java.util.UUID;
 
-public enum SupportAPIHandlers {
-	;
+public class SupportAPIHandlers {
+
 
 	@Subscribe
 	public static void onSupport ( final APIRequestEvent event ) {

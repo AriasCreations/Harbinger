@@ -6,6 +6,7 @@ import dev.zontreck.ariaslib.events.EventBus;
 import dev.zontreck.harbinger.events.GenericRequestEvent;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 
 public class GenericRequestHandler implements HttpHandler {
@@ -25,5 +26,9 @@ public class GenericRequestHandler implements HttpHandler {
 
 		httpExchange.getResponseHeaders ( ).add ( "Content-Type" , GRE.contentType );
 		httpExchange.sendResponseHeaders ( GRE.responseCode , response.length );
+
+		OutputStream os = httpExchange.getResponseBody ();
+		os.write ( GRE.responseText.getBytes () );
+		os.close ();
 	}
 }

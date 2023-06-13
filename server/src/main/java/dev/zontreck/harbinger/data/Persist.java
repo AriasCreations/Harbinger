@@ -1,24 +1,26 @@
 package dev.zontreck.harbinger.data;
 
 import dev.zontreck.ariaslib.events.annotations.Subscribe;
-import dev.zontreck.ariaslib.file.AriaIO;
-import dev.zontreck.ariaslib.file.Entry;
-import dev.zontreck.ariaslib.file.Folder;
 import dev.zontreck.harbinger.data.containers.*;
 import dev.zontreck.harbinger.data.types.Signature;
 import dev.zontreck.harbinger.events.MemoryAlteredEvent;
+import dev.zontreck.harbinger.thirdparty.libomv.StructuredData.LLSD.LLSDJson;
+import dev.zontreck.harbinger.thirdparty.libomv.StructuredData.OSD;
+import dev.zontreck.harbinger.thirdparty.libomv.StructuredData.OSDMap;
+import dev.zontreck.harbinger.thirdparty.libomv.StructuredData.OSDParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.nio.file.Path;
-import java.util.List;
+import java.io.*;
 
-public enum Persist {
-	;
-	public static final Logger LOGGER = LoggerFactory.getLogger ( Persist.class.getSimpleName ( ) );
-	public static final Path FILE_NAME = AriaIO.resolveDataFile ( "main" );
+public class Persist {
 
-	public static Entry<List<Entry>> MEMORY = Folder.getNew ( "root" );
+	public static final Logger LOGGER = LoggerFactory.getLogger ( Persist.class.
+
+			getSimpleName ( ) );
+	public static final String FILE_NAME = "Harbinger.json";
+
+	public static OSDMap MEMORY = new OSDMap ( );
 	public static Products products = new Products ( );
 	public static Servers servers = new Servers ( );
 	public static HTTPServerSettings serverSettings = new HTTPServerSettings ( );
@@ -26,49 +28,65 @@ public enum Persist {
 	public static Signature SIGNATURE = new Signature ( );
 	public static DiscordSettings discordSettings = new DiscordSettings ( );
 
+	public static SimulatorSettings simulatorSettings = new SimulatorSettings ( );
 
 	public static String HARBINGER_VERSION;
 
 	static {
 		try {
+			final BufferedInputStream BIS = new BufferedInputStream ( new FileInputStream ( FILE_NAME ) );
+			final byte[] data = BIS.readAllBytes ( );
 
-			Persist.MEMORY = ( Entry<List<Entry>> ) AriaIO.read ( Persist.FILE_NAME );
+			Persist.MEMORY = ( OSDMap ) OSDParser.deserialize ( data );
 
-			Persist.products = new Products ( Folder.getEntry ( Persist.MEMORY , "products" ) );
+			products = new Products ( Persist.MEMORY.get ( Products.TAG ) );
 
-			Persist.servers = Servers.deserialize ( Folder.getEntry ( Persist.MEMORY , "servers" ) );
-			SupportReps.load ( Folder.getEntry ( Persist.MEMORY , "support" ) );
+			servers = new Servers ( Persist.MEMORY.get ( Servers.TAG ) );
+			SupportReps.load ( MEMORY.get ( SupportReps.TAG ) );
 
-			Persist.serverSettings = new HTTPServerSettings ( Folder.getEntry ( Persist.MEMORY , HTTPServerSettings.TAG_NAME ) );
+			serverSettings = new HTTPServerSettings ( MEMORY.get ( HTTPServerSettings.TAG ) );
 
-			Persist.SIGNATURE = new Signature ( Folder.getEntry ( Persist.MEMORY , "sig" ) );
+			SIGNATURE = new Signature ( MEMORY.get ( Signature.TAG ) );
 
-			Persist.discordSettings = new DiscordSettings ( Folder.getEntry ( Persist.MEMORY , "discord" ) );
+			discordSettings = new DiscordSettings ( MEMORY.get ( DiscordSettings.TAG ) );
 
-			Persist.LOGGER.info ( "Memory file loaded" );
-		} catch ( final Exception e ) {
+			simulatorSettings = new SimulatorSettings ( MEMORY.get ( SimulatorSettings.TAG ) );
+
+			LOGGER.info ( "Memory file loaded" );
+
+			BIS.close ( );
+		} catch ( Exception e ) {
 			//e.printStackTrace();
 		}
 
 	}
 
 	@Subscribe
-	public static void onMemoryAltered ( final MemoryAlteredEvent ev ) {
-		Persist.save ( );
+	public static void onMemoryAltered ( MemoryAlteredEvent ev ) {
+		save ( );
 	}
 
 	private static void save ( ) {
-		Persist.MEMORY = Folder.getNew ( "root" );
-		Persist.MEMORY.value.add ( Persist.products.write ( ) );
-		Persist.MEMORY.value.add ( Persist.servers.save ( ) );
-		Persist.MEMORY.value.add ( SupportReps.save ( ) );
-		Persist.MEMORY.value.add ( Persist.serverSettings.save ( ) );
-		Persist.MEMORY.value.add ( Persist.SIGNATURE.save ( ) );
-		Persist.MEMORY.value.add ( Persist.discordSettings.save ( ) );
+		OSDMap map = new OSDMap ( );
+		map.put ( Products.TAG , products.write ( ) );
+		map.put ( Servers.TAG , servers.save ( ) );
+		map.put ( SupportReps.TAG , SupportReps.save ( ) );
+		map.put ( HTTPServerSettings.TAG , serverSettings.save ( ) );
+		map.put ( Signature.TAG , SIGNATURE.save ( ) );
+		map.put ( DiscordSettings.TAG , discordSettings.save ( ) );
 
 
-		Persist.LOGGER.info ( "Memory file saved" );
+		LOGGER.info ( "Memory file saved" );
+		try {
+			String json = LLSDJson.serializeToString ( map , OSD.OSDFormat.Json );
+			FileWriter fw = new FileWriter ( FILE_NAME );
+			fw.write ( json );
+			fw.close ();
+		} catch ( FileNotFoundException e ) {
+			throw new RuntimeException ( e );
+		} catch ( IOException e ) {
+			throw new RuntimeException ( e );
+		}
 
-		AriaIO.write ( Persist.FILE_NAME , Persist.MEMORY );
 	}
 }

@@ -1,10 +1,8 @@
 package dev.zontreck.harbinger.data.types;
 
-import dev.zontreck.ariaslib.file.Entry;
-import dev.zontreck.ariaslib.file.EntryUtils;
-import dev.zontreck.ariaslib.file.Folder;
+import dev.zontreck.harbinger.thirdparty.libomv.StructuredData.OSD;
+import dev.zontreck.harbinger.thirdparty.libomv.StructuredData.OSDMap;
 
-import java.util.List;
 import java.util.Random;
 
 /**
@@ -14,7 +12,7 @@ import java.util.Random;
  */
 public class Signature {
 
-	public static final String TAG_NAME = "sig";
+	public static final String TAG = "sig";
 
 
 	public long v1;
@@ -25,9 +23,11 @@ public class Signature {
 		this.v2 = 0;
 	}
 
-	public Signature ( final Entry<List<Entry>> entry ) {
-		this.v1 = EntryUtils.getLong ( Folder.getEntry ( entry , "a" ) );
-		this.v2 = EntryUtils.getLong ( Folder.getEntry ( entry , "b" ) );
+	public Signature ( final OSD entry ) {
+		if ( entry instanceof OSDMap map ) {
+			v1 = map.get ( "a" ).AsLong ( );
+			v2 = map.get ( "b" ).AsLong ( );
+		}
 	}
 
 	public static Signature makeNew ( ) {
@@ -40,12 +40,10 @@ public class Signature {
 		return sig;
 	}
 
-	public Entry<?> save ( ) {
-		final Entry<List<Entry>> e = Folder.getNew ( Signature.TAG_NAME );
-		e.value.add ( EntryUtils.mkLong ( "a" , this.v1 ) );
-		e.value.add ( EntryUtils.mkLong ( "b" , this.v2 ) );
-
-		return e;
-
+	public OSD save ( ) {
+		OSDMap map = new OSDMap ( );
+		map.put ( "a" , OSD.FromLong ( v1 ) );
+		map.put ( "b" , OSD.FromLong ( v2 ) );
+		return map;
 	}
 }

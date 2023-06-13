@@ -8,8 +8,8 @@ import org.json.JSONObject;
 
 import java.util.UUID;
 
-public enum ModifyProduct {
-	;
+public class ModifyProduct {
+
 
 	@Subscribe
 	public static void onAPIRequest ( final APIRequestEvent event ) {

@@ -1,17 +1,28 @@
 package dev.zontreck.harbinger.data.containers;
 
 import com.google.common.collect.Lists;
-import dev.zontreck.ariaslib.file.Entry;
-import dev.zontreck.ariaslib.file.Folder;
 import dev.zontreck.harbinger.data.types.Person;
+import dev.zontreck.harbinger.thirdparty.libomv.StructuredData.OSD;
+import dev.zontreck.harbinger.thirdparty.libomv.StructuredData.OSDArray;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
 public class SupportReps {
+	public static final String TAG = "support_reps";
 	public static List<Person> REPS = Lists.newArrayList ( );
 
 	public SupportReps ( ) {
+	}
+
+	public static void load ( OSD entry ) {
+		if ( entry instanceof OSDArray map ) {
+			Iterator<OSD> it = map.iterator ( );
+			while ( it.hasNext ( ) ) {
+				REPS.add ( new Person ( it.next ( ) ) );
+			}
+		}
 	}
 
 
@@ -37,13 +48,15 @@ public class SupportReps {
 		return SupportReps.REPS.stream ( ).filter ( m -> m.ID.equals ( ID ) ).toList ( ).get ( 0 );
 	}
 
-	public static Entry<List<Entry>> save ( ) {
-		final Entry<List<Entry>> tag = Folder.getNew ( "support" );
-		for ( final Person person : SupportReps.REPS ) {
-			tag.value.add ( person.save ( ) );
+	public static OSD save ( ) {
+		OSDArray arr = new OSDArray ( );
+		for (
+				Person p :
+				SupportReps.REPS
+		) {
+			arr.add ( p.save ( ) );
 		}
-
-		return tag;
+		return arr;
 	}
 
 	public static String dump ( ) {
@@ -61,18 +74,5 @@ public class SupportReps {
 
 
 		return s;
-	}
-
-
-	public static void load ( final Entry<List<Entry>> tag ) {
-		try {
-
-			for ( int i = 0 ; i < tag.value.size ( ) ; i++ ) {
-				SupportReps.REPS.add ( Person.deserialize ( ( Entry<List<Entry>> ) tag.value.get ( i ) ) );
-			}
-		} catch ( final Exception e ) {
-			e.printStackTrace ( );
-			//REPS = new ArrayList<>();
-		}
 	}
 }

@@ -1,31 +1,34 @@
 package dev.zontreck.harbinger.data.containers;
 
 import com.google.common.collect.Maps;
-import dev.zontreck.ariaslib.file.Entry;
-import dev.zontreck.ariaslib.file.Folder;
 import dev.zontreck.ariaslib.terminal.Task;
 import dev.zontreck.ariaslib.util.DelayedExecutorService;
 import dev.zontreck.harbinger.data.types.Server;
+import dev.zontreck.harbinger.thirdparty.libomv.StructuredData.OSD;
+import dev.zontreck.harbinger.thirdparty.libomv.StructuredData.OSDMap;
 
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
 
 public class Servers {
+	public static final String TAG = "servers";
 	public Map<String, Server> servers = Maps.newHashMap ( );
 
-	public static Servers deserialize ( final Entry<List<Entry>> lst ) {
-		try {
+	public Servers ( ) {
 
-			final Servers servers = new Servers ( );
-			for ( int i = 0 ; i < lst.value.size ( ) ; i++ ) {
-				final Entry<?> eX = lst.value.get ( i );
-				final Server serv = Server.deserialize ( ( Entry<List<Entry>> ) eX );
-				servers.servers.put ( serv.serverNick , serv );
+	}
+
+	public Servers ( OSD lst ) {
+
+		servers = new HashMap<> ( );
+		OSDMap servs = ( OSDMap ) lst;
+		for (
+				Map.Entry<String, OSD> serv :
+				servs.entrySet ( )
+		) {
+			if ( serv.getValue ( ) instanceof OSDMap server ) {
+				servers.put ( serv.getKey ( ) , new Server ( server ) );
 			}
-
-			return servers;
-		} catch ( final Exception e ) {
-			return new Servers ( );
 		}
 	}
 
@@ -40,13 +43,15 @@ public class Servers {
 		DelayedExecutorService.scheduleRepeatingTask ( watchdog , 60 );
 	}
 
-	public Entry<List<Entry>> save ( ) {
-		final Entry<List<Entry>> tag = Folder.getNew ( "servers" );
-		for ( final Map.Entry<String, Server> entry : this.servers.entrySet ( ) ) {
-			tag.value.add ( entry.getValue ( ).save ( ) );
+	public OSD save ( ) {
+		OSDMap servs = new OSDMap ( );
+		for (
+				Map.Entry<String, Server> entry : servers.entrySet ( )
+		) {
+			servs.put ( entry.getKey ( ) , entry.getValue ( ).save ( ) );
 		}
 
-		return tag;
+		return servs;
 	}
 
 	public void add ( final Server server ) {

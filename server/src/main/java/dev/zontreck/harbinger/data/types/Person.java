@@ -1,10 +1,8 @@
 package dev.zontreck.harbinger.data.types;
 
-import dev.zontreck.ariaslib.file.Entry;
-import dev.zontreck.ariaslib.file.EntryUtils;
-import dev.zontreck.ariaslib.file.Folder;
+import dev.zontreck.harbinger.thirdparty.libomv.StructuredData.OSD;
+import dev.zontreck.harbinger.thirdparty.libomv.StructuredData.OSDMap;
 
-import java.util.List;
 import java.util.UUID;
 
 public class Person {
@@ -18,17 +16,11 @@ public class Person {
 		this.Permissions = lvl;
 	}
 
-	public static Person deserialize ( final Entry<List<Entry>> tag ) {
-		try {
-
-			return new Person (
-					EntryUtils.getUUID ( Folder.getEntry ( tag , "id" ) ) ,
-					EntryUtils.getStr ( Folder.getEntry ( tag , "name" ) ) ,
-					PermissionLevel.of ( EntryUtils.getInt ( Folder.getEntry ( tag , "permissions" ) ) )
-			);
-		} catch ( final Exception e ) {
-			e.printStackTrace ( );
-			return null;
+	public Person ( OSD dat ) {
+		if ( dat instanceof OSDMap map ) {
+			ID = OSDID.loadUUID ( map.get ( "id" ) );
+			Name = map.get ( "name" ).AsString ( );
+			Permissions = PermissionLevel.of ( map.get ( "perms" ).AsInteger ( ) );
 		}
 	}
 
@@ -47,13 +39,11 @@ public class Person {
 		return s;
 	}
 
-	public Entry<List<Entry>> save ( ) {
-		final Entry<List<Entry>> tag = Folder.getNew ( this.Name );
-
-		tag.value.add ( EntryUtils.mkUUID ( "id" , this.ID ) );
-		tag.value.add ( EntryUtils.mkStr ( "name" , this.Name ) );
-		tag.value.add ( EntryUtils.mkInt ( "permissions" , this.Permissions.getFlag ( ) ) );
-
-		return tag;
+	public OSD save ( ) {
+		OSDMap map = new OSDMap ( );
+		map.put ( "id" , OSDID.saveUUID ( ID ) );
+		map.put ( "name" , OSD.FromString ( Name ) );
+		map.put ( "perms" , OSD.FromInteger ( Permissions.getFlag ( ) ) );
+		return map;
 	}
 }
