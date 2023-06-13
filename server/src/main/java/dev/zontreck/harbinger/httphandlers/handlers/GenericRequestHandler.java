@@ -4,6 +4,7 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import dev.zontreck.ariaslib.events.EventBus;
 import dev.zontreck.harbinger.events.GenericRequestEvent;
+import dev.zontreck.harbinger.httphandlers.HTTPEvents;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -14,7 +15,15 @@ public class GenericRequestHandler implements HttpHandler {
 	@Override
 	public void handle ( final HttpExchange httpExchange ) throws IOException {
 		final GenericRequestEvent GRE = new GenericRequestEvent ( httpExchange.getRequestURI ( ).getPath ( ) , httpExchange.getRequestMethod ( ) , httpExchange.getRequestBody ( ).readAllBytes ( ) );
-		EventBus.BUS.post ( GRE );
+		if(!EventBus.BUS.post ( GRE )){
+			GRE.responseText = "Not Found";
+			GRE.responseCode= 404;
+			GRE.contentType = "text/plain";
+
+			HTTPEvents.LOGGER.info("Unknown HTTP Request: \nPath: "+GRE.path+"\nBody: "+new String(GRE.body));
+		}
+
+
 
 		final byte[] response;
 		if ( GRE.responseIsBinary ) {

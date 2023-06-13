@@ -11,8 +11,8 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Iterator;
 
-public enum CommandRegistry {
-	;
+public class CommandRegistry {
+
 	public static final Logger LOGGER = LoggerFactory.getLogger ( CommandRegistry.class.getSimpleName ( ) );
 
 	public static void register ( final EventBus bus ) {

@@ -33,6 +33,7 @@ dependencies {
     implementation("org.apache.commons:commons-lang3:3.12.0")
 
     implementation("org.simpleframework:simple-xml:2.7.1")
+    implementation("org.netbeans.external:org-apache-xmlrpc:RELEASE180")
 }
 
 application {

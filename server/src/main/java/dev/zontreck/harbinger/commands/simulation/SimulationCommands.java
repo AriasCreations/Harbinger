@@ -62,6 +62,21 @@ public class SimulationCommands {
 						EventBus.BUS.post ( new MemoryAlteredEvent () );
 						break;
 					}
+					case setGridStatus -> {
+						if(ev.arguments.get ( 1 ).equalsIgnoreCase ( "false" ) || ev.arguments.get ( 1 ).equals ( "0" ))
+						{
+							CommandRegistry.LOGGER.info ( "Grid services have been disabled. HTTP service changes will not take effect until next Harbinger Restart" );
+
+							Persist.simulatorSettings.GRID_ON = false;
+						}else {
+							CommandRegistry.LOGGER.info ( "Grid services have been enabled. HTTP service changes will not take effect until next Harbinger Restart" );
+
+							Persist.simulatorSettings.GRID_ON = true;
+						}
+
+						EventBus.BUS.post ( new MemoryAlteredEvent () );
+						break;
+					}
 				}
 			}
 		}

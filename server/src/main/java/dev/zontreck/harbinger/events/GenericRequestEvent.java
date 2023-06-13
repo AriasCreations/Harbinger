@@ -24,6 +24,6 @@ public class GenericRequestEvent extends Event {
 
 	@Override
 	public boolean isCancellable ( ) {
-		return false;
+		return true;
 	}
 }

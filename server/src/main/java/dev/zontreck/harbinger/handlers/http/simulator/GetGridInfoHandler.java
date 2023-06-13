@@ -18,7 +18,15 @@ public class GetGridInfoHandler {
 			GridInfo info = GridInfo.consume ( );
 
 			GRE.responseText = info.toString ( );
-
+			GRE.setCancelled ( true );
+		} else if("/favicon.ico".equalsIgnoreCase ( GRE.path ))
+		{
+			// Just so it stops spamming the console if testing
+			GRE.responseCode=404;
+			GRE.contentType = "text/plain";
+			GRE.responseIsBinary=false;
+			GRE.responseText = "Not Found";
+			GRE.setCancelled ( true );
 		}
 	}
 
