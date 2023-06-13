@@ -2,6 +2,10 @@ package dev.zontreck.harbinger.simulator.types;
 
 import dev.zontreck.ariaslib.events.EventBus;
 import dev.zontreck.harbinger.simulator.events.GridInfoGatherEvent;
+import libomv.StructuredData.LLSD.LLSDXml;
+import libomv.StructuredData.OSD;
+import libomv.StructuredData.OSDMap;
+import libomv.StructuredData.OSDString;
 import org.json.JSONObject;
 
 /**
@@ -43,36 +47,23 @@ public class GridInfo implements Cloneable
 		return gather.info;
 	}
 
+	public OSD buildOSD()
+	{
+		OSDMap gridinfo = new OSDMap();
+		gridinfo.put("platform", OSD.FromString(ServiceType));
+		gridinfo.put("login", OSD.FromString(LoginURI));
+		gridinfo.put("economy", OSD.FromString(Economy));
+		gridinfo.put("register", OSD.FromString(Register));
+		gridinfo.put("gridname", OSD.FromString(GridName));
+		gridinfo.put("gridnick", OSD.FromString(GridNick));
+
+		return gridinfo;
+	}
+
 	@Override
 	public String toString()
 	{
-		StringBuilder sb = new StringBuilder();
-		sb.append("<gridinfo>");
-		{
-			sb.append("<platform>" + ServiceType + "</platform>");
-		}
-
-		{
-			sb.append("<login>" + LoginURI + "</login>");
-		}
-
-		{
-			sb.append("<economy>" + Economy + "</economy>");
-		}
-
-		{
-			sb.append("<register>" + Register + "</register>");
-		}
-
-		{
-			sb.append("<gridname>"+GridName+"</gridname>");
-			sb.append("<gridnick>"+GridNick+"</gridnick>");
-		}
-
-
-		sb.append("</gridinfo>");
-
-		return sb.toString();
+		return buildOSD().toString();
 	}
 
 	@Override
