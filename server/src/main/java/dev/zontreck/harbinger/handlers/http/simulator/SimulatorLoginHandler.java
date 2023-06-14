@@ -114,6 +114,7 @@ public class SimulatorLoginHandler {
 		LLoginResponse response = new LLoginResponse ( userAccount , passwd );
 		response.setToSStatus(agree_to_tos > 0 ? true : false);
 		response.setReadPatch(read_critical > 0 ? true : false);
+		response.setOptionalQuery(options);
 
 		return response.generateResponse ();
 	}

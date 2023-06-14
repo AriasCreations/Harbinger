@@ -1,7 +1,9 @@
 package dev.zontreck.harbinger.simulator.types;
 
+import dev.zontreck.ariaslib.events.EventBus;
 import dev.zontreck.ariaslib.xmlrpc.MethodResponse;
 import dev.zontreck.harbinger.data.Persist;
+import dev.zontreck.harbinger.events.GridFeatureQueryEvent;
 import dev.zontreck.harbinger.simulator.services.grid.PresenceService;
 import dev.zontreck.harbinger.utils.DataUtils;
 
@@ -10,7 +12,7 @@ import java.io.FileReader;
 import java.io.StringReader;
 import java.nio.file.Path;
 import java.time.Instant;
-import java.util.UUID;
+import java.util.*;
 
 public class LLoginResponse {
 
@@ -139,6 +141,17 @@ public class LLoginResponse {
 		code = LLoginResponseCodes.False;
 	}
 
+	public Map<String,Object> Optionals = new HashMap<> (  );
+	public void setOptionalQuery(String[] options)
+	{
+		GridFeatureQueryEvent GFQE = new GridFeatureQueryEvent ( List.of ( options) );
+		if( EventBus.BUS.post ( GFQE) )
+		{
+			// We have some optional parameters to copy out of the event
+			Optionals = GFQE.reply;
+		}
+	}
+
 	public MethodResponse generateResponse ( ) {
 		MethodResponse resp = new MethodResponse ( );
 		if(!UnlimitedGroups)resp.parameters.put ( "max-agent-groups", MaximumGroups );
@@ -171,6 +184,22 @@ public class LLoginResponse {
 				resp.parameters.put ( "region_x", pres.GlobalX );
 				resp.parameters.put ( "region_y", pres.GlobalY );
 				resp.parameters.put ( "circuit_code", pres.CircuitCode );
+				for (
+						Map.Entry<String, Object> reply :
+						Optionals.entrySet()
+				) {
+					resp.parameters.put ( reply.getKey (), reply.getValue () );
+				}
+				String FQDN = Persist.simulatorSettings.BASE_URL;
+				if(FQDN.contains ( "://" )){
+					FQDN = FQDN.substring ( FQDN.indexOf ( "://" ) );
+				}
+				resp.parameters.put ( "inventory_host", Persist.simulatorSettings.BASE_URL );
+
+				resp.parameters.put ( "start_location", "last" );
+				resp.parameters.put ( "seed_capability", Persist.simulatorSettings.BASE_URL + "/simulation/CAP/" + pres.SessionID.toString () );
+
+				resp.parameters.put ( "sim_ip", FQDN );
 			}
 
 		}
@@ -183,11 +212,6 @@ public class LLoginResponse {
 
 		resp.parameters.put ( "seconds_since_epoch", Instant.EPOCH.getEpochSecond () );
 		resp.parameters.put ( "agent_access", "M" );
-		String FQDN = Persist.simulatorSettings.BASE_URL;
-		if(FQDN.contains ( "://" )){
-			FQDN = FQDN.substring ( FQDN.indexOf ( "://" ) );
-		}
-		resp.parameters.put ( "inventory_host", Persist.simulatorSettings.BASE_URL );
 
 
 
