@@ -7,6 +7,7 @@ import dev.zontreck.harbinger.commands.CommandRegistry;
 import dev.zontreck.harbinger.data.Persist;
 import dev.zontreck.harbinger.events.MemoryAlteredEvent;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -87,6 +88,18 @@ public class SimulationCommands {
 						}
 
 						EventBus.BUS.post ( new MemoryAlteredEvent ( ) );
+						break;
+					}
+					case updateTos -> {
+						Persist.simulatorSettings.LAST_TOS_UPDATE = Instant.now ( );
+						EventBus.BUS.post ( new MemoryAlteredEvent () );
+						CommandRegistry.LOGGER.info ( "Timestamp updated" );
+						break;
+					}
+					case updatePatch -> {
+						Persist.simulatorSettings.LAST_PATCHNOTES_UPDATE = Instant.now ();
+						EventBus.BUS.post ( new MemoryAlteredEvent () );
+						CommandRegistry.LOGGER.info ( "Timestamp updated" );
 						break;
 					}
 				}

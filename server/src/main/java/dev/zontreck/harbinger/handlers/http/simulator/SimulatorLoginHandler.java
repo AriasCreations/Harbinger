@@ -5,10 +5,17 @@ import dev.zontreck.ariaslib.xmlrpc.MethodCall;
 import dev.zontreck.ariaslib.xmlrpc.MethodResponse;
 import dev.zontreck.ariaslib.xmlrpc.XmlRpcDeserializer;
 import dev.zontreck.harbinger.events.GenericRequestEvent;
+import dev.zontreck.harbinger.simulator.types.Account;
+import dev.zontreck.harbinger.simulator.types.LLoginResponse;
+import org.simpleframework.xml.Serializer;
+import org.simpleframework.xml.core.Persister;
 
+import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
+import java.io.FileInputStream;
+import java.io.FileReader;
+import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class SimulatorLoginHandler {
@@ -23,13 +30,13 @@ public class SimulatorLoginHandler {
 				XmlRpcDeserializer deserial = new XmlRpcDeserializer ( ARIS );
 				MethodCall call = MethodCall.fromDeserializer ( deserial );
 				Object[] objoptions = ( Object[] ) call.parameters.get ( "options" );
-				List<String> options = new ArrayList<> (  );
+				List<String> options = new ArrayList<> ( );
 				for (
 						Object obj :
 						objoptions
 				) {
 					try {
-						options.add ( (String)obj );
+						options.add ( ( String ) obj );
 					} catch ( Exception e ) {
 
 					}
@@ -73,14 +80,41 @@ public class SimulatorLoginHandler {
 	}
 
 	public static MethodResponse loginToSimulator ( int address_size , int agree_to_tos , String channel , int extended_errors , String first , String host_id , String id0 , String last , int last_exec_duration , int last_exec_event , String mac , String mfa_hash , String passwd , String platform , String platform_string , String platform_version , int read_critical , String start , String token , String version , String[] options ) {
-		MethodResponse resp = new MethodResponse ( );
-		resp.parameters.put ( "message" , "This function is not yet implemented" );
-		resp.parameters.put ( "login" , "false" );
-		resp.parameters.put ( "reason" , "Not yet implemented" );
-		resp.parameters.put ( "first_name" , first );
-		resp.parameters.put ( "last_name" , last );
+
+		Path accounts = Path.of ( "accounts" );
+		if ( ! accounts.toFile ( ).exists ( ) ) {
+			// Generate the folder
+			accounts.toFile ( ).mkdir ( );
+		}
+
+		Path namedAccount = accounts.resolve ( first + "." + last + ".xml" );
+		Path accountData = accounts.resolve ( "data" );
+
+		Account userAccount = null;
+		if ( namedAccount.toFile ( ).exists ( ) ) {
+
+			Serializer accountSerializer = new Persister ( );
+			try {
+				FileInputStream fis = new FileInputStream ( namedAccount.toFile () );
+				String ID = new String(fis.readAllBytes ());
+				Path userData = accountData.resolve ( ID+".xml" );
 
 
-		return resp;
+				userAccount = accountSerializer.read ( Account.class , userData.toFile ( ) );
+			} catch ( Exception e ) {
+				throw new RuntimeException ( e );
+			}
+		}
+		else {
+
+			userAccount = new Account ( first , last , passwd );
+			userAccount.commit ();
+		}
+
+		LLoginResponse response = new LLoginResponse ( userAccount , passwd );
+		response.setToSStatus(agree_to_tos > 0 ? true : false);
+		response.setReadPatch(read_critical > 0 ? true : false);
+
+		return response.generateResponse ();
 	}
 }

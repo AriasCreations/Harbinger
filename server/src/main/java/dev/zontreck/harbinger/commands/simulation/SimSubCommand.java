@@ -7,7 +7,11 @@ public enum SimSubCommand {
 	setGridStatus ( "set_grid" , "Arg [ bool ]:  Enables or disables the grid service" ),
 	setSimulator ( "set_sim" , "Arg [bool]: Enables or disables simulator functions" ),
 	setGridName ("set_grid_name", "Sets the grid name"),
-	setGridNick("set_grid_nick", "Sets the grid nickname");
+	setGridNick("set_grid_nick", "Sets the grid nickname"),
+	updateTos("update_tos", "Updates the Terms Of Service last changed timestamp, forcing all users to agree again"),
+	updatePatch("update_patch", "Updates the Patch Notes last changed timestamp, forcing all users to read again");
+
+
 
 
 	public String cmd;
