@@ -6,9 +6,9 @@ After=network.target
 Type=simple
 Restart=always
 WorkingDirectory=/harbinger
-RestartSec=1
+RestartSec=2
 User=harbinger
-ExecStart=screen -S harbinger /usr/bin/runHarbinger
+ExecStart=/usr/bin/runHarbinger
 ExecStop=/usr/bin/stopHarbinger
 
 [Install]

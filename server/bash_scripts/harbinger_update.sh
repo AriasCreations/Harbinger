@@ -18,6 +18,7 @@ then
   cp bash_scripts/harbinger_update.sh /tmp/harbinger_updater
   cp bash_scripts/pesc_harbinger_update_runner.sh /tmp/harbinger_updater2
   cp bash_scripts/runHarbinger.sh /tmp/run_harbinger_script
+  cp bash_scripts/runHarbingerStage2.sh /tmp/run_harbinger_script2
   cp bash_scripts/stopHarbinger.sh /tmp/stop_harbinger_script
 
 

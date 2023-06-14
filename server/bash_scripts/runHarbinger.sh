@@ -1,4 +1,3 @@
 #!/bin/bash
 
-
-/usr/bin/java -Xmx256m -jar /harbinger/server.jar
+screen -S harbinger /usr/bin/runHarbingerS2

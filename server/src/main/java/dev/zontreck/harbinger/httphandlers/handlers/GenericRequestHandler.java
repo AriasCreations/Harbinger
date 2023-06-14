@@ -9,6 +9,9 @@ import dev.zontreck.harbinger.httphandlers.HTTPEvents;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public class GenericRequestHandler implements HttpHandler {
 
@@ -22,7 +25,24 @@ public class GenericRequestHandler implements HttpHandler {
 			GRE.responseText = "";
 
 
-			HTTPEvents.LOGGER.info ( "[ERROR] Path: " + GRE.path + " [ " + GRE.responseCode + "/" + GRE.body + " ]" );
+			HTTPEvents.LOGGER.info ( "[ERROR] Path: " + GRE.path + " [ " + GRE.responseCode + "/" + new String(GRE.body) + " ]" );
+
+			String headers_str = "";
+			for (
+					Map.Entry<String, List<String>> header :
+					httpExchange.getRequestHeaders ().entrySet ()
+			) {
+				List<String> append = new ArrayList<> (  );
+				for (
+						String e :
+						header.getValue ( )
+				) {
+					append.add ( header.getKey ()+": "+e );
+				}
+				headers_str+= "\n" + String.join ( "\n", append );
+			}
+
+			HTTPEvents.LOGGER.debug ( "\nHEADERS: " + headers_str );
 		}
 		else {
 
