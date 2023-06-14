@@ -23,8 +23,11 @@ public enum StopCommand {
 			Terminal.setRunning ( false );
 			DelayedExecutorService.stop ( );
 			EventBus.BUS.post ( new ServerStoppingEvent ( ) );
+			EventBus.BUS.post ( new MemoryAlteredEvent () );
 
 			event.setCancelled ( true );
+
+			System.exit(0);
 		}
 		else if ( "save".equals ( event.command ) ) {
 			CommandRegistry.LOGGER.info ( "Saving data..." );

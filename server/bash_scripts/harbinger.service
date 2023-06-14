@@ -8,7 +8,8 @@ Restart=always
 WorkingDirectory=/harbinger
 RestartSec=1
 User=harbinger
-ExecStart=screen -dmS harbinger /usr/bin/runHarbinger
+ExecStart=screen -S harbinger /usr/bin/runHarbinger
+ExecStop=/usr/bin/stopHarbinger
 
 [Install]
 WantedBy=multi-user.target

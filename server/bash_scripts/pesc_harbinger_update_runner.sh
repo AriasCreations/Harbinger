@@ -13,6 +13,7 @@ mv /tmp/harbinger_updater /bin/harbinger_update
 mv /tmp/harbinger_updater2 /bin/pesc_harbinger_update_runner
 mv /tmp/harbinger_server.jar /harbinger/server.jar
 mv /tmp/run_harbinger_script /usr/bin/runHarbinger
+mv /tmp/stop_harbinger_script /usr/bin/stopHarbinger
 
 
 chown harbinger:harbinger /harbinger/server.jar
@@ -20,6 +21,8 @@ chown harbinger:harbinger /harbinger/server.jar
 chown root:root /bin/pesc_harbinger_update_runner
 chmod +x /bin/pesc_harbinger_update_runner
 chmod +x /usr/bin/runHarbinger
+chmod +x /usr/bin/stopHarbinger
+
 
 chown root:root /bin/harbinger_update
 chmod +x /bin/harbinger_update

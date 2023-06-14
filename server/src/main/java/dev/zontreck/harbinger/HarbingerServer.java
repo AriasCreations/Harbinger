@@ -148,29 +148,9 @@ public class HarbingerServer {
 		Servers.registerServerHandler ( );
 
 		try {
-			while(Terminal.isRunning ())
-			{
-				exec.wait ( 1000 );
-
-				if(!Terminal.isRunning ())
-				{
-					if(DelayedExecutorService.isRunning ())
-					{
-						// Stall detected.
-						LOGGER.info ( "Program Stall Detected" );
-						LOGGER.info("Terminating immediately");
-						EventBus.BUS.post(new MemoryAlteredEvent ());
-
-						throw new RuntimeException ( "Program has stalled" );
-					}
-				}
-			}
+			exec.wait ( );
 		} catch ( final InterruptedException e ) {
 			throw new RuntimeException ( e );
 		}
-
-		HarbingerServer.LOGGER.info ( "Saving..." );
-
-		EventBus.BUS.post ( new MemoryAlteredEvent ( ) );
 	}
 }
