@@ -12,7 +12,7 @@ import java.util.List;
 public class SimulatorLoginHandler {
 	@Subscribe
 	public static void onSimLogin ( GenericRequestEvent GRE ) {
-		if ( "/simulator/login".equals ( GRE.path ) ) {
+		if ( "/simulation/login".equals ( GRE.path ) ) {
 			GRE.setCancelled ( true );
 
 			ByteArrayInputStream ARIS = new ByteArrayInputStream ( GRE.body );
