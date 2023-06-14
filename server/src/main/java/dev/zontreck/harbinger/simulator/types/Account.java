@@ -76,16 +76,15 @@ public class Account {
 		 * 	- At 150 and above, Unlimited Groups is activated.
 		 */
 
-		String Pass = Pwd.substring ( 2 );
 		// Generate a salt
 		this.PasswordSalt = DigestUtils.md5hex ( DataUtils.GenerateGarbage ( 255 ) );
-		this.PasswordHash = DigestUtils.md5hex ( ( Pass + ":" + DigestUtils.md5hex ( PasswordSalt.getBytes ( ) ) ).getBytes ( ) );
+		this.PasswordHash = DigestUtils.md5hex ( ( Pwd + ":" + DigestUtils.md5hex ( PasswordSalt.getBytes ( ) ) ).getBytes ( ) );
 
 	}
 
 	public boolean ValidatePassword ( String pass ) {
-		String hash = DigestUtils.md5hex ( ( pass.substring ( 2 ) + ":" + DigestUtils.md5hex ( PasswordSalt.getBytes ( ) ) ).getBytes ( ) );
-		if ( PasswordHash.equals ( pass ) )
+		String hash = DigestUtils.md5hex ( ( pass + ":" + DigestUtils.md5hex ( PasswordSalt.getBytes ( ) ) ).getBytes ( ) );
+		if ( PasswordHash.equals ( hash ) )
 			return true;
 		else return false;
 	}

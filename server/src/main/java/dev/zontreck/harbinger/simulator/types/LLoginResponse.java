@@ -65,6 +65,9 @@ public class LLoginResponse {
 		}
 		else {
 			setLoginFail ( "Invalid password" );
+			code = LLoginResponseCodes.PasswordIncorrect;
+			Reason = code.reason;
+
 		}
 	}
 
