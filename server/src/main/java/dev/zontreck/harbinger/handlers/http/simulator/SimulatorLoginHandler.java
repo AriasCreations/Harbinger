@@ -7,6 +7,8 @@ import dev.zontreck.ariaslib.xmlrpc.XmlRpcDeserializer;
 import dev.zontreck.harbinger.events.GenericRequestEvent;
 
 import java.io.ByteArrayInputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class SimulatorLoginHandler {
@@ -20,7 +22,19 @@ public class SimulatorLoginHandler {
 			try {
 				XmlRpcDeserializer deserial = new XmlRpcDeserializer ( ARIS );
 				MethodCall call = MethodCall.fromDeserializer ( deserial );
-				List<String> options = ( List<String> ) call.parameters.get ( "options" );
+				Object[] objoptions = ( Object[] ) call.parameters.get ( "options" );
+				List<String> options = new ArrayList<> (  );
+				for (
+						Object obj :
+						objoptions
+				) {
+					try {
+						options.add ( (String)obj );
+					} catch ( Exception e ) {
+
+					}
+				}
+
 				String channel = ( String ) call.parameters.get ( "channel" );
 				int address_size = ( int ) call.parameters.get ( "address_size" );
 				int agree_to_tos = ( int ) call.parameters.get ( "agree_to_tos" );
