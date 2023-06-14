@@ -3,6 +3,7 @@ package dev.zontreck.harbinger.httphandlers;
 import dev.zontreck.ariaslib.events.annotations.Subscribe;
 import dev.zontreck.harbinger.commands.CommandRegistry;
 import dev.zontreck.harbinger.events.HTTPStartingEvent;
+import dev.zontreck.harbinger.handlers.http.simulator.SimulatorLoginHandler;
 import dev.zontreck.harbinger.httphandlers.handlers.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
