@@ -55,6 +55,11 @@ public class SimulatorLoginHandler {
 			}
 
 
+		} else if("/cgi-bin/login.cgi".equalsIgnoreCase ( GRE.path ))
+		{
+			GRE.setCancelled ( true );
+			GRE.responseCode=500;
+			GRE.responseText="";
 		}
 	}
 
