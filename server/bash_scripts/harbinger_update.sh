@@ -30,6 +30,6 @@ then
   echo -ne $PORT >/tmp/.harbinger_port
   pesc_harbinger_update
 else
-  git --no-pager log --pretty=format:'$aD %an - %s - [%h]' --shortstat > /tmp/harbinger_patch
+  git --no-pager log --pretty=format:'%aD %an - %s - [%h]' --shortstat > /tmp/harbinger_patch
   su -l harbinger -c "$(which harbinger_update) \"$(pwd)\""
 fi
