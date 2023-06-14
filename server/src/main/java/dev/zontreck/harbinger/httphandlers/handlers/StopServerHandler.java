@@ -16,6 +16,7 @@ public class StopServerHandler implements HttpHandler {
 	@Override
 	public void handle ( final HttpExchange httpExchange ) throws IOException {
 
+		httpExchange.getResponseHeaders ().add ( "Server", "Harbinger/" + Persist.HARBINGER_VERSION );
 		final InputStream IS = httpExchange.getRequestBody ( );
 		final String reqJson = new String ( IS.readAllBytes ( ) , StandardCharsets.UTF_8 );
 

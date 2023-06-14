@@ -2,6 +2,7 @@ package dev.zontreck.harbinger.httphandlers.handlers;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
+import dev.zontreck.harbinger.data.Persist;
 import dev.zontreck.harbinger.data.containers.SupportReps;
 import dev.zontreck.harbinger.data.types.Person;
 
@@ -15,6 +16,7 @@ public class GetSupportHandler implements HttpHandler {
 	@Override
 	public void handle ( final HttpExchange httpExchange ) throws IOException {
 		final List<String> items = new ArrayList<> ( );
+		httpExchange.getResponseHeaders ().add ( "Server", "Harbinger/" + Persist.HARBINGER_VERSION );
 		for ( final Person per : SupportReps.REPS ) {
 			items.add ( per.ID.toString ( ) );
 			items.add ( String.valueOf ( per.Permissions.getFlag ( ) ) );

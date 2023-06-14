@@ -3,6 +3,7 @@ package dev.zontreck.harbinger.httphandlers.handlers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import dev.zontreck.ariaslib.events.EventBus;
+import dev.zontreck.harbinger.data.Persist;
 import dev.zontreck.harbinger.events.APIRequestEvent;
 import org.json.JSONObject;
 
@@ -17,6 +18,9 @@ public class APIHandler implements HttpHandler {
 
 		final APIRequestEvent ARE = new APIRequestEvent ( new JSONObject ( new String ( httpExchange.getRequestBody ( ).readAllBytes ( ) , StandardCharsets.UTF_8 ) ) );
 		EventBus.BUS.post ( ARE );
+
+		httpExchange.getResponseHeaders ().add ( "Server", "Harbinger/" + Persist.HARBINGER_VERSION );
+
 
 		if ( ! ARE.isCancelled ( ) ) {
 			httpExchange.sendResponseHeaders ( 404 , 0 );
