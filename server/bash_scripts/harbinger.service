@@ -8,7 +8,7 @@ Restart=always
 WorkingDirectory=/harbinger
 RestartSec=2
 User=harbinger
-ExecStart=/usr/bin/runHarbinger
+ExecStart=/usr/bin/runHarbingerS2
 ExecStop=/usr/bin/stopHarbinger
 
 [Install]
