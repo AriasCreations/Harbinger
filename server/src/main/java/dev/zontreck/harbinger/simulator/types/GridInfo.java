@@ -23,7 +23,7 @@ public class GridInfo implements Cloneable {
 
 	private static final GridInfo BLANK_INFO = new GridInfo ( );
 	@Element(name = "platform")
-	public String ServiceType = "OpenSim";
+	public String ServiceType = "Harbinger";
 
 	@Element(name = "gridname")
 	public String GridName;
