@@ -8,7 +8,6 @@ import dev.zontreck.harbinger.data.Persist;
 import dev.zontreck.harbinger.events.MemoryAlteredEvent;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 
@@ -24,14 +23,14 @@ public class SimulationCommands {
 				String usage = SimSubCommand.print ( );
 
 				CommandRegistry.LOGGER.info ( "\n{}" , usage );
-			} else {
+			}
+			else {
 				SimSubCommand cmd = SimSubCommand.valueOfCommand ( ev.arguments.get ( 0 ) );
 
-				switch(cmd)
-				{
+				switch ( cmd ) {
 					case setBaseURL -> {
 						Persist.simulatorSettings.BASE_URL = ev.arguments.get ( 1 );
-						EventBus.BUS.post ( new MemoryAlteredEvent () );
+						EventBus.BUS.post ( new MemoryAlteredEvent ( ) );
 						break;
 					}
 					case getBaseURL -> {
@@ -39,49 +38,61 @@ public class SimulationCommands {
 						break;
 					}
 					case setGridName -> {
-						List<String> sublist = new ArrayList<> (  );
-						for(int i = 1; i < ev.arguments.size (); i++)
-						{
+						List<String> sublist = new ArrayList<> ( );
+						for ( int i = 1 ; i < ev.arguments.size ( ) ; i++ ) {
 							sublist.add ( ev.arguments.get ( i ) );
 						}
 
-						Persist.simulatorSettings.GRID_NAME = String.join (" ", sublist );
+						Persist.simulatorSettings.GRID_NAME = String.join ( " " , sublist );
 
-						EventBus.BUS.post ( new MemoryAlteredEvent () );
+						EventBus.BUS.post ( new MemoryAlteredEvent ( ) );
 						break;
 					}
 					case setGridNick -> {
-						List<String> sublist = new ArrayList<> (  );
-						for(int i = 1; i < ev.arguments.size (); i++)
-						{
+						List<String> sublist = new ArrayList<> ( );
+						for ( int i = 1 ; i < ev.arguments.size ( ) ; i++ ) {
 							sublist.add ( ev.arguments.get ( i ) );
 						}
 
-						Persist.simulatorSettings.GRID_NICK = String.join (" ", sublist );
+						Persist.simulatorSettings.GRID_NICK = String.join ( " " , sublist );
 
-						EventBus.BUS.post ( new MemoryAlteredEvent () );
+						EventBus.BUS.post ( new MemoryAlteredEvent ( ) );
 						break;
 					}
 					case setGridStatus -> {
-						if(ev.arguments.get ( 1 ).equalsIgnoreCase ( "false" ) || ev.arguments.get ( 1 ).equals ( "0" ))
-						{
+						if ( ev.arguments.get ( 1 ).equalsIgnoreCase ( "false" ) || ev.arguments.get ( 1 ).equals ( "0" ) ) {
 							CommandRegistry.LOGGER.info ( "Grid services have been disabled. HTTP service changes will not take effect until next Harbinger Restart" );
 
 							Persist.simulatorSettings.GRID_ON = false;
-						}else {
+						}
+						else {
 							CommandRegistry.LOGGER.info ( "Grid services have been enabled. HTTP service changes will not take effect until next Harbinger Restart" );
 
 							Persist.simulatorSettings.GRID_ON = true;
 						}
 
-						EventBus.BUS.post ( new MemoryAlteredEvent () );
+						EventBus.BUS.post ( new MemoryAlteredEvent ( ) );
+						break;
+					}
+					case setSimulator -> {
+						if ( ev.arguments.get ( 1 ).equalsIgnoreCase ( "false" ) || ev.arguments.get ( 1 ).equals ( "0" ) ) {
+							CommandRegistry.LOGGER.info ( "Simulator services have been disabled. HTTP service changes will not take effect until next Harbinger Restart" );
+
+							Persist.simulatorSettings.SIM_ON = false;
+						}
+						else {
+							CommandRegistry.LOGGER.info ( "Simulator services have been enabled. HTTP service changes will not take effect until next Harbinger Restart" );
+
+							Persist.simulatorSettings.SIM_ON = true;
+						}
+
+						EventBus.BUS.post ( new MemoryAlteredEvent ( ) );
 						break;
 					}
 				}
 			}
 		}
 	}
-
 
 
 }
