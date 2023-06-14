@@ -8,7 +8,7 @@ Restart=always
 WorkingDirectory=/harbinger
 RestartSec=1
 User=harbinger
-ExecStart=/usr/bin/java -Xmx256m -jar /harbinger/server.jar
+ExecStart=screen -dmS harbinger /usr/bin/runHarbinger
 
 [Install]
 WantedBy=multi-user.target

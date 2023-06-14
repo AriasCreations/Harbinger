@@ -150,7 +150,7 @@ public class HarbingerServer {
 		try {
 			while(Terminal.isRunning ())
 			{
-				exec.wait ( 100 );
+				exec.wait ( 1000 );
 
 				if(!Terminal.isRunning ())
 				{

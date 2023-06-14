@@ -48,7 +48,7 @@ public class SimulatorLoginHandler {
 				GRE.responseCode = 200;
 				GRE.responseText = resp.toXml ( );
 				GRE.responseIsBinary = false;
-				GRE.contentType = "text/xml";
+				GRE.contentType = "application/xml";
 
 			} catch ( Exception e ) {
 				throw new RuntimeException ( e );
