@@ -33,5 +33,7 @@ public class Presence
 		SessionID = UUID.randomUUID ();
 		GlobalX = 0;
 		GlobalY = 0;
+
+		ping();
 	}
 }
