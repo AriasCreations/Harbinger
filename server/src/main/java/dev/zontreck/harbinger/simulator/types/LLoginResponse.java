@@ -2,6 +2,7 @@ package dev.zontreck.harbinger.simulator.types;
 
 import dev.zontreck.ariaslib.xmlrpc.MethodResponse;
 import dev.zontreck.harbinger.data.Persist;
+import dev.zontreck.harbinger.simulator.services.grid.PresenceService;
 import dev.zontreck.harbinger.utils.DataUtils;
 
 import javax.xml.crypto.Data;
@@ -158,6 +159,18 @@ public class LLoginResponse {
 				code = LLoginResponseCodes.Critical;
 				Reason = code.reason;
 				Message = DataUtils.ReadTextFile ( Path.of("latest.html").toFile () );
+			} else {
+				// Login should be good to proceed, lets make a session ID
+
+				Presence pres = new Presence ( cached );
+				PresenceService.registerPresence ( pres );
+
+				resp.parameters.put ( "secure_session_id", pres.SessionID.toString () );
+
+				// The proper X and Y will be calculated inside the Presence constructor.
+				resp.parameters.put ( "region_x", pres.GlobalX );
+				resp.parameters.put ( "region_y", pres.GlobalY );
+				resp.parameters.put ( "circuit_code", pres.CircuitCode );
 			}
 
 		}
@@ -167,6 +180,15 @@ public class LLoginResponse {
 
 		resp.parameters.put ( "reason", Reason );
 		resp.parameters.put("message", Message);
+
+		resp.parameters.put ( "seconds_since_epoch", Instant.EPOCH.getEpochSecond () );
+		resp.parameters.put ( "agent_access", "M" );
+		String FQDN = Persist.simulatorSettings.BASE_URL;
+		if(FQDN.contains ( "://" )){
+			FQDN = FQDN.substring ( FQDN.indexOf ( "://" ) );
+		}
+		resp.parameters.put ( "inventory_host", Persist.simulatorSettings.BASE_URL );
+
 
 
 		return resp;

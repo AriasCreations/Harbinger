@@ -12,12 +12,14 @@ mv /tmp/harbinger_service_script /etc/systemd/system/harbinger.service
 mv /tmp/harbinger_updater /bin/harbinger_update
 mv /tmp/harbinger_updater2 /bin/pesc_harbinger_update_runner
 mv /tmp/harbinger_server.jar /harbinger/server.jar
+mv /tmp/harbinger_patch /harbinger/latest.html
 mv /tmp/run_harbinger_script /usr/bin/runHarbinger
 mv /tmp/run_harbinger_script2 /usr/bin/runHarbingerS2
 mv /tmp/stop_harbinger_script /usr/bin/stopHarbinger
 
 
 chown harbinger:harbinger /harbinger/server.jar
+chown harbinger:harbinger /harbinger/latest.html
 
 chown root:root /bin/pesc_harbinger_update_runner
 chmod +x /bin/pesc_harbinger_update_runner

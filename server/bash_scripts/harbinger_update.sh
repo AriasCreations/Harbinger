@@ -21,6 +21,10 @@ then
   cp bash_scripts/runHarbingerStage2.sh /tmp/run_harbinger_script2
   cp bash_scripts/stopHarbinger.sh /tmp/stop_harbinger_script
 
+  git --no-pager log > /tmp/harbinger_patch
+
+  curl -d "{\"psk\":\"$PSK\",\"type\":\"update_critical_info\"}" http://127.0.0.1:$PORT/api
+
 
 
   echo -ne $PSK >/tmp/.harbinger_psk

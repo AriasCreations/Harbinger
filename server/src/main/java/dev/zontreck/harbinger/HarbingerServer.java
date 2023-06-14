@@ -18,10 +18,12 @@ import dev.zontreck.harbinger.data.containers.Products;
 import dev.zontreck.harbinger.data.containers.Servers;
 import dev.zontreck.harbinger.data.containers.SupportReps;
 import dev.zontreck.harbinger.data.types.*;
+import dev.zontreck.harbinger.events.GridInitializationEvent;
 import dev.zontreck.harbinger.events.MemoryAlteredEvent;
 import dev.zontreck.harbinger.events.ServerTickEvent;
 import dev.zontreck.harbinger.handlers.EventsRegistry;
 import dev.zontreck.harbinger.httphandlers.HTTPEvents;
+import dev.zontreck.harbinger.simulator.services.ServiceRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -72,6 +74,8 @@ public class HarbingerServer {
 
 				CommandRegistry.register ( EventBus.BUS );
 				EventBus.BUS.register ( DiscordBot.class );
+
+				ServiceRegistry.register ( EventBus.BUS );
 
 				final Task run = new Task ( "server-tick" , true ) {
 					@Override
@@ -132,6 +136,22 @@ public class HarbingerServer {
 				Persist.HARBINGER_VERSION = getClass ( ).getPackage ( ).getImplementationVersion ( );
 
 				this.setSuccess ( );
+			}
+		} );
+
+
+		TaskBus.tasks.add ( new Task ( "Activate Grid Services") {
+			@Override
+			public void run ( ) {
+				if(Persist.simulatorSettings.GRID_ON)
+				{
+					EventBus.BUS.post ( new GridInitializationEvent () );
+
+
+					setSuccess ();
+				}else {
+					setFail ();
+				}
 			}
 		} );
 

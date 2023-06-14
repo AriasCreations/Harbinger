@@ -1,13 +1,36 @@
 package dev.zontreck.harbinger.handlers.http.simulator;
 
+import dev.zontreck.ariaslib.events.EventBus;
 import dev.zontreck.ariaslib.events.annotations.Subscribe;
+import dev.zontreck.harbinger.commands.simulation.SimulationCommands;
 import dev.zontreck.harbinger.data.Persist;
+import dev.zontreck.harbinger.events.APIRequestEvent;
 import dev.zontreck.harbinger.events.GenericRequestEvent;
+import dev.zontreck.harbinger.events.MemoryAlteredEvent;
 import dev.zontreck.harbinger.simulator.events.GridInfoGatherEvent;
 import dev.zontreck.harbinger.simulator.types.GridInfo;
 
+import java.time.Instant;
+
 public class GetGridInfoHandler {
 
+	@Subscribe
+	public static void onAPIRequest( final APIRequestEvent ev)
+	{
+		if("update_critical_info".equals ( ev.request_object.getString ( "type" ) ))
+		{
+
+			if(Persist.serverSettings.PSK.validate ( ev.request_object.getString ( "psk" ) ))
+			{
+				Persist.simulatorSettings.LAST_PATCHNOTES_UPDATE = Instant.now ();
+				EventBus.BUS.post ( new MemoryAlteredEvent () );
+
+				ev.response_status=200;
+				ev.response_object.put("status", "Success");
+				ev.setCancelled ( true );
+			}
+		}
+	}
 
 	@Subscribe
 	public static void onRequest ( final GenericRequestEvent GRE ) {
