@@ -28,7 +28,8 @@ public class GenericRequestHandler implements HttpHandler {
 			GRE.responseText = "Not Found";
 
 
-			HTTPEvents.LOGGER.info ( "[ERROR] Path: " + GRE.path + " [ " + GRE.responseCode + "/" + new String(GRE.body) + " ]" );
+			String bodyStr = new String(GRE.body);
+			HTTPEvents.LOGGER.info ( "[ERROR] Path: " + GRE.path + " [ " + GRE.responseCode + "/" + (bodyStr.length () > 8 ? bodyStr.substring ( 0,7 ) : bodyStr) + " ]" );
 
 			String headers_str = "";
 			for (
