@@ -3,6 +3,7 @@ package dev.zontreck.harbinger.httphandlers.handlers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import dev.zontreck.ariaslib.events.EventBus;
+import dev.zontreck.ariaslib.terminal.ConsolePrompt;
 import dev.zontreck.harbinger.events.GenericRequestEvent;
 import dev.zontreck.harbinger.httphandlers.HTTPEvents;
 
@@ -19,8 +20,13 @@ public class GenericRequestHandler implements HttpHandler {
 			GRE.responseText = "Not Found";
 			GRE.responseCode= 404;
 			GRE.contentType = "text/plain";
+			GRE.responseText="";
+
 
 			HTTPEvents.LOGGER.info("Unknown HTTP Request: \nPath: "+GRE.path+"\nBody: "+new String(GRE.body));
+		} else {
+
+			HTTPEvents.LOGGER.info("Request: \nPath: "+GRE.path+" [ "+GRE.responseCode + " ]");
 		}
 
 

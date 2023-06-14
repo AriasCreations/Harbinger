@@ -11,7 +11,7 @@ public class GetGridInfoHandler {
 
 	@Subscribe
 	public static void onRequest ( final GenericRequestEvent GRE ) {
-		if ( "/get_grid_info".equalsIgnoreCase ( GRE.path ) || "/cgi-bin/login.cgi".equalsIgnoreCase ( GRE.path ) ) {
+		if ( "/get_grid_info".equalsIgnoreCase ( GRE.path ) ) {
 			GRE.responseIsBinary = false;
 			GRE.responseCode = 200;
 			GRE.contentType = "text/plain";
