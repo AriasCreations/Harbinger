@@ -3,7 +3,6 @@ package dev.zontreck.harbinger.httphandlers.handlers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import dev.zontreck.ariaslib.events.EventBus;
-import dev.zontreck.ariaslib.terminal.ConsolePrompt;
 import dev.zontreck.harbinger.events.GenericRequestEvent;
 import dev.zontreck.harbinger.httphandlers.HTTPEvents;
 
@@ -16,19 +15,19 @@ public class GenericRequestHandler implements HttpHandler {
 	@Override
 	public void handle ( final HttpExchange httpExchange ) throws IOException {
 		final GenericRequestEvent GRE = new GenericRequestEvent ( httpExchange.getRequestURI ( ).getPath ( ) , httpExchange.getRequestMethod ( ) , httpExchange.getRequestBody ( ).readAllBytes ( ) );
-		if(!EventBus.BUS.post ( GRE )){
+		if ( ! EventBus.BUS.post ( GRE ) ) {
 			GRE.responseText = "Not Found";
-			GRE.responseCode= 404;
+			GRE.responseCode = 404;
 			GRE.contentType = "text/plain";
-			GRE.responseText="";
+			GRE.responseText = "";
 
 
-			HTTPEvents.LOGGER.info("Unknown HTTP Request: \nPath: "+GRE.path+"\nBody: "+new String(GRE.body));
-		} else {
-
-			HTTPEvents.LOGGER.info("Request: \nPath: "+GRE.path+" [ "+GRE.responseCode + " ]");
+			HTTPEvents.LOGGER.info ( "[ERROR] Path: " + GRE.path + " [ " + GRE.responseCode + "/" + GRE.body + " ]" );
 		}
+		else {
 
+			HTTPEvents.LOGGER.info ( "[ACCESS] Path: " + GRE.path + " [ " + GRE.responseCode + " ]" );
+		}
 
 
 		final byte[] response;
@@ -42,8 +41,8 @@ public class GenericRequestHandler implements HttpHandler {
 		httpExchange.getResponseHeaders ( ).add ( "Content-Type" , GRE.contentType );
 		httpExchange.sendResponseHeaders ( GRE.responseCode , response.length );
 
-		OutputStream os = httpExchange.getResponseBody ();
-		os.write ( GRE.responseText.getBytes () );
-		os.close ();
+		OutputStream os = httpExchange.getResponseBody ( );
+		os.write ( GRE.responseText.getBytes ( ) );
+		os.close ( );
 	}
 }
