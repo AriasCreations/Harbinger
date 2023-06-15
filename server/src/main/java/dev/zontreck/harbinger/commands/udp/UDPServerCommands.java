@@ -10,7 +10,7 @@ import dev.zontreck.harbinger.events.MemoryAlteredEvent;
 
 public class UDPServerCommands
 {
-
+	public static final String BASE_COMMAND = "udpserver";
 
 	public enum UDPSubCommand
 	{
@@ -62,13 +62,12 @@ public class UDPServerCommands
 	@Subscribe
 	public static void onCommand( CommandEvent ev )
 	{
-		if("udpserver".equalsIgnoreCase ( ev.command ))
+		if(BASE_COMMAND.equalsIgnoreCase ( ev.command ))
 		{
-			ev.setCancelled ( true );
 
 			if(ev.arguments.size () == 0)
 			{
-				UDPSubCommand.print ();
+				CommandRegistry.LOGGER.info ( UDPSubCommand.print () );
 			}else {
 				UDPSubCommand cmd = UDPSubCommand.valueOfCommand ( ev.arguments.get ( 0 ) );
 

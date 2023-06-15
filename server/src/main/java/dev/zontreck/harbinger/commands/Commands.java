@@ -3,6 +3,7 @@ package dev.zontreck.harbinger.commands;
 import dev.zontreck.harbinger.commands.http.HTTPServerCommands;
 import dev.zontreck.harbinger.commands.simulation.SimulationCommands;
 import dev.zontreck.harbinger.commands.support.SupportCommands;
+import dev.zontreck.harbinger.commands.udp.UDPServerCommands;
 
 public enum Commands {
 	help ( HelpCommand.Help , "Displays the available commands" ),
@@ -13,7 +14,8 @@ public enum Commands {
 	setpsk ( SetPresharedKeyCommand.SETPSK , "Sets the HTTP Preshared Key" ),
 	setsig ( SetSignature.SETSIG , "Sets the signature" ),
 
-	simulation ( SimulationCommands.BASE_COMMAND , "Simulator commands" );
+	simulation ( SimulationCommands.BASE_COMMAND , "Simulator commands" ),
+	udpserver( UDPServerCommands.BASE_COMMAND, "UDP Server commands" );
 
 
 	public String cmd;

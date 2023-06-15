@@ -124,6 +124,7 @@ public enum HTTPServerCommands {
 						}
 
 						EventBus.BUS.post ( new MemoryAlteredEvent () );
+						Terminal.startTerminal ();
 						break;
 					}
 				}
