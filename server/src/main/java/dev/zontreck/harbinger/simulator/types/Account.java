@@ -2,6 +2,7 @@ package dev.zontreck.harbinger.simulator.types;
 
 import dev.zontreck.harbinger.utils.DataUtils;
 import dev.zontreck.harbinger.utils.DigestUtils;
+import org.simpleframework.xml.Default;
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.Root;
 import org.simpleframework.xml.Serializer;
@@ -13,49 +14,31 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.UUID;
 
-@Root (strict = false)
+@Default(required = false)
 public class Account {
-	@Element
+
+
 	public String First;
-
-	@Element
 	public String Last;
-
-	@Element
 	public int UserLevel;
-
-	@Element
 	public String PasswordHash;
-
-	@Element
 	public String PasswordSalt;
-
-	@Element
 	public String UserID;
-
-	@Element
 	public String UserTitle = "Resident";
 
-	@Element
 	@org.simpleframework.xml.Path ("tos")
 	public boolean HasAgreedToTermsOfService = false;
 
-	@Element
 	@org.simpleframework.xml.Path ("tos")
 	public long LastReadTOS = 0;
 
-	@Element
 	@org.simpleframework.xml.Path ("critical")
 	public boolean HasReadCriticalInfo = false;
 
-	@Element
+	@Element (required = false)
 	@org.simpleframework.xml.Path ("critical")
 	public long LastReadCritical;
-
-	@Element
 	public Location LastLocation = new Location (  );
-
-	@Element
 	public Location HomeLocation = new Location (  );
 
 	public Account ( ) {
