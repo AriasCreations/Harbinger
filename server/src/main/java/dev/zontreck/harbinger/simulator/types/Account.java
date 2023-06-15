@@ -52,6 +52,10 @@ public class Account {
 	@org.simpleframework.xml.Path ("critical")
 	public long LastReadCritical;
 
+	@Element
+	public Location LastLocation;
+
+
 
 	public Account ( ) {
 
