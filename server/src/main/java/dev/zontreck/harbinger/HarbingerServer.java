@@ -24,9 +24,16 @@ import dev.zontreck.harbinger.events.ServerTickEvent;
 import dev.zontreck.harbinger.handlers.EventsRegistry;
 import dev.zontreck.harbinger.httphandlers.HTTPEvents;
 import dev.zontreck.harbinger.simulator.services.ServiceRegistry;
+import dev.zontreck.harbinger.simulator.services.simulator.SimulatorUDPService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.file.Path;
 import java.util.UUID;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
@@ -154,6 +161,41 @@ public class HarbingerServer {
 				}
 			}
 		} );
+
+		TaskBus.tasks.add ( new Task ( "Start Simulator Services" ) {
+			@Override
+			public void run ( ) {
+				if(Persist.simulatorSettings.SIM_ON){
+					SimulatorUDPService.startService ();
+
+					setSuccess ();
+				}else setFail ();
+			}
+		} );
+
+
+		Task obtainIPTask = new Task ( "Determine outward facing IP Address" ) {
+			@Override
+			public void run ( ) {
+				try {
+					URL url = new URL ( "http://checkip.amazonaws.com" );
+					BufferedReader BIS = new BufferedReader ( new InputStreamReader ( url.openStream () ) );
+					Persist.HARBINGER_EXTERNAL_IP = BIS.readLine();
+
+					setSuccess ();
+					return;
+				} catch ( MalformedURLException e ) {
+					setFail ();
+
+				} catch ( IOException e ) {
+					setFail ();
+				}
+
+				LOGGER.info ( "Failed to obtain the IP Address, the services used may be offline currently. If you set a backup using the commands, that will be used for now." );
+				throw new RuntimeException (  );
+			}
+		};
+		TaskBus.tasks.add ( obtainIPTask );
 
 		TaskBus.tasks.add ( new Task ( "Startup Completed" , true ) {
 			@Override
