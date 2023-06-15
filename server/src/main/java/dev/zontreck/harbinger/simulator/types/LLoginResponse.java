@@ -227,6 +227,7 @@ public class LLoginResponse {
 
 		resp.parameters.put ( "seconds_since_epoch", Instant.EPOCH.getEpochSecond () );
 		resp.parameters.put ( "agent_access", "M" );
+		resp.parameters.putAll ( Optionals );
 
 
 
