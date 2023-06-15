@@ -43,7 +43,7 @@ public class GridInventoryService {
 		Account aLibrarian;
 
 		if ( pLibrarian.toFile ( ).exists ( ) ) {
-			String LibrarianID = DataUtils.ReadTextFile ( pLibrarian.toFile ( ) );
+			String LibrarianID = DataUtils.StripNewLines ( DataUtils.ReadTextFile ( pLibrarian.toFile ( ) ) );
 			pLibrarian = pData.resolve ( LibrarianID + ".xml" );
 
 			aLibrarian = Account.readFrom ( pLibrarian );
@@ -148,10 +148,9 @@ public class GridInventoryService {
 		}
 
 		Account user = ev.userAccount;
-		pUserInventory = pInventory.resolve ( user.UserID+".xml" );
+		pUserInventory = pInventory.resolve ( user.UserID + ".xml" );
 
-		if(ev.options.contains ( "inventory-skeleton" ))
-		{
+		if ( ev.options.contains ( "inventory-skeleton" ) ) {
 
 			if ( pUserInventory.toFile ( ).exists ( ) ) {
 				try {
@@ -181,8 +180,7 @@ public class GridInventoryService {
 			ev.reply.put ( "inventory-skeleton" , folders );
 		}
 
-		if(ev.options.contains ( "inventory-root" ))
-		{
+		if ( ev.options.contains ( "inventory-root" ) ) {
 			if ( pUserInventory.toFile ( ).exists ( ) ) {
 				try {
 					root = InventoryFolder.loadFrom ( pUserInventory );
@@ -205,11 +203,11 @@ public class GridInventoryService {
 
 
 			List<Map<String, Object>> fold = new ArrayList<> ( );
-			Map<String, Object> tmp = new HashMap<> (  );
-			tmp.put ( "folder_id", root.folderID );
+			Map<String, Object> tmp = new HashMap<> ( );
+			tmp.put ( "folder_id" , root.folderID );
 			fold.add ( tmp );
 
-			ev.reply.put ( "inventory-root", fold );
+			ev.reply.put ( "inventory-root" , fold );
 		}
 
 	}

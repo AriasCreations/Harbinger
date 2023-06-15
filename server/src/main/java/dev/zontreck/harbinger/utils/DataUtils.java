@@ -21,6 +21,11 @@ public class DataUtils
 		return t;
 	}
 
+	public static String StripNewLines(String input)
+	{
+		return input.replace ( "\n", "" );
+	}
+
 	public static String ReadTextFile( File fileToRead)
 	{
 		StringBuilder sb = new StringBuilder (  );

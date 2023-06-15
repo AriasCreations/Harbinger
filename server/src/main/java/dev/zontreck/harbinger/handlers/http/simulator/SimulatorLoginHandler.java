@@ -8,13 +8,8 @@ import dev.zontreck.harbinger.events.GenericRequestEvent;
 import dev.zontreck.harbinger.simulator.types.Account;
 import dev.zontreck.harbinger.simulator.types.LLoginResponse;
 import dev.zontreck.harbinger.utils.DataUtils;
-import org.simpleframework.xml.Serializer;
-import org.simpleframework.xml.core.Persister;
 
-import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
-import java.io.FileInputStream;
-import java.io.FileReader;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -95,8 +90,8 @@ public class SimulatorLoginHandler {
 		if ( namedAccount.toFile ( ).exists ( ) ) {
 
 			try {
-				String ID = DataUtils.ReadTextFile ( namedAccount.toFile () );
-				Path userData = accountData.resolve ( ID+".xml" );
+				String ID = DataUtils.StripNewLines ( DataUtils.ReadTextFile ( namedAccount.toFile ( ) ) );
+				Path userData = accountData.resolve ( ID + ".xml" );
 
 
 				userAccount = Account.readFrom ( userData );
@@ -107,15 +102,15 @@ public class SimulatorLoginHandler {
 		else {
 
 			userAccount = new Account ( first , last , passwd );
-			userAccount.commit ();
+			userAccount.commit ( );
 		}
 
 		LLoginResponse response = new LLoginResponse ( userAccount , passwd );
-		response.setToSStatus(agree_to_tos > 0 ? true : false);
-		response.setReadPatch(read_critical > 0 ? true : false);
-		response.setOptionalQuery(options);
-		response.setLocationRequest(last);
+		response.setToSStatus ( agree_to_tos > 0 ? true : false );
+		response.setReadPatch ( read_critical > 0 ? true : false );
+		response.setOptionalQuery ( options );
+		response.setLocationRequest ( last );
 
-		return response.generateResponse ();
+		return response.generateResponse ( );
 	}
 }
