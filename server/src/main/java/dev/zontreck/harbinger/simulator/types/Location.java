@@ -3,7 +3,7 @@ package dev.zontreck.harbinger.simulator.types;
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.Root;
 
-@Root
+@Root (strict = false)
 public class Location {
 
 	@Element

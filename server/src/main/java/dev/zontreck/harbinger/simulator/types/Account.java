@@ -53,10 +53,10 @@ public class Account {
 	public long LastReadCritical;
 
 	@Element
-	public Location LastLocation;
+	public Location LastLocation = new Location (  );
 
 	@Element
-	public Location HomeLocation;
+	public Location HomeLocation = new Location (  );
 
 	public Account ( ) {
 
