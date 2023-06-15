@@ -12,9 +12,11 @@ public class MaxGroupsService {
 	@Subscribe
 	public static void onGridFeatureQuery( GridFeatureQueryEvent ev )
 	{
+		if(!ev.options.contains ( "max-agent-groups" )) return;
 		if(ev.currentResponse.UnlimitedGroups)
 			return;
 
+		ev.setCancelled ( true );
 		ev.reply.put ( "max-agent-groups", ev.currentResponse.MaximumGroups );
 	}
 }

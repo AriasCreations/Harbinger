@@ -35,7 +35,6 @@ public class Account {
 	@org.simpleframework.xml.Path ("critical")
 	public boolean HasReadCriticalInfo = false;
 
-	@Element (required = false)
 	@org.simpleframework.xml.Path ("critical")
 	public long LastReadCritical;
 	public Location LastLocation = new Location (  );
@@ -107,5 +106,15 @@ public class Account {
 			throw new RuntimeException ( e );
 		}
 
+	}
+
+	public static Account readFrom(Path p)
+	{
+		Serializer serial = new Persister (  );
+		try {
+			return serial.read ( Account.class, p.toFile () );
+		} catch ( Exception e ) {
+			throw new RuntimeException ( e );
+		}
 	}
 }

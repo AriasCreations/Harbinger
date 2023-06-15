@@ -7,6 +7,7 @@ import dev.zontreck.ariaslib.xmlrpc.XmlRpcDeserializer;
 import dev.zontreck.harbinger.events.GenericRequestEvent;
 import dev.zontreck.harbinger.simulator.types.Account;
 import dev.zontreck.harbinger.simulator.types.LLoginResponse;
+import dev.zontreck.harbinger.utils.DataUtils;
 import org.simpleframework.xml.Serializer;
 import org.simpleframework.xml.core.Persister;
 
@@ -93,14 +94,12 @@ public class SimulatorLoginHandler {
 		Account userAccount = null;
 		if ( namedAccount.toFile ( ).exists ( ) ) {
 
-			Serializer accountSerializer = new Persister ( );
 			try {
-				FileInputStream fis = new FileInputStream ( namedAccount.toFile () );
-				String ID = new String(fis.readAllBytes ());
+				String ID = DataUtils.ReadTextFile ( namedAccount.toFile () );
 				Path userData = accountData.resolve ( ID+".xml" );
 
 
-				userAccount = accountSerializer.read ( Account.class , userData.toFile ( ) );
+				userAccount = Account.readFrom ( userData );
 			} catch ( Exception e ) {
 				throw new RuntimeException ( e );
 			}
