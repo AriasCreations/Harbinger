@@ -1,6 +1,7 @@
 package dev.zontreck.harbinger.simulator.types.inventory;
 
 import org.simpleframework.xml.Element;
+import org.simpleframework.xml.ElementArray;
 import org.simpleframework.xml.Root;
 import org.simpleframework.xml.Serializer;
 import org.simpleframework.xml.core.Commit;
@@ -26,7 +27,8 @@ public class InventoryFolder {
 	@Element (required = false)
 	public String folderOwner;
 
-	@Element (required = false)
+
+	@ElementArray (required = false)
 	public List<InventoryFolder> subFolders;
 
 	@Element (required = false)
