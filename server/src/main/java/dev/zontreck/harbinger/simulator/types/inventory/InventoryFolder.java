@@ -28,8 +28,11 @@ public class InventoryFolder {
 	public String folderOwner;
 
 
-	@ElementArray (required = false)
 	public List<InventoryFolder> subFolders;
+
+
+	@ElementArray (required = false)
+	public InventoryFolder[] ChildFolders;
 
 	@Element (required = false)
 	public String folderID;
@@ -41,6 +44,7 @@ public class InventoryFolder {
 	@Persist
 	public void persist ( ) {
 		invFolderType = folderType.name ( );
+		ChildFolders = subFolders.toArray (new InventoryFolder[]{});
 	}
 
 	public InventoryFolder ( ) {
@@ -77,12 +81,14 @@ public class InventoryFolder {
 	@Commit
 	public void finalize ( ) {
 		folderType = InventoryFolderTypes.valueOf ( invFolderType );
+		subFolders = List.of ( ChildFolders );
 	}
 
 
 	@Complete
 	public void completed ( ) {
 		invFolderType = "";
+		ChildFolders = null;
 
 		for (
 				InventoryFolder folder :
