@@ -55,7 +55,7 @@ public class LLoginResponse {
 	public int MaximumGroups=0;
 
 
-	private Account cached;
+	public Account cached;
 
 	public Location StartLocation;
 	/**
@@ -156,7 +156,7 @@ public class LLoginResponse {
 	public Map<String,Object> Optionals = new HashMap<> (  );
 	public void setOptionalQuery(String[] options)
 	{
-		GridFeatureQueryEvent GFQE = new GridFeatureQueryEvent ( List.of ( options) );
+		GridFeatureQueryEvent GFQE = new GridFeatureQueryEvent ( List.of ( options), this );
 		if( EventBus.BUS.post ( GFQE) )
 		{
 			// We have some optional parameters to copy out of the event
@@ -166,7 +166,6 @@ public class LLoginResponse {
 
 	public MethodResponse generateResponse ( ) {
 		MethodResponse resp = new MethodResponse ( );
-		if(!UnlimitedGroups)resp.parameters.put ( "max-agent-groups", MaximumGroups );
 		resp.parameters.put ( "first_name", First_Name );
 		resp.parameters.put ( "agent_id", agent_id);
 		resp.parameters.put ( "region_size_x", 256 );
