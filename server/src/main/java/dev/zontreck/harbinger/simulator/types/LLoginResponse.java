@@ -56,6 +56,8 @@ public class LLoginResponse {
 
 
 	private Account cached;
+
+	public Location StartLocation;
 	/**
 	 * Pre-fills some essential information from the User Account object.
 	 *
@@ -122,7 +124,7 @@ public class LLoginResponse {
 		cached.HasReadCriticalInfo = patch;
 		if(patch && cached.UserLevel == 1)
 		{
-			cached.UserLevel=3;
+			cached.UserLevel++;
 		}
 		if(patch)
 		{
@@ -139,6 +141,16 @@ public class LLoginResponse {
 		Message = reason;
 
 		code = LLoginResponseCodes.False;
+	}
+
+	public void setLocationRequest(String last)
+	{
+		if(cached.UserLevel == 2)
+		{
+			StartLocation = cached.LastLocation;
+		}else {
+			StartLocation = new Location (last);
+		}
 	}
 
 	public Map<String,Object> Optionals = new HashMap<> (  );
@@ -192,11 +204,12 @@ public class LLoginResponse {
 				}
 				String FQDN = Persist.simulatorSettings.BASE_URL;
 				if(FQDN.contains ( "://" )){
-					FQDN = FQDN.substring ( FQDN.indexOf ( "://" ) );
+					FQDN = FQDN.substring ( FQDN.indexOf ( "://" )+3 );
 				}
 				resp.parameters.put ( "inventory_host", FQDN );
 
-				resp.parameters.put ( "start_location", "last" );
+
+				resp.parameters.put ( "start_location", StartLocation.interpret(cached) );
 				resp.parameters.put ( "seed_capability", Persist.simulatorSettings.BASE_URL + "/simulation/CAP/" + pres.SessionID.toString () );
 
 				resp.parameters.put ( "sim_ip", Persist.HARBINGER_EXTERNAL_IP );

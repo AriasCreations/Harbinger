@@ -24,4 +24,17 @@ public class Location {
 	{
 
 	}
+
+	public Location(String last)
+	{
+		// TODO
+	}
+
+
+	public String interpret(Account act)
+	{
+		if(act.LastLocation.RegionName == RegionName) return "last";
+		if(RegionName.equals ( act.HomeLocation.RegionName )) return "home";
+		else return RegionName+"/"+X+"/"+Y+"/"+Z;
+	}
 }

@@ -115,6 +115,7 @@ public class SimulatorLoginHandler {
 		response.setToSStatus(agree_to_tos > 0 ? true : false);
 		response.setReadPatch(read_critical > 0 ? true : false);
 		response.setOptionalQuery(options);
+		response.setLocationRequest(last);
 
 		return response.generateResponse ();
 	}

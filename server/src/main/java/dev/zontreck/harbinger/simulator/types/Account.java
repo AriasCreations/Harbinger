@@ -55,7 +55,8 @@ public class Account {
 	@Element
 	public Location LastLocation;
 
-
+	@Element
+	public Location HomeLocation;
 
 	public Account ( ) {
 
