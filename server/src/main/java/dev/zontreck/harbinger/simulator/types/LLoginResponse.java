@@ -170,6 +170,10 @@ public class LLoginResponse {
 		resp.parameters.put ( "agent_id", agent_id);
 		resp.parameters.put ( "region_size_x", 256 );
 		resp.parameters.put ( "region_size_y", 256 );
+		resp.parameters.put ( "look_at", "[r0,r0,r0]" ); // TODO: Set this to the actual avatar's lookat
+		resp.parameters.put ( "agent_access_max", "A" ); // For this one, we aren't SL, but this can be derived from having more account levels. It can be set to G, M, or A, depending on the user's age. Harbinger isn't intended to be accessed by non-adults, so this is set to A, for now.
+		resp.parameters.put ( "map-server-url", Persist.simulatorSettings.BASE_URL+"/simulation/map" );
+
 
 		if(Login){
 			// DISALLOW UNAUTHENTICATED USERS FROM ANSWERING THESE

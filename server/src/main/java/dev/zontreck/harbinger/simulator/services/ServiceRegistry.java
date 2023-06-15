@@ -5,6 +5,7 @@ import dev.zontreck.harbinger.commands.CommandRegistry;
 import dev.zontreck.harbinger.simulator.services.grid.GridInventoryService;
 import dev.zontreck.harbinger.simulator.services.grid.MaxGroupsService;
 import dev.zontreck.harbinger.simulator.services.grid.PresenceService;
+import dev.zontreck.harbinger.simulator.services.grid.UserProfilesService;
 import dev.zontreck.harbinger.simulator.services.simulator.SimulatorUDPService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,5 +20,6 @@ public class ServiceRegistry
 		bus.register ( SimulatorUDPService.class );
 		bus.register ( MaxGroupsService.class );
 		bus.register ( GridInventoryService.class );
+		bus.register ( UserProfilesService.class );
 	}
 }

@@ -67,6 +67,10 @@ public class SimulatorLoginHandler {
 				GRE.responseIsBinary = false;
 				GRE.contentType = "application/xml";
 
+
+				DataUtils.WriteFileBytes(Path.of ( "lastRequest.xml"), GRE.body);
+				DataUtils.WriteFileText(Path.of ( "lastResponse.xml" ), GRE.responseText);
+
 			} catch ( Exception e ) {
 				throw new RuntimeException ( e );
 			}
@@ -110,6 +114,7 @@ public class SimulatorLoginHandler {
 		response.setReadPatch ( read_critical > 0 ? true : false );
 		response.setOptionalQuery ( options );
 		response.setLocationRequest ( last );
+
 
 		return response.generateResponse ( );
 	}

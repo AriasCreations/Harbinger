@@ -1,6 +1,9 @@
 package dev.zontreck.harbinger.utils;
 
+import dev.zontreck.harbinger.thirdparty.libomv.primMesher.PrimMesh;
+
 import java.io.*;
+import java.nio.file.Path;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
@@ -43,6 +46,23 @@ public class DataUtils
 
 		} catch ( FileNotFoundException e ) {
 			throw new RuntimeException ( e );
+		} catch ( IOException e ) {
+			throw new RuntimeException ( e );
+		}
+	}
+
+
+	public static void WriteFileBytes( Path path, byte[] bytes ) throws IOException {
+		BufferedOutputStream bos = new BufferedOutputStream ( new FileOutputStream ( path.toFile () ) );
+		bos.write ( bytes );
+		bos.flush ();
+		bos.close ();
+	}
+
+	public static void WriteFileText(Path path, String text)
+	{
+		try {
+			WriteFileBytes ( path, text.getBytes () );
 		} catch ( IOException e ) {
 			throw new RuntimeException ( e );
 		}
