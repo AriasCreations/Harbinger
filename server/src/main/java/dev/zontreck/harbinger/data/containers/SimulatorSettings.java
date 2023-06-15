@@ -19,6 +19,7 @@ public class SimulatorSettings {
 	public Instant LAST_PATCHNOTES_UPDATE;
 
 
+
 	public OSD serialize ( ) {
 		OSDMap simsettings = new OSDMap ( );
 		simsettings.put ( "base_url" , OSD.FromString ( BASE_URL ) );
@@ -29,6 +30,7 @@ public class SimulatorSettings {
 
 		simsettings.put("tos", OSD.FromLong ( LAST_TOS_UPDATE.getEpochSecond () ));
 		simsettings.put("patch", OSD.FromLong(LAST_PATCHNOTES_UPDATE.getEpochSecond ()));
+
 
 
 		return simsettings;
@@ -49,6 +51,7 @@ public class SimulatorSettings {
 			SIM_ON = map.get ( "sim" ).AsBoolean ();
 			LAST_TOS_UPDATE = Instant.ofEpochSecond ( map.get ( "tos" ).AsLong () );
 			LAST_PATCHNOTES_UPDATE = Instant.ofEpochSecond ( map.get ( "patch" ).AsLong () );
+
 
 
 		}catch(Exception e){

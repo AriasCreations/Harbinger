@@ -32,6 +32,8 @@ public class Persist {
 
 	public static String HARBINGER_VERSION;
 
+	public static String HARBINGER_EXTERNAL_IP;
+
 	static {
 		try {
 			final BufferedInputStream BIS = new BufferedInputStream ( new FileInputStream ( FILE_NAME ) );

@@ -194,12 +194,15 @@ public class LLoginResponse {
 				if(FQDN.contains ( "://" )){
 					FQDN = FQDN.substring ( FQDN.indexOf ( "://" ) );
 				}
-				resp.parameters.put ( "inventory_host", Persist.simulatorSettings.BASE_URL );
+				resp.parameters.put ( "inventory_host", FQDN );
 
 				resp.parameters.put ( "start_location", "last" );
 				resp.parameters.put ( "seed_capability", Persist.simulatorSettings.BASE_URL + "/simulation/CAP/" + pres.SessionID.toString () );
 
-				resp.parameters.put ( "sim_ip", FQDN );
+				resp.parameters.put ( "sim_ip", Persist.HARBINGER_EXTERNAL_IP );
+				if(Persist.serverSettings.ExternalPortNumberSet)
+					resp.parameters.put ( "sim_port", Persist.serverSettings.ExternalPortNumber );
+				else resp.parameters.put ( "sim_port", Persist.serverSettings.port );
 			}
 
 		}

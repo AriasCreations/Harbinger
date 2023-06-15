@@ -20,6 +20,10 @@ public class HTTPServerSettings {
 
 	public PresharedKey PSK;
 
+
+	public int ExternalPortNumber; // If zero, the flag below will be set to false on serialize and deserialize.
+	public boolean ExternalPortNumberSet = false; // Defaults then to the internal port number from HTTPServer settings
+
 	public HTTPServerSettings ( ) {
 		try {
 			PSK = new PresharedKey ( "changeme" );
@@ -34,6 +38,11 @@ public class HTTPServerSettings {
 			enabled = map.get("enable").AsBoolean ();
 			port = map.get ( "port" ).AsInteger ();
 			PSK = new PresharedKey ( map.get("psk") );
+
+			ExternalPortNumber = map.get ( "external_port" ).AsInteger ();
+
+			if(ExternalPortNumber != 0)
+				ExternalPortNumberSet=true;
 		}
 	}
 
@@ -43,6 +52,13 @@ public class HTTPServerSettings {
 		map.put("enable", OSD.FromBoolean ( enabled ));
 		map.put("port", OSD.FromInteger ( port ));
 		map.put("psk", PSK.save ());
+
+		if(ExternalPortNumber == 0)
+		{
+			ExternalPortNumberSet=false;
+		} else map.put("external_port", OSD.FromInteger ( ExternalPortNumber ));
+
+
 		return map;
 	}
 }
