@@ -24,9 +24,14 @@ public class HTTPServerSettings {
 	public int ExternalPortNumber; // If zero, the flag below will be set to false on serialize and deserialize.
 	public boolean ExternalPortNumberSet = false; // Defaults then to the internal port number from HTTPServer settings
 
+	public UDPSettings udp_settings;
+
+
+
 	public HTTPServerSettings ( ) {
 		try {
 			PSK = new PresharedKey ( "changeme" );
+			udp_settings = new UDPSettings ( new OSDMap (  ) );
 		} catch ( Exception e ) {
 			e.printStackTrace ( );
 		}
@@ -38,6 +43,9 @@ public class HTTPServerSettings {
 			enabled = map.get("enable").AsBoolean ();
 			port = map.get ( "port" ).AsInteger ();
 			PSK = new PresharedKey ( map.get("psk") );
+			udp_settings = new UDPSettings ( map.get ( "udp" ) );
+
+
 
 			ExternalPortNumber = map.get ( "external_port" ).AsInteger ();
 
@@ -52,6 +60,9 @@ public class HTTPServerSettings {
 		map.put("enable", OSD.FromBoolean ( enabled ));
 		map.put("port", OSD.FromInteger ( port ));
 		map.put("psk", PSK.save ());
+		map.put("udp", udp_settings.save ());
+
+
 
 		if(ExternalPortNumber == 0)
 		{

@@ -6,6 +6,7 @@ import dev.zontreck.ariaslib.events.annotations.Subscribe;
 import dev.zontreck.harbinger.commands.http.HTTPServerCommands;
 import dev.zontreck.harbinger.commands.simulation.SimulationCommands;
 import dev.zontreck.harbinger.commands.support.SupportCommands;
+import dev.zontreck.harbinger.commands.udp.UDPServerCommands;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,6 +24,7 @@ public class CommandRegistry {
 		bus.register ( SetPresharedKeyCommand.class );
 		bus.register ( SetSignature.class );
 		bus.register ( SimulationCommands.class );
+		bus.register ( UDPServerCommands.class );
 
 
 		bus.register ( CommandRegistry.class );
