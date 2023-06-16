@@ -67,4 +67,17 @@ public class DataUtils
 			throw new RuntimeException ( e );
 		}
 	}
+
+	public static byte[] ReadAllBytes(Path pth)
+	{
+		try {
+			BufferedInputStream bis = new BufferedInputStream ( new FileInputStream ( pth.toFile () ) );
+
+			return bis.readAllBytes ();
+		} catch ( FileNotFoundException e ) {
+			throw new RuntimeException ( e );
+		} catch ( IOException e ) {
+			throw new RuntimeException ( e );
+		}
+	}
 }

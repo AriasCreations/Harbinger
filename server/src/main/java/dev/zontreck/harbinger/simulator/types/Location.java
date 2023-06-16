@@ -1,10 +1,8 @@
 package dev.zontreck.harbinger.simulator.types;
 
-import org.simpleframework.xml.Default;
-import org.simpleframework.xml.Element;
-import org.simpleframework.xml.Root;
+import dev.zontreck.ariaslib.xml.DynSerial;
 
-@Default(required = false)
+@DynSerial
 public class Location {
 
 	public String RegionName = "Harbinger";

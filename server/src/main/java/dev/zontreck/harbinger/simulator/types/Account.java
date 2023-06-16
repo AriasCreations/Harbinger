@@ -1,10 +1,8 @@
 package dev.zontreck.harbinger.simulator.types;
 
+import dev.zontreck.ariaslib.xml.DynSerial;
 import dev.zontreck.harbinger.utils.DataUtils;
 import dev.zontreck.harbinger.utils.DigestUtils;
-import org.simpleframework.xml.Default;
-import org.simpleframework.xml.Element;
-import org.simpleframework.xml.Root;
 import org.simpleframework.xml.Serializer;
 import org.simpleframework.xml.core.Persister;
 
@@ -14,7 +12,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.UUID;
 
-@Default(required = false)
+@DynSerial
 public class Account {
 
 
@@ -26,21 +24,17 @@ public class Account {
 	public String UserID;
 	public String UserTitle = "Resident";
 
-	public boolean PendingStipend=false;
+	public boolean PendingStipend = false;
 
-	@org.simpleframework.xml.Path ("tos")
 	public boolean HasAgreedToTermsOfService = false;
 
-	@org.simpleframework.xml.Path ("tos")
 	public long LastReadTOS = 0;
 
-	@org.simpleframework.xml.Path ("critical")
 	public boolean HasReadCriticalInfo = false;
 
-	@org.simpleframework.xml.Path ("critical")
 	public long LastReadCritical;
-	public Location LastLocation = new Location (  );
-	public Location HomeLocation = new Location (  );
+	public Location LastLocation = new Location ( );
+	public Location HomeLocation = new Location ( );
 
 	public Account ( ) {
 
@@ -110,11 +104,10 @@ public class Account {
 
 	}
 
-	public static Account readFrom(Path p)
-	{
-		Serializer serial = new Persister (  );
+	public static Account readFrom ( Path p ) {
+		Serializer serial = new Persister ( );
 		try {
-			return serial.read ( Account.class, p.toFile () );
+			return serial.read ( Account.class , p.toFile ( ) );
 		} catch ( Exception e ) {
 			throw new RuntimeException ( e );
 		}

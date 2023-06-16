@@ -1,43 +1,26 @@
 package dev.zontreck.harbinger.simulator.types.inventory;
 
-import org.simpleframework.xml.*;
-import org.simpleframework.xml.core.Commit;
-import org.simpleframework.xml.core.Complete;
-import org.simpleframework.xml.core.Persist;
-import org.simpleframework.xml.core.Persister;
+
+import dev.zontreck.ariaslib.xml.*;
+import dev.zontreck.harbinger.utils.DataUtils;
 
 import java.nio.file.Path;
 import java.util.*;
 
-@Root (strict = false)
+@DynSerial
 public class InventoryFolder {
+	@IgnoreSerialization
 	public InventoryFolderTypes folderType;
-
-	@Element (required = false)
 	public String invFolderType;
-
-	@Element (required = false)
 	public String folderName;
-
 	public InventoryFolder parentFolder;
-
-	@Element (required = false)
 	public String folderOwner;
-
-
-
-	@ElementMap (required = false)
 	public Map<String, InventoryFolder> subFolders;
-
-
-	@Element (required = false)
 	public String folderID;
-
-	@Element
 	public int folderRevision = 1;
 
 
-	@Persist
+	@PreSerialize
 	public void persist ( ) {
 		invFolderType = folderType.name ( );
 	}
@@ -123,9 +106,10 @@ public class InventoryFolder {
 	}
 
 
-	@Complete
-	public void completed ( ) {
-		finishLoad ();
+	@Completed
+	public void completed (boolean deserial ) {
+		if(deserial)
+			finishLoad ();
 	}
 
 	public boolean needsReSave=false;
@@ -177,8 +161,7 @@ public class InventoryFolder {
 
 
 	public static InventoryFolder loadFrom ( Path path ) throws Exception {
-		Serializer serial = new Persister ( );
-		InventoryFolder orig =  serial.read ( InventoryFolder.class , path.toFile ( ) , false );
+		InventoryFolder orig = DynamicDeserializer.doDeserialize ( InventoryFolder.class, DataUtils.ReadAllBytes(path) );
 		orig.originalPath = path;
 		return orig;
 	}
@@ -194,8 +177,8 @@ public class InventoryFolder {
 	}
 
 	private void saveTo ( Path path ) throws Exception {
-		Serializer serial = new Persister ( );
-		serial.write ( this , path.toFile ( ) );
+		byte[] arr = DynamicSerializer.doSerialize ( this );
+		DataUtils.WriteFileBytes ( path, arr );
 		needsReSave=false;
 	}
 
