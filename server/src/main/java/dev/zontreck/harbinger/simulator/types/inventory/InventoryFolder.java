@@ -109,9 +109,9 @@ public class InventoryFolder {
 	@Completed
 	public void completed ( boolean deserial ) {
 		if ( deserial ) {
-			finishLoad ( );
-
 			if(subFolders==null)subFolders=new HashMap<> (  );
+
+			finishLoad ( );
 		}
 	}
 
