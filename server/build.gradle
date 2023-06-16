@@ -10,6 +10,10 @@ repositories {
         url = "https://maven.zontreck.dev"
         name = "Aria's Creations"
     }
+    maven {
+        url = "/docker_build_maven"
+        name = "Docker Build Maven"
+    }
 }
 dependencies {
 

@@ -5,8 +5,9 @@ COPY server/build.gradle .
 COPY server/gradle.properties .
 COPY server/src ./src
 COPY .git ./.git
-
-COPY tmp_hosts /etc/hosts
+RUN if [ -d /srv/maven.zontreck.dev ]; then \
+    cp -r /srv/maven.zontreck.dev /docker_build_maven; \
+fi
 
 
 RUN gradle build
