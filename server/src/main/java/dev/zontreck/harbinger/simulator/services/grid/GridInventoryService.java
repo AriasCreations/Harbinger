@@ -86,29 +86,27 @@ public class GridInventoryService {
 
 		Path pUserInventory = pInventory.resolve ( aLibrarian.UserID + ".xml" );
 		InventoryFolder root;
+		if ( pUserInventory.toFile ( ).exists ( ) ) {
+			try {
+				root = InventoryFolder.loadFrom ( pUserInventory );
+			} catch ( Exception e ) {
+				throw new RuntimeException ( e );
+			}
+		}
+		else {
+			root = new InventoryFolder ( aLibrarian.UserID );
+			root.folderName = "Library";
 
+			GenerateRequiredSystemFolders ( root , aLibrarian );
+
+			try {
+				root.saveTo ( pUserInventory );
+			} catch ( Exception e ) {
+				throw new RuntimeException ( e );
+			}
+		}
 
 		if ( ev.options.contains ( "inventory-skel-lib" ) ) {
-
-			if ( pUserInventory.toFile ( ).exists ( ) ) {
-				try {
-					root = InventoryFolder.loadFrom ( pUserInventory );
-				} catch ( Exception e ) {
-					throw new RuntimeException ( e );
-				}
-			}
-			else {
-				root = new InventoryFolder ( aLibrarian.UserID );
-				root.folderName = "Library";
-
-				GenerateRequiredSystemFolders ( root , aLibrarian );
-
-				try {
-					root.saveTo ( pUserInventory );
-				} catch ( Exception e ) {
-					throw new RuntimeException ( e );
-				}
-			}
 
 			List<Map<String, Object>> folders = new ArrayList<> ( );
 
@@ -150,28 +148,26 @@ public class GridInventoryService {
 		Account user = ev.userAccount;
 		pUserInventory = pInventory.resolve ( user.UserID + ".xml" );
 
+		if ( pUserInventory.toFile ( ).exists ( ) ) {
+			try {
+				root = InventoryFolder.loadFrom ( pUserInventory );
+			} catch ( Exception e ) {
+				throw new RuntimeException ( e );
+			}
+		}
+		else {
+			root = new InventoryFolder ( user.UserID );
+			root.folderName = "Inventory";
+
+			GenerateRequiredSystemFolders ( root , user );
+
+			try {
+				root.saveTo ( pUserInventory );
+			} catch ( Exception e ) {
+				throw new RuntimeException ( e );
+			}
+		}
 		if ( ev.options.contains ( "inventory-skeleton" ) ) {
-
-			if ( pUserInventory.toFile ( ).exists ( ) ) {
-				try {
-					root = InventoryFolder.loadFrom ( pUserInventory );
-				} catch ( Exception e ) {
-					throw new RuntimeException ( e );
-				}
-			}
-			else {
-				root = new InventoryFolder ( user.UserID );
-				root.folderName = "Inventory";
-
-				GenerateRequiredSystemFolders ( root , user );
-
-				try {
-					root.saveTo ( pUserInventory );
-				} catch ( Exception e ) {
-					throw new RuntimeException ( e );
-				}
-			}
-
 
 			List<Map<String, Object>> folders = new ArrayList<> ( );
 
@@ -181,25 +177,7 @@ public class GridInventoryService {
 		}
 
 		if ( ev.options.contains ( "inventory-root" ) ) {
-			if ( pUserInventory.toFile ( ).exists ( ) ) {
-				try {
-					root = InventoryFolder.loadFrom ( pUserInventory );
-				} catch ( Exception e ) {
-					throw new RuntimeException ( e );
-				}
-			}
-			else {
-				root = new InventoryFolder ( user.UserID );
-				root.folderName = "Inventory";
 
-				GenerateRequiredSystemFolders ( root , user );
-
-				try {
-					root.saveTo ( pUserInventory );
-				} catch ( Exception e ) {
-					throw new RuntimeException ( e );
-				}
-			}
 
 
 			List<Map<String, Object>> fold = new ArrayList<> ( );
