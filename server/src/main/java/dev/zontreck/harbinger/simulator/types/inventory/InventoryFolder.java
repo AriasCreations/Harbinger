@@ -34,6 +34,10 @@ public class InventoryFolder {
 
 
 	public void AddFolder ( InventoryFolder folder ) {
+		if(folder.folderID.isEmpty ())
+		{
+			folder.folderID = UUID.randomUUID ().toString ();
+		}
 		subFolders.put ( folder.folderID , folder );
 		bumpFolderVersion ( );
 	}
