@@ -45,6 +45,7 @@ public class InventoryFolder {
 		ClimbTree ( ).commitFolders ( );
 	}
 
+	@IgnoreSerialization
 	public Path originalPath;
 
 	public InventoryFolder ( ) {
