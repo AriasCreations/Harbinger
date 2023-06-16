@@ -227,7 +227,8 @@ public class LLoginResponse {
 		resp.parameters.put ( "login", code == LLoginResponseCodes.OK ? Login : false );
 
 
-		resp.parameters.put ( "reason", Reason );
+		if(!Login)
+			resp.parameters.put ( "reason", Reason );
 		resp.parameters.put("message", Message);
 
 		resp.parameters.put ( "seconds_since_epoch", Instant.EPOCH.getEpochSecond () );
