@@ -20,6 +20,8 @@ public class InventoryFolder {
 	@IgnoreSerialization
 	public InventoryFolder parentFolder;
 	public String folderOwner;
+
+	@ListOrMap
 	public Map<String, InventoryFolder> subFolders;
 	public String folderID;
 	public int folderRevision = 1;
