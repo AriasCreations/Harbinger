@@ -1,9 +1,11 @@
 FROM gradle:jdk17 AS builder
 WORKDIR /app
 
-COPY build.gradle .
-COPY gradle.properties .
-COPY src ./src
+COPY server/build.gradle .
+COPY server/gradle.properties .
+COPY server/src ./src
+COPY .git ./.git
+
 
 RUN gradle build
 
