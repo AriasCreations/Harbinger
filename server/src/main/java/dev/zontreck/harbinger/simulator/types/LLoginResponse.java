@@ -43,7 +43,7 @@ public class LLoginResponse {
 
 	public boolean Login = false;
 
-	public LLoginResponseCodes code;
+	public LLoginResponseCodes code = LLoginResponseCodes.False;
 	public String Reason;
 	public String Message;
 
@@ -99,8 +99,9 @@ public class LLoginResponse {
 	public void setLoginSuccess()
 	{
 		Login=true;
-		Reason = "";
-		Message = "";
+		code = LLoginResponseCodes.OK;
+		Reason = code.reason;
+		Message = "Welcome";
 
 
 	}

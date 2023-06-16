@@ -20,6 +20,8 @@ import java.util.Map;
  * inventory-lib-owner
  * inventory-lib-root
  * inventory-skel-lib
+ * inventory-root
+ * inventory-skeleton
  */
 public class GridInventoryService {
 	private static List<String> VALID_OPTIONS = new ArrayList<> ( );
@@ -178,7 +180,6 @@ public class GridInventoryService {
 		}
 
 		if ( ev.options.contains ( "inventory-root" ) ) {
-
 
 
 			List<Map<String, Object>> fold = new ArrayList<> ( );
