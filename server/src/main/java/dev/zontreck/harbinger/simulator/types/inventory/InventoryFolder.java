@@ -16,6 +16,8 @@ public class InventoryFolder {
 	public InventoryFolderTypes folderType;
 	public String invFolderType;
 	public String folderName;
+
+	@IgnoreSerialization
 	public InventoryFolder parentFolder;
 	public String folderOwner;
 	public Map<String, InventoryFolder> subFolders;
