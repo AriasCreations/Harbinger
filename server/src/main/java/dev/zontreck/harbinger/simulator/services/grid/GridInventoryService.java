@@ -167,6 +167,7 @@ public class GridInventoryService {
 				throw new RuntimeException ( e );
 			}
 		}
+
 		if ( ev.options.contains ( "inventory-skeleton" ) ) {
 
 			List<Map<String, Object>> folders = new ArrayList<> ( );

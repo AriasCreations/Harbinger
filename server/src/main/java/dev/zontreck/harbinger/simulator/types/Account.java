@@ -26,6 +26,8 @@ public class Account {
 	public String UserID;
 	public String UserTitle = "Resident";
 
+	public boolean PendingStipend=false;
+
 	@org.simpleframework.xml.Path ("tos")
 	public boolean HasAgreedToTermsOfService = false;
 

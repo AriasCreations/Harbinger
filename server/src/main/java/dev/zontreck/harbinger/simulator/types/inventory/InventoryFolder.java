@@ -120,6 +120,7 @@ public class InventoryFolder {
 		self.put("version", folderRevision);
 		self.put("parent_id", (parentFolder == null) ? new UUID(0,0).toString () : parentFolder.folderID);
 
+		folders.add ( self );
 		for (
 				InventoryFolder folder :
 				subFolders
