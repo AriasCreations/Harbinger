@@ -1,6 +1,7 @@
 package dev.zontreck.harbinger.data;
 
 import dev.zontreck.ariaslib.events.annotations.Subscribe;
+import dev.zontreck.harbinger.HarbingerServer;
 import dev.zontreck.harbinger.data.containers.*;
 import dev.zontreck.harbinger.data.types.Signature;
 import dev.zontreck.harbinger.events.MemoryAlteredEvent;
@@ -36,7 +37,7 @@ public class Persist {
 
 	static {
 		try {
-			final BufferedInputStream BIS = new BufferedInputStream ( new FileInputStream ( FILE_NAME ) );
+			final BufferedInputStream BIS = new BufferedInputStream ( new FileInputStream ( HarbingerServer.BASE_PATH.resolve ( FILE_NAME ).toString () ) );
 			final byte[] data = BIS.readAllBytes ( );
 
 			Persist.MEMORY = ( OSDMap ) OSDParser.deserialize ( data );
@@ -82,7 +83,7 @@ public class Persist {
 		LOGGER.info ( "Memory file saved" );
 		try {
 			String json = LLSDJson.serializeToString ( map , OSD.OSDFormat.Json );
-			FileWriter fw = new FileWriter ( FILE_NAME );
+			FileWriter fw = new FileWriter ( HarbingerServer.BASE_PATH.resolve ( FILE_NAME ).toFile () );
 			fw.write ( json );
 			fw.close ( );
 		} catch ( FileNotFoundException e ) {

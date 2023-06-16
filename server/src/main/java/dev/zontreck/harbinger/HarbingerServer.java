@@ -28,10 +28,7 @@ import dev.zontreck.harbinger.simulator.services.simulator.SimulatorUDPService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Path;
@@ -51,6 +48,17 @@ public class HarbingerServer {
 		}
 	}
 
+	public static final Path BASE_PATH;
+
+	static{
+
+		if(System.getenv ( "IN_DOCKER" )!="")
+		{
+			BASE_PATH = Path.of ( "/data" );
+		}else {
+			BASE_PATH = Path.of ( "data" );
+		}
+	}
 	public static void main ( final String[] args ) {
 
 		final UUID ID = Product.makeProductID ( 1 , 59 );

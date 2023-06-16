@@ -4,6 +4,7 @@ import dev.zontreck.ariaslib.events.annotations.Subscribe;
 import dev.zontreck.ariaslib.xmlrpc.MethodCall;
 import dev.zontreck.ariaslib.xmlrpc.MethodResponse;
 import dev.zontreck.ariaslib.xmlrpc.XmlRpcDeserializer;
+import dev.zontreck.harbinger.HarbingerServer;
 import dev.zontreck.harbinger.events.GenericRequestEvent;
 import dev.zontreck.harbinger.simulator.types.Account;
 import dev.zontreck.harbinger.simulator.types.LLoginResponse;
@@ -68,8 +69,8 @@ public class SimulatorLoginHandler {
 				GRE.contentType = "application/xml";
 
 
-				DataUtils.WriteFileBytes(Path.of ( "lastRequest.xml"), GRE.body);
-				DataUtils.WriteFileText(Path.of ( "lastResponse.xml" ), GRE.responseText);
+				DataUtils.WriteFileBytes( HarbingerServer.BASE_PATH.resolve ( "lastRequest.xml"), GRE.body);
+				DataUtils.WriteFileText( HarbingerServer.BASE_PATH.resolve ( "lastResponse.xml" ), GRE.responseText);
 
 			} catch ( Exception e ) {
 				throw new RuntimeException ( e );
@@ -81,7 +82,7 @@ public class SimulatorLoginHandler {
 
 	public static MethodResponse loginToSimulator ( int address_size , int agree_to_tos , String channel , int extended_errors , String first , String host_id , String id0 , String last , int last_exec_duration , int last_exec_event , String mac , String mfa_hash , String passwd , String platform , String platform_string , String platform_version , int read_critical , String start , String token , String version , String[] options ) {
 
-		Path accounts = Path.of ( "accounts" );
+		Path accounts = HarbingerServer.BASE_PATH.resolve ( "accounts" );
 		if ( ! accounts.toFile ( ).exists ( ) ) {
 			// Generate the folder
 			accounts.toFile ( ).mkdir ( );

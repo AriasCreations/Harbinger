@@ -3,6 +3,7 @@ package dev.zontreck.harbinger.simulator.types;
 import dev.zontreck.ariaslib.json.DynSerial;
 import dev.zontreck.ariaslib.json.DynamicDeserializer;
 import dev.zontreck.ariaslib.json.DynamicSerializer;
+import dev.zontreck.harbinger.HarbingerServer;
 import dev.zontreck.harbinger.utils.DataUtils;
 import dev.zontreck.harbinger.utils.DigestUtils;
 
@@ -75,7 +76,7 @@ public class Account {
 
 
 	public void commit ( ) {
-		Path accounts = Path.of ( "accounts" );
+		Path accounts = HarbingerServer.BASE_PATH.resolve ( "accounts" );
 		Path UserNameFile = accounts.resolve ( First + "." + Last + ".txt" );
 		if ( UserNameFile.toFile ( ).exists ( ) )
 			UserNameFile.toFile ( ).delete ( );
