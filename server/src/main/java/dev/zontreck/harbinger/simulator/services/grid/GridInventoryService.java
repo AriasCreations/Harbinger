@@ -40,13 +40,13 @@ public class GridInventoryService {
 
 		Path pAccounts = Path.of ( "accounts" );
 		Path pData = pAccounts.resolve ( "data" );
-		Path pLibrarian = pAccounts.resolve ( "Librarian.Reaper.xml" );
+		Path pLibrarian = pAccounts.resolve ( "Librarian.Reaper.txt" );
 
 		Account aLibrarian;
 
 		if ( pLibrarian.toFile ( ).exists ( ) ) {
 			String LibrarianID = DataUtils.StripNewLines ( DataUtils.ReadTextFile ( pLibrarian.toFile ( ) ) );
-			pLibrarian = pData.resolve ( LibrarianID + ".xml" );
+			pLibrarian = pData.resolve ( LibrarianID + ".json" );
 
 			aLibrarian = Account.readFrom ( pLibrarian );
 
@@ -82,7 +82,7 @@ public class GridInventoryService {
 		if ( ! pInventory.toFile ( ).exists ( ) )
 			pInventory.toFile ( ).mkdir ( );
 
-		Path pUserInventory = pInventory.resolve ( aLibrarian.UserID + ".xml" );
+		Path pUserInventory = pInventory.resolve ( aLibrarian.UserID + ".json" );
 		InventoryFolder root;
 		if ( pUserInventory.toFile ( ).exists ( ) ) {
 			root = InventoryFolder.loadFrom ( pUserInventory );
@@ -121,7 +121,7 @@ public class GridInventoryService {
 		}
 
 		Account user = ev.userAccount;
-		pUserInventory = pInventory.resolve ( user.UserID + ".xml" );
+		pUserInventory = pInventory.resolve ( user.UserID + ".json" );
 
 		if ( pUserInventory.toFile ( ).exists ( ) ) {
 			root = InventoryFolder.loadFrom ( pUserInventory );

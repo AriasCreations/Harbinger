@@ -1,6 +1,7 @@
 package dev.zontreck.harbinger.simulator.types;
 
-import dev.zontreck.ariaslib.xml.DynSerial;
+
+import dev.zontreck.ariaslib.json.DynSerial;
 
 @DynSerial
 public class Location {

@@ -1,14 +1,15 @@
 package dev.zontreck.harbinger.simulator.types;
 
-import dev.zontreck.ariaslib.xml.DynSerial;
+import dev.zontreck.ariaslib.json.DynSerial;
+import dev.zontreck.ariaslib.json.DynamicDeserializer;
+import dev.zontreck.ariaslib.json.DynamicSerializer;
 import dev.zontreck.harbinger.utils.DataUtils;
 import dev.zontreck.harbinger.utils.DigestUtils;
-import org.simpleframework.xml.Serializer;
-import org.simpleframework.xml.core.Persister;
 
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Path;
 import java.util.UUID;
 
@@ -75,7 +76,7 @@ public class Account {
 
 	public void commit ( ) {
 		Path accounts = Path.of ( "accounts" );
-		Path UserNameFile = accounts.resolve ( First + "." + Last + ".xml" );
+		Path UserNameFile = accounts.resolve ( First + "." + Last + ".txt" );
 		if ( UserNameFile.toFile ( ).exists ( ) )
 			UserNameFile.toFile ( ).delete ( );
 		try {
@@ -94,20 +95,25 @@ public class Account {
 		if ( ! accountData.toFile ( ).exists ( ) )
 			accountData.toFile ( ).mkdir ( );
 
-		Path UserDataFile = accountData.resolve ( UserID + ".xml" );
-		Serializer serial = new Persister ( );
+		Path UserDataFile = accountData.resolve ( UserID + ".json" );
+
+
 		try {
-			serial.write ( this , UserDataFile.toFile ( ) );
-		} catch ( Exception e ) {
+			byte[] bytes = DynamicSerializer.doSerialize ( this );
+			DataUtils.WriteFileBytes ( UserDataFile , bytes );
+		} catch ( InvocationTargetException e ) {
+			throw new RuntimeException ( e );
+		} catch ( IllegalAccessException e ) {
+			throw new RuntimeException ( e );
+		} catch ( IOException e ) {
 			throw new RuntimeException ( e );
 		}
 
 	}
 
 	public static Account readFrom ( Path p ) {
-		Serializer serial = new Persister ( );
 		try {
-			return serial.read ( Account.class , p.toFile ( ) );
+			return DynamicDeserializer.doDeserialize ( Account.class , DataUtils.ReadAllBytes ( p ) );
 		} catch ( Exception e ) {
 			throw new RuntimeException ( e );
 		}
