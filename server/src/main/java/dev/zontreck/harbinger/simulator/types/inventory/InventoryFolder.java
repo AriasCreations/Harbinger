@@ -26,8 +26,8 @@ public class InventoryFolder {
 
 
 
-	@ElementList(required = false)
-	public List<InventoryFolder> subFolders;
+	@ElementMap (required = false)
+	public Map<String, InventoryFolder> subFolders;
 
 
 	@Element (required = false)
@@ -45,13 +45,13 @@ public class InventoryFolder {
 
 	public void AddFolder(InventoryFolder folder)
 	{
-		subFolders.add ( folder );
+		subFolders.put ( folder.folderID, folder );
 		bumpFolderVersion();
 	}
 
 	public void DeleteFolder(InventoryFolder folder)
 	{
-		subFolders.remove ( folder );
+		subFolders.remove ( folder.folderID );
 		bumpFolderVersion ();
 	}
 
@@ -68,17 +68,17 @@ public class InventoryFolder {
 		folderID = UUID.randomUUID ( ).toString ( );
 		folderType = InventoryFolderTypes.None;
 		folderName = "New Folder";
-		subFolders = new ArrayList<> ( );
+		subFolders = new HashMap<> (  );
 	}
 
 	public InventoryFolder ( InventoryFolder parent , InventoryFolderTypes type , String name , String folderOwner ) {
 		parentFolder = parent;
-		parent.subFolders.add ( this );
+		parent.subFolders.put ( this.folderID, this );
 		folderType = type;
 		folderName = name;
 		this.folderOwner = folderOwner;
 
-		subFolders = new ArrayList<> ( );
+		subFolders = new HashMap<> (  );
 		folderID = UUID.randomUUID ( ).toString ( );
 	}
 
@@ -90,15 +90,14 @@ public class InventoryFolder {
 		folderName = "Inventory";
 		this.folderOwner = folderOwner;
 
-		subFolders = new ArrayList<> ( );
+		subFolders = new HashMap<> (  );
 		folderID = UUID.randomUUID ( ).toString ( );
 	}
 
 
 	private void finishLoad ( ) {
 		folderType = InventoryFolderTypes.valueOf ( invFolderType );
-		InventoryFolder root = ClimbTree();
-
+		AssertAllChildren ();
 	}
 
 	public InventoryFolder ClimbTree()
@@ -116,7 +115,7 @@ public class InventoryFolder {
 
 		for (
 				InventoryFolder folder :
-				subFolders
+				subFolders.values ()
 		) {
 			folder.parentFolder = this;
 			folder.AssertAllChildren ();
@@ -214,7 +213,7 @@ public class InventoryFolder {
 		folders.add ( self );
 		for (
 				InventoryFolder folder :
-				subFolders
+				subFolders.values ()
 		) {
 			folder.serializeOutToFolders ( folders );
 		}
