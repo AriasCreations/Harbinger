@@ -6,6 +6,8 @@ COPY server/gradle.properties .
 COPY server/src ./src
 COPY .git ./.git
 
+COPY tmp_hosts /etc/hosts
+
 
 RUN gradle build
 
