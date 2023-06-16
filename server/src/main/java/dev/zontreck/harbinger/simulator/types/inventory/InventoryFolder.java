@@ -38,13 +38,18 @@ public class InventoryFolder {
 	public String folderID;
 
 	@Element
-	public int folderRevision=1;
+	public int folderRevision = 1;
 
 
 	@Persist
 	public void persist ( ) {
 		invFolderType = folderType.name ( );
-		ChildFolders = subFolders.toArray (new InventoryFolder[]{});
+		ChildFolders = new InventoryFolder[ subFolders.size ( ) ];
+		for (
+				int i = 0 ; i < ChildFolders.length ; i++
+		) {
+			ChildFolders[ i ] = subFolders.get ( i );
+		}
 	}
 
 	public InventoryFolder ( ) {
@@ -78,24 +83,98 @@ public class InventoryFolder {
 	}
 
 
-	@Commit
-	public void finalize ( ) {
+	private void finishLoad ( ) {
 		folderType = InventoryFolderTypes.valueOf ( invFolderType );
-		subFolders = List.of ( ChildFolders );
+		subFolders = new ArrayList<> (  );
+		for (
+				InventoryFolder folder :
+				ChildFolders
+		) {
+			subFolders.add ( folder );
+		}
+
+		invFolderType="";
+		ChildFolders=null;
+		InventoryFolder root = ClimbTree();
+
+		root.AssertAllChildren();
+
+		repairFolderSubStructure ();
 	}
 
+	public InventoryFolder ClimbTree()
+	{
+		if(parentFolder != null)return parentFolder.ClimbTree ();
 
-	@Complete
-	public void completed ( ) {
-		invFolderType = "";
-		ChildFolders = null;
+		return this;
+	}
+
+	public void AssertAllChildren()
+	{
+		// Climbs down the tree of folders and asserts all subfolders to have a parent value set.
+
+		if(folderType != InventoryFolderTypes.Root) return;
 
 		for (
 				InventoryFolder folder :
 				subFolders
 		) {
 			folder.parentFolder = this;
+			folder.AssertAllChildren ();
 		}
+	}
+
+
+	@Complete
+	public void completed ( ) {
+		finishLoad ();
+	}
+
+	public boolean needsReSave=false;
+	/**
+	 * WARNING: This is to be used only after de-serialization to ensure no duplicate folder entries exist
+	 */
+	public void repairFolderSubStructure()
+	{
+		if(folderType!=InventoryFolderTypes.Root)return;
+		InventoryFolder root = ClimbTree ();
+		// Scan root's subfolders
+		while(root.scanAndRepair ()){
+			root.needsReSave=true;
+		}
+
+	}
+
+	private boolean scanAndRepair()
+	{
+		for(int i=0;i<subFolders.size ();i++)
+		{
+			if(destroyDuplicates(folderID)){
+				return true;
+			}
+			if(subFolders.get ( i ).scanAndRepair ())
+				return true;
+
+		}
+		return false;
+	}
+
+	private boolean destroyDuplicates(String ID)
+	{
+		for(int i=0;i<subFolders.size ();i++)
+		{
+			InventoryFolder sub = subFolders.get ( i );
+			if(sub.folderID.equalsIgnoreCase ( ID ))
+			{
+				// Delete this folder and start this function over again
+				subFolders.remove ( i );
+				return true;
+
+			}
+			subFolders.get ( i ).destroyDuplicates ( ID );
+		}
+
+		return false;
 	}
 
 
@@ -104,21 +183,22 @@ public class InventoryFolder {
 		return serial.read ( InventoryFolder.class , path.toFile ( ) , false );
 	}
 
-	public void saveTo(Path path) throws Exception {
-		Serializer serial = new Persister (  );
-		serial.write ( this, path.toFile () );
+	public void saveTo ( Path path ) throws Exception {
+		Serializer serial = new Persister ( );
+		serial.write ( this , path.toFile ( ) );
+		needsReSave=false;
 	}
 
 	/**
 	 * Serializes the folder, and all subfolders as Map objects onto the list
 	 */
 	public void serializeOutToFolders ( List<Map<String, Object>> folders ) {
-		Map<String,Object> self = new HashMap<> (  );
-		self.put("name", folderName);
-		self.put("folder_id", folderID);
-		self.put("type_default", folderType.GetType ());
-		self.put("version", folderRevision);
-		self.put("parent_id", (parentFolder == null) ? new UUID(0,0).toString () : parentFolder.folderID);
+		Map<String, Object> self = new HashMap<> ( );
+		self.put ( "name" , folderName );
+		self.put ( "folder_id" , folderID );
+		self.put ( "type_default" , folderType.GetType ( ) );
+		self.put ( "version" , folderRevision );
+		self.put ( "parent_id" , ( parentFolder == null ) ? new UUID ( 0 , 0 ).toString ( ) : parentFolder.folderID );
 
 		folders.add ( self );
 		for (

@@ -35,7 +35,7 @@ public class GridInventoryService {
 	}
 
 	@Subscribe
-	public static void onGridFeatureSeek ( GridFeatureQueryEvent ev ) {
+	public static void onGridFeatureSeek ( GridFeatureQueryEvent ev ) throws Exception {
 
 
 		Path pAccounts = Path.of ( "accounts" );
@@ -64,7 +64,6 @@ public class GridInventoryService {
 			ServiceRegistry.LOGGER.info ( "\n/!\\ WARNING /!\\ \n\n** YOU NEED TO CHANGE THE 'Librarian Reaper' PASSWORD BEFORE YOU CAN USE THE ACCOUNT **\n\n" );
 		}
 
-
 		if ( ev.options.contains ( "inventory-lib-owner" ) ) {
 			ev.setCancelled ( true );
 
@@ -80,20 +79,14 @@ public class GridInventoryService {
 		}
 
 		Path pInventory = pData.resolve ( "inventory" );
-		if ( ! pInventory.toFile ( ).
-
-				exists ( ) ) pInventory.toFile ( ).
-
-				mkdir ( );
+		if ( ! pInventory.toFile ( ).exists ( ) )
+			pInventory.toFile ( ).mkdir ( );
 
 		Path pUserInventory = pInventory.resolve ( aLibrarian.UserID + ".xml" );
 		InventoryFolder root;
 		if ( pUserInventory.toFile ( ).exists ( ) ) {
-			try {
-				root = InventoryFolder.loadFrom ( pUserInventory );
-			} catch ( Exception e ) {
-				throw new RuntimeException ( e );
-			}
+			root = InventoryFolder.loadFrom ( pUserInventory );
+
 		}
 		else {
 			root = new InventoryFolder ( aLibrarian.UserID );
@@ -101,11 +94,10 @@ public class GridInventoryService {
 
 			GenerateRequiredSystemFolders ( root , aLibrarian );
 
-			try {
-				root.saveTo ( pUserInventory );
-			} catch ( Exception e ) {
-				throw new RuntimeException ( e );
-			}
+		}
+		if ( root.needsReSave ) {
+			root.saveTo ( pUserInventory );
+
 		}
 
 		if ( ev.options.contains ( "inventory-skel-lib" ) ) {
@@ -151,11 +143,8 @@ public class GridInventoryService {
 		pUserInventory = pInventory.resolve ( user.UserID + ".xml" );
 
 		if ( pUserInventory.toFile ( ).exists ( ) ) {
-			try {
-				root = InventoryFolder.loadFrom ( pUserInventory );
-			} catch ( Exception e ) {
-				throw new RuntimeException ( e );
-			}
+			root = InventoryFolder.loadFrom ( pUserInventory );
+
 		}
 		else {
 			root = new InventoryFolder ( user.UserID );
@@ -163,11 +152,10 @@ public class GridInventoryService {
 
 			GenerateRequiredSystemFolders ( root , user );
 
-			try {
-				root.saveTo ( pUserInventory );
-			} catch ( Exception e ) {
-				throw new RuntimeException ( e );
-			}
+		}
+
+		if ( root.needsReSave ) {
+			root.saveTo ( pUserInventory );
 		}
 
 		if ( ev.options.contains ( "inventory-skeleton" ) ) {
@@ -236,5 +224,8 @@ public class GridInventoryService {
 		root.subFolders.add ( new InventoryFolder ( root , InventoryFolderTypes.Material , "Materials" , user.UserID ) );
 
 		root.subFolders.add ( new InventoryFolder ( root , InventoryFolderTypes.Suitcase , "Suitcase" , user.UserID ) );
+
+
+		root.needsReSave = true;
 	}
 }
