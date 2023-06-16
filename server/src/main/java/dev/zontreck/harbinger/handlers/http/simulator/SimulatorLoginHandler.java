@@ -87,7 +87,7 @@ public class SimulatorLoginHandler {
 			accounts.toFile ( ).mkdir ( );
 		}
 
-		Path namedAccount = accounts.resolve ( first + "." + last + ".xml" );
+		Path namedAccount = accounts.resolve ( first + "." + last + ".txt" );
 		Path accountData = accounts.resolve ( "data" );
 
 		Account userAccount = null;
@@ -95,7 +95,7 @@ public class SimulatorLoginHandler {
 
 			try {
 				String ID = DataUtils.StripNewLines ( DataUtils.ReadTextFile ( namedAccount.toFile ( ) ) );
-				Path userData = accountData.resolve ( ID + ".xml" );
+				Path userData = accountData.resolve ( ID + ".json" );
 
 
 				userAccount = Account.readFrom ( userData );
