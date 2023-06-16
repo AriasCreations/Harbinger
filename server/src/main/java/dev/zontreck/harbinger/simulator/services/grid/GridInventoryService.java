@@ -91,6 +91,7 @@ public class GridInventoryService {
 		else {
 			root = new InventoryFolder ( aLibrarian.UserID );
 			root.folderName = "Library";
+			root.originalPath = pUserInventory;
 
 			GenerateRequiredSystemFolders ( root , aLibrarian );
 
@@ -129,6 +130,7 @@ public class GridInventoryService {
 		else {
 			root = new InventoryFolder ( user.UserID );
 			root.folderName = "Inventory";
+			root.originalPath = pUserInventory;
 
 			GenerateRequiredSystemFolders ( root , user );
 
