@@ -1,9 +1,6 @@
 package dev.zontreck.harbinger.simulator.types.inventory;
 
-import org.simpleframework.xml.Element;
-import org.simpleframework.xml.ElementArray;
-import org.simpleframework.xml.Root;
-import org.simpleframework.xml.Serializer;
+import org.simpleframework.xml.*;
 import org.simpleframework.xml.core.Commit;
 import org.simpleframework.xml.core.Complete;
 import org.simpleframework.xml.core.Persist;
@@ -28,11 +25,10 @@ public class InventoryFolder {
 	public String folderOwner;
 
 
+
+	@ElementList(required = false)
 	public List<InventoryFolder> subFolders;
 
-
-	@ElementArray (required = false)
-	public InventoryFolder[] ChildFolders;
 
 	@Element (required = false)
 	public String folderID;
@@ -44,13 +40,29 @@ public class InventoryFolder {
 	@Persist
 	public void persist ( ) {
 		invFolderType = folderType.name ( );
-		ChildFolders = new InventoryFolder[ subFolders.size ( ) ];
-		for (
-				int i = 0 ; i < ChildFolders.length ; i++
-		) {
-			ChildFolders[ i ] = subFolders.get ( i );
-		}
 	}
+
+
+	public void AddFolder(InventoryFolder folder)
+	{
+		subFolders.add ( folder );
+		bumpFolderVersion();
+	}
+
+	public void DeleteFolder(InventoryFolder folder)
+	{
+		subFolders.remove ( folder );
+		bumpFolderVersion ();
+	}
+
+	public void bumpFolderVersion()
+	{
+
+		folderRevision++;
+		ClimbTree ().commitFolders ();
+	}
+
+	public Path originalPath;
 
 	public InventoryFolder ( ) {
 		folderID = UUID.randomUUID ( ).toString ( );
@@ -85,21 +97,8 @@ public class InventoryFolder {
 
 	private void finishLoad ( ) {
 		folderType = InventoryFolderTypes.valueOf ( invFolderType );
-		subFolders = new ArrayList<> (  );
-		for (
-				InventoryFolder folder :
-				ChildFolders
-		) {
-			subFolders.add ( folder );
-		}
-
-		invFolderType="";
-		ChildFolders=null;
 		InventoryFolder root = ClimbTree();
 
-		root.AssertAllChildren();
-
-		repairFolderSubStructure ();
 	}
 
 	public InventoryFolder ClimbTree()
@@ -180,10 +179,22 @@ public class InventoryFolder {
 
 	public static InventoryFolder loadFrom ( Path path ) throws Exception {
 		Serializer serial = new Persister ( );
-		return serial.read ( InventoryFolder.class , path.toFile ( ) , false );
+		InventoryFolder orig =  serial.read ( InventoryFolder.class , path.toFile ( ) , false );
+		orig.originalPath = path;
+		return orig;
 	}
 
-	public void saveTo ( Path path ) throws Exception {
+	public void commitFolders()
+	{
+		InventoryFolder root = ClimbTree ();
+		try {
+			root.saveTo ( root.originalPath );
+		} catch ( Exception e ) {
+			throw new RuntimeException ( e );
+		}
+	}
+
+	private void saveTo ( Path path ) throws Exception {
 		Serializer serial = new Persister ( );
 		serial.write ( this , path.toFile ( ) );
 		needsReSave=false;
