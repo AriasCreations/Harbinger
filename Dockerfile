@@ -5,7 +5,7 @@ COPY server ./server
 COPY build.gradle .
 COPY settings.gradle .
 
-ENV VERSION $INPUT_VERSION
+ENV VERSION $INPUT_PATCH
 
 
 RUN gradle build
