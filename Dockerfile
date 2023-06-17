@@ -5,7 +5,7 @@ COPY server/build.gradle .
 COPY server/gradle.properties .
 COPY server/src ./src
 COPY gradlew .
-COPY gradle .
+COPY gradle ./gradle
 COPY .git ./.git
 
 
