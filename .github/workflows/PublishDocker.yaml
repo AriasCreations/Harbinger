@@ -36,13 +36,13 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           flavor: |
-            latest=${{ github.ref == 'refs/heads/master' }}
+            latest=${{ github.ref == 'refs/heads/main' }}
           tags: |
             type=schedule
             type=ref,event=branch
-            type=ref,event=tags
+            type=ref,event=tag
             type=ref,event=pr
-            type=raw,enable=${{ github.ref == 'refs/heads/master' }},value=${{ env.version }}
+            type=raw,enable=${{ github.ref == 'refs/heads/main' }},value=${{ env.version }}
 
       - name: Build and push
         uses: docker/build-push-action@v2
