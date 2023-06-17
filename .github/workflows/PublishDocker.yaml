@@ -28,21 +28,13 @@ jobs:
 
       - name: Determine the Harbinger version
         run: |
-          echo "version=$(git describe --tags | awk -F "-" '{print $1 "." $2}')" >> "$GITHUB_ENV"
+          SET PATCH=$(git describe --tags | awk -F "-" '{print $2}')"
 
       - name: Extract Metadata
         id: meta
         uses: docker/metadata-action@v3
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-          flavor: |
-            latest=${{ github.ref == 'refs/heads/main' }}
-          tags: |
-            type=schedule
-            type=ref,event=branch
-            type=ref,event=tag
-            type=ref,event=pr
-            type=raw,enable=${{ github.ref == 'refs/heads/main' }},value=${{ env.version }}
 
       - name: Build and push
         uses: docker/build-push-action@v2
@@ -51,4 +43,4 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          VERSION: ${{ env.version }}
+          VERSION: ${{ env.PATCH }}
