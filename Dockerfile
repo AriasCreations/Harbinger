@@ -1,9 +1,9 @@
 FROM gradle:jdk17 AS builder
 WORKDIR /app
 
-COPY server/build.gradle .
-COPY server/gradle.properties .
-COPY server/src ./src
+COPY server ./server
+COPY build.gradle .
+COPY settings.gradle .
 COPY .git ./.git
 
 
@@ -14,7 +14,7 @@ FROM openjdk:17
 
 
 WORKDIR /app
-COPY --from=builder /app/build/libs/Harbinger-*.jar harbinger.jar
+COPY --from=builder /app/server/build/libs/Harbinger-*.jar harbinger.jar
 
 EXPOSE 7768/tcp
 EXPOSE 7769/udp
