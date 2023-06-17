@@ -4,6 +4,7 @@ WORKDIR /app
 COPY server ./server
 COPY build.gradle .
 COPY settings.gradle .
+COPY .git ./.git
 
 ENV VERSION $INPUT_PATCH
 

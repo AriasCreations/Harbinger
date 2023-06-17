@@ -31,7 +31,7 @@ jobs:
       - name: Determine the Harbinger version
         run: echo PATCH=$(git describe --tags | awk -F "-" '{print $2}') >> $GITHUB_ENV
 
-      - name: Verify Patch Version
+      - name: Patch Version
         run: echo "Harbinger Patch Version ${{ env.PATCH }}"
 
       - name: Extract Metadata
@@ -47,4 +47,3 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          PATCH: ${{ env.PATCH }}
