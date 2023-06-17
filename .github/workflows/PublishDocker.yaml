@@ -2,7 +2,7 @@ name: Publish Package
 
 on:
   push:
-    branches: ["main", "release"]
+    branches: [ "main", "release" ]
 
 env:
   REGISTRY: ghcr.io
@@ -25,6 +25,10 @@ jobs:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Determine the Harbinger version
+        run: |
+          echo "version=$(git describe --tags | awk -F "-" '{print $1 "." $2}')" >> "$GITHUB_ENV"
 
       - name: Extract Metadata
         id: meta
