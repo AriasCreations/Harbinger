@@ -1,16 +1,7 @@
 FROM gradle:jdk17 AS builder
 WORKDIR /app
 
-COPY server/build.gradle .
-COPY server/gradle.properties .
-COPY server/src ./src
-COPY gradlew .
-COPY gradle ./gradle
-COPY .git ./.git
-
-
-
-RUN ./gradlew build
+COPY server/build/libs/Harbinger-*.jar harbinger.jar
 
 FROM openjdk:17
 
