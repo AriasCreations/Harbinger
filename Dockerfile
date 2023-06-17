@@ -7,7 +7,7 @@ FROM openjdk:17
 
 
 WORKDIR /app
-COPY --from=builder /app/build/libs/Harbinger-*.jar harbinger.jar
+COPY --from=builder /app/harbinger.jar harbinger.jar
 
 EXPOSE 7768/tcp
 EXPOSE 7769/udp
