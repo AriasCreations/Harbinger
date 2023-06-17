@@ -28,7 +28,7 @@ jobs:
 
       - name: Determine the Harbinger version
         run: |
-          echo "version=$(git describe --tags | awk -F "-" '{print $1 "." $2}')" >> "$GITHUB_ENV"
+          echo "version=$(git describe --tags | awk -F "-" '{print $1 "." $2}')" > build.ver
 
       - name: Extract Metadata
         id: meta

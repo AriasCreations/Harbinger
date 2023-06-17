@@ -4,8 +4,7 @@ WORKDIR /app
 COPY server ./server
 COPY build.gradle .
 COPY settings.gradle .
-COPY .git ./.git
-
+COPY build.ver .
 
 
 RUN gradle build
