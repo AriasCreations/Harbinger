@@ -4,11 +4,13 @@ WORKDIR /app
 COPY server/build.gradle .
 COPY server/gradle.properties .
 COPY server/src ./src
+COPY gradlew .
+COPY gradle .
 COPY .git ./.git
 
 
 
-RUN gradle build
+RUN ./gradlew build
 
 FROM openjdk:17
 
