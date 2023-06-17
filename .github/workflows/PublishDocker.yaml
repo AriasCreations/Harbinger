@@ -32,10 +32,12 @@ jobs:
 
       - name: Extract Metadata
         id: meta
-        uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
+        uses: docker/metadata-action@v3
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-          tags:
+          flavor: |
+            latest=${{ github.ref == 'refs/heads/master' }}
+          tags: |
             type=schedule
             type=ref,event=branch
             type=ref,event=tags
@@ -43,7 +45,7 @@ jobs:
             type=raw,enable=${{ github.ref == 'refs/heads/master' }},value=${{ env.version }}
 
       - name: Build and push
-        uses: docker/build-push-action@3b5e8027fcad23fda98b2e3ac259d8d67585f671
+        uses: docker/build-push-action@v2
         with:
           context: .
           push: true
