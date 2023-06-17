@@ -35,6 +35,12 @@ jobs:
         uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags:
+            type=schedule
+            type=ref,event=branch
+            type=ref,event=tags
+            type=ref,event=pr
+            type=raw,enable=${{ github.ref == 'refs/heads/master' }},value=${{ env.version }}
 
       - name: Build and push
         uses: docker/build-push-action@3b5e8027fcad23fda98b2e3ac259d8d67585f671
