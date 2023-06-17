@@ -44,13 +44,13 @@ application {
 def determinePatchVersion = {
     // get the name of the last tag
     def tagInfo = new ByteArrayOutputStream()
-    if (file("build.ver").exists()) {
-        exec {
-            commandLine 'cat', 'build.ver'
-            standardOutput = tagInfo
+    def E = System.getenv("VERSION")
+    if(E != null){
+        if(!E.isBlank()) {
+            return E
         }
-        return tagInfo.toString()
     }
+
     exec {
         commandLine 'git', 'describe', '--tags'
         standardOutput = tagInfo
