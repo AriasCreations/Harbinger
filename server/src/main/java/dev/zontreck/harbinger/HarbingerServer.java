@@ -11,6 +11,7 @@ import dev.zontreck.ariaslib.terminal.Terminal;
 import dev.zontreck.ariaslib.util.DelayedExecutorService;
 import dev.zontreck.harbinger.commands.CommandRegistry;
 import dev.zontreck.harbinger.daemons.DiscordBot;
+import dev.zontreck.harbinger.daemons.HTTPBackupServer;
 import dev.zontreck.harbinger.daemons.HTTPServer;
 import dev.zontreck.harbinger.daemons.plugins.PluginLoader;
 import dev.zontreck.harbinger.data.Persist;
@@ -122,6 +123,14 @@ public class HarbingerServer {
 				}
 				else this.setFail ( );
 
+			}
+		} );
+
+		TaskBus.tasks.add ( new Task ( "Start Emergency Remote-Admin server" ) {
+			@Override
+			public void run ( ) {
+				if( HTTPBackupServer.startServer () ) this.setSuccess ();
+				else this.setFail ();
 			}
 		} );
 

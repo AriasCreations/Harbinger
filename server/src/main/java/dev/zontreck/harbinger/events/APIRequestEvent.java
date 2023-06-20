@@ -15,6 +15,8 @@ public class APIRequestEvent extends Event {
 	public JSONObject response_object;
 	public int response_status = 200;
 
+	public boolean containsHTMLContent=false;
+	public String html;
 	public APIRequestEvent ( final JSONObject req ) {
 		this.request_object = req;
 	}

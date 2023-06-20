@@ -25,7 +25,7 @@ public class HTTPServer {
 	public HTTPServer ( ) {
 	}
 
-	public static boolean startServer ( ) {
+	public static boolean startServer (  ) {
 		if ( HTTPServer.instance.running ) {
 			// Server is already running
 			HTTPServer.LOGGER.info ( "Server is already running" );

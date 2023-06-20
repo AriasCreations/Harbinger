@@ -1,17 +1,15 @@
 package dev.zontreck.harbinger.commands.http;
 
-import dev.zontreck.ariaslib.events.CommandEvent;
 import dev.zontreck.ariaslib.events.EventBus;
 import dev.zontreck.ariaslib.events.annotations.Subscribe;
-import dev.zontreck.ariaslib.terminal.ConsolePrompt;
-import dev.zontreck.ariaslib.terminal.Terminal;
-import dev.zontreck.harbinger.commands.CommandRegistry;
+import dev.zontreck.harbinger.commands.CommandResponse;
 import dev.zontreck.harbinger.daemons.HTTPServer;
 import dev.zontreck.harbinger.data.Persist;
+import dev.zontreck.harbinger.events.HarbingerCommandEvent;
 import dev.zontreck.harbinger.events.MemoryAlteredEvent;
 
-public enum HTTPServerCommands {
-	;
+public class HTTPServerCommands {
+
 	public static final String HTTPCommands = "httpserver";
 
 
@@ -60,56 +58,65 @@ public enum HTTPServerCommands {
 
 
 	@Subscribe
-	public static void onCommand ( final CommandEvent ev ) {
+	public static void onCommand ( final HarbingerCommandEvent ev ) {
 		if ( ev.command.equals ( HTTPServerCommands.HTTPCommands ) ) {
 			if ( 0 == ev.arguments.size ( ) ) {
-				CommandRegistry.LOGGER.info ( HTTPSubCommands.print ( ) );
+				CommandResponse.NOARG.addToResponse ( ev.response , HTTPSubCommands.print ( ) );
 			}
 			else {
 
 				HTTPSubCommands cmd = HTTPSubCommands.valueOfCommand ( ev.arguments.get ( 0 ) );
 				switch ( cmd ) {
 					case SetPort -> {
+						if ( ev.arguments.size ( ) == 2 ) {
 
-						ev.setCancelled ( true );
+							Persist.serverSettings.port = Integer.parseInt ( ev.arguments.get ( 1 ) );
+							EventBus.BUS.post ( new MemoryAlteredEvent ( ) );
 
-						ConsolePrompt.console.printf ( "What should the port be changed to? [" + Persist.serverSettings.port + "] " );
-						Persist.serverSettings.port = Integer.parseInt ( ConsolePrompt.console.readLine ( ) );
-						EventBus.BUS.post ( new MemoryAlteredEvent ( ) );
+							CommandResponse.OK.addToResponse ( ev.response , "Port number changed. This will not take effect until next restart" );
+						}
+						else {
+							CommandResponse.NOARG.addToResponse ( ev.response , "You must supply the port number" );
+						}
 
-						Terminal.startTerminal ( );
 						break;
 					}
 					case Start -> {
 
-						CommandRegistry.LOGGER.info ( "Starting up server..." );
+
 						if ( Persist.serverSettings.enabled ) {
-							CommandRegistry.LOGGER.info ( "Fatal: The server is already running" );
+							CommandResponse.DENY.addToResponse ( ev.response , "Server is already running" );
 							return;
 						}
 						Persist.serverSettings.enabled = true;
+						CommandResponse.OK.addToResponse ( ev.response , "Server started!" );
 						HTTPServer.startServer ( );
 						EventBus.BUS.post ( new MemoryAlteredEvent ( ) );
 						break;
 					}
 					case Stop -> {
 
-						CommandRegistry.LOGGER.info ( "Stopping server..." );
 						if ( ! Persist.serverSettings.enabled ) {
-							CommandRegistry.LOGGER.info ( "Fatal: The server is already not running" );
+							CommandResponse.DENY.addToResponse ( ev.response , "The server is already stopped" );
 							return;
 						}
 						Persist.serverSettings.enabled = false;
+						CommandResponse.OK.addToResponse ( ev.response , "The server is being stopped" );
 						HTTPServer.stopServer ( );
 						EventBus.BUS.post ( new MemoryAlteredEvent ( ) );
 						break;
 					}
 					case SetExtPort -> {
-						ev.setCancelled ( true );
 
-						ConsolePrompt.console.printf ( "What should the external port number be set to? (To unset the external port number, supply a blank entry or a 0)  [" + ( Persist.serverSettings.ExternalPortNumberSet ? Persist.serverSettings.ExternalPortNumber : Persist.serverSettings.port ) + "]" );
+						if ( ev.arguments.size ( ) != 2 ) {
+							CommandResponse.NOARG.addToResponse ( ev.response , "You must supply a port number" );
+							return;
+						}
+						else {
+							CommandResponse.OK.addToResponse ( ev.response , "Value changed to " + ev.arguments.get ( 1 ) );
+						}
 
-						String x = ConsolePrompt.console.readLine ( );
+						String x = ev.arguments.get ( 1 );
 						if ( x.isEmpty ( ) || "0".equals ( x ) ) {
 							Persist.serverSettings.ExternalPortNumber = 0;
 						}
@@ -118,7 +125,6 @@ public enum HTTPServerCommands {
 						}
 
 						EventBus.BUS.post ( new MemoryAlteredEvent ( ) );
-						Terminal.startTerminal ( );
 						break;
 					}
 				}
