@@ -17,6 +17,8 @@ public class APIRequestEvent extends Event {
 
 	public boolean containsHTMLContent=false;
 	public String html;
+
+	public String contentType = "text/plain";
 	public APIRequestEvent ( final JSONObject req ) {
 		this.request_object = req;
 	}

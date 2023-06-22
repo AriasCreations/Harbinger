@@ -38,8 +38,9 @@ public class CommandAPIHandler
 			{
 				ev.containsHTMLContent=true;
 				ev.html = evt.response.getString ( "html" );
+				ev.contentType = "text/html";
 				evt.response.remove ( "html" );
-			}
+			} else ev.contentType = "application/json";
 			if(EventBus.BUS.post ( evt ))
 				ev.response_object=evt.response;
 			else {

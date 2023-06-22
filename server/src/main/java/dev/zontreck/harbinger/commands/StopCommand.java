@@ -2,6 +2,7 @@ package dev.zontreck.harbinger.commands;
 
 import dev.zontreck.ariaslib.events.EventBus;
 import dev.zontreck.ariaslib.events.annotations.Subscribe;
+import dev.zontreck.ariaslib.terminal.Task;
 import dev.zontreck.ariaslib.util.DelayedExecutorService;
 import dev.zontreck.harbinger.daemons.HTTPServer;
 import dev.zontreck.harbinger.events.HarbingerCommandEvent;
@@ -24,7 +25,15 @@ public class StopCommand {
 
 			CommandResponse.OK.addToResponse ( event.response , "ok" );
 
-			System.exit ( 0 );
+			DelayedExecutorService.scheduleTask ( new Task ( "Shutdown Server", true ) {
+				@Override
+				public void run ( ) {
+					System.exit ( 0 );
+				}
+			}, 2 );
+
+
+
 		}
 		else if ( "save".equals ( event.command ) ) {
 			CommandResponse.OK.addToResponse ( event.response , "ok" );
