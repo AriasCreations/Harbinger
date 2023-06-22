@@ -1,13 +1,16 @@
 plugins {
     id 'com.github.johnrengelman.shadow' version '8.1.0'
     id 'application'
+    id 'idea'
+    id 'java'
+    id 'maven-publish'
 }
 
 repositories {
     // Use Maven Central for resolving dependencies.
     mavenCentral()
     maven {
-        url = "https://maven.zontreck.dev"
+        url = "https://maven.zontreck.dev/repository/ariascreations"
         name = "Aria's Creations"
     }
 }
@@ -73,4 +76,27 @@ shadowJar{
 }
 artifacts {
     archives shadowJar
+}
+
+
+def MAVEN_PASSWORD_PROPERTY = "AriasCreationsMavenPassword"
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifact jar
+        }
+    }
+    repositories {
+        maven {
+            url = "https://maven.zontreck.dev/repository/ariascreations"
+            name = "ariascreations"
+            if (project.findProperty(MAVEN_PASSWORD_PROPERTY) != null) {
+                credentials {
+                    username = "admin"
+                    password = project.findProperty(MAVEN_PASSWORD_PROPERTY)
+                }
+            }
+        }
+    }
 }
