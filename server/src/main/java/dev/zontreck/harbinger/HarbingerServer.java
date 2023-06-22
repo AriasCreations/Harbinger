@@ -57,7 +57,7 @@ public class HarbingerServer {
 	static {
 
 		if ( System.getenv ( ).containsKey ( "IN_DOCKER" ) ) {
-			BASE_PATH = Path.of ( "/data" );
+			BASE_PATH = Path.of ( "/app/data" );
 			DOCKER=true;
 		}
 		else {
@@ -237,7 +237,7 @@ public class HarbingerServer {
 				if( HarbingerServer.DOCKER )
 				{
 					// If we are in docker, ensure the base file path is /data
-					if(BASE_PATH.toAbsolutePath ().toString ().startsWith ( "/data" ))
+					if(BASE_PATH.toAbsolutePath ().toString ().startsWith ( "/app/data" ))
 					{
 						LOGGER.info ( "Successfully verified docker data storage status" );
 					}else {

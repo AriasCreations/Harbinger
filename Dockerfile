@@ -22,7 +22,7 @@ EXPOSE 7767/tcp
 EXPOSE 7768/tcp
 EXPOSE 7769/udp
 
-VOLUME /data
+VOLUME /app/data
 ENV IN_DOCKER true
 
 ENTRYPOINT ["java", "-jar", "harbinger.jar"]
