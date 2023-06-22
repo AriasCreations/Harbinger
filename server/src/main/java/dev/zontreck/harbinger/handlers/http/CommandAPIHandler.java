@@ -4,7 +4,6 @@ import dev.zontreck.ariaslib.events.EventBus;
 import dev.zontreck.ariaslib.events.annotations.Subscribe;
 import dev.zontreck.harbinger.commands.CommandRegistry;
 import dev.zontreck.harbinger.commands.CommandResponse;
-import dev.zontreck.harbinger.data.Persist;
 import dev.zontreck.harbinger.events.APIRequestEvent;
 import dev.zontreck.harbinger.events.HarbingerCommandEvent;
 import org.json.JSONArray;
@@ -32,11 +31,12 @@ public class CommandAPIHandler {
 				}
 			}
 
-			ev.HTMLContent = evt.html;
-			evt.response.remove ( "html" );
 
-			if ( EventBus.BUS.post ( evt ) )
+			if ( EventBus.BUS.post ( evt ) ) {
 				ev.response_object = evt.response;
+				ev.HTMLContent = evt.html;
+				evt.response.remove ( "html" );
+			}
 			else {
 				ev.response_status = 404;
 
