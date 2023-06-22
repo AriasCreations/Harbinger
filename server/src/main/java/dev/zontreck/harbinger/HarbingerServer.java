@@ -6,8 +6,8 @@ package dev.zontreck.harbinger;
 import dev.zontreck.ariaslib.events.EventBus;
 import dev.zontreck.ariaslib.terminal.Task;
 import dev.zontreck.ariaslib.terminal.TaskBus;
-import dev.zontreck.ariaslib.terminal.Terminal;
 import dev.zontreck.ariaslib.util.DelayedExecutorService;
+import dev.zontreck.ariaslib.util.EnvironmentUtils;
 import dev.zontreck.harbinger.commands.CommandRegistry;
 import dev.zontreck.harbinger.daemons.DiscordBot;
 import dev.zontreck.harbinger.daemons.HTTPBackupServer;
@@ -51,14 +51,14 @@ public class HarbingerServer {
 	}
 
 	public static final Path BASE_PATH;
-	public static boolean DOCKER=false;
+	public static boolean DOCKER = false;
 
 
 	static {
 
-		if ( System.getenv ( ).containsKey ( "IN_DOCKER" ) ) {
+		if ( EnvironmentUtils.isRunningInsideDocker ( ) ) {
 			BASE_PATH = Path.of ( "/app/data" );
-			DOCKER=true;
+			DOCKER = true;
 		}
 		else {
 			BASE_PATH = Path.of ( "data" );
@@ -77,8 +77,7 @@ public class HarbingerServer {
 		exec = DelayedExecutorService.getExecutor ( );
 		TaskBus.register ( );
 
-		if(DOCKER)
-		{
+		if ( DOCKER ) {
 			LOGGER.info ( "Environment: Docker" );
 		}
 
@@ -122,7 +121,7 @@ public class HarbingerServer {
 		if ( 0 == Persist.MEMORY.size ( ) ) {
 			HarbingerServer.LOGGER.info ( "No settings exist yet!" );
 			// Save defaults
-			EventBus.BUS.post ( new MemoryAlteredEvent () );
+			EventBus.BUS.post ( new MemoryAlteredEvent ( ) );
 
 		}
 
@@ -234,13 +233,12 @@ public class HarbingerServer {
 				HarbingerServer.LOGGER.info ( "Server is running" );
 
 
-				if( HarbingerServer.DOCKER )
-				{
+				if ( HarbingerServer.DOCKER ) {
 					// If we are in docker, ensure the base file path is /data
-					if(BASE_PATH.toAbsolutePath ().toString ().startsWith ( "/app/data" ))
-					{
+					if ( BASE_PATH.toAbsolutePath ( ).toString ( ).startsWith ( "/app/data" ) ) {
 						LOGGER.info ( "Successfully verified docker data storage status" );
-					}else {
+					}
+					else {
 						LOGGER.error ( "Docker data path is set incorrectly" );
 					}
 				}
