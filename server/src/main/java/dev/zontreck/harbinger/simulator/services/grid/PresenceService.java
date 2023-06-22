@@ -34,6 +34,7 @@ public class PresenceService {
 	@Subscribe
 	public static void onServerTick( ServerTickEvent ev)
 	{
+		if(presenceDB == null)return; // Simulator services not yet ready
 		// Only check every 15 seconds
 		if(LastCheck.plusSeconds ( 15 ).isAfter( Instant.now () ))
 			return;
