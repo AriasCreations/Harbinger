@@ -1,6 +1,7 @@
 package dev.zontreck.harbinger.events;
 
 import dev.zontreck.ariaslib.events.Event;
+import dev.zontreck.ariaslib.html.HTMLElementBuilder;
 import org.json.JSONObject;
 
 /**
@@ -15,10 +16,9 @@ public class APIRequestEvent extends Event {
 	public JSONObject response_object;
 	public int response_status = 200;
 
-	public boolean containsHTMLContent=false;
-	public String html;
+	public HTMLElementBuilder HTMLContent;
 
-	public String contentType = "text/plain";
+
 	public APIRequestEvent ( final JSONObject req ) {
 		this.request_object = req;
 	}
