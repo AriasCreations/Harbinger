@@ -26,11 +26,13 @@ public class APIHandler implements HttpHandler {
 
 
 		final APIRequestEvent ARE = new APIRequestEvent ( new JSONObject ( new String ( httpExchange.getRequestBody ( ).readAllBytes ( ) , StandardCharsets.UTF_8 ) ) );
-		EventBus.BUS.post ( ARE );
+
+		ARE.admin = Persist.serverSettings.PSK.validate ( ARE.request_object.getString ( "psk" ) );
 
 		httpExchange.getResponseHeaders ( ).add ( "Server" , "Harbinger/" + Persist.HARBINGER_VERSION );
 
-		HTTPEvents.LOGGER.info ( "API Request [" + ( htmlRender ? "/api/html" : "/api/json" ) + " : " + ( Persist.serverSettings.PSK.validate ( ARE.request_object.getString ( "psk" ) ) ? "admin" : "anonymous" ) + "] " + ARE.request_object.getString ( "type" ) );
+		HTTPEvents.LOGGER.info ( "API Request [" + ( htmlRender ? "/api/html" : "/api/json" ) + " : " + ( ARE.admin ? "admin" : "anonymous" ) + "] " + ARE.request_object.getString ( "type" ) );
+		EventBus.BUS.post ( ARE );
 
 		if ( ! ARE.isCancelled ( ) ) {
 			httpExchange.sendResponseHeaders ( 404 , 0 );

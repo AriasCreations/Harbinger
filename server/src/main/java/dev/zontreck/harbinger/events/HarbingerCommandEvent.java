@@ -6,6 +6,11 @@ import org.json.JSONObject;
 
 import java.util.List;
 
+/**
+ * DANGER: Admin access is implied when this event is dispatched. The only source of this is from /api and the PSK is validated before this event is permitted to be fired.
+ *
+ * Use extreme caution if implementing a usage of this event elsewhere
+ */
 public class HarbingerCommandEvent extends Event {
 	public String command;
 	public List<String> arguments;
