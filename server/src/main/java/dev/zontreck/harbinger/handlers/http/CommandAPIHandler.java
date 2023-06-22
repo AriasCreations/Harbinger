@@ -15,6 +15,7 @@ public class CommandAPIHandler {
 	public static void onCommand ( APIRequestEvent ev ) {
 		if ( "command".equalsIgnoreCase ( ev.request_object.getString ( "type" ) ) && Persist.serverSettings.PSK.validate ( ev.request_object.getString ( "psk" ) ) ) {
 			ev.response_status = 200;
+			ev.setCancelled ( true );
 			HarbingerCommandEvent evt = new HarbingerCommandEvent ( ev.request_object.getString ( "command" ) );
 			evt.arguments = new ArrayList<> ( );
 
