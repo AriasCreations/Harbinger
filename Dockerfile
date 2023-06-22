@@ -7,6 +7,7 @@ COPY settings.gradle .
 COPY .git ./.git
 
 ENV VERSION $INPUT_PATCH
+ENV IN_DOCKER true
 
 
 RUN gradle build
@@ -22,6 +23,6 @@ EXPOSE 7768/tcp
 EXPOSE 7769/udp
 
 VOLUME /data
-ENV IN_DOCKER=true
+ENV IN_DOCKER true
 
 ENTRYPOINT ["java", "-jar", "harbinger.jar"]

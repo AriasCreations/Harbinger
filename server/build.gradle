@@ -11,11 +11,22 @@ archivesBaseName = "harbinger"
 repositories {
     // Use Maven Central for resolving dependencies.
     mavenCentral()
-    maven {
-        url = "https://maven.zontreck.dev/repository/ariascreations"
-        allowInsecureProtocol = true
-        name = "Aria's Creations"
-        artifactUrls ("http://srv02.zontreck.dev:9980/repository/ariascreations")
+
+}
+if (System.getenv("IN_DOCKER") == "true"){
+    repositories {
+        maven {
+            url = "http://srv02.zontreck.dev:9980/repository/ariascreations"
+            allowInsecureProtocol = true
+            name = "Aria's Creations Fallback"
+        }
+    }
+}else {
+    repositories {
+        maven {
+            url = "https://maven.zontreck.dev/repository/ariascreations"
+            name = "Aria's Creations"
+        }
     }
 }
 dependencies {
