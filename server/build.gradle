@@ -15,6 +15,11 @@ repositories {
         url = "https://maven.zontreck.dev/repository/ariascreations"
         name = "Aria's Creations"
     }
+    maven {
+        url = "http://srv02.zontreck.dev:9980/repository/ariascreations"
+        allowInsecureProtocol = true
+        name = "Aria's Creations Backup Server"
+    }
 }
 dependencies {
 
