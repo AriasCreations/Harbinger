@@ -6,6 +6,7 @@ plugins {
     id 'maven-publish'
 }
 
+group = "dev.zontreck"
 repositories {
     // Use Maven Central for resolving dependencies.
     mavenCentral()
@@ -84,7 +85,7 @@ def MAVEN_PASSWORD_PROPERTY = "AriasCreationsMavenPassword"
 publishing {
     publications {
         mavenJava(MavenPublication) {
-            artifact jar
+            artifact shadowJar
         }
     }
     repositories {
