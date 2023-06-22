@@ -15,6 +15,7 @@ public class SetSignature {
 	@Subscribe
 	public static void onSetSignature ( final HarbingerCommandEvent event ) {
 		if ( event.command.equals ( SetSignature.SETSIG ) ) {
+			event.setCancelled ( true );
 
 
 			if ( event.arguments.size ( ) == 0 ) {

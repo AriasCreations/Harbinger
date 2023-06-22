@@ -19,6 +19,7 @@ public class StopCommand {
 	@Subscribe
 	public static void onStop ( final HarbingerCommandEvent event ) {
 		if ( event.command.equals ( StopCommand.Stop ) ) {
+			event.setCancelled ( true );
 			HTTPServer.stopServer ( );
 			DelayedExecutorService.stop ( );
 			EventBus.BUS.post ( new ServerStoppingEvent ( ) );
