@@ -15,7 +15,7 @@ public class HarbingerCommandEvent extends Event {
 	public String command;
 	public List<String> arguments;
 
-	public JSONObject response;
+	public JSONObject response = new JSONObject (  );
 	public HTMLElementBuilder html;
 
 	@Override
