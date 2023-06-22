@@ -19,6 +19,7 @@ import dev.zontreck.harbinger.data.containers.Servers;
 import dev.zontreck.harbinger.data.containers.SupportReps;
 import dev.zontreck.harbinger.data.types.*;
 import dev.zontreck.harbinger.events.GridInitializationEvent;
+import dev.zontreck.harbinger.events.MemoryAlteredEvent;
 import dev.zontreck.harbinger.events.ServerTickEvent;
 import dev.zontreck.harbinger.handlers.EventsRegistry;
 import dev.zontreck.harbinger.httphandlers.HTTPEvents;
@@ -50,11 +51,14 @@ public class HarbingerServer {
 	}
 
 	public static final Path BASE_PATH;
+	public static boolean DOCKER=false;
+
 
 	static {
 
 		if ( System.getenv ( ).containsKey ( "IN_DOCKER" ) ) {
 			BASE_PATH = Path.of ( "/data" );
+			DOCKER=true;
 		}
 		else {
 			BASE_PATH = Path.of ( "data" );
@@ -72,6 +76,11 @@ public class HarbingerServer {
 
 		exec = DelayedExecutorService.getExecutor ( );
 		TaskBus.register ( );
+
+		if(DOCKER)
+		{
+			LOGGER.info ( "Environment: Docker" );
+		}
 
 		TaskBus.tasks.add ( new Task ( "Register Events" ) {
 			@Override
@@ -112,6 +121,8 @@ public class HarbingerServer {
 		// This is designed to work without mysql
 		if ( 0 == Persist.MEMORY.size ( ) ) {
 			HarbingerServer.LOGGER.info ( "No settings exist yet!" );
+			// Save defaults
+			EventBus.BUS.post ( new MemoryAlteredEvent () );
 
 		}
 
@@ -220,10 +231,19 @@ public class HarbingerServer {
 		TaskBus.tasks.add ( new Task ( "Startup Completed" , true ) {
 			@Override
 			public void run ( ) {
-
-				Terminal.PREFIX = "HARBINGER";
-				Terminal.startTerminal ( );
 				HarbingerServer.LOGGER.info ( "Server is running" );
+
+
+				if( HarbingerServer.DOCKER )
+				{
+					// If we are in docker, ensure the base file path is /data
+					if(BASE_PATH.toAbsolutePath ().toString ().startsWith ( "/data" ))
+					{
+						LOGGER.info ( "Successfully verified docker data storage status" );
+					}else {
+						LOGGER.error ( "Docker data path is set incorrectly" );
+					}
+				}
 			}
 		} );
 
