@@ -7,6 +7,7 @@ plugins {
 }
 
 group = "dev.zontreck"
+archivesBaseName = "harbinger"
 repositories {
     // Use Maven Central for resolving dependencies.
     mavenCentral()
@@ -86,6 +87,7 @@ publishing {
     publications {
         mavenJava(MavenPublication) {
             artifact shadowJar
+            artifact jar
         }
     }
     repositories {
