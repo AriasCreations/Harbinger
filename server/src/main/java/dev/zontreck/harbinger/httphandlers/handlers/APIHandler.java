@@ -7,6 +7,7 @@ import dev.zontreck.ariaslib.html.DOM;
 import dev.zontreck.ariaslib.html.HTMLElementBuilder;
 import dev.zontreck.harbinger.data.Persist;
 import dev.zontreck.harbinger.events.APIRequestEvent;
+import dev.zontreck.harbinger.httphandlers.HTTPEvents;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -15,10 +16,11 @@ import java.nio.charset.StandardCharsets;
 
 public class APIHandler implements HttpHandler {
 	private boolean htmlRender = false;
-	public APIHandler(boolean html)
-	{
-		htmlRender=!html;
+
+	public APIHandler ( boolean html ) {
+		htmlRender = ! html;
 	}
+
 	@Override
 	public void handle ( final HttpExchange httpExchange ) throws IOException {
 
@@ -26,26 +28,28 @@ public class APIHandler implements HttpHandler {
 		final APIRequestEvent ARE = new APIRequestEvent ( new JSONObject ( new String ( httpExchange.getRequestBody ( ).readAllBytes ( ) , StandardCharsets.UTF_8 ) ) );
 		EventBus.BUS.post ( ARE );
 
-		httpExchange.getResponseHeaders ().add ( "Server", "Harbinger/" + Persist.HARBINGER_VERSION );
+		httpExchange.getResponseHeaders ( ).add ( "Server" , "Harbinger/" + Persist.HARBINGER_VERSION );
 
+		HTTPEvents.LOGGER.info ( "API Request [" + ( htmlRender ? "/api/html" : "/api/json" ) + " : " + ( Persist.serverSettings.PSK.validate ( ARE.request_object.getString ( "psk" ) ) ? "admin" : "anonymous" ) + "] " + ARE.request_object.getString ( "type" ) );
 
 		if ( ! ARE.isCancelled ( ) ) {
 			httpExchange.sendResponseHeaders ( 404 , 0 );
 			httpExchange.close ( );
 		}
 		else {
-			if(htmlRender){
+			if ( htmlRender ) {
 				String reply = "";
-				HTMLElementBuilder builder = DOM.beginBootstrapDOM ( httpExchange.getRequestURI ().getPath () );
+				HTMLElementBuilder builder = DOM.beginBootstrapDOM ( httpExchange.getRequestURI ( ).getPath ( ) );
 				builder.getChildByTagName ( "html" ).getChildByTagName ( "body" ).addChild ( ARE.HTMLContent );
-				reply = builder.build ().generateHTML();
+				reply = builder.build ( ).generateHTML ( );
 				byte[] bRep = reply.getBytes ( StandardCharsets.UTF_8 );
-				httpExchange.getResponseHeaders ().add ( "Content-Type", "text/html" );
-				httpExchange.sendResponseHeaders ( ARE.response_status, bRep.length );
-				OutputStream os = httpExchange.getResponseBody ();
+				httpExchange.getResponseHeaders ( ).add ( "Content-Type" , "text/html" );
+				httpExchange.sendResponseHeaders ( ARE.response_status , bRep.length );
+				OutputStream os = httpExchange.getResponseBody ( );
 				os.write ( bRep );
-				os.close ();
-			}else {
+				os.close ( );
+			}
+			else {
 
 				final String reply = ARE.response_object.toString ( );
 				final byte[] bRep = reply.getBytes ( StandardCharsets.UTF_8 );

@@ -2,6 +2,7 @@ package dev.zontreck.harbinger.handlers.http;
 
 import dev.zontreck.ariaslib.events.EventBus;
 import dev.zontreck.ariaslib.events.annotations.Subscribe;
+import dev.zontreck.harbinger.commands.CommandRegistry;
 import dev.zontreck.harbinger.commands.CommandResponse;
 import dev.zontreck.harbinger.data.Persist;
 import dev.zontreck.harbinger.events.APIRequestEvent;
@@ -18,6 +19,8 @@ public class CommandAPIHandler {
 			ev.setCancelled ( true );
 			HarbingerCommandEvent evt = new HarbingerCommandEvent ( ev.request_object.getString ( "command" ) );
 			evt.arguments = new ArrayList<> ( );
+
+			CommandRegistry.LOGGER.info ( "Commend [" + evt.command + "] " + ev.request_object.getJSONArray ( "args" ).join ( " " ) );
 
 			JSONArray arr = ev.request_object.getJSONArray ( "args" );
 			for (
