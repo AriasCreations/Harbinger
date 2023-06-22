@@ -4,7 +4,6 @@
 package dev.zontreck.harbinger;
 
 import dev.zontreck.ariaslib.events.EventBus;
-import dev.zontreck.ariaslib.file.Folder;
 import dev.zontreck.ariaslib.terminal.Task;
 import dev.zontreck.ariaslib.terminal.TaskBus;
 import dev.zontreck.ariaslib.terminal.Terminal;
@@ -20,7 +19,6 @@ import dev.zontreck.harbinger.data.containers.Servers;
 import dev.zontreck.harbinger.data.containers.SupportReps;
 import dev.zontreck.harbinger.data.types.*;
 import dev.zontreck.harbinger.events.GridInitializationEvent;
-import dev.zontreck.harbinger.events.MemoryAlteredEvent;
 import dev.zontreck.harbinger.events.ServerTickEvent;
 import dev.zontreck.harbinger.handlers.EventsRegistry;
 import dev.zontreck.harbinger.httphandlers.HTTPEvents;
@@ -29,7 +27,9 @@ import dev.zontreck.harbinger.simulator.services.simulator.SimulatorUDPService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Path;
@@ -51,18 +51,19 @@ public class HarbingerServer {
 
 	public static final Path BASE_PATH;
 
-	static{
+	static {
 
-		if(System.getenv ( "IN_DOCKER" )!="")
-		{
+		if ( System.getenv ( ).containsKey ( "IN_DOCKER" ) ) {
 			BASE_PATH = Path.of ( "/data" );
-		}else {
+		}
+		else {
 			BASE_PATH = Path.of ( "data" );
 		}
 	}
+
 	public static void main ( final String[] args ) {
 
-		final UUID ID = Product.makeProductID ( 1 , 59 );
+		final UUID ID = Product.makeProductID ( 0x9f , 0xcd );
 
 		HarbingerServer.LOGGER.info ( "We are Harbinger" );
 
@@ -109,7 +110,7 @@ public class HarbingerServer {
 		// Start up the server
 		// Read the NBT Files for the database
 		// This is designed to work without mysql
-		if ( 0 == Persist.MEMORY.size () ) {
+		if ( 0 == Persist.MEMORY.size ( ) ) {
 			HarbingerServer.LOGGER.info ( "No settings exist yet!" );
 
 		}
@@ -129,8 +130,9 @@ public class HarbingerServer {
 		TaskBus.tasks.add ( new Task ( "Start Emergency Remote-Admin server" ) {
 			@Override
 			public void run ( ) {
-				if( HTTPBackupServer.startServer () ) this.setSuccess ();
-				else this.setFail ();
+				if ( HTTPBackupServer.startServer ( ) )
+					this.setSuccess ( );
+				else this.setFail ( );
 			}
 		} );
 
@@ -164,17 +166,17 @@ public class HarbingerServer {
 		} );
 
 
-		TaskBus.tasks.add ( new Task ( "Activate Grid Services") {
+		TaskBus.tasks.add ( new Task ( "Activate Grid Services" ) {
 			@Override
 			public void run ( ) {
-				if(Persist.simulatorSettings.GRID_ON)
-				{
-					EventBus.BUS.post ( new GridInitializationEvent () );
+				if ( Persist.simulatorSettings.GRID_ON ) {
+					EventBus.BUS.post ( new GridInitializationEvent ( ) );
 
 
-					setSuccess ();
-				}else {
-					setFail ();
+					setSuccess ( );
+				}
+				else {
+					setFail ( );
 				}
 			}
 		} );
@@ -182,11 +184,12 @@ public class HarbingerServer {
 		TaskBus.tasks.add ( new Task ( "Start Simulator Services" ) {
 			@Override
 			public void run ( ) {
-				if(Persist.simulatorSettings.SIM_ON){
-					SimulatorUDPService.startService ();
+				if ( Persist.simulatorSettings.SIM_ON ) {
+					SimulatorUDPService.startService ( );
 
-					setSuccess ();
-				}else setFail ();
+					setSuccess ( );
+				}
+				else setFail ( );
 			}
 		} );
 
@@ -196,20 +199,20 @@ public class HarbingerServer {
 			public void run ( ) {
 				try {
 					URL url = new URL ( "http://checkip.amazonaws.com" );
-					BufferedReader BIS = new BufferedReader ( new InputStreamReader ( url.openStream () ) );
-					Persist.HARBINGER_EXTERNAL_IP = BIS.readLine();
+					BufferedReader BIS = new BufferedReader ( new InputStreamReader ( url.openStream ( ) ) );
+					Persist.HARBINGER_EXTERNAL_IP = BIS.readLine ( );
 
-					setSuccess ();
+					setSuccess ( );
 					return;
 				} catch ( MalformedURLException e ) {
-					setFail ();
+					setFail ( );
 
 				} catch ( IOException e ) {
-					setFail ();
+					setFail ( );
 				}
 
 				LOGGER.info ( "Failed to obtain the IP Address, the services used may be offline currently. If you set a backup using the commands, that will be used for now." );
-				throw new RuntimeException (  );
+				throw new RuntimeException ( );
 			}
 		};
 		TaskBus.tasks.add ( obtainIPTask );
