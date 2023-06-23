@@ -18,14 +18,14 @@ public class WebUIHandler implements HttpHandler {
 				"    \n" +
 				"      function submitCommand()\n" +
 				"      {\n" +
-				"        var cmd = $(\"#cmd\").value;\n" +
+				"        var cmd = $(\"#cmd\")[0].value;\n" +
 				"        var RawArgs = cmd.split(\" \");\n" +
 				"        cmd = RawArgs[0];\n" +
 				"        var args = RawArgs.slice(1);\n" +
 				"\n" +
 				"        var postData = {\n" +
 				"          type: \"command\",\n" +
-				"          psk: $(\"#psk\").value,\n" +
+				"          psk: $(\"#psk\")[0].value,\n" +
 				"          command: cmd,\n" +
 				"          args: args\n" +
 				"        };\n" +
@@ -46,7 +46,7 @@ public class WebUIHandler implements HttpHandler {
 		webUIMain.addChild ( "div" ).addClass ( "card-header" ).addChild ( "h4" ).withText ( "Harbinger WebUI" );
 		var cardBody = webUIMain.addChild ( "div" ).addClass ( "card-body" );
 
-		cardBody.addChild ( "label" ).addClass ( "form-label" ).withAttribute ( "for" , "psk" );
+		cardBody.addChild ( "label" ).addClass ( "form-label" ).withAttribute ( "for" , "psk" ).withText ( "Pre-Shared Key" );
 		cardBody.addChild ( "input" ).addClass ( "form-control" ).withAttribute ( "type" , "password" ).withAttribute ( "id" , "psk" ).withAttribute ( "aria-labelledby" , "pskInfo" );
 		cardBody.addChild ( "div" ).addClass ( "form-text" ).withAttribute ( "id" , "pskInfo" ).withText ( "Preshared key is the Administrator access code for this command interface" );
 
@@ -54,7 +54,7 @@ public class WebUIHandler implements HttpHandler {
 		cardBody.addChild ( "br" );
 
 
-		cardBody.addChild ( "label" ).addClass ( "form-label" ).withAttribute ( "for" , "cmd" );
+		cardBody.addChild ( "label" ).addClass ( "form-label" ).withAttribute ( "for" , "cmd" ).withText ( "Command" );
 		cardBody.addChild ( "input" ).addClass ( "form-control" ).withAttribute ( "type" , "text" ).withAttribute ( "id" , "cmd" ).withAttribute ( "aria-labelledby" , "cmdInfo" );
 		cardBody.addChild ( "div" ).addClass ( "form-text" ).withAttribute ( "id" , "cmdInfo" ).withText ( "Command to execute" );
 
