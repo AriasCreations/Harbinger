@@ -2,7 +2,10 @@ package dev.zontreck.harbinger.commands.udp;
 
 import dev.zontreck.ariaslib.events.EventBus;
 import dev.zontreck.ariaslib.events.annotations.Subscribe;
+import dev.zontreck.ariaslib.html.HTMLElementBuilder;
+import dev.zontreck.harbinger.commands.CommandHTMLPage;
 import dev.zontreck.harbinger.commands.CommandResponse;
+import dev.zontreck.harbinger.commands.Commands;
 import dev.zontreck.harbinger.data.Persist;
 import dev.zontreck.harbinger.events.HarbingerCommandEvent;
 import dev.zontreck.harbinger.events.MemoryAlteredEvent;
@@ -11,18 +14,21 @@ public class UDPServerCommands {
 	public static final String BASE_COMMAND = "udpserver";
 
 	public enum UDPSubCommand {
-		Enable ( "enable" , "Enables the UDP Server on next restart" ),
-		Disable ( "disable" , "Disables the UDP Server on next restart" ),
-		SetUDPPort ( "setport" , "Sets the UDP Port" ),
-		GetUDPPort ( "getport" , "Prints out the UDP Port" );
+		Enable ( "enable" , "Enables the UDP Server on next restart" , "[none]" ),
+		Disable ( "disable" , "Disables the UDP Server on next restart" , "[none]" ),
+		SetUDPPort ( "setport" , "Sets the UDP Port" , "[int:port]" ),
+		GetUDPPort ( "getport" , "Prints out the UDP Port" , "[none]" );
 
 
 		public String cmd;
-		public String usage;
+		public String description;
+		public String use;
 
-		UDPSubCommand ( String cmd , String usage ) {
-			this.cmd = cmd;
-			this.usage = usage;
+
+		UDPSubCommand ( final String command , final String desc , String usage ) {
+			this.cmd = command;
+			this.description = desc;
+			this.use = usage;
 		}
 
 		public static UDPSubCommand valueOfCommand ( String commandText ) {
@@ -49,16 +55,45 @@ public class UDPServerCommands {
 
 		@Override
 		public String toString ( ) {
-			return ( this.cmd + "\t\t-\t\t" + this.usage );
+			return ( this.cmd + "\t\t-\t\t" + this.use + " - " + this.description );
 		}
+
+		public static HTMLElementBuilder render ( ) {
+			HTMLElementBuilder root = new HTMLElementBuilder ( "table" );
+			root.addClass ( "table-primary" ).addClass ( "text-center" ).addClass ( "table-bordered" ).addClass ( "border-black" ).addClass ( "table" ).addClass ( "rounded-4" ).addClass ( "shadow" ).addClass ( "table-striped" );
+			var tableHead = root.addChild ( "thead" );
+			var row = tableHead.addChild ( "tr" );
+			row.addChild ( "th" ).withAttribute ( "scope" , "col" ).withText ( "Command" );
+			row.addChild ( "th" ).withAttribute ( "scope" , "col" ).withText ( "Description" );
+
+			var tableBody = root.addChild ( "tbody" );
+			for (
+					UDPSubCommand cmd :
+					values ( )
+			) {
+				var entry = tableBody.addChild ( "tr" );
+				entry.withAttribute ( "data-bs-toggle" , "popover" ).withAttribute ( "data-bs-title" , "Usage" ).withAttribute ( "data-bs-custom-class" , "command-popover" ).withAttribute ( "data-bs-content" , cmd.use ).withAttribute ( "data-bs-container" , "body" ).withAttribute ( "data-bs-placement" , "left" ).withAttribute ( "data-bs-trigger" , "hover" );
+
+				entry.addChild ( "td" ).withText ( cmd.cmd );
+				entry.addChild ( "td" ).withText ( cmd.description );
+
+			}
+
+			return root;
+		}
+
 	}
 
 	@Subscribe
 	public static void onCommand ( HarbingerCommandEvent ev ) {
 		if ( BASE_COMMAND.equalsIgnoreCase ( ev.command ) ) {
+			ev.setCancelled ( true );
 
 			if ( ev.arguments.size ( ) == 0 ) {
 				CommandResponse.NOARG.addToResponse ( ev.response , "failed" );
+
+				ev.html = CommandHTMLPage.makePage ( "UDP Server Commands", UDPSubCommand.render (), ev.response );
+
 				ev.response.put ( "usage" , UDPSubCommand.print ( ) );
 			}
 			else {

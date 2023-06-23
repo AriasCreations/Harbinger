@@ -60,7 +60,7 @@ public class WebUIHandler implements HttpHandler {
 
 		cardBody.addChild ( "br" );
 
-		cardBody.addChild ( "button" ).addClass ( "btn btn-danger" ).withAttribute ( "onclick" , "submitCommand" ).withText ( "Submit Admin Command" );
+		cardBody.addChild ( "button" ).addClass ( "btn btn-danger" ).withAttribute ( "onclick" , "submitCommand()" ).withText ( "Submit Admin Command" );
 
 		var footer = webUIMain.addChild ( "div" ).addClass ( "card-footer" );
 		footer.withAttribute ( "id" , "cfooter" );

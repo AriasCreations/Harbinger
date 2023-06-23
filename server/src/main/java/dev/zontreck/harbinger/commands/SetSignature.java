@@ -35,6 +35,8 @@ public class SetSignature {
 						EventBus.BUS.post ( new MemoryAlteredEvent ( ) );
 						CommandResponse.OK.addToResponse ( event.response , "success" );
 
+						event.response.put("sig1", sig.v1);
+						event.response.put("sig2", sig.v2);
 
 						event.html = CommandHTMLPage.makePage ( "Set Signature" , new HTMLElementBuilder ( "h4" ).withText ( "Signature regenerated" ) , event.response );
 					}
@@ -60,6 +62,9 @@ public class SetSignature {
 
 						Persist.SIGNATURE = sig;
 						EventBus.BUS.post ( new MemoryAlteredEvent ( ) );
+
+						event.response.put("sig1", sig.v1);
+						event.response.put("sig2", sig.v2);
 
 						event.html = CommandHTMLPage.makePage ( "Set Signature" , new HTMLElementBuilder ( "h4" ).withText ( "Signature has been set!" ) , event.response );
 					}
