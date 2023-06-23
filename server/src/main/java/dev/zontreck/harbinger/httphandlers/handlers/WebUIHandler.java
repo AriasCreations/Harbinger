@@ -71,8 +71,12 @@ public class WebUIHandler implements HttpHandler {
 		httpExchange.getResponseHeaders ( ).add ( "Content-Type" , "text/html" );
 
 
-		body.addChild ( "script" ).withAttribute ( "type", "text/javascript" ).withText ( "const popoverTriggerList = document.querySelectorAll('[data-bs-toggle=\"popover\"]');\n" +
-				"const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl));" );
+		body.addChild ( "script" ).withAttribute ( "type", "text/javascript" ).withText ( "" +
+				"$(document).ready(function(){" +
+				"" +
+				"const popoverTriggerList = document.querySelectorAll('[data-bs-toggle=\"popover\"]');\n" +
+				"const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl));" +
+				"});" );
 
 		byte[] bRep = builder.build ( ).generateHTML ( ).getBytes ( StandardCharsets.UTF_8 );
 		httpExchange.sendResponseHeaders ( 200 , bRep.length );
