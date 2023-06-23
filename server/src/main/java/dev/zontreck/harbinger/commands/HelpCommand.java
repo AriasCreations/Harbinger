@@ -15,7 +15,8 @@ public class HelpCommand {
 			CommandResponse.OK.addToResponse ( ev.response , "ok" );
 			ev.setCancelled ( true );
 
-			var CommandTable = Commands.render();
+			var CommandTable = new HTMLElementBuilder ( "div" ).addClass ( "table-responsive" );
+			CommandTable.addChild ( Commands.render () );
 
 			ev.html = CommandHTMLPage.makePage ( "Command Index", CommandTable, ev.response );
 

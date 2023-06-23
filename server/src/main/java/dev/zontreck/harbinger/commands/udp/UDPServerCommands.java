@@ -92,7 +92,10 @@ public class UDPServerCommands {
 			if ( ev.arguments.size ( ) == 0 ) {
 				CommandResponse.NOARG.addToResponse ( ev.response , "failed" );
 
-				ev.html = CommandHTMLPage.makePage ( "UDP Server Commands", UDPSubCommand.render (), ev.response );
+				var tableContainer = new HTMLElementBuilder ( "div" ).addClass ( "table-responsive" );
+				tableContainer.addChild ( UDPSubCommand.render () );
+
+				ev.html = CommandHTMLPage.makePage ( "UDP Server Commands", tableContainer, ev.response );
 
 				ev.response.put ( "usage" , UDPSubCommand.print ( ) );
 			}
