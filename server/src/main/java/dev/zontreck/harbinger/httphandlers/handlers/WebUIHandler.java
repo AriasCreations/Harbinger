@@ -18,14 +18,14 @@ public class WebUIHandler implements HttpHandler {
 				"    \n" +
 				"      function submitCommand()\n" +
 				"      {\n" +
-				"        var cmd = $(\"cmd\").text;\n" +
+				"        var cmd = $(\"#cmd\").value;\n" +
 				"        var RawArgs = cmd.split(\" \");\n" +
 				"        cmd = RawArgs[0];\n" +
 				"        var args = RawArgs.slice(1);\n" +
 				"\n" +
 				"        var postData = {\n" +
 				"          type: \"command\",\n" +
-				"          psk: $(\"psk\").text,\n" +
+				"          psk: $(\"#psk\").value,\n" +
 				"          command: cmd,\n" +
 				"          args: args\n" +
 				"        };\n" +
