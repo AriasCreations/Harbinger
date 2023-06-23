@@ -35,6 +35,7 @@ public class WebUIHandler implements HttpHandler {
 				"          data: JSON.stringify(postData),\n" +
 				"          success: function(dat){\n" +
 				"            $(\"#cfooter\").html(\"<br/><br/>\"+dat);\n" +
+				"	scanPopOver();" +
 				"          }\n" +
 				"        })\n" +
 				"      }\n" +
@@ -72,10 +73,10 @@ public class WebUIHandler implements HttpHandler {
 
 
 		body.addChild ( "script" ).withAttribute ( "type", "text/javascript" ).withText ( "" +
-				"$(document).ready(function(){" +
+				"function scanPopOver()" +
 				"" +
-				"const popoverTriggerList = document.querySelectorAll('[data-bs-toggle=\"popover\"]');\n" +
-				"const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl));" +
+				"var popoverTriggerList = document.querySelectorAll('[data-bs-toggle=\"popover\"]');\n" +
+				"var popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl));" +
 				"});" );
 
 		byte[] bRep = builder.build ( ).generateHTML ( ).getBytes ( StandardCharsets.UTF_8 );
