@@ -34,7 +34,7 @@ public class WebUIHandler implements HttpHandler {
 				"          url: \"/api/html\",\n" +
 				"          data: JSON.stringify(postData),\n" +
 				"          success: function(dat){\n" +
-				"            $(\"cfooter\").html(\"<br/><br/>\"+dat);\n" +
+				"            $(\"#cfooter\").html(\"<br/><br/>\"+dat);\n" +
 				"          }\n" +
 				"        })\n" +
 				"      }\n" +
@@ -61,6 +61,9 @@ public class WebUIHandler implements HttpHandler {
 		cardBody.addChild ( "br" );
 
 		cardBody.addChild ( "button" ).addClass ( "btn btn-danger" ).withAttribute ( "onclick" , "submitCommand" ).withText ( "Submit Admin Command" );
+
+		var footer = webUIMain.addChild ( "div" ).addClass ( "card-footer" );
+		footer.withAttribute ( "id" , "cfooter" );
 
 
 		httpExchange.getResponseHeaders ( ).add ( "Server" , "Harbinger/" + Persist.HARBINGER_VERSION );
