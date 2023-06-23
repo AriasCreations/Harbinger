@@ -22,7 +22,7 @@ public class CommandHTMLPage
 		var card_json = card_footer.addChild ( "div" ).addClass ( "card text-bg-danger rounded-4 shadow bg-gradient" );
 		var card_json_title = card_json.addChild ( "div" ).addClass ( "card-header" ).withText ( "Raw Response" );
 		var json_body = card_json.addChild ( "div" ).addClass ( "card-body" );
-		json_body.withText ( json.toString ( 4 ) );
+		json_body.addChild ( "pre" ).withText ( json.toString ( 4 ) );
 
 
 		return builder;
