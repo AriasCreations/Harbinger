@@ -5,7 +5,6 @@ import dev.zontreck.ariaslib.events.annotations.Subscribe;
 import dev.zontreck.ariaslib.html.HTMLElementBuilder;
 import dev.zontreck.harbinger.commands.CommandHTMLPage;
 import dev.zontreck.harbinger.commands.CommandResponse;
-import dev.zontreck.harbinger.commands.Commands;
 import dev.zontreck.harbinger.data.Persist;
 import dev.zontreck.harbinger.events.HarbingerCommandEvent;
 import dev.zontreck.harbinger.events.MemoryAlteredEvent;
@@ -72,7 +71,7 @@ public class UDPServerCommands {
 					values ( )
 			) {
 				var entry = tableBody.addChild ( "tr" );
-				entry.withAttribute ( "data-bs-toggle" , "popover" ).withAttribute ( "data-bs-title" , "Usage" ).withAttribute ( "data-bs-custom-class" , "command-popover" ).withAttribute ( "data-bs-content" , cmd.use ).withAttribute ( "data-bs-container" , "body" ).withAttribute ( "data-bs-placement" , "left" ).withAttribute ( "data-bs-trigger" , "hover" );
+				entry.withAttribute ( "data-bs-toggle" , "popover" ).withAttribute ( "data-bs-title" , "Usage" ).withAttribute ( "data-bs-custom-class" , "command-popover" ).withAttribute ( "data-bs-content" , cmd.use ).withAttribute ( "data-bs-container" , "body" ).withAttribute ( "data-bs-placement" , "left" ).withAttribute ( "data-bs-trigger" , "hover focus" );
 
 				entry.addChild ( "td" ).withText ( cmd.cmd );
 				entry.addChild ( "td" ).withText ( cmd.description );
@@ -93,9 +92,9 @@ public class UDPServerCommands {
 				CommandResponse.NOARG.addToResponse ( ev.response , "failed" );
 
 				var tableContainer = new HTMLElementBuilder ( "div" ).addClass ( "table-responsive" );
-				tableContainer.addChild ( UDPSubCommand.render () );
+				tableContainer.addChild ( UDPSubCommand.render ( ) );
 
-				ev.html = CommandHTMLPage.makePage ( "UDP Server Commands", tableContainer, ev.response );
+				ev.html = CommandHTMLPage.makePage ( "UDP Server Commands" , tableContainer , ev.response );
 
 				ev.response.put ( "usage" , UDPSubCommand.print ( ) );
 			}
