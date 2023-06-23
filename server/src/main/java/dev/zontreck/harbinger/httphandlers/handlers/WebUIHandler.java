@@ -42,8 +42,8 @@ public class WebUIHandler implements HttpHandler {
 
 		body.addClass ( "text-bg-dark" );
 		var webUIMain = body.addChild ( "div" );
-		webUIMain.addClass ( "border rounded-4 shadow text-bg-secondary bg-gradient p-3 border-info text-auto card" );
-		webUIMain.withAttribute ( "style", "position:absolute;left:10%;top:10%;width:75vw" );
+		webUIMain.addClass ( "border rounded-4 shadow text-bg-secondary bg-gradient p-3 border-info text-auto card start-50 position-absolute translate-middle-x w-75 h-auto" );
+		webUIMain.withAttribute ( "style", "top:10%" );
 		webUIMain.addChild ( "div" ).addClass ( "card-header" ).addChild ( "h4" ).withText ( "Harbinger WebUI" );
 		var cardBody = webUIMain.addChild ( "div" ).addClass ( "card-body" );
 
@@ -70,7 +70,9 @@ public class WebUIHandler implements HttpHandler {
 		httpExchange.getResponseHeaders ( ).add ( "Server" , "Harbinger/" + Persist.HARBINGER_VERSION );
 		httpExchange.getResponseHeaders ( ).add ( "Content-Type" , "text/html" );
 
-		DOM.addPopOverScan ( builder );
+
+		body.addChild ( "script" ).withAttribute ( "type", "text/javascript" ).withText ( "const popoverTriggerList = document.querySelectorAll('[data-bs-toggle=\"popover\"]')\n" +
+				"const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl))" );
 
 		byte[] bRep = builder.build ( ).generateHTML ( ).getBytes ( StandardCharsets.UTF_8 );
 		httpExchange.sendResponseHeaders ( 200 , bRep.length );
