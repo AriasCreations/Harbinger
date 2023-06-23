@@ -40,10 +40,13 @@ public class APIHandler implements HttpHandler {
 		}
 		else {
 			if ( htmlRender ) {
-				String reply = "";
+				String reply = ARE.HTMLContent.build ().generateHTML ();
+				/*
 				HTMLElementBuilder builder = DOM.beginBootstrapDOM ( httpExchange.getRequestURI ( ).getPath ( ) );
 				builder.getChildByTagName ( "html" ).getChildByTagName ( "body" ).addChild ( ARE.HTMLContent );
 				reply = builder.build ( ).generateHTML ( );
+				 */
+
 				byte[] bRep = reply.getBytes ( StandardCharsets.UTF_8 );
 				httpExchange.getResponseHeaders ( ).add ( "Content-Type" , "text/html" );
 				httpExchange.sendResponseHeaders ( ARE.response_status , bRep.length );

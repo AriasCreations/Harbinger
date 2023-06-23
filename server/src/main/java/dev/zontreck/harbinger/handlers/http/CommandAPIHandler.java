@@ -19,7 +19,7 @@ public class CommandAPIHandler {
 			HarbingerCommandEvent evt = new HarbingerCommandEvent ( ev.request_object.getString ( "command" ) );
 			evt.arguments = new ArrayList<> ( );
 
-			CommandRegistry.LOGGER.info ( "Commend [" + evt.command + "] " + ev.request_object.getJSONArray ( "args" ).join ( " " ) );
+			CommandRegistry.LOGGER.info ( "Command [" + evt.command + "] " + ev.request_object.getJSONArray ( "args" ).join ( " " ) );
 
 			JSONArray arr = ev.request_object.getJSONArray ( "args" );
 			for (
