@@ -14,7 +14,7 @@ public class WebUIHandler implements HttpHandler {
 	public void handle ( HttpExchange httpExchange ) throws IOException {
 		HTMLElementBuilder builder = DOM.beginBootstrapDOM ( "WebUI" );
 		var body = builder.getChildByTagName ( "html" ).getChildByTagName ( "body" );
-		body.addChild ( "script" ).withText ( "\n" +
+		builder.getChildByTagName ( "html" ).addChild ( "script" ).withText ( "\n" +
 				"    \n" +
 				"      function submitCommand()\n" +
 				"      {\n" +
@@ -34,7 +34,7 @@ public class WebUIHandler implements HttpHandler {
 				"          url: \"/api/html\",\n" +
 				"          data: JSON.stringify(postData),\n" +
 				"          success: function(dat){\n" +
-				"            $(\"cfooter\").html(dat);\n" +
+				"            $(\"cfooter\").html(\"<br/><br/>\"+dat);\n" +
 				"          }\n" +
 				"        })\n" +
 				"      }\n" +
@@ -42,7 +42,7 @@ public class WebUIHandler implements HttpHandler {
 
 		body.addClass ( "text-bg-dark" );
 		var webUIMain = body.addChild ( "div" );
-		webUIMain.addClass ( "position-absolute border rounded-4 shadow text-bg-secondary bg-gradient p-3 w-75 h-auto border-danger top-50 start-50 translate-middle text-auto card" );
+		webUIMain.addClass ( "position-absolute border rounded-4 shadow text-bg-secondary bg-gradient p-3 w-75 h-auto border-info top-50 start-50 translate-middle text-auto card" );
 		webUIMain.addChild ( "div" ).addClass ( "card-header" ).addChild ( "h4" ).withText ( "Harbinger WebUI" );
 		var cardBody = webUIMain.addChild ( "div" ).addClass ( "card-body" );
 
@@ -60,7 +60,7 @@ public class WebUIHandler implements HttpHandler {
 
 		cardBody.addChild ( "br" );
 
-		cardBody.addChild ( "input" ).addClass ( "btn btn-danger" ).withAttribute ( "onclick" , "submitCommand()" ).withAttribute ( "value" , "Submit Admin Command" );
+		cardBody.addChild ( "button" ).addClass ( "btn btn-danger" ).withAttribute ( "onclick" , "submitCommand" ).withText ( "Submit Admin Command" );
 
 
 		httpExchange.getResponseHeaders ( ).add ( "Server" , "Harbinger/" + Persist.HARBINGER_VERSION );

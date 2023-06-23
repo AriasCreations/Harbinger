@@ -17,8 +17,8 @@ import java.nio.charset.StandardCharsets;
 public class APIHandler implements HttpHandler {
 	private boolean htmlRender = false;
 
-	public APIHandler ( boolean html ) {
-		htmlRender = ! html;
+	public APIHandler ( boolean json ) {
+		htmlRender = ! json;
 	}
 
 	@Override
