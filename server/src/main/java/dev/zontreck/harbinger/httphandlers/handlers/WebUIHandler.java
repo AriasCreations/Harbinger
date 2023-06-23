@@ -43,7 +43,7 @@ public class WebUIHandler implements HttpHandler {
 		body.addClass ( "text-bg-dark" );
 		var webUIMain = body.addChild ( "div" );
 		webUIMain.addClass ( "border rounded-4 shadow text-bg-secondary bg-gradient p-3 border-info text-auto card" );
-		webUIMain.withAttribute ( "style", "position:absolute;left:25%;top:25%;width:75vw" );
+		webUIMain.withAttribute ( "style", "position:absolute;left:10%;top:10%;width:75vw" );
 		webUIMain.addChild ( "div" ).addClass ( "card-header" ).addChild ( "h4" ).withText ( "Harbinger WebUI" );
 		var cardBody = webUIMain.addChild ( "div" ).addClass ( "card-body" );
 

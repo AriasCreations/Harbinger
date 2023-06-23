@@ -2,6 +2,7 @@ package dev.zontreck.harbinger.handlers.http;
 
 import dev.zontreck.ariaslib.events.EventBus;
 import dev.zontreck.ariaslib.events.annotations.Subscribe;
+import dev.zontreck.ariaslib.html.DOM;
 import dev.zontreck.harbinger.commands.CommandRegistry;
 import dev.zontreck.harbinger.commands.CommandResponse;
 import dev.zontreck.harbinger.events.APIRequestEvent;
@@ -35,6 +36,7 @@ public class CommandAPIHandler {
 			if ( EventBus.BUS.post ( evt ) ) {
 				ev.response_object = evt.response;
 				ev.HTMLContent = evt.html;
+				DOM.addPopOverScan ( ev.HTMLContent );
 				evt.response.remove ( "html" );
 			}
 			else {
