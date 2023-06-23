@@ -36,7 +36,6 @@ public class CommandAPIHandler {
 			if ( EventBus.BUS.post ( evt ) ) {
 				ev.response_object = evt.response;
 				ev.HTMLContent = evt.html;
-				DOM.addPopOverScan ( ev.HTMLContent );
 				evt.response.remove ( "html" );
 			}
 			else {

@@ -70,6 +70,8 @@ public class WebUIHandler implements HttpHandler {
 		httpExchange.getResponseHeaders ( ).add ( "Server" , "Harbinger/" + Persist.HARBINGER_VERSION );
 		httpExchange.getResponseHeaders ( ).add ( "Content-Type" , "text/html" );
 
+		DOM.addPopOverScan ( builder );
+
 		byte[] bRep = builder.build ( ).generateHTML ( ).getBytes ( StandardCharsets.UTF_8 );
 		httpExchange.sendResponseHeaders ( 200 , bRep.length );
 		httpExchange.getResponseBody ( ).write ( bRep );
