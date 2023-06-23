@@ -3,8 +3,6 @@ package dev.zontreck.harbinger.httphandlers.handlers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import dev.zontreck.ariaslib.events.EventBus;
-import dev.zontreck.ariaslib.html.DOM;
-import dev.zontreck.ariaslib.html.HTMLElementBuilder;
 import dev.zontreck.harbinger.data.Persist;
 import dev.zontreck.harbinger.events.APIRequestEvent;
 import dev.zontreck.harbinger.httphandlers.HTTPEvents;
@@ -40,7 +38,7 @@ public class APIHandler implements HttpHandler {
 		}
 		else {
 			if ( htmlRender ) {
-				String reply = ARE.HTMLContent.build ().generateHTML ();
+				String reply = ARE.HTMLContent.build ( ).generateHTML ( );
 				/*
 				HTMLElementBuilder builder = DOM.beginBootstrapDOM ( httpExchange.getRequestURI ( ).getPath ( ) );
 				builder.getChildByTagName ( "html" ).getChildByTagName ( "body" ).addChild ( ARE.HTMLContent );
@@ -53,14 +51,15 @@ public class APIHandler implements HttpHandler {
 				OutputStream os = httpExchange.getResponseBody ( );
 				os.write ( bRep );
 				os.close ( );
+
 			}
 			else {
 
-				final String reply = ARE.response_object.toString ( );
-				final byte[] bRep = reply.getBytes ( StandardCharsets.UTF_8 );
+				String reply = ARE.response_object.toString ( );
+				byte[] bRep = reply.getBytes ( StandardCharsets.UTF_8 );
 				httpExchange.getResponseHeaders ( ).add ( "Content-Type" , "application/json" );
 				httpExchange.sendResponseHeaders ( ARE.response_status , bRep.length );
-				final OutputStream os = httpExchange.getResponseBody ( );
+				OutputStream os = httpExchange.getResponseBody ( );
 				os.write ( bRep );
 				os.close ( );
 			}

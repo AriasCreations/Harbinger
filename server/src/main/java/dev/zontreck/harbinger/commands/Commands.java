@@ -44,7 +44,7 @@ public enum Commands {
 		return ( this.cmd + "\t\t-\t\t" + this.use + " - " + this.description );
 	}
 
-	public HTMLElementBuilder render ( ) {
+	public static HTMLElementBuilder render ( ) {
 		HTMLElementBuilder root = new HTMLElementBuilder ( "table" );
 		root.addClass ( "table-primary" ).addClass ( "text-center" ).addClass ( "table-bordered" ).addClass ( "border-black" ).addClass ( "table" ).addClass ( "rounded-4" ).addClass ( "shadow" ).addClass ( "table-striped" );
 		var tableHead = root.addChild ( "thead" );

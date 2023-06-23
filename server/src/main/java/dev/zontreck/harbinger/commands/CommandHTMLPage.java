@@ -11,19 +11,18 @@ public class CommandHTMLPage
 	{
 
 		HTMLElementBuilder builder = new HTMLElementBuilder ("div");
-		builder.addClass ( "position-absolute" );
-		Bootstrap.Border.make ().withColor ( Bootstrap.Colors.make ().withColor ( Color.Danger ) ).apply ( builder );
-		builder.addClass ( "rounded-4" ).addClass ( "text-bg-dark" ).addClass ( "bg-gradient" ).addClass ( "p-3" ).addClass ( "w-50" ).addClass ( "h-auto" ).addClass ( "top-50 start-50" ).addClass ( "translate-middle card" );
+		builder.addClass ( "position-relative border rounded-4 shadow text-bg-dark bg-gradient p-3 border-danger text-auto card" );
 		var card_header = builder.addChild ( "div" ).addClass ( "card-header" );
 		card_header.addChild ( "h4" ).withText ( title );
 		var card_body = builder.addChild ( "div" ).addClass ( "card-body" );
-		card_body.addChild ( body );
+		var card_body_child = card_body.addChild("div");
+		card_body_child.withText ( " " ).addChild ( body );
 
 		var card_footer = builder.addChild ( "div" ).addClass ( "card-footer" );
 		var card_json = card_footer.addChild ( "div" ).addClass ( "card text-bg-danger rounded-4 shadow bg-gradient" );
 		var card_json_title = card_json.addChild ( "div" ).addClass ( "card-header" ).withText ( "Raw Response" );
 		var json_body = card_json.addChild ( "div" ).addClass ( "card-body" );
-		json_body.withText ( json.toString () );
+		json_body.withText ( json.toString ( 4 ) );
 
 
 		return builder;
