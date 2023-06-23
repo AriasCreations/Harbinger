@@ -90,10 +90,10 @@ public class SupportCommands {
 	public static void onListSupport ( final HarbingerCommandEvent ev ) {
 		if ( ev.command.equals ( SupportCommands.SUPPORT ) ) {
 			ev.setCancelled ( true );
+			var tbl = new HTMLElementBuilder ( "div" );
 			if ( 0 == ev.arguments.size ( ) ) {
 				CommandResponse.NOARG.addToResponse ( ev.response , "no arguments supplied" );
 
-				var tbl = new HTMLElementBuilder ( "div" );
 				tbl.addChild ( SubCommand.render ( ) );
 				tbl.addChild ( "br" );
 				tbl.addChild ( "br" );
@@ -120,7 +120,6 @@ public class SupportCommands {
 							CommandResponse.NOARG.addToResponse ( ev.response , "Insufficient arguments." );
 							ev.response.put ( "usage" , "[uuid] [first.last] [level]" );
 
-							var tbl = new HTMLElementBuilder ( "div" );
 							tbl.addChild ( SubCommand.render ( ) );
 							tbl.addChild ( "br" );
 							tbl.addChild ( "br" );
@@ -138,7 +137,7 @@ public class SupportCommands {
 						SupportReps.add ( p );
 						EventBus.BUS.post ( new MemoryAlteredEvent ( ) );
 
-						ev.html = CommandHTMLPage.makePage ( "Add Support User" , new HTMLElementBuilder ( "p" ).withText ( "Action Successful" ) , ev.response );
+						ev.html = CommandHTMLPage.makePage ( "Add Support User" , tbl.addChild ( "p" ).withText ( "Action Successful" ) , ev.response );
 
 						break;
 					}
