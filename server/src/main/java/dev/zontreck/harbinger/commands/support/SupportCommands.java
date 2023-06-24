@@ -3,7 +3,9 @@ package dev.zontreck.harbinger.commands.support;
 import dev.zontreck.ariaslib.events.EventBus;
 import dev.zontreck.ariaslib.events.annotations.Subscribe;
 import dev.zontreck.ariaslib.html.HTMLElementBuilder;
+import dev.zontreck.ariaslib.html.bootstrap.Color;
 import dev.zontreck.harbinger.commands.CommandHTMLPage;
+import dev.zontreck.harbinger.commands.CommandMessage;
 import dev.zontreck.harbinger.commands.CommandResponse;
 import dev.zontreck.harbinger.data.containers.SupportReps;
 import dev.zontreck.harbinger.data.types.PermissionLevel;
@@ -110,7 +112,7 @@ public class SupportCommands {
 						ev.response.put ( "reps" , SupportReps.dump ( ) );
 
 
-						ev.html = CommandHTMLPage.makePage ( "Support Command Index" , new HTMLElementBuilder ( "div" ) , ev.response );
+						ev.html = CommandHTMLPage.makePage ( "Support Member List" , tbl.addChild ( CommandMessage.buildMessage ( Color.Primary , "Support member listing is not yet implemented" ) ) , ev.response );
 
 						break;
 					}
@@ -137,7 +139,7 @@ public class SupportCommands {
 						SupportReps.add ( p );
 						EventBus.BUS.post ( new MemoryAlteredEvent ( ) );
 
-						ev.html = CommandHTMLPage.makePage ( "Add Support User" , tbl.addChild ( "p" ).withText ( "Action Successful" ) , ev.response );
+						ev.html = CommandHTMLPage.makePage ( "Add Support User" , tbl.addChild ( CommandMessage.buildMessage ( Color.Success , "Action successful" ) ) , ev.response );
 
 						break;
 					}
