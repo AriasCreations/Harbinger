@@ -3,8 +3,10 @@ package dev.zontreck.harbinger.commands.http;
 import dev.zontreck.ariaslib.events.EventBus;
 import dev.zontreck.ariaslib.events.annotations.Subscribe;
 import dev.zontreck.ariaslib.html.HTMLElementBuilder;
+import dev.zontreck.ariaslib.html.bootstrap.Color;
 import dev.zontreck.ariaslib.util.EnvironmentUtils;
 import dev.zontreck.harbinger.commands.CommandHTMLPage;
+import dev.zontreck.harbinger.commands.CommandMessage;
 import dev.zontreck.harbinger.commands.CommandResponse;
 import dev.zontreck.harbinger.daemons.HTTPServer;
 import dev.zontreck.harbinger.data.Persist;
@@ -105,9 +107,10 @@ public class HTTPServerCommands {
 					case SetPort -> {
 						if ( EnvironmentUtils.isRunningInsideDocker ( ) ) {
 							CommandResponse.DENY.addToResponse ( ev.response , "Action not allowed for environment" );
-							tbl.addClass ( "text-bg-danger" ).withText ( "ERROR: You cannot change the port number using the command system when running inside Docker or a container. Please instead use the container's port forwarding to change the port" );
 
-							ev.html = CommandHTMLPage.makePage ( "HTTP Server - Set Port", tbl, ev.response );
+							tbl.addChild ( CommandMessage.buildMessage ( Color.Danger , "ERROR: You cannot change the port number using the command system when running inside Docker or a container. Please instead use the container's port forwarding to change the port" ) );
+
+							ev.html = CommandHTMLPage.makePage ( "HTTP Server - Set Port" , tbl , ev.response );
 
 							return;
 						}
@@ -119,12 +122,12 @@ public class HTTPServerCommands {
 							CommandResponse.OK.addToResponse ( ev.response , "Port number changed. This will not take effect until next restart" );
 							ev.response.put ( "restart_needed" , true );
 
-							ev.html = CommandHTMLPage.makePage ( "HTTP Server - Set Port" , tbl.addClass ( "text-bg-success" ).withText ( "Port successfully changed" ) , ev.response );
+							ev.html = CommandHTMLPage.makePage ( "HTTP Server - Set Port" , tbl.addChild ( CommandMessage.buildMessage ( Color.Success , "Port successfully changed" ) ) , ev.response );
 						}
 						else {
 							CommandResponse.NOARG.addToResponse ( ev.response , "You must supply the port number" );
 
-							ev.html = CommandHTMLPage.makePage ( "HTTP Server - Set Port" , tbl.addClass ( "text-bg-danger" ).withText ( "Port not changed because a port number was not supplied" ) , ev.response );
+							ev.html = CommandHTMLPage.makePage ( "HTTP Server - Set Port" , tbl.addChild ( CommandMessage.buildMessage ( Color.Danger , "Port not changed because a port number was not supplied" ) ) , ev.response );
 						}
 
 						break;
@@ -134,7 +137,7 @@ public class HTTPServerCommands {
 
 						if ( Persist.serverSettings.enabled ) {
 							CommandResponse.DENY.addToResponse ( ev.response , "Server is already running" );
-							ev.html = CommandHTMLPage.makePage ( "HTTP Server - Start" , tbl.addClass ( "text-bg-warning" ).withText ( "The server is already running. No action has been taken" ) , ev.response );
+							ev.html = CommandHTMLPage.makePage ( "HTTP Server - Start" , tbl.addChild ( CommandMessage.buildMessage ( Color.Warning , "The server is already running. No action has been taken" ) ) , ev.response );
 							return;
 						}
 						Persist.serverSettings.enabled = true;
@@ -142,14 +145,16 @@ public class HTTPServerCommands {
 						HTTPServer.startServer ( );
 						EventBus.BUS.post ( new MemoryAlteredEvent ( ) );
 						ev.response.put ( "restart_needed" , true );
-						ev.html = CommandHTMLPage.makePage ( "HTTP Server - Start" , tbl.addClass ( "text-bg-success" ).withText ( "The server status has been changed. A restart may be needed." ) , ev.response );
+						ev.html = CommandHTMLPage.makePage ( "HTTP Server - Start" , tbl.addChild ( CommandMessage.buildMessage ( Color.Success , "The server status has been changed. A restart may be needed." ) ) , ev.response );
+
 						break;
 					}
 					case Stop -> {
 
 						if ( ! Persist.serverSettings.enabled ) {
 							CommandResponse.DENY.addToResponse ( ev.response , "The server is already stopped" );
-							ev.html = CommandHTMLPage.makePage ( "HTTP Server - Stop" , tbl.addClass ( "text-bg-warning" ).withText ( "The server is already stopped. No action has been taken" ) , ev.response );
+							ev.html = CommandHTMLPage.makePage ( "HTTP Server - Stop" , tbl.addChild ( CommandMessage.buildMessage ( Color.Warning , "The server is already stopped. No action has been taken" ) ) , ev.response );
+
 							return;
 						}
 						Persist.serverSettings.enabled = false;
@@ -157,14 +162,15 @@ public class HTTPServerCommands {
 						HTTPServer.stopServer ( );
 						EventBus.BUS.post ( new MemoryAlteredEvent ( ) );
 						ev.response.put ( "restart_needed" , true );
-						ev.html = CommandHTMLPage.makePage ( "HTTP Server - Stop" , tbl.addClass ( "text-bg-success" ).withText ( "The server status has been changed. A restart may be needed." ) , ev.response );
+						ev.html = CommandHTMLPage.makePage ( "HTTP Server - Stop" , tbl.addChild ( CommandMessage.buildMessage ( Color.Success , "The server status has been changed. A restart may be needed." ) ) , ev.response );
 						break;
 					}
 					case SetExtPort -> {
 
 						if ( ev.arguments.size ( ) != 2 ) {
 							CommandResponse.NOARG.addToResponse ( ev.response , "You must supply a port number" );
-							ev.html = CommandHTMLPage.makePage ( "HTTP Server - Set External Port" , tbl.addClass ( "text-bg-danger" ).withText ( "Port not changed because a port number was not supplied" ) , ev.response );
+							ev.html = CommandHTMLPage.makePage ( "HTTP Server - Set External Port" , tbl.addChild ( CommandMessage.buildMessage ( Color.Danger , "Port not changed because a port number was not supplied." ) ) , ev.response );
+
 							return;
 						}
 						else {
@@ -181,7 +187,8 @@ public class HTTPServerCommands {
 
 						EventBus.BUS.post ( new MemoryAlteredEvent ( ) );
 
-						ev.html = CommandHTMLPage.makePage ( "HTTP Server - Set External Port" , tbl.addClass ( "text-bg-success" ).withText ( "External port number changed" ) , ev.response );
+						ev.html = CommandHTMLPage.makePage ( "HTTP Server - Set External Port" , tbl.addChild ( CommandMessage.buildMessage ( Color.Success , "External port number changed" ) ) , ev.response );
+
 						break;
 					}
 				}
