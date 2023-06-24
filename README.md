@@ -15,4 +15,16 @@ When setting up Harbinger, the default port of 7767 for TCP/HTTP should be used.
 
 A request should be made to /api to change the PSK.
 
-*NOTE* : There is currently no web UI.
+Compiling
+=========
+-------
+
+General
+----
+1. ./prebuild.sh
+2. gradle build
+
+For docker
+----
+1. ./prebuild.sh
+2. docker build
