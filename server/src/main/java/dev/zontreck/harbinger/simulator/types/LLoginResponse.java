@@ -171,7 +171,7 @@ public class LLoginResponse {
 				Reason = code.reason;
 				Message = DataUtils.ReadTextFile ( Path.of ( "tos.html" ).toFile ( ) );
 			}
-			else if ( cached.UserLevel == 1 || cached.LastReadCritical != DigestUtils.md5hex ( Persist.PATCH_NOTES ) ) {
+			else if ( cached.UserLevel == 1 || !cached.LastReadCritical.equalsIgnoreCase ( DigestUtils.md5hex ( Persist.PATCH_NOTES ) ) ) {
 				code = LLoginResponseCodes.Critical;
 				Reason = code.reason;
 				Message = new String ( Persist.PATCH_NOTES );
