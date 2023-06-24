@@ -39,11 +39,13 @@ public class InventoryFolder {
 			folder.folderID = UUID.randomUUID ().toString ();
 		}
 		subFolders.put ( folder.folderID , folder );
+		folder.parentFolder=this;
 		bumpFolderVersion ( );
 	}
 
 	public void DeleteFolder ( InventoryFolder folder ) {
 		subFolders.remove ( folder.folderID );
+		folder.parentFolder=null;
 		bumpFolderVersion ( );
 	}
 

@@ -215,5 +215,6 @@ public class GridInventoryService {
 
 
 		root.needsReSave = true;
+		root.AssertAllChildren ();
 	}
 }
