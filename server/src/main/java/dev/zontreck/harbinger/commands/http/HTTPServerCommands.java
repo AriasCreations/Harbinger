@@ -106,6 +106,10 @@ public class HTTPServerCommands {
 						if ( EnvironmentUtils.isRunningInsideDocker ( ) ) {
 							CommandResponse.DENY.addToResponse ( ev.response , "Action not allowed for environment" );
 							tbl.addClass ( "text-bg-danger" ).withText ( "ERROR: You cannot change the port number using the command system when running inside Docker or a container. Please instead use the container's port forwarding to change the port" );
+
+							ev.html = CommandHTMLPage.makePage ( "HTTP Server - Set Port", tbl, ev.response );
+
+							return;
 						}
 						if ( ev.arguments.size ( ) == 2 ) {
 
