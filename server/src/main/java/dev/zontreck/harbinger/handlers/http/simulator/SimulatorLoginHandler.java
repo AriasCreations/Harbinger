@@ -18,7 +18,7 @@ import java.util.List;
 public class SimulatorLoginHandler {
 	@Subscribe
 	public static void onSimLogin ( GenericRequestEvent GRE ) {
-		if ( "/simulation/login".equals ( GRE.path ) ) {
+		if ( GRE.path.equals ( "/simulation/login" ) ) {
 			GRE.setCancelled ( true );
 
 			ByteArrayInputStream ARIS = new ByteArrayInputStream ( GRE.body );

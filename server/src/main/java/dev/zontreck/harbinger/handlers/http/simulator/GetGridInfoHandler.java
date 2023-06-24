@@ -19,13 +19,13 @@ public class GetGridInfoHandler {
 		if ( GRE.path.equalsIgnoreCase ( "/get_grid_info" ) ) {
 			GRE.responseIsBinary = false;
 			GRE.responseCode = 200;
-			GRE.contentType = "text/plain";
+			GRE.contentType = "application/xml";
 			GridInfo info = GridInfo.consume ( );
 
 			GRE.responseText = info.toString ( );
 			GRE.setCancelled ( true );
 		}
-		else if ( "/favicon.ico".equalsIgnoreCase ( GRE.path ) ) {
+		else if ( GRE.path.equalsIgnoreCase ( "/favicon.ico" ) ) {
 			// Just so it stops spamming the console if testing
 			GRE.responseCode = 404;
 			GRE.contentType = "text/plain";
