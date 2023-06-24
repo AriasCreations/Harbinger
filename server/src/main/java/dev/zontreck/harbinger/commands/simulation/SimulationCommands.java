@@ -2,7 +2,8 @@ package dev.zontreck.harbinger.commands.simulation;
 
 import dev.zontreck.ariaslib.events.EventBus;
 import dev.zontreck.ariaslib.events.annotations.Subscribe;
-import dev.zontreck.harbinger.commands.CommandRegistry;
+import dev.zontreck.ariaslib.html.HTMLElementBuilder;
+import dev.zontreck.harbinger.commands.CommandHTMLPage;
 import dev.zontreck.harbinger.commands.CommandResponse;
 import dev.zontreck.harbinger.data.Persist;
 import dev.zontreck.harbinger.events.HarbingerCommandEvent;
@@ -20,11 +21,14 @@ public class SimulationCommands {
 	@Subscribe
 	public static void onCommand ( HarbingerCommandEvent ev ) {
 		if ( ev.command.equals ( BASE_COMMAND ) ) {
+			ev.setCancelled ( true );
+			var tbl = new HTMLElementBuilder ( "div" );
 			if ( 0 == ev.arguments.size ( ) ) {
 				// Print Usage
+				CommandResponse.NOARG.addToResponse ( ev.response , "No arguments supplied" );
 				String usage = SimSubCommand.print ( );
-
-				CommandRegistry.LOGGER.info ( "\n{}" , usage );
+				tbl.addChild ( SimSubCommand.render ( ) );
+				ev.html = CommandHTMLPage.makePage ( "Simulation Command Index" , tbl , ev.response );
 			}
 			else {
 				SimSubCommand cmd = SimSubCommand.valueOfCommand ( ev.arguments.get ( 0 ) );
@@ -33,21 +37,26 @@ public class SimulationCommands {
 					case setBaseURL -> {
 						if ( ev.arguments.size ( ) != 2 ) {
 							CommandResponse.NOARG.addToResponse ( ev.response , "You must supply the URL" );
+							ev.html = CommandHTMLPage.makePage ( "Set Base URL" , tbl.addClass ( "text-bg-danger" ).withText ( "You must supply the URL" ) , ev.response );
 							return;
 						}
 						CommandResponse.OK.addToResponse ( ev.response , "BASE URL updated" );
 						Persist.simulatorSettings.BASE_URL = ev.arguments.get ( 1 );
 						EventBus.BUS.post ( new MemoryAlteredEvent ( ) );
+						ev.html = CommandHTMLPage.makePage ( "Set Base URL" , tbl.addClass ( "text-bg-success" ).withText ( "URL has been successfully set" ) , ev.response );
 						break;
 					}
 					case getBaseURL -> {
 						CommandResponse.OK.addToResponse ( ev.response , Persist.simulatorSettings.BASE_URL );
+
+						ev.html = CommandHTMLPage.makePage ( "Get Base URL" , tbl.addClass ( "text-bg-primary" ).withText ( "URL " + Persist.simulatorSettings.BASE_URL ) , ev.response );
 						break;
 					}
 					case setGridName -> {
 
 						if ( ev.arguments.size ( ) != 2 ) {
 							CommandResponse.NOARG.addToResponse ( ev.response , "You must supply the grid name" );
+							ev.html = CommandHTMLPage.makePage ( "Set Grid Name" , tbl.addClass ( "text-bg-danger" ).withText ( "Grid Name could not be set because it was not supplied" ) , ev.response );
 							return;
 						}
 
@@ -60,12 +69,15 @@ public class SimulationCommands {
 						CommandResponse.OK.addToResponse ( ev.response , "success" );
 
 						EventBus.BUS.post ( new MemoryAlteredEvent ( ) );
+
+						ev.html = CommandHTMLPage.makePage ( "Set Grid Name" , tbl.addClass ( "text-bg-success" ).withText ( "Grid Name was successfully changed" ) , ev.response );
 						break;
 					}
 					case setGridNick -> {
 
 						if ( ev.arguments.size ( ) != 2 ) {
 							CommandResponse.NOARG.addToResponse ( ev.response , "You must supply the grid nickname" );
+							ev.html = CommandHTMLPage.makePage ( "Set Grid Nickname" , tbl.addClass ( "text-bg-danger" ).withText ( "Grid Nickname could not be set because it was not supplied" ) , ev.response );
 							return;
 						}
 
@@ -78,11 +90,13 @@ public class SimulationCommands {
 
 						CommandResponse.OK.addToResponse ( ev.response , "success" );
 						EventBus.BUS.post ( new MemoryAlteredEvent ( ) );
+						ev.html = CommandHTMLPage.makePage ( "Set Grid Nick" , tbl.addClass ( "text-bg-success" ).withText ( "Grid Nickname was successfully changed" ) , ev.response );
 						break;
 					}
 					case setGridStatus -> {
 						if ( ev.arguments.size ( ) != 2 ) {
 							CommandResponse.NOARG.addToResponse ( ev.response , "You need to supply a true or false" );
+							ev.html = CommandHTMLPage.makePage ( "Set Grid Service" , tbl.addClass ( "text-bg-danger" ).withText ( "No arguments supplied" ) , ev.response );
 							return;
 						}
 						if ( ev.arguments.get ( 1 ).equalsIgnoreCase ( "false" ) || ev.arguments.get ( 1 ).equals ( "0" ) ) {
@@ -100,12 +114,14 @@ public class SimulationCommands {
 							Persist.simulatorSettings.GRID_ON = true;
 						}
 
+						ev.html = CommandHTMLPage.makePage ( "Set Grid Service" , tbl.addClass ( "text-bg-success" ).withText ( "Service operation successful" ) , ev.response );
 						EventBus.BUS.post ( new MemoryAlteredEvent ( ) );
 						break;
 					}
 					case setSimulator -> {
 						if ( ev.arguments.size ( ) != 2 ) {
 							CommandResponse.NOARG.addToResponse ( ev.response , "You need to supply a true or false" );
+							ev.html = CommandHTMLPage.makePage ( "Set Simulator Service" , tbl.addClass ( "text-bg-danger" ).withText ( "No arguments supplied" ) , ev.response );
 							return;
 						}
 
@@ -124,6 +140,7 @@ public class SimulationCommands {
 							Persist.simulatorSettings.SIM_ON = true;
 						}
 
+						ev.html = CommandHTMLPage.makePage ( "Set Simulator Service" , tbl.addClass ( "text-bg-success" ).withText ( "Simulator Service action successful" ) , ev.response );
 						EventBus.BUS.post ( new MemoryAlteredEvent ( ) );
 						break;
 					}
@@ -131,12 +148,15 @@ public class SimulationCommands {
 						Persist.simulatorSettings.LAST_TOS_UPDATE = Instant.now ( );
 						EventBus.BUS.post ( new MemoryAlteredEvent ( ) );
 						CommandResponse.OK.addToResponse ( ev.response , "success" );
+						ev.html = CommandHTMLPage.makePage ( "Update Terms of Service" , tbl.addClass ( "text-bg-success" ).withText ( "Terms of service will be shown to everyone again" ) , ev.response );
 						break;
 					}
 					case updatePatch -> {
 						Persist.simulatorSettings.LAST_PATCHNOTES_UPDATE = Instant.now ( );
 						EventBus.BUS.post ( new MemoryAlteredEvent ( ) );
 						CommandResponse.OK.addToResponse ( ev.response , "success" );
+
+						ev.html = CommandHTMLPage.makePage ( "Update Patchnotes" , tbl.addClass ( "text-bg-success" ).withText ( "Simulator patch notes will be shown to all users again" ) , ev.response );
 						break;
 					}
 				}
