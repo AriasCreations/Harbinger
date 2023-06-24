@@ -18,7 +18,9 @@ public class UDPServerCommands {
 		Enable ( "enable" , "Enables the UDP Server on next restart" , "[none]" ),
 		Disable ( "disable" , "Disables the UDP Server on next restart" , "[none]" ),
 		SetUDPPort ( "setport" , "Sets the UDP Port" , "[int:port]" ),
-		GetUDPPort ( "getport" , "Prints out the UDP Port" , "[none]" );
+		GetUDPPort ( "getport" , "Prints out the UDP Port" , "[none]" ),
+		SetExtPort ( "set_ext_port" , "Sets the external inbound port to this UDP Server" , "[int:port]" ),
+		GetExtPort ( "get_ext_port" , "Gets the external port number" , "[none]" );
 
 
 		public String cmd;
@@ -149,6 +151,27 @@ public class UDPServerCommands {
 						ev.html = CommandHTMLPage.makePage ( "UDP Server" , tbl.addChild ( CommandMessage.buildMessage ( Color.Success , "Service disabled, a restart is needed." ) ) , ev.response );
 
 						EventBus.BUS.post ( new MemoryAlteredEvent ( ) );
+						break;
+					}
+					case GetExtPort -> {
+						CommandResponse.OK.addToResponse ( ev.response , "External Port " + Persist.serverSettings.udp_settings.UDPExtPort );
+						ev.html = CommandHTMLPage.makePage ( "UDP Server - External Port" , CommandMessage.buildMessage ( Color.Primary , "External Port is " + Persist.serverSettings.udp_settings.UDPExtPort ) , ev.response );
+
+						break;
+					}
+					case SetExtPort -> {
+						if ( ev.arguments.size ( ) != 2 ) {
+							CommandResponse.NOARG.addToResponse ( ev.response , "Not enough arguments" );
+							ev.html = CommandHTMLPage.makePage ( "UDP Server - Set External Port" , CommandMessage.buildMessage ( Color.Danger , "You need to supply the port number" ) , ev.response );
+							return;
+						}
+						else {
+							CommandResponse.OK.addToResponse ( ev.response , "External port set" );
+							Persist.serverSettings.udp_settings.UDPExtPort = Integer.parseInt ( ev.arguments.get ( 1 ) );
+							EventBus.BUS.post ( new MemoryAlteredEvent ( ) );
+
+							ev.html = CommandHTMLPage.makePage ( "UDP Server - Set External Port" , CommandMessage.buildMessage ( Color.Success , "External port number set. This is primarily used in combination with port forwarding, where the outward port is not the same as the internal one. (Example: Containers).   To undo this set the external port to 0, and it will default to the primary UDP Port." ) , ev.response );
+						}
 						break;
 					}
 				}
