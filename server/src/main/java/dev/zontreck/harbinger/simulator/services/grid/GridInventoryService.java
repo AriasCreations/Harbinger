@@ -1,6 +1,7 @@
 package dev.zontreck.harbinger.simulator.services.grid;
 
 import dev.zontreck.ariaslib.events.annotations.Subscribe;
+import dev.zontreck.harbinger.HarbingerServer;
 import dev.zontreck.harbinger.events.GridFeatureQueryEvent;
 import dev.zontreck.harbinger.simulator.services.ServiceRegistry;
 import dev.zontreck.harbinger.simulator.types.Account;
@@ -38,7 +39,7 @@ public class GridInventoryService {
 	public static void onGridFeatureSeek ( GridFeatureQueryEvent ev ) throws Exception {
 
 
-		Path pAccounts = Path.of ( "accounts" );
+		Path pAccounts = HarbingerServer.BASE_PATH.resolve ( "accounts" );
 		Path pData = pAccounts.resolve ( "data" );
 		Path pLibrarian = pAccounts.resolve ( "Librarian.Reaper.txt" );
 
