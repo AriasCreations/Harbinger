@@ -151,14 +151,6 @@ public class SimulationCommands {
 						ev.html = CommandHTMLPage.makePage ( "Update Terms of Service" , tbl.addClass ( "text-bg-success" ).withText ( "Terms of service will be shown to everyone again" ) , ev.response );
 						break;
 					}
-					case updatePatch -> {
-						Persist.simulatorSettings.LAST_PATCHNOTES_UPDATE = Instant.now ( );
-						EventBus.BUS.post ( new MemoryAlteredEvent ( ) );
-						CommandResponse.OK.addToResponse ( ev.response , "success" );
-
-						ev.html = CommandHTMLPage.makePage ( "Update Patchnotes" , tbl.addClass ( "text-bg-success" ).withText ( "Simulator patch notes will be shown to all users again" ) , ev.response );
-						break;
-					}
 				}
 			}
 		}

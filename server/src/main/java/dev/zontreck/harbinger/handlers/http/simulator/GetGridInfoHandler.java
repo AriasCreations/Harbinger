@@ -15,26 +15,8 @@ import java.time.Instant;
 public class GetGridInfoHandler {
 
 	@Subscribe
-	public static void onAPIRequest( final APIRequestEvent ev)
-	{
-		if("update_critical_info".equals ( ev.request_object.getString ( "type" ) ))
-		{
-
-			if(Persist.serverSettings.PSK.validate ( ev.request_object.getString ( "psk" ) ))
-			{
-				Persist.simulatorSettings.LAST_PATCHNOTES_UPDATE = Instant.now ();
-				EventBus.BUS.post ( new MemoryAlteredEvent () );
-
-				ev.response_status=200;
-				ev.response_object.put("status", "Success");
-				ev.setCancelled ( true );
-			}
-		}
-	}
-
-	@Subscribe
 	public static void onRequest ( final GenericRequestEvent GRE ) {
-		if ( "/get_grid_info".equalsIgnoreCase ( GRE.path ) ) {
+		if ( GRE.path.equalsIgnoreCase ( "/get_grid_info" ) ) {
 			GRE.responseIsBinary = false;
 			GRE.responseCode = 200;
 			GRE.contentType = "text/plain";

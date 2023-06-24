@@ -25,6 +25,7 @@ import dev.zontreck.harbinger.handlers.EventsRegistry;
 import dev.zontreck.harbinger.httphandlers.HTTPEvents;
 import dev.zontreck.harbinger.simulator.services.ServiceRegistry;
 import dev.zontreck.harbinger.simulator.services.simulator.SimulatorUDPService;
+import dev.zontreck.harbinger.utils.DataUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -170,6 +171,15 @@ public class HarbingerServer {
 			@Override
 			public void run ( ) {
 				Persist.HARBINGER_VERSION = getClass ( ).getPackage ( ).getImplementationVersion ( );
+
+				this.setSuccess ( );
+			}
+		} );
+
+		TaskBus.tasks.add ( new Task ( "Load Patch Notes from Jar" ) {
+			@Override
+			public void run ( ) {
+				Persist.PATCH_NOTES = DataUtils.ReadAllBytesFromResource ( "patch.notes" );
 
 				this.setSuccess ( );
 			}

@@ -34,7 +34,10 @@ public class Account {
 
 	public boolean HasReadCriticalInfo = false;
 
-	public long LastReadCritical;
+	/**
+	 * MD5 hash of last critical info read.
+	 */
+	public String LastReadCritical;
 	public Location LastLocation = new Location ( );
 	public Location HomeLocation = new Location ( );
 

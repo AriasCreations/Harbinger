@@ -6,6 +6,7 @@ import dev.zontreck.harbinger.data.Persist;
 import dev.zontreck.harbinger.events.GridFeatureQueryEvent;
 import dev.zontreck.harbinger.simulator.services.grid.PresenceService;
 import dev.zontreck.harbinger.utils.DataUtils;
+import dev.zontreck.harbinger.utils.DigestUtils;
 
 import java.nio.file.Path;
 import java.time.Instant;
@@ -119,7 +120,7 @@ public class LLoginResponse {
 			cached.UserLevel++;
 		}
 		if ( patch ) {
-			cached.LastReadCritical = Instant.now ( ).getEpochSecond ( );
+			cached.LastReadCritical = DigestUtils.md5hex ( Persist.PATCH_NOTES );
 		}
 		cached.commit ( );
 
@@ -170,10 +171,10 @@ public class LLoginResponse {
 				Reason = code.reason;
 				Message = DataUtils.ReadTextFile ( Path.of ( "tos.html" ).toFile ( ) );
 			}
-			else if ( cached.UserLevel == 1 || cached.LastReadCritical < Persist.simulatorSettings.LAST_PATCHNOTES_UPDATE.getEpochSecond ( ) ) {
+			else if ( cached.UserLevel == 1 || cached.LastReadCritical != DigestUtils.md5hex ( Persist.PATCH_NOTES ) ) {
 				code = LLoginResponseCodes.Critical;
 				Reason = code.reason;
-				Message = DataUtils.ReadTextFile ( Path.of ( "latest.html" ).toFile ( ) );
+				Message = new String ( Persist.PATCH_NOTES );
 			}
 			else {
 				// Login should be good to proceed, lets make a session ID

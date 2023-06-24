@@ -35,9 +35,11 @@ public class Persist {
 
 	public static String HARBINGER_EXTERNAL_IP;
 
+	public static byte[] PATCH_NOTES;
+
 	static {
 		try {
-			final BufferedInputStream BIS = new BufferedInputStream ( new FileInputStream ( HarbingerServer.BASE_PATH.resolve ( FILE_NAME ).toString () ) );
+			final BufferedInputStream BIS = new BufferedInputStream ( new FileInputStream ( HarbingerServer.BASE_PATH.resolve ( FILE_NAME ).toString ( ) ) );
 			final byte[] data = BIS.readAllBytes ( );
 
 			Persist.MEMORY = ( OSDMap ) OSDParser.deserialize ( data );
@@ -83,7 +85,7 @@ public class Persist {
 		LOGGER.info ( "Memory file saved" );
 		try {
 			String json = LLSDJson.serializeToString ( map , OSD.OSDFormat.Json );
-			FileWriter fw = new FileWriter ( HarbingerServer.BASE_PATH.resolve ( FILE_NAME ).toFile () );
+			FileWriter fw = new FileWriter ( HarbingerServer.BASE_PATH.resolve ( FILE_NAME ).toFile ( ) );
 			fw.write ( json );
 			fw.close ( );
 		} catch ( FileNotFoundException e ) {
