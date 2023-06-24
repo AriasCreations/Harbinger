@@ -73,7 +73,7 @@ public class PresenceService {
 	}
 
 
-	private static int current_circuit_code;
+	private static int current_circuit_code=1;
 	private static int getNextCircuitCode()
 	{
 		return current_circuit_code++;
