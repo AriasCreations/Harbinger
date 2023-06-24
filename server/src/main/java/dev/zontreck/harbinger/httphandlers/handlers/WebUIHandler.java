@@ -44,7 +44,7 @@ public class WebUIHandler implements HttpHandler {
 		body.addClass ( "text-bg-dark" );
 		var webUIMain = body.addChild ( "div" );
 		webUIMain.addClass ( "border rounded-4 shadow text-bg-secondary bg-gradient p-3 border-info text-auto card start-50 position-absolute translate-middle-x w-75 h-auto" );
-		webUIMain.withAttribute ( "style", "top:10%" );
+		webUIMain.withAttribute ( "style" , "top:10%" );
 		webUIMain.addChild ( "div" ).addClass ( "card-header" ).addChild ( "h4" ).withText ( "Harbinger WebUI" );
 		var cardBody = webUIMain.addChild ( "div" ).addClass ( "card-body" );
 
@@ -62,7 +62,9 @@ public class WebUIHandler implements HttpHandler {
 
 		cardBody.addChild ( "br" );
 
-		cardBody.addChild ( "button" ).addClass ( "btn btn-danger" ).withAttribute ( "onclick" , "submitCommand()" ).withText ( "Submit Admin Command" );
+		cardBody.addChild ( "button" ).addClass ( "btn btn-danger" ).withAttribute ( "onclick" , "submitCommand()" ).withText ( "Submit Admin Command" ).withAttribute ( "aria-labelledby" , "harbinger_ver" );
+		cardBody.addChild ( "div" ).addClass ( "form-text" ).withAttribute ( "id" , "harbinger_ver" ).withText ( "Harbinger v" + Persist.HARBINGER_VERSION );
+
 
 		var footer = webUIMain.addChild ( "div" ).addClass ( "card-footer" );
 		footer.withAttribute ( "id" , "cfooter" );
