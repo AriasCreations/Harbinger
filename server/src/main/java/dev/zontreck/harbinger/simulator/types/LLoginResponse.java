@@ -171,7 +171,7 @@ public class LLoginResponse {
 				Reason = code.reason;
 				Message = DataUtils.ReadTextFile ( Path.of ( "tos.html" ).toFile ( ) );
 			}
-			else if ( cached.UserLevel == 1 || !cached.LastReadCritical.equalsIgnoreCase ( DigestUtils.md5hex ( Persist.PATCH_NOTES ) ) ) {
+			else if ( cached.UserLevel == 1 || ! cached.LastReadCritical.equalsIgnoreCase ( DigestUtils.md5hex ( Persist.PATCH_NOTES ) ) ) {
 				code = LLoginResponseCodes.Critical;
 				Reason = code.reason;
 				Message = new String ( Persist.PATCH_NOTES );
@@ -205,10 +205,10 @@ public class LLoginResponse {
 				resp.parameters.put ( "seed_capability" , Persist.simulatorSettings.BASE_URL + "/simulation/CAP/" + pres.SessionID.toString ( ) );
 
 				resp.parameters.put ( "sim_ip" , Persist.HARBINGER_EXTERNAL_IP );
-				if ( Persist.serverSettings.ExternalPortNumberSet )
-					resp.parameters.put ( "sim_port" , Persist.serverSettings.ExternalPortNumber );
+				if ( Persist.serverSettings.udp_settings.UDPExtPort != 0 )
+					resp.parameters.put ( "sim_port" , Persist.serverSettings.udp_settings.UDPExtPort );
 				else
-					resp.parameters.put ( "sim_port" , Persist.serverSettings.port );
+					resp.parameters.put ( "sim_port" , Persist.serverSettings.udp_settings.UDPPort );
 			}
 
 		}
