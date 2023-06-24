@@ -3,7 +3,9 @@ package dev.zontreck.harbinger.commands.udp;
 import dev.zontreck.ariaslib.events.EventBus;
 import dev.zontreck.ariaslib.events.annotations.Subscribe;
 import dev.zontreck.ariaslib.html.HTMLElementBuilder;
+import dev.zontreck.ariaslib.html.bootstrap.Color;
 import dev.zontreck.harbinger.commands.CommandHTMLPage;
+import dev.zontreck.harbinger.commands.CommandMessage;
 import dev.zontreck.harbinger.commands.CommandResponse;
 import dev.zontreck.harbinger.data.Persist;
 import dev.zontreck.harbinger.events.HarbingerCommandEvent;
@@ -85,13 +87,13 @@ public class UDPServerCommands {
 
 	@Subscribe
 	public static void onCommand ( HarbingerCommandEvent ev ) {
-		if ( BASE_COMMAND.equalsIgnoreCase ( ev.command ) ) {
+		if ( ev.command.equalsIgnoreCase ( BASE_COMMAND ) ) {
 			ev.setCancelled ( true );
 
 			if ( ev.arguments.size ( ) == 0 ) {
 				CommandResponse.NOARG.addToResponse ( ev.response , "failed" );
 
-				var tableContainer = new HTMLElementBuilder ( "div" ).addClass ( "table-responsive" );
+				var tableContainer = new HTMLElementBuilder ( "div" );
 				tableContainer.addChild ( UDPSubCommand.render ( ) );
 
 				ev.html = CommandHTMLPage.makePage ( "UDP Server Commands" , tableContainer , ev.response );
@@ -100,21 +102,30 @@ public class UDPServerCommands {
 			}
 			else {
 				UDPSubCommand cmd = UDPSubCommand.valueOfCommand ( ev.arguments.get ( 0 ) );
+				var tbl = new HTMLElementBuilder ( "div" );
 
 				switch ( cmd ) {
 					case GetUDPPort -> {
 						CommandResponse.OK.addToResponse ( ev.response , "okay!" );
 						ev.response.put ( "port" , Persist.serverSettings.udp_settings.UDPPort );
 
+						ev.html = CommandHTMLPage.makePage ( "UDP Server - Get Port" , tbl.addChild ( CommandMessage.buildMessage ( Color.Primary , "Port Number : " + Persist.serverSettings.udp_settings.UDPPort ) ) , ev.response );
+
 						break;
 					}
 					case SetUDPPort -> {
 						if ( ev.arguments.size ( ) != 2 ) {
 							CommandResponse.NOARG.addToResponse ( ev.response , "You need to supply the port number" );
+
+							ev.html = CommandHTMLPage.makePage ( "UDP Server - Set Port" , tbl.addChild ( CommandMessage.buildMessage ( Color.Danger , "Port number not changed because no number was supplied" ) ) , ev.response );
+
 						}
 						else {
 							Persist.serverSettings.udp_settings.UDPPort = Integer.parseInt ( ev.arguments.get ( 1 ) );
 							CommandResponse.OK.addToResponse ( ev.response , "Port number has been changed" );
+
+							ev.html = CommandHTMLPage.makePage ( "UDP Server - Set Port" , tbl.addChild ( CommandMessage.buildMessage ( Color.Success , "Port number changed" ) ) , ev.response );
+
 
 							EventBus.BUS.post ( new MemoryAlteredEvent ( ) );
 						}
@@ -125,6 +136,7 @@ public class UDPServerCommands {
 						CommandResponse.OK.addToResponse ( ev.response , "UDP Server enabled" );
 						ev.response.put ( "restart_needed" , true );
 
+						ev.html = CommandHTMLPage.makePage ( "UDP Server" , tbl.addChild ( CommandMessage.buildMessage ( Color.Success , "Service enabled, a restart is needed." ) ) , ev.response );
 
 						EventBus.BUS.post ( new MemoryAlteredEvent ( ) );
 						break;
@@ -134,6 +146,7 @@ public class UDPServerCommands {
 						CommandResponse.OK.addToResponse ( ev.response , "UDP Server disabled" );
 						ev.response.put ( "restart_needed" , true );
 
+						ev.html = CommandHTMLPage.makePage ( "UDP Server" , tbl.addChild ( CommandMessage.buildMessage ( Color.Success , "Service disabled, a restart is needed." ) ) , ev.response );
 
 						EventBus.BUS.post ( new MemoryAlteredEvent ( ) );
 						break;
