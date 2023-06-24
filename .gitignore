@@ -22,3 +22,5 @@ bin
 # Ignore any file ending in .harbinger or .aria
 *.harbinger
 *.aria
+
+server/src/main/resources/patch.notes
