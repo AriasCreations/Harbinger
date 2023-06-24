@@ -2,7 +2,7 @@ package dev.zontreck.harbinger.commands;
 
 import dev.zontreck.ariaslib.events.EventBus;
 import dev.zontreck.ariaslib.events.annotations.Subscribe;
-import dev.zontreck.ariaslib.html.HTMLElementBuilder;
+import dev.zontreck.ariaslib.html.bootstrap.Color;
 import dev.zontreck.ariaslib.terminal.Task;
 import dev.zontreck.ariaslib.util.DelayedExecutorService;
 import dev.zontreck.harbinger.daemons.HTTPServer;
@@ -28,12 +28,13 @@ public class StopCommand {
 			CommandResponse.OK.addToResponse ( event.response , "ok" );
 
 
-			event.html = CommandHTMLPage.makePage ( "Stop Server" , new HTMLElementBuilder ( "h4" ).withText ( "Server will be stopping" ) , event.response );
+			event.html = CommandHTMLPage.makePage ( "Stop Server" , CommandMessage.buildMessage ( Color.Success , "Server will now stop" ) , event.response );
 
 
 			DelayedExecutorService.scheduleTask ( new Task ( "Shutdown Server" , true ) {
 				@Override
 				public void run ( ) {
+					CommandRegistry.LOGGER.info ( "Shutting down..." );
 					System.exit ( 0 );
 				}
 			} , 2 );
