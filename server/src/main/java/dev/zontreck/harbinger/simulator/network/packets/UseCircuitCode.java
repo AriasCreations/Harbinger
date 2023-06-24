@@ -6,7 +6,7 @@ import java.util.UUID;
 
 public class UseCircuitCode
 {
-	public int CircuitCode;
+	public int CircuitCode=1;
 	public UUID SessionID = new UUID ( 0,0 );
 	public UUID AgentID = new UUID ( 0,0 );
 
