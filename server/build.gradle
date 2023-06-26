@@ -53,6 +53,7 @@ dependencies {
     implementation("org.simpleframework:simple-xml:2.7.1")
 
     implementation("org.mongodb:mongodb-driver-sync:${mongodb_version}")
+    implementation("ch.qos.logback:logback-classic:${logback_version}")
 
 }
 

@@ -1,5 +1,7 @@
 package dev.zontreck.harbinger.data.mongo;
 
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.LoggerContext;
 import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
 import com.mongodb.ServerApi;
@@ -7,11 +9,11 @@ import com.mongodb.ServerApiVersion;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoDatabase;
-import com.mongodb.connection.SocketSettings;
 import org.bson.BsonDocument;
 import org.bson.BsonInt64;
 import org.bson.Document;
 import org.bson.conversions.Bson;
+import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.TimeUnit;
 
@@ -20,12 +22,17 @@ public class MongoDriver {
 	public static boolean can_connect = false;
 	public static MongoClientSettings client_settings;
 
+	static {
+		LoggerContext ctx = ( LoggerContext ) LoggerFactory.getILoggerFactory ( );
+		ctx.getLogger ( "org.mongodb.driver" ).setLevel ( Level.OFF );
+	}
+
 	public static boolean tryConnect ( ) {
 		String uri = "mongodb://" + ( DBSettings.instance.USER != "" ? DBSettings.instance.USER + ":" + DBSettings.instance.PASSWORD + "@" : "" ) + DBSettings.instance.HOST + ":" + DBSettings.instance.PORT;
 
-		ServerApi api = ServerApi.builder ( ).version ( ServerApiVersion.V1 ).build ();
+		ServerApi api = ServerApi.builder ( ).version ( ServerApiVersion.V1 ).build ( );
 
-		MongoClientSettings settings = MongoClientSettings.builder ( ).applyConnectionString ( new ConnectionString ( uri ) ).serverApi ( api ).applicationName ( "Harbinger" ).applyToSocketSettings ( builder -> builder.connectTimeout ( 10, TimeUnit.SECONDS ).readTimeout ( 10, TimeUnit.SECONDS ) ).applyToConnectionPoolSettings ( builder -> builder.maxWaitTime ( 10, TimeUnit.SECONDS ) ).build ();
+		MongoClientSettings settings = MongoClientSettings.builder ( ).applyConnectionString ( new ConnectionString ( uri ) ).serverApi ( api ).applicationName ( "Harbinger" ).applyToSocketSettings ( builder -> builder.connectTimeout ( 10 , TimeUnit.SECONDS ).readTimeout ( 10 , TimeUnit.SECONDS ) ).applyToConnectionPoolSettings ( builder -> builder.maxWaitTime ( 10 , TimeUnit.SECONDS ) ).build ( );
 
 
 		try ( MongoClient client = MongoClients.create ( settings ) ) {
