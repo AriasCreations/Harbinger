@@ -1,6 +1,7 @@
 package dev.zontreck.harbinger.commands;
 
 import dev.zontreck.ariaslib.html.HTMLElementBuilder;
+import dev.zontreck.harbinger.commands.database.DatabaseCommands;
 import dev.zontreck.harbinger.commands.http.HTTPServerCommands;
 import dev.zontreck.harbinger.commands.simulation.SimulationCommands;
 import dev.zontreck.harbinger.commands.support.SupportCommands;
@@ -16,7 +17,10 @@ public enum Commands {
 	setsig ( SetSignature.SETSIG , "Sets the signature" , "[char:y] / [string:sig1] [string:sig2]" ),
 
 	simulation ( SimulationCommands.BASE_COMMAND , "Simulator commands" , "[none:get usage]" ),
-	udpserver ( UDPServerCommands.BASE_COMMAND , "UDP Server commands" , "[none:get usage]" );
+	udpserver ( UDPServerCommands.BASE_COMMAND , "UDP Server commands" , "[none:get usage]" ),
+	db( DatabaseCommands.BASE_COMMAND, "Database commands", "[none:get usage]" )
+
+	;
 
 
 	public String cmd;
