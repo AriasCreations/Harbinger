@@ -75,8 +75,6 @@ public class SimulatorLoginHandler {
 			} catch ( Exception e ) {
 				throw new RuntimeException ( e );
 			}
-
-
 		}
 	}
 

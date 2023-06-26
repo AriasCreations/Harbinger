@@ -17,6 +17,8 @@ import dev.zontreck.harbinger.data.Persist;
 import dev.zontreck.harbinger.data.containers.Products;
 import dev.zontreck.harbinger.data.containers.Servers;
 import dev.zontreck.harbinger.data.containers.SupportReps;
+import dev.zontreck.harbinger.data.mongo.DBSettings;
+import dev.zontreck.harbinger.data.mongo.MongoDriver;
 import dev.zontreck.harbinger.data.types.*;
 import dev.zontreck.harbinger.events.GridInitializationEvent;
 import dev.zontreck.harbinger.events.MemoryAlteredEvent;
@@ -81,6 +83,17 @@ public class HarbingerServer {
 		if ( DOCKER ) {
 			LOGGER.info ( "Environment: Docker" );
 		}
+
+		TaskBus.tasks.add ( new Task ( "Connect to DB" ) {
+			@Override
+			public void run ( ) {
+				DBSettings.LOAD();
+				if(MongoDriver.tryConnect ())
+				{
+					setSuccess ();
+				}else setFail ();
+			}
+		} );
 
 		TaskBus.tasks.add ( new Task ( "Register Events" ) {
 			@Override

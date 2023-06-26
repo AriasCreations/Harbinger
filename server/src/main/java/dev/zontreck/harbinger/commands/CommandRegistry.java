@@ -3,10 +3,12 @@ package dev.zontreck.harbinger.commands;
 import dev.zontreck.ariaslib.events.CommandEvent;
 import dev.zontreck.ariaslib.events.EventBus;
 import dev.zontreck.ariaslib.events.annotations.Subscribe;
+import dev.zontreck.harbinger.commands.database.DatabaseCommands;
 import dev.zontreck.harbinger.commands.http.HTTPServerCommands;
 import dev.zontreck.harbinger.commands.simulation.SimulationCommands;
 import dev.zontreck.harbinger.commands.support.SupportCommands;
 import dev.zontreck.harbinger.commands.udp.UDPServerCommands;
+import dev.zontreck.harbinger.data.mongo.MongoDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,8 +19,8 @@ public class CommandRegistry {
 	public static final Logger LOGGER = LoggerFactory.getLogger ( CommandRegistry.class.getSimpleName ( ) );
 
 	public static void register ( final EventBus bus ) {
-		bus.register ( HelpCommand.class );
-		bus.register ( StopCommand.class );
+
+
 		bus.register ( SupportCommands.class );
 		bus.register ( HTTPServerCommands.class );
 		bus.register ( SetPresharedKeyCommand.class );
@@ -27,6 +29,9 @@ public class CommandRegistry {
 		bus.register ( UDPServerCommands.class );
 
 
+		bus.register ( StopCommand.class );
+		bus.register ( HelpCommand.class );
+		bus.register( DatabaseCommands.class);
 		bus.register ( CommandRegistry.class );
 	}
 
