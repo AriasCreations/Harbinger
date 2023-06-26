@@ -41,7 +41,7 @@ public class DBSettings {
 	}
 
 
-	public static DBSettings instance;
+	public static DBSettings instance = new DBSettings (  );
 
 	static {
 		LOAD ( );
