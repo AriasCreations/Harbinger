@@ -148,7 +148,13 @@ public class HarbingerServer {
 				if ( 0 == Persist.MEMORY.size ( ) ) {
 					HarbingerServer.LOGGER.info ( "No settings exist yet!" );
 					// Save defaults
-					EventBus.BUS.post ( new MemoryAlteredEvent ( ) );
+					try{
+						EventBus.BUS.post ( new MemoryAlteredEvent ( ) );
+						setSuccess ();
+
+					}catch(Exception e){
+						setFail ();
+					}
 
 				}
 			}
@@ -269,10 +275,11 @@ public class HarbingerServer {
 			@Override
 			public void run ( ) {
 				HarbingerServer.LOGGER.info ( "Server is running" );
-
+				setSuccess ();
 
 				if ( HarbingerServer.DOCKER ) {
 					// If we are in docker, ensure the base file path is /data
+
 					if ( BASE_PATH.toAbsolutePath ( ).toString ( ).startsWith ( "/app/data" ) ) {
 						LOGGER.info ( "Successfully verified docker data storage status" );
 					}
