@@ -4,17 +4,18 @@ import dev.zontreck.harbinger.HarbingerServer;
 import dev.zontreck.harbinger.thirdparty.libomv.StructuredData.LLSD.LLSDBinary;
 import dev.zontreck.harbinger.thirdparty.libomv.StructuredData.OSD;
 import dev.zontreck.harbinger.thirdparty.libomv.StructuredData.OSDMap;
+import dev.zontreck.harbinger.thirdparty.libomv.StructuredData.OSDParser;
 import dev.zontreck.harbinger.utils.DataUtils;
 
 import java.io.IOException;
 import java.text.ParseException;
 
 public class DBSettings {
-	public String HOST;
-	public int PORT;
-	public String USER;
-	public String PASSWORD;
-	public String DATABASE;
+	public String HOST = "127.0.0.1";
+	public int PORT = 27017;
+	public String USER = "";
+	public String PASSWORD = "";
+	public String DATABASE = "harbinger";
 
 
 	public OSD save ( ) {
@@ -41,7 +42,7 @@ public class DBSettings {
 	}
 
 
-	public static DBSettings instance = new DBSettings (  );
+	public static DBSettings instance = new DBSettings ( );
 
 	static {
 		LOAD ( );
@@ -49,14 +50,13 @@ public class DBSettings {
 
 
 	public static void LOAD ( ) {
-		byte[] arr = DataUtils.ReadAllBytes ( HarbingerServer.BASE_PATH.resolve ( "db.bin" ) );
 		try {
-			OSD deserial = LLSDBinary.deserialize ( arr );
-			instance = new DBSettings ( deserial );
-		} catch ( IOException e ) {
-			throw new RuntimeException ( e );
-		} catch ( ParseException e ) {
-			throw new RuntimeException ( e );
+			byte[] arr = DataUtils.ReadAllBytes ( HarbingerServer.BASE_PATH.resolve ( "db.bin" ) );
+			final OSD deserialize = OSDParser.deserialize ( arr );
+			DBSettings.instance = new DBSettings ( deserialize );
+		} catch ( Exception e)
+		{
+			return;
 		}
 	}
 

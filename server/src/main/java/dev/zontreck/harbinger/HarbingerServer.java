@@ -64,7 +64,7 @@ public class HarbingerServer {
 
 		if ( EnvironmentUtils.isRunningInsideDocker ( ) ) {
 			BASE_PATH = Path.of ( "/app/data" );
-			DOCKER = true;
+			HarbingerServer.DOCKER = true;
 		}
 		else {
 			BASE_PATH = Path.of ( "data" );
@@ -83,19 +83,20 @@ public class HarbingerServer {
 		exec = DelayedExecutorService.getExecutor ( );
 		TaskBus.register ( );
 
-		if ( DOCKER ) {
-			LOGGER.info ( "Environment: Docker" );
+		if ( HarbingerServer.DOCKER ) {
+			HarbingerServer.LOGGER.info ( "Environment: Docker" );
 		}
 
-		TaskBus.tasks.add ( new Task ( "Connect to DB" ) {
+		TaskBus.tasks.add ( new Task ( "Connect to Database" ) {
 			@Override
 			public void run ( ) {
 				DBSettings.LOAD ( );
-				Future<Boolean> task = CompletableFuture.supplyAsync ( ( ) -> MongoDriver.tryConnect ( ) );
+				final Future<Boolean> task = CompletableFuture.supplyAsync ( MongoDriver::tryConnect );
+
 				try {
 					task.get ( 10 , TimeUnit.SECONDS );
 					setSuccess ( );
-				} catch ( Exception e ) {
+				} catch ( final Exception e ) {
 					setFail ( );
 					task.cancel ( true );
 					MongoDriver.can_connect = false;
@@ -133,19 +134,25 @@ public class HarbingerServer {
 				DelayedExecutorService.getInstance ( ).scheduleRepeating ( run , ServerTickEvent.FREQUENCY );
 
 
-				this.setSuccess ( );
+				setSuccess ( );
 			}
 		} );
 
 		// Start up the server
 		// Read the NBT Files for the database
 		// This is designed to work without mysql
-		if ( 0 == Persist.MEMORY.size ( ) ) {
-			HarbingerServer.LOGGER.info ( "No settings exist yet!" );
-			// Save defaults
-			EventBus.BUS.post ( new MemoryAlteredEvent ( ) );
+		TaskBus.tasks.add ( new Task ( "Check existing settings...", true ) {
+			@Override
+			public void run ( ) {
 
-		}
+				if ( 0 == Persist.MEMORY.size ( ) ) {
+					HarbingerServer.LOGGER.info ( "No settings exist yet!" );
+					// Save defaults
+					EventBus.BUS.post ( new MemoryAlteredEvent ( ) );
+
+				}
+			}
+		} );
 
 
 		TaskBus.tasks.add ( new Task ( "Start HTTP Server" ) {

@@ -7,10 +7,13 @@ import com.mongodb.ServerApiVersion;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.connection.SocketSettings;
 import org.bson.BsonDocument;
 import org.bson.BsonInt64;
 import org.bson.Document;
 import org.bson.conversions.Bson;
+
+import java.util.concurrent.TimeUnit;
 
 public class MongoDriver {
 
@@ -22,7 +25,8 @@ public class MongoDriver {
 
 		ServerApi api = ServerApi.builder ( ).version ( ServerApiVersion.V1 ).build ();
 
-		MongoClientSettings settings = MongoClientSettings.builder ( ).applyConnectionString ( new ConnectionString ( uri ) ).serverApi ( api ).applicationName ( "Harbinger" ).build ();
+		MongoClientSettings settings = MongoClientSettings.builder ( ).applyConnectionString ( new ConnectionString ( uri ) ).serverApi ( api ).applicationName ( "Harbinger" ).applyToSocketSettings ( builder -> builder.connectTimeout ( 10, TimeUnit.SECONDS ).readTimeout ( 10, TimeUnit.SECONDS ) ).applyToConnectionPoolSettings ( builder -> builder.maxWaitTime ( 10, TimeUnit.SECONDS ) ).build ();
+
 
 		try ( MongoClient client = MongoClients.create ( settings ) ) {
 			MongoDatabase database = client.getDatabase ( DBSettings.instance.DATABASE );
