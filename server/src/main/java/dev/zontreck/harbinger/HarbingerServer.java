@@ -38,7 +38,10 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 public class HarbingerServer {
 
@@ -87,11 +90,16 @@ public class HarbingerServer {
 		TaskBus.tasks.add ( new Task ( "Connect to DB" ) {
 			@Override
 			public void run ( ) {
-				DBSettings.LOAD();
-				if(MongoDriver.tryConnect ())
-				{
-					setSuccess ();
-				}else setFail ();
+				DBSettings.LOAD ( );
+				Future<Boolean> task = CompletableFuture.supplyAsync ( ( ) -> MongoDriver.tryConnect ( ) );
+				try {
+					task.get ( 10 , TimeUnit.SECONDS );
+					setSuccess ( );
+				} catch ( Exception e ) {
+					setFail ( );
+					task.cancel ( true );
+					MongoDriver.can_connect = false;
+				}
 			}
 		} );
 

@@ -20,9 +20,9 @@ public class MongoDriver {
 	public static boolean tryConnect ( ) {
 		String uri = "mongodb://" + ( DBSettings.instance.USER != "" ? DBSettings.instance.USER + ":" + DBSettings.instance.PASSWORD + "@" : "" ) + DBSettings.instance.HOST + ":" + DBSettings.instance.PORT;
 
-		ServerApi api = ServerApi.builder ( ).version ( ServerApiVersion.V1 ).build ( );
+		ServerApi api = ServerApi.builder ( ).version ( ServerApiVersion.V1 ).build ();
 
-		MongoClientSettings settings = MongoClientSettings.builder ( ).applyConnectionString ( new ConnectionString ( uri ) ).serverApi ( api ).build ( );
+		MongoClientSettings settings = MongoClientSettings.builder ( ).applyConnectionString ( new ConnectionString ( uri ) ).serverApi ( api ).applicationName ( "Harbinger" ).build ();
 
 		try ( MongoClient client = MongoClients.create ( settings ) ) {
 			MongoDatabase database = client.getDatabase ( DBSettings.instance.DATABASE );

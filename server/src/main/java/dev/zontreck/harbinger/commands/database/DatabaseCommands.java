@@ -3,12 +3,18 @@ package dev.zontreck.harbinger.commands.database;
 import dev.zontreck.ariaslib.events.annotations.Subscribe;
 import dev.zontreck.ariaslib.html.HTMLElementBuilder;
 import dev.zontreck.ariaslib.html.bootstrap.Color;
+import dev.zontreck.ariaslib.terminal.Task;
+import dev.zontreck.ariaslib.terminal.TaskBus;
 import dev.zontreck.harbinger.commands.CommandHTMLPage;
 import dev.zontreck.harbinger.commands.CommandMessage;
 import dev.zontreck.harbinger.commands.CommandResponse;
 import dev.zontreck.harbinger.data.mongo.DBSettings;
 import dev.zontreck.harbinger.data.mongo.MongoDriver;
 import dev.zontreck.harbinger.events.HarbingerCommandEvent;
+
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 public class DatabaseCommands {
 	public static final String BASE_COMMAND = "db";
@@ -169,14 +175,19 @@ public class DatabaseCommands {
 							break;
 						}
 						case Connect -> {
-							if ( MongoDriver.tryConnect ( ) ) {
+
+							Future<Boolean> task = CompletableFuture.supplyAsync ( ( ) -> MongoDriver.tryConnect ( ) );
+							try {
+								task.get ( 10 , TimeUnit.SECONDS );
 								CommandResponse.OK.addToResponse ( ev.response , "success" );
 								msgColor = Color.Success;
 								msg = "Connection test successful. Database connection updated. A restart may be needed.";
 
 								ev.response.put ( "restart_needed" , true );
-							}
-							else {
+
+							} catch ( Exception e ) {
+								task.cancel ( true );
+
 								CommandResponse.FAIL.addToResponse ( ev.response , "error" );
 								msgColor = Color.Danger;
 								msg = "Connection test failed. Database connection was not successful";
