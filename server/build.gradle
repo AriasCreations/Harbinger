@@ -16,7 +16,7 @@ repositories {
 if (System.getenv("IN_DOCKER") == "true"){
     repositories {
         maven {
-            url = "http://srv02.zontreck.dev:9980/repository/ariascreations"
+            url = "http://srv02.zontreck.dev:9980/repository/internal"
             allowInsecureProtocol = true
             name = "Aria's Creations Fallback"
         }
@@ -24,7 +24,7 @@ if (System.getenv("IN_DOCKER") == "true"){
 }else {
     repositories {
         maven {
-            url = "https://maven.zontreck.dev/repository/ariascreations"
+            url = "https://maven.zontreck.dev/repository/internal"
             name = "Aria's Creations"
         }
     }
