@@ -18,6 +18,11 @@ if (System.getenv("IN_DOCKER") == "true"){
         maven {
             url = "http://srv02.zontreck.dev:9980/repository/internal"
             allowInsecureProtocol = true
+            name = "Aria's Creations Caches Fallback"
+        }
+        maven {
+            url = "http://srv02.zontreck.dev:9980/repository/zontreck"
+            allowInsecureProtocol = true
             name = "Aria's Creations Fallback"
         }
     }
@@ -25,6 +30,10 @@ if (System.getenv("IN_DOCKER") == "true"){
     repositories {
         maven {
             url = "https://maven.zontreck.dev/repository/internal"
+            name = "Aria's Creations Cache"
+        }
+        maven {
+            url = "https://maven.zontreck.dev/repository/zontreck"
             name = "Aria's Creations"
         }
     }
@@ -108,7 +117,7 @@ publishing {
     }
     repositories {
         maven {
-            url = "https://maven.zontreck.dev/repository/internal"
+            url = "https://maven.zontreck.dev/repository/zontreck"
             name = "ariascreations"
             if (project.findProperty(MAVEN_PASSWORD_PROPERTY) != null) {
                 credentials {
