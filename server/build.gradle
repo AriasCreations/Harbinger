@@ -10,7 +10,7 @@ group = "dev.zontreck.harbinger"
 archivesBaseName = "server"
 repositories {
     // Use Maven Central for resolving dependencies.
-    mavenCentral()
+    // mavenCentral()
 
 }
 if (System.getenv("IN_DOCKER") == "true"){
