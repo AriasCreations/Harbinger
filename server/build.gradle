@@ -108,7 +108,7 @@ publishing {
     }
     repositories {
         maven {
-            url = "https://maven.zontreck.dev/repository/ariascreations"
+            url = "https://maven.zontreck.dev/repository/internal"
             name = "ariascreations"
             if (project.findProperty(MAVEN_PASSWORD_PROPERTY) != null) {
                 credentials {
