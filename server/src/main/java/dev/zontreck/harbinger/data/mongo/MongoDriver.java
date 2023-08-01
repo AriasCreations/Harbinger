@@ -8,7 +8,9 @@ import com.mongodb.ServerApi;
 import com.mongodb.ServerApiVersion;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
+import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import dev.zontreck.harbinger.data.types.GenericClass;
 import org.bson.BsonDocument;
 import org.bson.BsonInt64;
 import org.bson.Document;
@@ -51,5 +53,26 @@ public class MongoDriver {
 		}
 
 
+	}
+
+	private static MongoClient _client;
+
+	public static MongoDatabase getDB()
+	{
+		if(tryConnect())
+		{
+			_client = MongoClients.create(client_settings);
+
+			return _client.getDatabase(DBSettings.instance.DATABASE);
+		}else return null;
+	}
+
+	public static <T> MongoCollection<T> getTableFor(String ID, GenericClass<T> clazz)
+	{
+		MongoDatabase db = getDB();
+		if(db!=null)
+		{
+			return db.getCollection(ID, clazz.getMyType());
+		}else return null;
 	}
 }
