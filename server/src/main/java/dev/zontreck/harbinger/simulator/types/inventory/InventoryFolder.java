@@ -146,8 +146,8 @@ public class InventoryFolder {
 		folderID = UUID.randomUUID ( ).toString ( );
 	}
 
-	public static InventoryFolder GetRootFolder ( ) {
-		return getParentFolderByID(new UUID(0,0).toString());
+	public static InventoryFolder GetRootFolder ( String UserID ) {
+		return getParentFolderByID(UserID, new UUID(0,0).toString());
 	}
 
 	public static InventoryFolder getFolderByID(String ID)
@@ -162,12 +162,13 @@ public class InventoryFolder {
 			return tbl.find(query).first();
 		} else return null;
 	}
-	public static InventoryFolder getParentFolderByID(String ID)
+	public static InventoryFolder getParentFolderByID(String UserID, String ID)
 	{
 		DBSession sess = MongoDriver.makeSession();
 		var tbl = sess.getTableFor(TAG, getGenericClass());
 		BsonDocument query = new BsonDocument();
 		query.put("parentFolderID", new BsonString(new UUID(0,0).toString()));
+		query.put("folderOwner", new BsonString(UserID));
 
 		if(tbl.countDocuments(query) > 0)
 		{

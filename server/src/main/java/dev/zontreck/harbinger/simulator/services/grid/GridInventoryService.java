@@ -17,10 +17,7 @@ import org.bson.BsonString;
 import org.bson.conversions.Bson;
 
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Provides Services to Optional Queries
@@ -86,34 +83,40 @@ public class GridInventoryService {
 
 		}
 
-		Path pInventory = pData.resolve ( "inventory" );
-		if ( ! pInventory.toFile ( ).exists ( ) )
-			pInventory.toFile ( ).mkdir ( );
 
-		Path pUserInventory = pInventory.resolve ( aLibrarian.UserID + ".json" );
-		InventoryFolder root;
-		if ( pUserInventory.toFile ( ).exists ( ) ) {
-			root = InventoryFolder.loadFrom ( pUserInventory );
+		List<InventoryFolder> libraryFolders = InventoryFolder.retrieveFolders(UUID.fromString(aLibrarian.UserID));
 
+		InventoryFolder libraryRoot = new InventoryFolder();
+		if(libraryFolders.size() == 0) {
+			libraryRoot.folderName = "Library";
+			libraryRoot.folderType = InventoryFolderTypes.Root;
+			libraryRoot.folderOwner = aLibrarian.UserID;
+
+			GenerateRequiredSystemFolders(libraryRoot, aLibrarian, libraryFolders);
+
+			libraryRoot.commit();
+			libraryFolders.add(libraryRoot);
+
+		}else {
+			libraryRoot = InventoryFolder.GetRootFolder(aLibrarian.UserID);
 		}
-		else {
-			root = new InventoryFolder ( aLibrarian.UserID );
-			root.folderName = "Library";
-			root.originalPath = pUserInventory;
 
-			GenerateRequiredSystemFolders ( root , aLibrarian );
-
-		}
-		if ( root.needsReSave ) {
-			root.commitFolders ();
-
-		}
 
 		if ( ev.options.contains ( "inventory-skel-lib" ) ) {
 
 			List<Map<String, Object>> folders = new ArrayList<> ( );
 
-			root.serializeOutToFolders ( folders );
+			for (InventoryFolder subfolder :
+					libraryFolders) {
+				Map<String,Object> entry = new HashMap<>();
+				entry.put ( "name" , subfolder.folderName );
+				entry.put ( "folder_id" , subfolder.folderID );
+				entry.put ( "type_default" , subfolder.folderType.GetType ( ) );
+				entry.put ( "version" , subfolder.folderRevision );
+				entry.put ( "parent_id" , subfolder.parentFolderID );
+
+				folders.add(entry);
+			}
 
 			ev.reply.put ( "inventory-skel-lib" , folders );
 		}
@@ -122,7 +125,7 @@ public class GridInventoryService {
 
 			List<Map<String, Object>> X = new ArrayList<> ( );
 			Map<String, Object> V = new HashMap<> ( );
-			V.put ( "folder_id" , root.folderID );
+			V.put ( "folder_id" , libraryRoot.folderID );
 
 			X.add ( V );
 			ev.reply.put ( "inventory-lib-root" , X );
@@ -170,7 +173,7 @@ public class GridInventoryService {
 
 	}
 
-	private static void GenerateRequiredSystemFolders ( InventoryFolder root , Account user ) {
+	private static void GenerateRequiredSystemFolders ( InventoryFolder root , Account user, List<InventoryFolder> folders ) {
 
 		root.AddFolder ( new InventoryFolder ( root , InventoryFolderTypes.Texture , "Textures" , user.UserID ) );
 
