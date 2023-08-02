@@ -9,6 +9,7 @@ import dev.zontreck.harbinger.data.types.GenericClass;
 import dev.zontreck.harbinger.utils.DataUtils;
 import org.bson.BsonDocument;
 import org.bson.BsonString;
+import org.bson.codecs.pojo.annotations.BsonId;
 import org.bson.codecs.pojo.annotations.BsonIgnore;
 import org.bson.codecs.pojo.annotations.BsonProperty;
 
@@ -18,6 +19,7 @@ import java.util.stream.Collectors;
 
 
 public class InventoryFolder {
+
 
 	public InventoryFolderTypes folderType;
 	public String folderName;
@@ -118,18 +120,6 @@ public class InventoryFolder {
 		return items;
 	}
 
-	public static InventoryFolder rootFolder(UUID folderOwner)
-	{
-		DBSession sess = MongoDriver.makeSession();
-		MongoCollection<InventoryFolder> table = sess.getTableFor(TAG, getGenericClass());
-
-		BsonDocument query = new BsonDocument();
-		query.put("folderOwner", new BsonString(folderOwner.toString()));
-		query.put("parentFolderID", new BsonString(new UUID(0,0).toString()));
-
-		return table.find(query).first();
-	}
-
 	public InventoryFolder ( ) {
 		folderID = UUID.randomUUID ( ).toString ( );
 		folderType = InventoryFolderTypes.None;
@@ -156,16 +146,28 @@ public class InventoryFolder {
 		folderID = UUID.randomUUID ( ).toString ( );
 	}
 
-	public InventoryFolder GetRootFolder ( ) {
-		return getFolderByID(new UUID(0,0).toString());
+	public static InventoryFolder GetRootFolder ( ) {
+		return getParentFolderByID(new UUID(0,0).toString());
 	}
 
-	public InventoryFolder getFolderByID(String ID)
+	public static InventoryFolder getFolderByID(String ID)
 	{
 		DBSession sess = MongoDriver.makeSession();
 		var tbl = sess.getTableFor(TAG, getGenericClass());
 		BsonDocument query = new BsonDocument();
 		query.put("folder_id", new BsonString(new UUID(0,0).toString()));
+
+		if(tbl.countDocuments(query) > 0)
+		{
+			return tbl.find(query).first();
+		} else return null;
+	}
+	public static InventoryFolder getParentFolderByID(String ID)
+	{
+		DBSession sess = MongoDriver.makeSession();
+		var tbl = sess.getTableFor(TAG, getGenericClass());
+		BsonDocument query = new BsonDocument();
+		query.put("parentFolderID", new BsonString(new UUID(0,0).toString()));
 
 		if(tbl.countDocuments(query) > 0)
 		{
