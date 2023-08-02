@@ -10,6 +10,7 @@ import dev.zontreck.harbinger.thirdparty.libomv.StructuredData.OSD;
 import dev.zontreck.harbinger.thirdparty.libomv.StructuredData.OSDMap;
 import org.bson.BsonDocument;
 import org.bson.BsonString;
+import org.bson.conversions.Bson;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -82,5 +83,17 @@ public class Server {
 		{
 			return Persist.servers.stream().filter(x->x.serverNick.equals(nick)).collect(Collectors.toList()).get(0);
 		}else return new Server(nick);
+	}
+
+	public void delete()
+	{
+		DBSession sess = MongoDriver.makeSession();
+		MongoCollection<Server> table = sess.getTableFor(TAG, new GenericClass<>(Server.class));
+
+		BsonDocument filter = new BsonDocument();
+		filter.put("serverNick", new BsonString(serverNick));
+		table.deleteOne(filter);
+
+		MongoDriver.closeSession(sess);
 	}
 }

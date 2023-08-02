@@ -98,4 +98,17 @@ public class Product {
 		return Persist.products.stream().anyMatch(x->x.productID.equals(ID));
 	}
 
+
+	public void delete()
+	{
+		DBSession sess = MongoDriver.makeSession();
+		MongoCollection<Product> table = sess.getTableFor(TAG, new GenericClass<>(Product.class));
+
+		BsonDocument filter = new BsonDocument();
+		filter.put("productID", new BsonString(productID.toString()));
+		table.deleteOne(filter);
+
+		MongoDriver.closeSession(sess);
+	}
+
 }
