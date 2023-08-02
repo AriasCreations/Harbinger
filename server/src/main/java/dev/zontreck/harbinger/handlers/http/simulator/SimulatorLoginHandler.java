@@ -80,14 +80,6 @@ public class SimulatorLoginHandler {
 
 	public static MethodResponse loginToSimulator ( int address_size , int agree_to_tos , String channel , int extended_errors , String first , String host_id , String id0 , String last , int last_exec_duration , int last_exec_event , String mac , String mfa_hash , String passwd , String platform , String platform_string , String platform_version , int read_critical , String start , String token , String version , String[] options ) {
 
-		Path accounts = HarbingerServer.BASE_PATH.resolve ( "accounts" );
-		if ( ! accounts.toFile ( ).exists ( ) ) {
-			// Generate the folder
-			accounts.toFile ( ).mkdir ( );
-		}
-
-		Path namedAccount = accounts.resolve ( first + "." + last + ".txt" );
-		Path accountData = accounts.resolve ( "data" );
 
 		Account userAccount = Account.getAccount(first, last);
 		if(userAccount == null)
