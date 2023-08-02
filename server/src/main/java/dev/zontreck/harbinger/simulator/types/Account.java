@@ -93,12 +93,7 @@ public class Account {
 
 		var filter = new BsonDocument();
 		filter.put("UserID", new BsonString(UserID));
-		if(accounts.countDocuments(filter) == 1)
-		{
-			accounts.findOneAndReplace(filter, this);
-		} else {
-			accounts.insertOne(this);
-		}
+		accounts.replaceOne(filter, this);
 
 		MongoDriver.closeSession(session);
 	}
@@ -107,7 +102,7 @@ public class Account {
 	public static Account getAccount(String First, String Last)
 	{
 		DBSession session = MongoDriver.makeSession();
-		MongoCollection<Account> accounts = session.getTableFor(TAG, getGenericClass());
+		MongoCollection<Account> accounts = session.getTableFor(TAG, new GenericClass<>(Account.class));
 
 		BsonDocument query = new BsonDocument();
 		query.put("First", new BsonString(First));
@@ -129,7 +124,7 @@ public class Account {
 	public static Account getAccount(String ID)
 	{
 		DBSession session = MongoDriver.makeSession();
-		MongoCollection<Account> accounts = session.getTableFor(TAG, getGenericClass());
+		MongoCollection<Account> accounts = session.getTableFor(TAG, new GenericClass<>(Account.class));
 
 		BsonDocument query = new BsonDocument();
 		query.put("UserID", new BsonString(ID));
@@ -147,10 +142,6 @@ public class Account {
 		return result;
 	}
 
-	public static GenericClass<Account> getGenericClass()
-	{
-		return new GenericClass<>(Account.class);
-	}
 
 
 }

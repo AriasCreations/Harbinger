@@ -93,7 +93,7 @@ public class InventoryFolder {
 
 		DBSession sess = MongoDriver.makeSession();
 		var tbl = sess.getTableFor(TAG, getGenericClass());
-		tbl.findOneAndReplace(filter, this);
+		tbl.replaceOne(filter, this);
 
 		MongoDriver.closeSession(sess);
 	}
