@@ -3,6 +3,7 @@ package dev.zontreck.harbinger.data;
 import dev.zontreck.ariaslib.events.annotations.Subscribe;
 import dev.zontreck.harbinger.HarbingerServer;
 import dev.zontreck.harbinger.data.containers.*;
+import dev.zontreck.harbinger.data.types.Product;
 import dev.zontreck.harbinger.data.types.Signature;
 import dev.zontreck.harbinger.events.MemoryAlteredEvent;
 import dev.zontreck.harbinger.thirdparty.libomv.StructuredData.LLSD.LLSDJson;
@@ -13,6 +14,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Persist {
 
@@ -22,7 +25,7 @@ public class Persist {
 	public static final String FILE_NAME = "Harbinger.json";
 
 	public static OSDMap MEMORY = new OSDMap ( );
-	public static Products products = new Products ( );
+	public static List<Product> products = new ArrayList<>();
 	public static Servers servers = new Servers ( );
 	public static HTTPServerSettings serverSettings = new HTTPServerSettings ( );
 
@@ -44,7 +47,7 @@ public class Persist {
 
 			Persist.MEMORY = ( OSDMap ) OSDParser.deserialize ( data );
 
-			products = new Products ( Persist.MEMORY.get ( Products.TAG ) );
+			products = Product.loadProducts();
 
 			servers = new Servers ( Persist.MEMORY.get ( Servers.TAG ) );
 			SupportReps.load ( MEMORY.get ( SupportReps.TAG ) );
@@ -71,7 +74,6 @@ public class Persist {
 
 	private static void save ( ) {
 		OSDMap map = new OSDMap ( );
-		map.put ( Products.TAG , products.write ( ) );
 		map.put ( Servers.TAG , servers.save ( ) );
 		map.put ( SupportReps.TAG , SupportReps.save ( ) );
 		map.put ( HTTPServerSettings.TAG , serverSettings.save ( ) );

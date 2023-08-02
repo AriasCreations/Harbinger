@@ -1,15 +1,23 @@
 package dev.zontreck.harbinger.data.types;
 
+import com.mongodb.client.MongoCollection;
 import dev.zontreck.ariaslib.events.annotations.Subscribe;
 import dev.zontreck.harbinger.data.Persist;
+import dev.zontreck.harbinger.data.mongo.DBSession;
+import dev.zontreck.harbinger.data.mongo.MongoDriver;
 import dev.zontreck.harbinger.events.MemoryAlteredEvent;
 import dev.zontreck.harbinger.thirdparty.libomv.StructuredData.OSD;
 import dev.zontreck.harbinger.thirdparty.libomv.StructuredData.OSDMap;
+import org.bson.BsonDocument;
+import org.bson.BsonString;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class Product {
+	public static final String TAG = "products";
 	public static AtomicLong SEQUENCE = new AtomicLong ( 0 );
 	private static long Signature1;
 	private static long Signature2;
@@ -49,24 +57,40 @@ public class Product {
 		return new UUID ( ID1 , ID2 );
 	}
 
-	public Product ( OSD entry ) {
-		if ( entry instanceof OSDMap map ) {
-			productName = map.get ( "product" ).AsString ( );
-			versionNumber = new Version ( map.get ( "version" ) );
-			productItem = map.get ( "item" ).AsString ( );
-			productID = OSDID.loadUUID ( map.get ( "id" ) );
+
+	public static List<Product> loadProducts()
+	{
+		DBSession sess = MongoDriver.makeSession();
+		MongoCollection<Product> prods = sess.getTableFor(TAG, getGenericClass());
+
+		List<Product> products = new ArrayList<>();
+		for (Product prod :
+				prods.find()) {
+			products.add(prod);
 		}
+		MongoDriver.closeSession(sess);
+
+		return products;
 	}
 
-	public OSD save ( ) {
-		OSDMap map = new OSDMap ( );
-		map.put ( "product" , OSD.FromString ( productName ) );
-		map.put ( "version" , versionNumber.save ( ) );
-		map.put ( "item" , OSD.FromString ( productItem ) );
-		map.put ( "id" , OSDID.saveUUID ( productID ) );
+	public static GenericClass<Product> getGenericClass()
+	{
+		return new GenericClass<>(Product.class);
+	}
 
+	/**
+	 * Commits the current product to the database
+	 */
+	public void commit()
+	{
+		DBSession sess = MongoDriver.makeSession();
+		MongoCollection<Product> prods = sess.getTableFor(TAG, getGenericClass());
 
-		return map;
+		BsonDocument filter = new BsonDocument();
+		filter.put("productID", new BsonString(productID.toString()));
+		prods.replaceOne(filter, this);
+
+		MongoDriver.closeSession(sess);
 	}
 
 }

@@ -14,7 +14,6 @@ import dev.zontreck.harbinger.daemons.HTTPBackupServer;
 import dev.zontreck.harbinger.daemons.HTTPServer;
 import dev.zontreck.harbinger.daemons.plugins.PluginLoader;
 import dev.zontreck.harbinger.data.Persist;
-import dev.zontreck.harbinger.data.containers.Products;
 import dev.zontreck.harbinger.data.containers.Servers;
 import dev.zontreck.harbinger.data.containers.SupportReps;
 import dev.zontreck.harbinger.data.mongo.DBSettings;
@@ -110,7 +109,6 @@ public class HarbingerServer {
 
 				EventBus.BUS.register ( Persist.class );
 				EventBus.BUS.register ( Product.class );
-				EventBus.BUS.register ( Products.class );
 				EventBus.BUS.register ( Servers.class );
 				EventBus.BUS.register ( SupportReps.class );
 				EventBus.BUS.register ( Server.class );
