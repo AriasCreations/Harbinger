@@ -1,78 +1,135 @@
 package dev.zontreck.harbinger.simulator.types.inventory;
 
 
+import com.mongodb.client.MongoCollection;
 import dev.zontreck.ariaslib.json.*;
+import dev.zontreck.harbinger.data.mongo.DBSession;
+import dev.zontreck.harbinger.data.mongo.MongoDriver;
+import dev.zontreck.harbinger.data.types.GenericClass;
 import dev.zontreck.harbinger.utils.DataUtils;
+import org.bson.BsonDocument;
+import org.bson.BsonString;
+import org.bson.codecs.pojo.annotations.BsonIgnore;
+import org.bson.codecs.pojo.annotations.BsonProperty;
 
 import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
-@DynSerial
+
 public class InventoryFolder {
-	@IgnoreSerialization
+
 	public InventoryFolderTypes folderType;
-	public String invFolderType;
 	public String folderName;
 
-	@IgnoreSerialization
-	public InventoryFolder parentFolder;
+	public String parentFolderID;
+
 	public String folderOwner;
 
-	@ListOrMap
-	public Map<String, InventoryFolder> subFolders;
+
+	@BsonProperty("folder_id")
 	public String folderID;
+
 	public int folderRevision = 1;
 
 
-	@PreSerialize
-	public void persist ( ) {
-		invFolderType = folderType.name ( );
-	}
-
-
-	public void AddFolder ( InventoryFolder folder ) {
+	public void AddFolder ( InventoryFolder folder, boolean bumpDB ) {
 		if(folder.folderID.isEmpty ())
 		{
 			folder.folderID = UUID.randomUUID ().toString ();
 		}
-		subFolders.put ( folder.folderID , folder );
-		folder.parentFolder=this;
-		bumpFolderVersion ( );
+		folder.parentFolderID = folderID;
+
+		if(bumpDB)
+		{
+
+			bumpFolderVersion ( );
+
+			DBSession sess = MongoDriver.makeSession();
+			sess.getTableFor(TAG, getGenericClass()).insertOne(folder);
+
+			MongoDriver.closeSession(sess);
+		}
 	}
 
 	public void DeleteFolder ( InventoryFolder folder ) {
-		subFolders.remove ( folder.folderID );
-		folder.parentFolder=null;
 		bumpFolderVersion ( );
+
+		BsonDocument query = new BsonDocument();
+		query.put("folder_id", new BsonString(folder.folderID));
+		query.put("folderOwner", new BsonString(folder.folderOwner));
+
+		DBSession sess = MongoDriver.makeSession();
+		sess.getTableFor(TAG, getGenericClass()).deleteOne(query);
+
+		MongoDriver.closeSession(sess);
+	}
+
+	@BsonIgnore
+	public static final String TAG = "inventory_folders";
+
+
+	public static GenericClass<InventoryFolder> getGenericClass()
+	{
+		return new GenericClass<>(InventoryFolder.class);
 	}
 
 	public void bumpFolderVersion ( ) {
 
 		folderRevision++;
-		ClimbTree ( ).commitFolders ( );
+		commit();
 	}
 
-	@IgnoreSerialization
-	public Path originalPath;
+	public void commit()
+	{
+		UUID id = new UUID(0,0);
+
+		// Commit folder
+		BsonDocument filter = new BsonDocument();
+		filter.put("folder_id", new BsonString(folderID));
+		filter.put("folderOwner", new BsonString(folderOwner));
+
+		DBSession sess = MongoDriver.makeSession();
+		var tbl = sess.getTableFor(TAG, getGenericClass());
+		tbl.findOneAndReplace(filter, this);
+
+		MongoDriver.closeSession(sess);
+	}
+
+	public static List<InventoryFolder> retrieveFolders(UUID folderOwner)
+	{
+		DBSession sess = MongoDriver.makeSession();
+		MongoCollection<InventoryFolder> table = sess.getTableFor(TAG, getGenericClass());
+
+		BsonDocument query = new BsonDocument();
+		query.put("folderOwner", new BsonString(folderOwner.toString()));
+
+		var lst = table.find(query);
+		InventoryFolder ret = new InventoryFolder();
+
+		List<InventoryFolder> items = new ArrayList<>();
+		for(InventoryFolder folder : lst)
+		{
+			items.add(folder);
+		}
+		MongoDriver.closeSession(sess);
+
+
+		return items;
+	}
 
 	public InventoryFolder ( ) {
 		folderID = UUID.randomUUID ( ).toString ( );
 		folderType = InventoryFolderTypes.None;
 		folderName = "New Folder";
-		subFolders = new HashMap<> ( );
 	}
 
 	public InventoryFolder ( InventoryFolder parent , InventoryFolderTypes type , String name , String folderOwner ) {
-		parentFolder = parent;
-		parent.subFolders.put ( this.folderID , this );
+
 		folderType = type;
 		folderName = name;
 		this.folderOwner = folderOwner;
 
-		subFolders = new HashMap<> ( );
 		folderID = UUID.randomUUID ( ).toString ( );
 	}
 
@@ -84,130 +141,23 @@ public class InventoryFolder {
 		folderName = "Inventory";
 		this.folderOwner = folderOwner;
 
-		subFolders = new HashMap<> ( );
 		folderID = UUID.randomUUID ( ).toString ( );
 	}
 
-
-	private void finishLoad ( ) {
-		folderType = InventoryFolderTypes.valueOf ( invFolderType );
-		AssertAllChildren ( );
+	public InventoryFolder GetRootFolder ( ) {
+		return getFolderByID(new UUID(0,0).toString());
 	}
 
-	public InventoryFolder ClimbTree ( ) {
-		if ( parentFolder != null )
-			return parentFolder.ClimbTree ( );
+	public InventoryFolder getFolderByID(String ID)
+	{
+		DBSession sess = MongoDriver.makeSession();
+		var tbl = sess.getTableFor(TAG, getGenericClass());
+		BsonDocument query = new BsonDocument();
+		query.put("folder_id", new BsonString(new UUID(0,0).toString()));
 
-		return this;
-	}
-
-	public void AssertAllChildren ( ) {
-		// Climbs down the tree of folders and asserts all subfolders to have a parent value set.
-
-		if ( folderType != InventoryFolderTypes.Root )
-			return;
-
-		for (
-				InventoryFolder folder :
-				subFolders.values ( )
-		) {
-			folder.parentFolder = this;
-			folder.AssertAllChildren ( );
-		}
-	}
-
-
-	@Completed
-	public void completed ( boolean deserial ) {
-		if ( deserial ) {
-			if(subFolders==null)subFolders=new HashMap<> (  );
-
-			finishLoad ( );
-		}
-	}
-
-	public boolean needsReSave = false;
-
-	/**
-	 * WARNING: This is to be used only after de-serialization to ensure no duplicate folder entries exist
-	 */
-	public void repairFolderSubStructure ( ) {
-		if ( folderType != InventoryFolderTypes.Root )
-			return;
-		InventoryFolder root = ClimbTree ( );
-		// Scan root's subfolders
-		while ( root.scanAndRepair ( ) ) {
-			root.needsReSave = true;
-		}
-
-	}
-
-	private boolean scanAndRepair ( ) {
-		for ( int i = 0 ; i < subFolders.size ( ) ; i++ ) {
-			if ( destroyDuplicates ( folderID ) ) {
-				return true;
-			}
-			if ( subFolders.get ( i ).scanAndRepair ( ) )
-				return true;
-
-		}
-		return false;
-	}
-
-	private boolean destroyDuplicates ( String ID ) {
-		for ( int i = 0 ; i < subFolders.size ( ) ; i++ ) {
-			InventoryFolder sub = subFolders.get ( i );
-			if ( sub.folderID.equalsIgnoreCase ( ID ) ) {
-				// Delete this folder and start this function over again
-				subFolders.remove ( i );
-				return true;
-
-			}
-			subFolders.get ( i ).destroyDuplicates ( ID );
-		}
-
-		return false;
-	}
-
-
-	public static InventoryFolder loadFrom ( Path path ) throws Exception {
-		InventoryFolder orig = DynamicDeserializer.doDeserialize ( InventoryFolder.class , DataUtils.ReadAllBytes ( path ) );
-		orig.originalPath = path;
-		return orig;
-	}
-
-	public void commitFolders ( ) {
-		InventoryFolder root = ClimbTree ( );
-		try {
-			root.saveTo ( root.originalPath );
-		} catch ( Exception e ) {
-			throw new RuntimeException ( e );
-		}
-	}
-
-	private void saveTo ( Path path ) throws Exception {
-		byte[] arr = DynamicSerializer.doSerialize ( this );
-		DataUtils.WriteFileBytes ( path , arr );
-		needsReSave = false;
-	}
-
-	/**
-	 * Serializes the folder, and all subfolders as Map objects onto the list
-	 */
-	public void serializeOutToFolders ( List<Map<String, Object>> folders ) {
-		Map<String, Object> self = new HashMap<> ( );
-		self.put ( "name" , folderName );
-		self.put ( "folder_id" , folderID );
-		self.put ( "type_default" , folderType.GetType ( ) );
-		self.put ( "version" , folderRevision );
-		self.put ( "parent_id" , ( parentFolder == null ) ? new UUID ( 0 , 0 ).toString ( ) : parentFolder.folderID );
-
-		folders.add ( self );
-		for (
-				InventoryFolder folder :
-				subFolders.values ( )
-		) {
-			folder.serializeOutToFolders ( folders );
-		}
+		if(tbl.countDocuments(query) > 0)
+		{
+			return tbl.find(query).first();
+		} else return null;
 	}
 }
