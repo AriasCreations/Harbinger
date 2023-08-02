@@ -16,6 +16,14 @@ public class DigestUtils {
 		}
 	}
 
+	public static String sha256hex ( final byte[] toHash ) {
+		try {
+			return new BigInteger ( 1 , MessageDigest.getInstance ( "SHA256" ).digest ( toHash ) ).toString ( 16 );
+		} catch ( final NoSuchAlgorithmException e ) {
+			throw new RuntimeException ( e );
+		}
+	}
+
 	public static String base64 ( final byte[] bytes ) {
 		return Base64.getEncoder ( ).encodeToString ( bytes );
 	}
