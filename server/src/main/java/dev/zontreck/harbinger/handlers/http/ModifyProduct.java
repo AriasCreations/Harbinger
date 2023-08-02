@@ -16,7 +16,7 @@ public class ModifyProduct {
 		if ( "modify_product".equals ( event.request_object.getString ( "type" ) ) ) {
 			switch ( event.request_object.getString ( "action" ) ) {
 				case "update": {
-					if ( Persist.products.hasProduct ( UUID.fromString ( event.request_object.getString ( "product" ) ) ) ) {
+					if ( Product.exists ( UUID.fromString ( event.request_object.getString ( "product" ) ) ) ) {
 					}
 					break;
 				}

@@ -20,7 +20,7 @@ public class URLCallback {
 		this.forwarded = new JSONObject ( request );
 
 		final String product = this.forwarded.getString ( "product" );
-		final Product p = Persist.products.products.stream ( ).filter ( v -> v.productName.equals ( product ) ).collect ( Collectors.toList ( ) ).get ( 0 );
+		final Product p = Persist.products.stream ( ).filter ( v -> v.productName.equals ( product ) ).collect ( Collectors.toList ( ) ).get ( 0 );
 		this.serverForRequest = p.containingServer;
 		this.forwarded.put ( "product" , p.productItem );
 	}

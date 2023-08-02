@@ -93,4 +93,9 @@ public class Product {
 		MongoDriver.closeSession(sess);
 	}
 
+	public static boolean exists(UUID ID)
+	{
+		return Persist.products.stream().anyMatch(x->x.productID.equals(ID));
+	}
+
 }
