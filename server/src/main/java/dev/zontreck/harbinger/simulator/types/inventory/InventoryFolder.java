@@ -118,6 +118,18 @@ public class InventoryFolder {
 		return items;
 	}
 
+	public static InventoryFolder rootFolder(UUID folderOwner)
+	{
+		DBSession sess = MongoDriver.makeSession();
+		MongoCollection<InventoryFolder> table = sess.getTableFor(TAG, getGenericClass());
+
+		BsonDocument query = new BsonDocument();
+		query.put("folderOwner", new BsonString(folderOwner.toString()));
+		query.put("parentFolderID", new BsonString(new UUID(0,0).toString()));
+
+		return table.find(query).first();
+	}
+
 	public InventoryFolder ( ) {
 		folderID = UUID.randomUUID ( ).toString ( );
 		folderType = InventoryFolderTypes.None;
