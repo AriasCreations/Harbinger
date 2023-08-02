@@ -16,6 +16,7 @@ import org.bson.conversions.Bson;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * Contains the settings for the Harbinger Discord Bot
@@ -78,5 +79,10 @@ public class DiscordSettings {
 
 
 		MongoDriver.closeSession(session);
+	}
+
+	public DiscordWebhook getHook(String nick)
+	{
+		return WEBHOOKS.values().stream().filter(x->x.WebHookName.equals(nick)).collect(Collectors.toList()).get(0);
 	}
 }
