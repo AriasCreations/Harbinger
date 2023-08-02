@@ -89,23 +89,11 @@ public class SimulatorLoginHandler {
 		Path namedAccount = accounts.resolve ( first + "." + last + ".txt" );
 		Path accountData = accounts.resolve ( "data" );
 
-		Account userAccount = null;
-		if ( namedAccount.toFile ( ).exists ( ) ) {
-
-			try {
-				String ID = DataUtils.StripNewLines ( DataUtils.ReadTextFile ( namedAccount.toFile ( ) ) );
-				Path userData = accountData.resolve ( ID + ".json" );
-
-
-				userAccount = Account.readFrom ( userData );
-			} catch ( Exception e ) {
-				throw new RuntimeException ( e );
-			}
-		}
-		else {
-
-			userAccount = new Account ( first , last , passwd );
-			userAccount.commit ( );
+		Account userAccount = Account.getAccount(first, last);
+		if(userAccount == null)
+		{
+			userAccount = new Account(first, last, passwd);
+			userAccount.commit();
 		}
 
 		LLoginResponse response = new LLoginResponse ( userAccount , passwd );
