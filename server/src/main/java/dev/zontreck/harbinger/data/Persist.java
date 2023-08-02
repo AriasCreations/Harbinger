@@ -4,6 +4,7 @@ import dev.zontreck.ariaslib.events.annotations.Subscribe;
 import dev.zontreck.harbinger.HarbingerServer;
 import dev.zontreck.harbinger.data.containers.*;
 import dev.zontreck.harbinger.data.types.Product;
+import dev.zontreck.harbinger.data.types.Server;
 import dev.zontreck.harbinger.data.types.Signature;
 import dev.zontreck.harbinger.events.MemoryAlteredEvent;
 import dev.zontreck.harbinger.thirdparty.libomv.StructuredData.LLSD.LLSDJson;
@@ -26,7 +27,7 @@ public class Persist {
 
 	public static OSDMap MEMORY = new OSDMap ( );
 	public static List<Product> products = new ArrayList<>();
-	public static Servers servers = new Servers ( );
+	public static List<Server> servers = new ArrayList<> ( );
 	public static HTTPServerSettings serverSettings = new HTTPServerSettings ( );
 
 	public static Signature SIGNATURE = new Signature ( );
@@ -49,7 +50,8 @@ public class Persist {
 
 			products = Product.loadProducts();
 
-			servers = new Servers ( Persist.MEMORY.get ( Servers.TAG ) );
+			servers = Server.loadServers();
+
 			SupportReps.load ( MEMORY.get ( SupportReps.TAG ) );
 
 			serverSettings = new HTTPServerSettings ( MEMORY.get ( HTTPServerSettings.TAG ) );
@@ -74,7 +76,6 @@ public class Persist {
 
 	private static void save ( ) {
 		OSDMap map = new OSDMap ( );
-		map.put ( Servers.TAG , servers.save ( ) );
 		map.put ( SupportReps.TAG , SupportReps.save ( ) );
 		map.put ( HTTPServerSettings.TAG , serverSettings.save ( ) );
 		map.put ( Signature.TAG , SIGNATURE.save ( ) );

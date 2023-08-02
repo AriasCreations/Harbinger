@@ -54,7 +54,7 @@ public class ServersAPI {
 						return;
 					}
 
-					final Server srv = Persist.servers.retrieve ( event.request_object.getString ( "name" ) );
+					Server srv = Server.getOrCreate(event.request_object.getString("name"));
 
 					EventBus.BUS.post ( new HarbingerClientRemovedEvent ( srv ) );
 
