@@ -4,6 +4,7 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import dev.zontreck.ariaslib.events.EventBus;
 import dev.zontreck.harbinger.data.Persist;
+import dev.zontreck.harbinger.data.containers.types.DiscordWebhook;
 import dev.zontreck.harbinger.data.types.DiscordEmbed;
 import dev.zontreck.harbinger.data.types.DiscordEmbedColor;
 import dev.zontreck.harbinger.data.types.DiscordWebhookMessage;
@@ -54,7 +55,10 @@ public class DiscordHandler implements HttpHandler {
 				}
 				case "set_webhook": {
 					// Simply set the webhook URL and flush the settings
-					Persist.discordSettings.WEBHOOKS.put ( request.getString ( "nick" ) , request.getString ( "url" ) );
+
+					DiscordWebhook hook = new DiscordWebhook(request.getString("nick"), request.getString("url"));
+					Persist.discordSettings.addNewWebhook(hook);
+
 					EventBus.BUS.post ( new MemoryAlteredEvent ( ) );
 
 
@@ -62,7 +66,9 @@ public class DiscordHandler implements HttpHandler {
 				}
 				case "del_webhook": {
 					// Delete the webhook and flush
-					Persist.discordSettings.WEBHOOKS.remove ( request.getString ( "nick" ) );
+					DiscordWebhook hook = Persist.discordSettings.getHook(request.getString("nick"));
+					Persist.discordSettings.removeHook(hook);
+
 					EventBus.BUS.post ( new MemoryAlteredEvent ( ) );
 					break;
 				}
@@ -83,15 +89,24 @@ public class DiscordHandler implements HttpHandler {
 					}
 
 					// Get the URL of the target hook
-					final String hookURL = Persist.discordSettings.WEBHOOKS.get ( request.getString ( "nick" ) );
-					final HttpClient cli = HttpClient.newHttpClient ( );
-					try {
-						final HttpRequest req = HttpRequest.newBuilder ( new URI ( hookURL ) ).POST ( HttpRequest.BodyPublishers.ofString ( embMsg ) ).setHeader ( "Content-Type" , "application/json" ).build ( );
-						cli.send ( req , HttpResponse.BodyHandlers.discarding ( ) );
-					} catch ( final URISyntaxException e ) {
-						throw new RuntimeException ( e );
-					} catch ( final InterruptedException e ) {
-						throw new RuntimeException ( e );
+					try{
+
+						DiscordWebhook hook = Persist.discordSettings.getHook(request.getString("nick"));
+						String hookURL = hook.WebHookURL;
+
+						final HttpClient cli = HttpClient.newHttpClient ( );
+						try {
+							final HttpRequest req = HttpRequest.newBuilder ( new URI ( hookURL ) ).POST ( HttpRequest.BodyPublishers.ofString ( embMsg ) ).setHeader ( "Content-Type" , "application/json" ).build ( );
+							cli.send ( req , HttpResponse.BodyHandlers.discarding ( ) );
+						} catch ( final URISyntaxException e ) {
+							throw new RuntimeException ( e );
+						} catch ( final InterruptedException e ) {
+							throw new RuntimeException ( e );
+						}
+					}catch(Exception e)
+					{
+						replyObj.put("result", "failure");
+						replyObj.put("reason", "No such webhook");
 					}
 
 					break;
