@@ -1,7 +1,10 @@
 package dev.zontreck.harbinger.data.types;
 
+import dev.zontreck.harbinger.data.mongo.DBSession;
+import dev.zontreck.harbinger.data.mongo.MongoDriver;
 import dev.zontreck.harbinger.thirdparty.libomv.StructuredData.OSD;
 import dev.zontreck.harbinger.thirdparty.libomv.StructuredData.OSDMap;
+import org.bson.BsonDocument;
 
 import java.util.Random;
 
@@ -15,19 +18,24 @@ public class Signature {
 	public static final String TAG = "sig";
 
 
-	public long v1;
-	public long v2;
+	public long v1=0;
+	public long v2=0;
 
 	public Signature ( ) {
 		this.v1 = 0;
 		this.v2 = 0;
-	}
 
-	public Signature ( final OSD entry ) {
-		if ( entry instanceof OSDMap map ) {
-			v1 = map.get ( "a" ).AsLong ( );
-			v2 = map.get ( "b" ).AsLong ( );
+		DBSession sess = MongoDriver.makeSession();
+		var table = sess.getTableFor(TAG, new GenericClass<>(Signature.class));
+
+		if(table.countDocuments()>0)
+		{
+			Signature sig = table.find().first();
+			v1 = sig.v1;
+			v2 = sig.v2;
 		}
+
+		MongoDriver.closeSession(sess);
 	}
 
 	public static Signature makeNew ( ) {
@@ -37,13 +45,18 @@ public class Signature {
 		sig.v1 = rng.nextLong ( );
 		sig.v2 = rng.nextLong ( );
 
+		sig.commit();
+
 		return sig;
 	}
 
-	public OSD save ( ) {
-		OSDMap map = new OSDMap ( );
-		map.put ( "a" , OSD.FromLong ( v1 ) );
-		map.put ( "b" , OSD.FromLong ( v2 ) );
-		return map;
+	public void commit()
+	{
+		DBSession sess = MongoDriver.makeSession();
+		var table = sess.getTableFor(TAG, new GenericClass<>(Signature.class));
+		table.replaceOne(new BsonDocument(), this);
+
+		MongoDriver.closeSession(sess);
 	}
+
 }
