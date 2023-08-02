@@ -53,8 +53,6 @@ public class Persist {
 
 			SIGNATURE = new Signature ( MEMORY.get ( Signature.TAG ) );
 
-			discordSettings = new DiscordSettings ( MEMORY.get ( DiscordSettings.TAG ) );
-
 			simulatorSettings = new SimulatorSettings ( MEMORY.get ( SimulatorSettings.TAG ) );
 
 			LOGGER.info ( "Memory file loaded" );
@@ -78,7 +76,6 @@ public class Persist {
 		map.put ( SupportReps.TAG , SupportReps.save ( ) );
 		map.put ( HTTPServerSettings.TAG , serverSettings.save ( ) );
 		map.put ( Signature.TAG , SIGNATURE.save ( ) );
-		map.put ( DiscordSettings.TAG , discordSettings.save ( ) );
 		map.put ( SimulatorSettings.TAG , simulatorSettings.serialize ( ) );
 
 

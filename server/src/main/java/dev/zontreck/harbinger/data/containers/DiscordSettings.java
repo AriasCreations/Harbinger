@@ -11,6 +11,7 @@ import dev.zontreck.harbinger.thirdparty.libomv.StructuredData.OSDMap;
 import org.bson.BsonDocument;
 import org.bson.BsonInt64;
 import org.bson.BsonValue;
+import org.bson.codecs.pojo.annotations.BsonIgnore;
 import org.bson.conversions.Bson;
 
 import java.util.HashMap;
@@ -23,36 +24,36 @@ import java.util.stream.Collectors;
  */
 public class DiscordSettings {
 	public static final String TAG = "discord_webhooks";
+	public static final String MAIN_TAG = "discordsettings";
+
 	public String BOT_TOKEN = "";
+
+	@BsonIgnore
 	protected Map<UUID, DiscordWebhook> WEBHOOKS = new HashMap<> ( );
 
 	public DiscordSettings ( ) {
-	}
 
+		DBSession discordSettingsLoadUp = MongoDriver.makeSession();
+		GenericClass<DiscordSettings> mainClz = new GenericClass<>(DiscordSettings.class);
+		MongoCollection<DiscordSettings> mainTable = discordSettingsLoadUp.getTableFor(MAIN_TAG, mainClz);
 
-	public DiscordSettings ( final OSD tag ) {
-		if ( tag instanceof OSDMap map ) {
-			BOT_TOKEN = map.get ( "token" ).AsString ( );
+		var pojo = mainTable.find().first();
+		if(pojo != null)
+		{
+			BOT_TOKEN = pojo.BOT_TOKEN;
+		}else BOT_TOKEN = "";
 
-			DBSession discordSettingsLoadUp = MongoDriver.makeSession();
+		GenericClass<DiscordWebhook> hookClz = new GenericClass<>(DiscordWebhook.class);
+		MongoCollection<DiscordWebhook> hookz = discordSettingsLoadUp.getTableFor(TAG, hookClz);
 
-			GenericClass<DiscordWebhook> hookClz = new GenericClass<>(DiscordWebhook.class);
-			MongoCollection<DiscordWebhook> hookz = discordSettingsLoadUp.getTableFor(TAG, hookClz);
-
-			for (DiscordWebhook hook :
-					hookz.find()) {
-				WEBHOOKS.put(hook.getID(), hook);
-			}
-
-			MongoDriver.closeSession(discordSettingsLoadUp);
+		for (DiscordWebhook hook :
+				hookz.find()) {
+			WEBHOOKS.put(hook.getID(), hook);
 		}
+
+		MongoDriver.closeSession(discordSettingsLoadUp);
 	}
 
-	public OSD save ( ) {
-		OSDMap map = new OSDMap ( );
-		map.put ( "token" , OSD.FromString ( BOT_TOKEN ) );
-		return map;
-	}
 
 	public void addNewWebhook(DiscordWebhook hook)
 	{
