@@ -47,10 +47,8 @@ public class InventoryFolder {
 
 			bumpFolderVersion ( );
 
-			DBSession sess = MongoDriver.makeSession();
-			sess.getTableFor(TAG, getGenericClass()).insertOne(folder);
-
-			MongoDriver.closeSession(sess);
+			folder.commit();
+			commit();
 		}
 	}
 
@@ -61,10 +59,12 @@ public class InventoryFolder {
 		query.put("folder_id", new BsonString(folder.folderID));
 		query.put("folderOwner", new BsonString(folder.folderOwner));
 
+		bumpFolderVersion();
 		DBSession sess = MongoDriver.makeSession();
 		sess.getTableFor(TAG, getGenericClass()).deleteOne(query);
 
 		MongoDriver.closeSession(sess);
+		commit();
 	}
 
 	@BsonIgnore

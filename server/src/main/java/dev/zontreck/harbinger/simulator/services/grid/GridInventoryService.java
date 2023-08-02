@@ -132,30 +132,35 @@ public class GridInventoryService {
 		}
 
 		Account user = ev.userAccount;
-		pUserInventory = pInventory.resolve ( user.UserID + ".json" );
 
-		if ( pUserInventory.toFile ( ).exists ( ) ) {
-			root = InventoryFolder.loadFrom ( pUserInventory );
+		List<InventoryFolder> rootFolders = InventoryFolder.retrieveFolders(UUID.fromString(user.UserID));
 
-		}
-		else {
-			root = new InventoryFolder ( user.UserID );
-			root.folderName = "Inventory";
-			root.originalPath = pUserInventory;
+		InventoryFolder userRoot = new InventoryFolder();
 
-			GenerateRequiredSystemFolders ( root , user );
+		if(rootFolders.size() == 0)
+		{
+			userRoot.folderName = "Inventory";
+			GenerateRequiredSystemFolders(userRoot, user, rootFolders);
 
-		}
-
-		if ( root.needsReSave ) {
-			root.commitFolders ();
+			rootFolders.add(userRoot);
+			userRoot.commit();
 		}
 
 		if ( ev.options.contains ( "inventory-skeleton" ) ) {
 
 			List<Map<String, Object>> folders = new ArrayList<> ( );
 
-			root.serializeOutToFolders ( folders );
+			for (InventoryFolder subfolder :
+					libraryFolders) {
+				Map<String,Object> entry = new HashMap<>();
+				entry.put ( "name" , subfolder.folderName );
+				entry.put ( "folder_id" , subfolder.folderID );
+				entry.put ( "type_default" , subfolder.folderType.GetType ( ) );
+				entry.put ( "version" , subfolder.folderRevision );
+				entry.put ( "parent_id" , subfolder.parentFolderID );
+
+				folders.add(entry);
+			}
 
 			ev.reply.put ( "inventory-skeleton" , folders );
 		}
@@ -165,7 +170,7 @@ public class GridInventoryService {
 
 			List<Map<String, Object>> fold = new ArrayList<> ( );
 			Map<String, Object> tmp = new HashMap<> ( );
-			tmp.put ( "folder_id" , root.folderID );
+			tmp.put ( "folder_id" , userRoot.folderID );
 			fold.add ( tmp );
 
 			ev.reply.put ( "inventory-root" , fold );
@@ -175,56 +180,52 @@ public class GridInventoryService {
 
 	private static void GenerateRequiredSystemFolders ( InventoryFolder root , Account user, List<InventoryFolder> folders ) {
 
-		root.AddFolder ( new InventoryFolder ( root , InventoryFolderTypes.Texture , "Textures" , user.UserID ) );
+		root.AddFolder ( new InventoryFolder ( root , InventoryFolderTypes.Texture , "Textures" , user.UserID ), true );
 
-		root.AddFolder ( new InventoryFolder ( root , InventoryFolderTypes.Sound , "Sounds" , user.UserID ) );
+		root.AddFolder ( new InventoryFolder ( root , InventoryFolderTypes.Sound , "Sounds" , user.UserID ), true );
 
-		root.AddFolder ( new InventoryFolder ( root , InventoryFolderTypes.CallingCard , "Calling Cards" , user.UserID ) );
+		root.AddFolder ( new InventoryFolder ( root , InventoryFolderTypes.CallingCard , "Calling Cards" , user.UserID ), true );
 
-		root.AddFolder ( new InventoryFolder ( root , InventoryFolderTypes.Landmark , "Landmarks" , user.UserID ) );
+		root.AddFolder ( new InventoryFolder ( root , InventoryFolderTypes.Landmark , "Landmarks" , user.UserID ), true );
 
-		root.AddFolder ( new InventoryFolder ( root , InventoryFolderTypes.Clothing , "Clothing" , user.UserID ) );
+		root.AddFolder ( new InventoryFolder ( root , InventoryFolderTypes.Clothing , "Clothing" , user.UserID ), true );
 
-		root.AddFolder ( new InventoryFolder ( root , InventoryFolderTypes.Object , "Objects" , user.UserID ) );
+		root.AddFolder ( new InventoryFolder ( root , InventoryFolderTypes.Object , "Objects" , user.UserID ),true );
 
-		root.AddFolder ( new InventoryFolder ( root , InventoryFolderTypes.Notecard , "Notecards" , user.UserID ) );
+		root.AddFolder ( new InventoryFolder ( root , InventoryFolderTypes.Notecard , "Notecards" , user.UserID ),true );
 
-		root.AddFolder ( new InventoryFolder ( root , InventoryFolderTypes.LSLText , "Scripts" , user.UserID ) );
+		root.AddFolder ( new InventoryFolder ( root , InventoryFolderTypes.LSLText , "Scripts" , user.UserID ),true );
 
-		root.AddFolder ( new InventoryFolder ( root , InventoryFolderTypes.BodyPart , "Body Parts" , user.UserID ) );
+		root.AddFolder ( new InventoryFolder ( root , InventoryFolderTypes.BodyPart , "Body Parts" , user.UserID ),true );
 
-		root.AddFolder ( new InventoryFolder ( root , InventoryFolderTypes.Trash , "Trash" , user.UserID ) );
+		root.AddFolder ( new InventoryFolder ( root , InventoryFolderTypes.Trash , "Trash" , user.UserID ),true );
 
-		root.AddFolder ( new InventoryFolder ( root , InventoryFolderTypes.Snapshot , "Photo Album" , user.UserID ) );
+		root.AddFolder ( new InventoryFolder ( root , InventoryFolderTypes.Snapshot , "Photo Album" , user.UserID ),true );
 
-		root.AddFolder ( new InventoryFolder ( root , InventoryFolderTypes.LostAndFound , "Lost And Found" , user.UserID ) );
+		root.AddFolder ( new InventoryFolder ( root , InventoryFolderTypes.LostAndFound , "Lost And Found" , user.UserID ),true );
 
-		root.AddFolder ( new InventoryFolder ( root , InventoryFolderTypes.Animation , "Animations" , user.UserID ) );
+		root.AddFolder ( new InventoryFolder ( root , InventoryFolderTypes.Animation , "Animations" , user.UserID ),true );
 
-		root.AddFolder ( new InventoryFolder ( root , InventoryFolderTypes.Gesture , "Gestures" , user.UserID ) );
+		root.AddFolder ( new InventoryFolder ( root , InventoryFolderTypes.Gesture , "Gestures" , user.UserID ),true );
 
-		root.AddFolder ( new InventoryFolder ( root , InventoryFolderTypes.CurrentOutfit , "Current Outfit" , user.UserID ) );
+		root.AddFolder ( new InventoryFolder ( root , InventoryFolderTypes.CurrentOutfit , "Current Outfit" , user.UserID ),true );
 
-		root.AddFolder ( new InventoryFolder ( root , InventoryFolderTypes.Outfit , "Outfit" , user.UserID ) );
+		root.AddFolder ( new InventoryFolder ( root , InventoryFolderTypes.Outfit , "Outfit" , user.UserID ), true );
 
-		root.AddFolder ( new InventoryFolder ( root , InventoryFolderTypes.MyOutfits , "My Outfits" , user.UserID ) );
+		root.AddFolder ( new InventoryFolder ( root , InventoryFolderTypes.MyOutfits , "My Outfits" , user.UserID ), true );
 
-		root.AddFolder ( new InventoryFolder ( root , InventoryFolderTypes.Mesh , "Mesh" , user.UserID ) );
+		root.AddFolder ( new InventoryFolder ( root , InventoryFolderTypes.Mesh , "Mesh" , user.UserID ), true );
 
-		root.AddFolder ( new InventoryFolder ( root , InventoryFolderTypes.Outbox , "Outbox" , user.UserID ) );
+		root.AddFolder ( new InventoryFolder ( root , InventoryFolderTypes.Outbox , "Outbox" , user.UserID ), true );
 
-		root.AddFolder ( new InventoryFolder ( root , InventoryFolderTypes.MarketplaceListings , "Marketplace Listings" , user.UserID ) );
+		root.AddFolder ( new InventoryFolder ( root , InventoryFolderTypes.MarketplaceListings , "Marketplace Listings" , user.UserID ), true );
 
-		root.AddFolder ( new InventoryFolder ( root , InventoryFolderTypes.MarkplaceStock , "Marketplace Stock" , user.UserID ) );
+		root.AddFolder ( new InventoryFolder ( root , InventoryFolderTypes.MarkplaceStock , "Marketplace Stock" , user.UserID ), true );
 
-		root.AddFolder ( new InventoryFolder ( root , InventoryFolderTypes.Settings , "Settings" , user.UserID ) );
+		root.AddFolder ( new InventoryFolder ( root , InventoryFolderTypes.Settings , "Settings" , user.UserID ), true );
 
-		root.AddFolder ( new InventoryFolder ( root , InventoryFolderTypes.Material , "Materials" , user.UserID ) );
+		root.AddFolder ( new InventoryFolder ( root , InventoryFolderTypes.Material , "Materials" , user.UserID ), true );
 
-		root.AddFolder ( new InventoryFolder ( root , InventoryFolderTypes.Suitcase , "Suitcase" , user.UserID ) );
-
-
-		root.needsReSave = true;
-		root.AssertAllChildren ();
+		root.AddFolder ( new InventoryFolder ( root , InventoryFolderTypes.Suitcase , "Suitcase" , user.UserID ), true );
 	}
 }
