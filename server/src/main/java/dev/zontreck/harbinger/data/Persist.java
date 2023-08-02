@@ -52,7 +52,7 @@ public class Persist {
 
 			servers = Server.loadServers();
 
-			SupportReps.load ( MEMORY.get ( SupportReps.TAG ) );
+			SupportReps.loadSupportReps ( );
 
 			serverSettings = new HTTPServerSettings ( MEMORY.get ( HTTPServerSettings.TAG ) );
 
@@ -76,7 +76,6 @@ public class Persist {
 
 	private static void save ( ) {
 		OSDMap map = new OSDMap ( );
-		map.put ( SupportReps.TAG , SupportReps.save ( ) );
 		map.put ( HTTPServerSettings.TAG , serverSettings.save ( ) );
 		map.put ( Signature.TAG , SIGNATURE.save ( ) );
 		map.put ( SimulatorSettings.TAG , simulatorSettings.serialize ( ) );

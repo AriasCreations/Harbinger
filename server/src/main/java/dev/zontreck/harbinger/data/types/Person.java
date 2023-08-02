@@ -1,7 +1,12 @@
 package dev.zontreck.harbinger.data.types;
 
+import dev.zontreck.harbinger.data.containers.SupportReps;
+import dev.zontreck.harbinger.data.mongo.DBSession;
+import dev.zontreck.harbinger.data.mongo.MongoDriver;
 import dev.zontreck.harbinger.thirdparty.libomv.StructuredData.OSD;
 import dev.zontreck.harbinger.thirdparty.libomv.StructuredData.OSDMap;
+import org.bson.BsonDocument;
+import org.bson.BsonString;
 
 import java.util.UUID;
 
@@ -14,14 +19,6 @@ public class Person {
 		this.ID = id;
 		this.Name = user;
 		this.Permissions = lvl;
-	}
-
-	public Person ( OSD dat ) {
-		if ( dat instanceof OSDMap map ) {
-			ID = OSDID.loadUUID ( map.get ( "id" ) );
-			Name = map.get ( "name" ).AsString ( );
-			Permissions = PermissionLevel.of ( map.get ( "perms" ).AsInteger ( ) );
-		}
 	}
 
 	public String print ( final int indent ) {
@@ -39,11 +36,29 @@ public class Person {
 		return s;
 	}
 
-	public OSD save ( ) {
-		OSDMap map = new OSDMap ( );
-		map.put ( "id" , OSDID.saveUUID ( ID ) );
-		map.put ( "name" , OSD.FromString ( Name ) );
-		map.put ( "perms" , OSD.FromInteger ( Permissions.getFlag ( ) ) );
-		return map;
+	public void commit()
+	{
+		DBSession sess = MongoDriver.makeSession();
+		var table = sess.getTableFor(SupportReps.TAG, new GenericClass<>(Person.class));
+
+		var filter = new BsonDocument();
+		filter.put("ID", new BsonString(ID.toString()));
+
+		table.replaceOne(filter, this);
+
+		MongoDriver.closeSession(sess);
+	}
+
+	public void delete()
+	{
+		DBSession sess = MongoDriver.makeSession();
+		var table = sess.getTableFor(SupportReps.TAG, new GenericClass<>(Person.class));
+
+		var filter = new BsonDocument();
+		filter.put("ID", new BsonString(ID.toString()));
+
+		table.deleteOne(filter);
+
+		MongoDriver.closeSession(sess);
 	}
 }

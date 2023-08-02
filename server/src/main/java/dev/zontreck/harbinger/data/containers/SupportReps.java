@@ -1,37 +1,45 @@
 package dev.zontreck.harbinger.data.containers;
 
 import com.google.common.collect.Lists;
+import dev.zontreck.harbinger.data.mongo.DBSession;
+import dev.zontreck.harbinger.data.mongo.MongoDriver;
+import dev.zontreck.harbinger.data.types.GenericClass;
 import dev.zontreck.harbinger.data.types.Person;
 import dev.zontreck.harbinger.thirdparty.libomv.StructuredData.OSD;
 import dev.zontreck.harbinger.thirdparty.libomv.StructuredData.OSDArray;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
 public class SupportReps {
 	public static final String TAG = "support_reps";
-	public static List<Person> REPS = Lists.newArrayList ( );
+	public static List<Person> REPS = new ArrayList<> ( );
 
 	public SupportReps ( ) {
 	}
 
-	public static void load ( OSD entry ) {
-		if ( entry instanceof OSDArray map ) {
-			Iterator<OSD> it = map.iterator ( );
-			while ( it.hasNext ( ) ) {
-				REPS.add ( new Person ( it.next ( ) ) );
-			}
+	public static void loadSupportReps ( ) {
+		DBSession sess = MongoDriver.makeSession();
+		var table = sess.getTableFor(TAG, new GenericClass<>(Person.class));
+
+		REPS = new ArrayList<>();
+		for (Person person :
+				table.find()) {
+			REPS.add(person);
 		}
 	}
 
 
 	public static void add ( final Person rep ) {
 		SupportReps.REPS.add ( rep );
+		rep.commit();
 	}
 
 	public static void remove ( final Person rep ) {
 		SupportReps.REPS.remove ( rep );
+		rep.delete();
 	}
 
 	public static boolean contains ( final Person rep ) {
@@ -39,24 +47,12 @@ public class SupportReps {
 	}
 
 	public static boolean hasID ( final UUID id ) {
-		return 0 < REPS.stream ( ).filter ( m -> m.ID.equals ( id ) ).count ( );
-
+		return REPS.stream().anyMatch(x->x.ID.equals(id));
 	}
 
 	public static Person get ( final UUID ID ) {
 		if ( ! SupportReps.hasID ( ID ) ) return null;
 		return SupportReps.REPS.stream ( ).filter ( m -> m.ID.equals ( ID ) ).toList ( ).get ( 0 );
-	}
-
-	public static OSD save ( ) {
-		OSDArray arr = new OSDArray ( );
-		for (
-				Person p :
-				SupportReps.REPS
-		) {
-			arr.add ( p.save ( ) );
-		}
-		return arr;
 	}
 
 	public static String dump ( ) {
