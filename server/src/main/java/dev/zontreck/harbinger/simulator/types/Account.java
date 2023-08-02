@@ -1,11 +1,18 @@
 package dev.zontreck.harbinger.simulator.types;
 
+import com.mongodb.client.MongoCollection;
 import dev.zontreck.ariaslib.json.DynSerial;
 import dev.zontreck.ariaslib.json.DynamicDeserializer;
 import dev.zontreck.ariaslib.json.DynamicSerializer;
 import dev.zontreck.harbinger.HarbingerServer;
+import dev.zontreck.harbinger.data.mongo.DBSession;
+import dev.zontreck.harbinger.data.mongo.MongoDriver;
+import dev.zontreck.harbinger.data.types.GenericClass;
 import dev.zontreck.harbinger.utils.DataUtils;
 import dev.zontreck.harbinger.utils.DigestUtils;
+import org.bson.BsonDocument;
+import org.bson.BsonString;
+import org.bson.codecs.pojo.annotations.BsonIgnore;
 
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
@@ -14,9 +21,10 @@ import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Path;
 import java.util.UUID;
 
-@DynSerial
 public class Account {
 
+	@BsonIgnore
+	public static final String TAG = "accounts";
 
 	public String First;
 	public String Last;
@@ -79,47 +87,70 @@ public class Account {
 
 
 	public void commit ( ) {
-		Path accounts = HarbingerServer.BASE_PATH.resolve ( "accounts" );
-		Path UserNameFile = accounts.resolve ( First + "." + Last + ".txt" );
-		if ( UserNameFile.toFile ( ).exists ( ) )
-			UserNameFile.toFile ( ).delete ( );
-		try {
-			FileWriter fw = new FileWriter ( UserNameFile.toFile ( ) );
-			fw.write ( UserID );
 
-			fw.close ( );
-		} catch ( FileNotFoundException e ) {
-			throw new RuntimeException ( e );
-		} catch ( IOException e ) {
-			throw new RuntimeException ( e );
+		DBSession session = MongoDriver.makeSession();
+		MongoCollection<Account> accounts = session.getTableFor(TAG, new GenericClass<>(Account.class));
+
+		var filter = new BsonDocument();
+		filter.put("UserID", new BsonString(UserID));
+		if(accounts.countDocuments(filter) == 1)
+		{
+			accounts.findOneAndReplace(filter, this);
+		} else {
+			accounts.insertOne(this);
 		}
 
-
-		Path accountData = accounts.resolve ( "data" );
-		if ( ! accountData.toFile ( ).exists ( ) )
-			accountData.toFile ( ).mkdir ( );
-
-		Path UserDataFile = accountData.resolve ( UserID + ".json" );
-
-
-		try {
-			byte[] bytes = DynamicSerializer.doSerialize ( this );
-			DataUtils.WriteFileBytes ( UserDataFile , bytes );
-		} catch ( InvocationTargetException e ) {
-			throw new RuntimeException ( e );
-		} catch ( IllegalAccessException e ) {
-			throw new RuntimeException ( e );
-		} catch ( IOException e ) {
-			throw new RuntimeException ( e );
-		}
-
+		MongoDriver.closeSession(session);
 	}
 
-	public static Account readFrom ( Path p ) {
-		try {
-			return DynamicDeserializer.doDeserialize ( Account.class , DataUtils.ReadAllBytes ( p ) );
-		} catch ( Exception e ) {
-			throw new RuntimeException ( e );
+
+	public static Account getAccount(String First, String Last)
+	{
+		DBSession session = MongoDriver.makeSession();
+		MongoCollection<Account> accounts = session.getTableFor(TAG, getGenericClass());
+
+		BsonDocument query = new BsonDocument();
+		query.put("First", new BsonString(First));
+		query.put("Last", new BsonString(Last));
+
+		Account result;
+		if(accounts.countDocuments(query)>0)
+		{
+			result = accounts.find(query).first();
+		}else {
+			result = null;
 		}
+
+		MongoDriver.closeSession(session);
+
+		return result;
 	}
+
+	public static Account getAccount(String ID)
+	{
+		DBSession session = MongoDriver.makeSession();
+		MongoCollection<Account> accounts = session.getTableFor(TAG, getGenericClass());
+
+		BsonDocument query = new BsonDocument();
+		query.put("UserID", new BsonString(ID));
+
+		Account result;
+		if(accounts.countDocuments(query)>0)
+		{
+			result = accounts.find(query).first();
+		}else {
+			result = null;
+		}
+
+		MongoDriver.closeSession(session);
+
+		return result;
+	}
+
+	public static GenericClass<Account> getGenericClass()
+	{
+		return new GenericClass<>(Account.class);
+	}
+
+
 }

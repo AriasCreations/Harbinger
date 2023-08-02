@@ -1,13 +1,20 @@
 package dev.zontreck.harbinger.simulator.services.grid;
 
+import com.mongodb.client.MongoCollection;
 import dev.zontreck.ariaslib.events.annotations.Subscribe;
 import dev.zontreck.harbinger.HarbingerServer;
+import dev.zontreck.harbinger.data.mongo.DBSession;
+import dev.zontreck.harbinger.data.mongo.MongoDriver;
+import dev.zontreck.harbinger.data.types.GenericClass;
 import dev.zontreck.harbinger.events.GridFeatureQueryEvent;
 import dev.zontreck.harbinger.simulator.services.ServiceRegistry;
 import dev.zontreck.harbinger.simulator.types.Account;
 import dev.zontreck.harbinger.simulator.types.inventory.InventoryFolder;
 import dev.zontreck.harbinger.simulator.types.inventory.InventoryFolderTypes;
 import dev.zontreck.harbinger.utils.DataUtils;
+import org.bson.BsonDocument;
+import org.bson.BsonString;
+import org.bson.conversions.Bson;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -38,32 +45,32 @@ public class GridInventoryService {
 	@Subscribe
 	public static void onGridFeatureSeek ( GridFeatureQueryEvent ev ) throws Exception {
 
-
-		Path pAccounts = HarbingerServer.BASE_PATH.resolve ( "accounts" );
-		Path pData = pAccounts.resolve ( "data" );
-		Path pLibrarian = pAccounts.resolve ( "Librarian.Reaper.txt" );
-
 		Account aLibrarian;
 
-		if ( pLibrarian.toFile ( ).exists ( ) ) {
-			String LibrarianID = DataUtils.StripNewLines ( DataUtils.ReadTextFile ( pLibrarian.toFile ( ) ) );
-			pLibrarian = pData.resolve ( LibrarianID + ".json" );
+		DBSession session = MongoDriver.makeSession();
+		MongoCollection<Account> accounts = session.getTableFor(Account.TAG, new GenericClass<>(Account.class));
 
-			aLibrarian = Account.readFrom ( pLibrarian );
+		var librarian = new BsonDocument();
+		librarian.put("First", new BsonString("Librarian"));
+		librarian.put("Last", new BsonString("Reaper"));
+		boolean existed = false;
 
+		aLibrarian = Account.getAccount("Librarian", "Reaper");
+		if(aLibrarian == null)
+		{
 
-		}
-		else {
-			aLibrarian = new Account ( "Librarian" , "Reaper" , "password-change-me" );
+			aLibrarian = new Account("Librarian", "Reaper", "password-change-me");
 			aLibrarian.PasswordHash = "";
 			aLibrarian.UserLevel = 250;
 			aLibrarian.UserTitle = "Librarian of the Reapers";
+			aLibrarian.commit();
 
-
-			aLibrarian.commit ( );
+			existed=false;
 
 			ServiceRegistry.LOGGER.info ( "\n/!\\ WARNING /!\\ \n\n** YOU NEED TO CHANGE THE 'Librarian Reaper' PASSWORD BEFORE YOU CAN USE THE ACCOUNT **\n\n" );
-		}
+		} else existed=true;
+
+
 
 		if ( ev.options.contains ( "inventory-lib-owner" ) ) {
 			ev.setCancelled ( true );
