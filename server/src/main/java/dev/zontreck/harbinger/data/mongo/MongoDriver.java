@@ -11,12 +11,15 @@ import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import dev.zontreck.harbinger.data.types.GenericClass;
+import dev.zontreck.harbinger.thirdparty.libomv.types.UUID;
 import org.bson.BsonDocument;
 import org.bson.BsonInt64;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.slf4j.LoggerFactory;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 public class MongoDriver {
@@ -55,6 +58,21 @@ public class MongoDriver {
 
 	}
 
+	public static DBSession makeSession()
+	{
+		if(tryConnect())
+		{
+			DBSession sess = new DBSession(MongoClients.create(client_settings));
+			sess.openDB(DBSettings.instance.DATABASE);
+
+			sessions.put(sess.getID(), sess);
+
+			return sess;
+		}else return null;
+	}
+
+	private static Map<UUID, DBSession> sessions = new HashMap<>();
+
 	private static MongoClient _client;
 
 	public static MongoDatabase getDB()
@@ -67,12 +85,16 @@ public class MongoDriver {
 		}else return null;
 	}
 
-	public static <T> MongoCollection<T> getTableFor(String ID, GenericClass<T> clazz)
+
+	public static void closeSession(DBSession session)
 	{
-		MongoDatabase db = getDB();
-		if(db!=null)
+		if(sessions.containsKey(session.getID()))
 		{
-			return db.getCollection(ID, clazz.getMyType());
-		}else return null;
+			session.close();
+
+			sessions.remove(session.getID());
+
+			session=null;
+		}
 	}
 }
