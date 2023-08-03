@@ -1,7 +1,12 @@
 package dev.zontreck.harbinger.data.containers;
 
+import dev.zontreck.harbinger.data.mongo.DBSession;
+import dev.zontreck.harbinger.data.mongo.DBSettings;
+import dev.zontreck.harbinger.data.mongo.MongoDriver;
+import dev.zontreck.harbinger.data.types.GenericClass;
 import dev.zontreck.harbinger.thirdparty.libomv.StructuredData.OSD;
 import dev.zontreck.harbinger.thirdparty.libomv.StructuredData.OSDMap;
+import org.bson.BsonDocument;
 
 import java.time.Instant;
 
@@ -18,38 +23,28 @@ public class SimulatorSettings {
 	public Instant LAST_TOS_UPDATE;
 
 
-	public OSD serialize ( ) {
-		OSDMap simsettings = new OSDMap ( );
-		simsettings.put ( "base_url" , OSD.FromString ( BASE_URL ) );
-		simsettings.put ( "name" , OSD.FromString ( GRID_NAME ) );
-		simsettings.put ( "nick" , OSD.FromString ( GRID_NICK ) );
-		simsettings.put ( "grid" , OSD.FromBoolean ( GRID_ON ) );
-		simsettings.put ( "sim" , OSD.FromBoolean ( SIM_ON ) );
+	public void commit()
+	{
+		DBSession sess = MongoDriver.makeSession();
+		var table = sess.getTableFor(TAG, new GenericClass<>(SimulatorSettings.class));
 
-		simsettings.put ( "tos" , OSD.FromLong ( LAST_TOS_UPDATE.getEpochSecond ( ) ) );
+		table.replaceOne(new BsonDocument(), this);
 
-
-		return simsettings;
+		MongoDriver.closeSession(sess);
 	}
 
 	public SimulatorSettings ( ) {
 
 	}
 
-	public SimulatorSettings ( OSD val ) {
-		OSDMap map = ( OSDMap ) val;
-		try {
+	public static SimulatorSettings loadSettings()
+	{
+		DBSession sess = MongoDriver.makeSession();
+		var table = sess.getTableFor(TAG, new GenericClass<>(SimulatorSettings.class));
 
-			BASE_URL = map.get ( "base_url" ).AsString ( );
-			GRID_NAME = map.get ( "name" ).AsString ( );
-			GRID_NICK = map.get ( "nick" ).AsString ( );
-			GRID_ON = map.get ( "grid" ).AsBoolean ( );
-			SIM_ON = map.get ( "sim" ).AsBoolean ( );
-			LAST_TOS_UPDATE = Instant.ofEpochSecond ( map.get ( "tos" ).AsLong ( ) );
+		SimulatorSettings ret = table.find().first();
+		MongoDriver.closeSession(sess);
 
-
-		} catch ( Exception e ) {
-
-		}
+		return ret;
 	}
 }

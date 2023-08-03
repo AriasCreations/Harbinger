@@ -56,7 +56,7 @@ public class Persist {
 
 			serverSettings = new HTTPServerSettings ( MEMORY.get ( HTTPServerSettings.TAG ) );
 
-			simulatorSettings = new SimulatorSettings ( MEMORY.get ( SimulatorSettings.TAG ) );
+			simulatorSettings = SimulatorSettings.loadSettings();
 
 			LOGGER.info ( "Memory file loaded" );
 
@@ -75,7 +75,6 @@ public class Persist {
 	private static void save ( ) {
 		OSDMap map = new OSDMap ( );
 		map.put ( HTTPServerSettings.TAG , serverSettings.save ( ) );
-		map.put ( SimulatorSettings.TAG , simulatorSettings.serialize ( ) );
 
 
 		LOGGER.info ( "Memory file saved" );
