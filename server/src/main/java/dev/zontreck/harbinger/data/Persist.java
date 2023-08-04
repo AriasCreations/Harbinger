@@ -25,7 +25,6 @@ public class Persist {
 			getSimpleName ( ) );
 	public static final String FILE_NAME = "Harbinger.json";
 
-	public static OSDMap MEMORY = new OSDMap ( );
 	public static List<Product> products = new ArrayList<>();
 	public static List<Server> servers = new ArrayList<> ( );
 	public static HTTPServerSettings serverSettings = new HTTPServerSettings ( );
@@ -43,10 +42,6 @@ public class Persist {
 
 	static {
 		try {
-			final BufferedInputStream BIS = new BufferedInputStream ( new FileInputStream ( HarbingerServer.BASE_PATH.resolve ( FILE_NAME ).toString ( ) ) );
-			final byte[] data = BIS.readAllBytes ( );
-
-			Persist.MEMORY = ( OSDMap ) OSDParser.deserialize ( data );
 
 			products = Product.loadProducts();
 
@@ -54,13 +49,11 @@ public class Persist {
 
 			SupportReps.loadSupportReps ( );
 
-			serverSettings = new HTTPServerSettings ( MEMORY.get ( HTTPServerSettings.TAG ) );
+			serverSettings = HTTPServerSettings.loadSettings();
 
 			simulatorSettings = SimulatorSettings.loadSettings();
 
-			LOGGER.info ( "Memory file loaded" );
-
-			BIS.close ( );
+			LOGGER.info ( "Memory loaded" );
 		} catch ( Exception e ) {
 			//e.printStackTrace();
 		}
@@ -73,21 +66,7 @@ public class Persist {
 	}
 
 	private static void save ( ) {
-		OSDMap map = new OSDMap ( );
-		map.put ( HTTPServerSettings.TAG , serverSettings.save ( ) );
 
-
-		LOGGER.info ( "Memory file saved" );
-		try {
-			String json = LLSDJson.serializeToString ( map , OSD.OSDFormat.Json );
-			FileWriter fw = new FileWriter ( HarbingerServer.BASE_PATH.resolve ( FILE_NAME ).toFile ( ) );
-			fw.write ( json );
-			fw.close ( );
-		} catch ( FileNotFoundException e ) {
-			throw new RuntimeException ( e );
-		} catch ( IOException e ) {
-			throw new RuntimeException ( e );
-		}
 
 	}
 }

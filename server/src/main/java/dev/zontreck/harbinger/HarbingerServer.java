@@ -135,26 +135,6 @@ public class HarbingerServer {
 		} );
 
 		// Start up the server
-		// Read the NBT Files for the database
-		// This is designed to work without mysql
-		TaskBus.tasks.add ( new Task ( "Check existing settings...", true ) {
-			@Override
-			public void run ( ) {
-
-				if ( 0 == Persist.MEMORY.size ( ) ) {
-					HarbingerServer.LOGGER.info ( "No settings exist yet!" );
-					// Save defaults
-					try{
-						EventBus.BUS.post ( new MemoryAlteredEvent ( ) );
-						setSuccess ();
-
-					}catch(Exception e){
-						setFail ();
-					}
-
-				}
-			}
-		} );
 
 
 		TaskBus.tasks.add ( new Task ( "Start HTTP Server" ) {

@@ -4,10 +4,14 @@ import dev.zontreck.ariaslib.file.Entry;
 import dev.zontreck.ariaslib.file.EntryType;
 import dev.zontreck.ariaslib.file.EntryUtils;
 import dev.zontreck.ariaslib.file.Folder;
+import dev.zontreck.harbinger.data.mongo.DBSession;
+import dev.zontreck.harbinger.data.mongo.MongoDriver;
+import dev.zontreck.harbinger.data.types.GenericClass;
 import dev.zontreck.harbinger.data.types.PresharedKey;
 import dev.zontreck.harbinger.thirdparty.libomv.StructuredData.OSD;
 import dev.zontreck.harbinger.thirdparty.libomv.StructuredData.OSDMap;
 import dev.zontreck.harbinger.utils.Key;
+import org.bson.BsonDocument;
 
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
@@ -31,45 +35,30 @@ public class HTTPServerSettings {
 	public HTTPServerSettings ( ) {
 		try {
 			PSK = new PresharedKey ( "changeme" );
-			udp_settings = new UDPSettings ( new OSDMap (  ) );
+			udp_settings = new UDPSettings ( );
 		} catch ( Exception e ) {
 			e.printStackTrace ( );
 		}
 	}
 
-	public HTTPServerSettings ( final OSD tag ) {
-		if(tag instanceof OSDMap map )
-		{
-			enabled = map.get("enable").AsBoolean ();
-			port = map.get ( "port" ).AsInteger ();
-			PSK = new PresharedKey ( map.get("psk") );
-			udp_settings = new UDPSettings ( map.get ( "udp" ) );
+	public static HTTPServerSettings loadSettings()
+	{
+		DBSession sess = MongoDriver.makeSession();
+		var table = sess.getTableFor(TAG, new GenericClass<>(HTTPServerSettings.class));
 
+		HTTPServerSettings ret = table.find().first();
+		MongoDriver.closeSession(sess);
 
-
-			ExternalPortNumber = map.get ( "external_port" ).AsInteger ();
-
-			if(ExternalPortNumber != 0)
-				ExternalPortNumberSet=true;
-		}
+		return ret;
 	}
 
+	public void commit()
+	{
+		DBSession sess = MongoDriver.makeSession();
+		var table = sess.getTableFor(TAG, new GenericClass<>(HTTPServerSettings.class));
 
-	public OSD save ( ) {
-		OSDMap map = new OSDMap (  );
-		map.put("enable", OSD.FromBoolean ( enabled ));
-		map.put("port", OSD.FromInteger ( port ));
-		map.put("psk", PSK.save ());
-		map.put("udp", udp_settings.save ());
+		table.replaceOne(new BsonDocument(), this);
 
-
-
-		if(ExternalPortNumber == 0)
-		{
-			ExternalPortNumberSet=false;
-		} else map.put("external_port", OSD.FromInteger ( ExternalPortNumber ));
-
-
-		return map;
+		MongoDriver.closeSession(sess);
 	}
 }
