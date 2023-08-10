@@ -13,6 +13,9 @@ Setting Up
 
 When setting up Harbinger, the default port of 7767 for TCP/HTTP should be used.
 
+UDP Port: 7769
+
+
 A request should be made to /api to change the PSK.
 
 Compiling

@@ -33,6 +33,7 @@ public class DiscordSettings {
 
 	public DiscordSettings ( ) {
 
+            if(!MongoDriver.can_connect) return;
 		DBSession discordSettingsLoadUp = MongoDriver.makeSession();
 		GenericClass<DiscordSettings> mainClz = new GenericClass<>(DiscordSettings.class);
 		MongoCollection<DiscordSettings> mainTable = discordSettingsLoadUp.getTableFor(MAIN_TAG, mainClz);

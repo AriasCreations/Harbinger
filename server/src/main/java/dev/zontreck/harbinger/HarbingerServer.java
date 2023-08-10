@@ -86,6 +86,16 @@ public class HarbingerServer {
 			HarbingerServer.LOGGER.info ( "Environment: Docker" );
 		}
 
+
+		Server.registerServerHandler ( );
+
+                MainUI.showUI(exec);
+		
+	}
+        
+        public static void runStartupTasks()
+        {
+            
 		TaskBus.tasks.add ( new Task ( "Connect to Database" ) {
 			@Override
 			public void run ( ) {
@@ -266,10 +276,5 @@ public class HarbingerServer {
 				}
 			}
 		} );
-
-		Server.registerServerHandler ( );
-
-                MainUI.showUI(exec);
-		
-	}
+        }
 }

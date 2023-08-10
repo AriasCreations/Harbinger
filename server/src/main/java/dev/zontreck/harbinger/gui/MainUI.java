@@ -92,6 +92,8 @@ public class MainUI extends javax.swing.JFrame {
         this.setVisible(false);
         EventBus.BUS.post(new ServerStoppingEvent());
         EventBus.BUS.post(new HarbingerCommandEvent("stop"));
+        
+        System.exit(0);
     }//GEN-LAST:event_jMenuItem1ActionPerformed
 
     private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
