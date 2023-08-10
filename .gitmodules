@@ -1,0 +1,3 @@
+[submodule "server/Prebuild"]
+	path = server/Prebuild
+	url = git@github.com:zontreck/Prebuild
