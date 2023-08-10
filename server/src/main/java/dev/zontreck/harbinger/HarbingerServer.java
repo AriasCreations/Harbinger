@@ -21,6 +21,7 @@ import dev.zontreck.harbinger.data.types.*;
 import dev.zontreck.harbinger.events.GridInitializationEvent;
 import dev.zontreck.harbinger.events.MemoryAlteredEvent;
 import dev.zontreck.harbinger.events.ServerTickEvent;
+import dev.zontreck.harbinger.gui.MainUI;
 import dev.zontreck.harbinger.handlers.EventsRegistry;
 import dev.zontreck.harbinger.httphandlers.HTTPEvents;
 import dev.zontreck.harbinger.simulator.services.ServiceRegistry;
@@ -268,10 +269,7 @@ public class HarbingerServer {
 
 		Server.registerServerHandler ( );
 
-		try {
-			exec.wait ( );
-		} catch ( final InterruptedException e ) {
-			throw new RuntimeException ( e );
-		}
+                MainUI.showUI(exec);
+		
 	}
 }
