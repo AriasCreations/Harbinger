@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Prebuild xmlns="http://dnpb.sourceforge.net/schemas/prebuild-1.10.xsd" version="1.10">
+	<Solution name="Harbinger" frameworkVersion="net7_0">
+		<Options>
+			<UseDepsFile>true</UseDepsFile>
+		</Options>
+    </Solution>
+</Prebuild>
