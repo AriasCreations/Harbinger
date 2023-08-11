@@ -9,7 +9,7 @@
         <Configuration name="Debug">
             <Options>
 
-                <OptimizeCode>true</OptimizeCode>
+                <OptimizeCode>false</OptimizeCode>
                 <AllowUnsafe>true</AllowUnsafe>
                 <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
                 <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>

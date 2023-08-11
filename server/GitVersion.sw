@@ -48,6 +48,7 @@ Console.WriteLine($"\n" +
 "public static class GitVersion\n" +
 "{\n" +
 $"    public const string Version = \"{versionInfo}.{patch}\";\n" +
+$"    public const string FullVersion = \"{versionInfo}.{patch}-{commitHash}\";\n" +
 $"    public const string APIVer = \"{versionInfo}\";\n" +
 $"    public const string CommitHash = \"{commitHash}\";\n" +
 "}\n");

@@ -21,7 +21,7 @@ namespace Harbinger.EventBus
 
         public Dictionary<Type, List<EventContainer>> registry = new();
 
-        private void Scan(Type type)
+        public void Scan(Type type)
         {
             foreach (MethodInfo method in type.GetMethods())
             {

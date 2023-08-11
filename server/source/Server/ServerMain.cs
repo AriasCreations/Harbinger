@@ -9,6 +9,7 @@ namespace Server
         public static void Main(string[] args)
         {
             Console.WriteLine();
+            EventBus.PRIMARY.Scan(typeof(ServerMain));
             EventBus.PRIMARY.post(new StartupEvent());
         }
 
@@ -17,6 +18,9 @@ namespace Server
         public static void onStartup(StartupEvent startupEvent)
         {
             Console.WriteLine("We Are Harbinger");
+            Console.WriteLine($"Version: {GitVersion.FullVersion}");
+
+
 
         }
     }
