@@ -7,13 +7,15 @@ using System.Threading.Tasks;
 namespace Harbinger.EventBus
 {
     [AttributeUsage(AttributeTargets.Method)]
-    public class Subscribe : Attribute
+    public class SubscribeAttribute : Attribute
     {
         public readonly Priority priority_level;
+        public readonly bool isSingleShot;
 
-        public Subscribe(Priority priority)
+        public SubscribeAttribute(Priority priority)
         {
             priority_level = priority;
+            isSingleShot = false;
         }
     }
 }

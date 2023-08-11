@@ -12,29 +12,36 @@ namespace Harbinger.EventBus
         public Event() { }
         
 
-        public bool isCancellable()
+        public bool isCancellable
         {
-            var cnl = GetType().GetCustomAttribute<CancellableAttribute>();
-            if (cnl == null)
+            get
             {
-                return false;
+
+                var cnl = GetType().GetCustomAttribute<CancellableAttribute>();
+                if (cnl == null)
+                {
+                    return false;
+                }
+                else return true;
             }
-            else return true;
         }
         private bool cancel { get; set; } = false;
 
         public void setCancelled(bool cancel)
         {
-            if(isCancellable())
+            if(isCancellable)
             {
                 this.cancel = cancel;
             }
         }
 
 
-        public bool isCancelled()
+        public bool isCancelled
         {
-            return cancel;
+            get
+            {
+                return cancel;
+            }
         }
         
     }
