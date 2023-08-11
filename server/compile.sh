@@ -1,6 +1,7 @@
 #!/bin/bash
 
 cd Prebuild
+chmod +x compile.sh
 ./compile.sh
 cd ..
 
