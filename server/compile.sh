@@ -1,11 +1,9 @@
 #!/bin/bash
 
-cd Prebuild
-chmod +x compile.sh
-./compile.sh
-cd ..
+chmod +x runprebuild.sh
+./runprebuild.sh
 
-rm -rfv packaged || true
+rm -rf packaged
 mkdir packaged
 rm -rf binaries/release
 mkdir binaries/release
