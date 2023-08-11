@@ -5,7 +5,7 @@ cd Prebuild
 cd ..
 
 rm -rfv packaged || true
-mdir packaged
+mkdir packaged
 rm -rf binaries/release
 mkdir binaries/release
 
