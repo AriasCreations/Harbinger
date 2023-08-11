@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Harbinger.EventBus
+namespace Harbinger.EventsBus
 {
     [AttributeUsage(AttributeTargets.Method)]
     public class SubscribeAttribute : Attribute
@@ -16,6 +16,11 @@ namespace Harbinger.EventBus
         {
             priority_level = priority;
             isSingleShot = false;
+        }
+
+        public SubscribeAttribute(Priority priority_level, bool isSingleShot) : this(priority_level)
+        {
+            this.isSingleShot = isSingleShot;
         }
     }
 }

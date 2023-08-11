@@ -57,7 +57,7 @@
 
 
             <Reference name="Harbinger.EventBus"/>
-            <PackageReference name="Figgle" version="0.5.1"/>
+            <Reference name="Harbinger.FontHelper"/>
         </Project>
 
 
@@ -75,6 +75,31 @@
                 </Options>
             </Configuration>
 
+
+            <TextGen sourceInSolution="true" name="GitVersion.sw" output="Versions.cs">
+                <Reference name="System"/>
+                <Reference name="System.Diagnostics"/>
+                <Reference name="System.IO"/>
+                <Reference name="System.Diagnostics.Process" version="7.0.0.0"/>
+                <Reference name="System.Reflection"/>
+            </TextGen>
+        </Project>
+
+        <Project name="Harbinger.FontHelper" path="source\FontHelper" type="Exe">
+            <Author>Tara Piccari (tarapiccari@gmail.com)</Author>
+            <Configuration name="Debug">
+                <Options>
+                    <OutputPath>../../binaries/debug/</OutputPath>
+                </Options>
+            </Configuration>
+            <Configuration name="Release">
+                <Options>
+                    <OutputPath>../../binaries/release/</OutputPath>
+                </Options>
+            </Configuration>
+
+            <PackageReference name="Figgle" version="0.5.1"/>
+            <Reference name="Harbinger.EventBus"/>
 
             <TextGen sourceInSolution="true" name="GitVersion.sw" output="Versions.cs">
                 <Reference name="System"/>

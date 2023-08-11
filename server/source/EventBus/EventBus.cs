@@ -5,13 +5,13 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Harbinger.EventBus
+namespace Harbinger.EventsBus
 {
     public class EventBus
     {
         public static EventBus PRIMARY = new EventBus("Main");
 
-        public EventBus(string name)
+        private EventBus(string name)
         {
             nick = name;
         }

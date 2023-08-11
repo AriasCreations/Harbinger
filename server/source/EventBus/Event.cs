@@ -5,7 +5,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Harbinger.EventBus
+namespace Harbinger.EventsBus
 {
     public class Event
     {
