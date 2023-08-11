@@ -600,6 +600,7 @@ namespace Harbinger.FontHelper
                     try
                     {
                         Console.WriteLine(font.Value.Render((text.Length > 0 ? text : font.Key)));
+                        Console.WriteLine(font.Key);
                         Thread.Sleep(250);
                     }catch(Exception ex) { }
                 }
