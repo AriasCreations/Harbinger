@@ -31,8 +31,8 @@
             </Options>
         </Configuration>
 
-        <Project name="Server"
-            path="source/Server"
+        <Project name="Harbinger"
+            path="source\Server"
             type="Exe"
         >
             <Author>Tara Piccari (tarapiccari@gmail.com)</Author>
@@ -47,7 +47,40 @@
                 </Options>
             </Configuration>
 
-            <TextGen name="Versions.tt" output="Versions.cs">
+            <TextGen sourceInSolution="true" name="GitVersion.sw" output="Versions.cs">
+                <Reference name="System"/>
+                <Reference name="System.Diagnostics"/>
+                <Reference name="System.IO"/>
+                <Reference name="System.Diagnostics.Process" version="7.0.0.0"/>
+                <Reference name="System.Reflection"/>
+            </TextGen>
+
+
+            <Reference name="Harbinger.EventBus"/>
+        </Project>
+
+
+        <Project name="Harbinger.EventBus" path="source\EventBus" type="Library">
+            
+            <Author>Tara Piccari (tarapiccari@gmail.com)</Author>
+            <Configuration name="Debug">
+                <Options>
+                    <OutputPath>../../binaries/debug/</OutputPath>
+                </Options>
+            </Configuration>
+            <Configuration name="Release">
+                <Options>
+                    <OutputPath>../../binaries/release/</OutputPath>
+                </Options>
+            </Configuration>
+
+
+            <TextGen sourceInSolution="true" name="GitVersion.sw" output="Versions.cs">
+                <Reference name="System"/>
+                <Reference name="System.Diagnostics"/>
+                <Reference name="System.IO"/>
+                <Reference name="System.Diagnostics.Process" version="7.0.0.0"/>
+                <Reference name="System.Reflection"/>
             </TextGen>
         </Project>
     </Solution>
