@@ -57,6 +57,7 @@
 
 
             <Reference name="Harbinger.EventBus"/>
+            <PackageReference name="Figgle" version="0.5.1"/>
         </Project>
 
 
