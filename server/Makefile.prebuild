@@ -31,6 +31,8 @@
             </Options>
         </Configuration>
 
+        <?include file="Prebuild/prebuild.xml"?>
+
         <Project name="Harbinger"
             path="source\Server"
             type="Exe"
