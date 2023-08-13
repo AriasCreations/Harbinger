@@ -35,6 +35,8 @@ namespace Harbinger
             Console.WriteLine($"Version: {GitVersion.FullVersion}");
 
 
+            // Start GUI Here
+
 
         }
     }
