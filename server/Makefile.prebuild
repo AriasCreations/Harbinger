@@ -16,6 +16,7 @@
                 <NoStdLib>false</NoStdLib>
                 <Prefer32Bit>false</Prefer32Bit>
                 <DebugInformation>true</DebugInformation>
+                <Icon>Harbinger.ico</Icon>
             </Options>
         </Configuration>
         <Configuration name="Release">
@@ -35,7 +36,7 @@
             path="Prebuild/source/Prebuild"
             language="C#"
             assemblyName="prebuild"
-            icon="App.ico"
+            icon="Prebuild/App.ico"
             type="Exe"
             rootNamespace="Prebuild"
             startupObject="Prebuild.Prebuild"
@@ -105,6 +106,7 @@
         <Project name="Harbinger"
             path="source\Server"
             type="Exe"
+            icon="Harbinger.ico"
         >
             <Author>Tara Piccari (tarapiccari@gmail.com)</Author>
             <Configuration name="Debug">
@@ -195,6 +197,10 @@
                     <OutputPath>../../binaries/release/</OutputPath>
                 </Options>
             </Configuration>
+
+            <Maui>
+                <Title>Harbinger</Title>
+            </Maui>
 
             <Reference name="Harbinger.EventBus"/>
 
