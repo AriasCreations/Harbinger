@@ -36,7 +36,7 @@
             path="Prebuild/source/Prebuild"
             language="C#"
             assemblyName="prebuild"
-            icon="Prebuild/App.ico"
+            icon="App.ico"
             type="Exe"
             rootNamespace="Prebuild"
             startupObject="Prebuild.Prebuild"
@@ -131,7 +131,7 @@
 
             <Reference name="Harbinger.EventBus" />
             <Reference name="Harbinger.FontHelper" />
-            <Reference name="Harbinger.GUI"/>
+            <Reference name="Harbinger.GUI.Forms"/>
         </Project>
 
 
@@ -184,9 +184,10 @@
             </TextGen>
         </Project>
 
-        <Project name="Harbinger.GUI" path="source\GUI" type="Library">
+        <Project name="Harbinger.GUI.Forms" path="source\GUI\Forms" type="Exe">
             
             <Author>Tara Piccari (tarapiccari@gmail.com)</Author>
+            <Nullable />
             <Configuration name="Debug">
                 <Options>
                     <OutputPath>../../binaries/debug/</OutputPath>
@@ -198,11 +199,9 @@
                 </Options>
             </Configuration>
 
-            <Maui>
-                <Title>Harbinger</Title>
-            </Maui>
-
             <Reference name="Harbinger.EventBus"/>
+            <PackageReference name="Microsoft.Extensions.Logging.Debug" version="7.0.0" />
+            <PackageReference name="Modern.Forms" version="0.3.0"/>
 
             <TextGen sourceInSolution="true" name="GitVersion.sw" output="Versions.cs">
                 <Reference name="System" />

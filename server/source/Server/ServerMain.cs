@@ -1,4 +1,5 @@
 ﻿using Harbinger;
+using Harbinger.GUI.Forms;
 using Harbinger.EventsBus;
 using Harbinger.EventsBus.Events;
 using Harbinger.FontHelper;
@@ -36,7 +37,7 @@ namespace Harbinger
 
 
             // Start GUI Here
-
+            Welcome.StartMain();
 
         }
     }
