@@ -8,11 +8,9 @@ using System.Threading.Tasks;
 namespace Harbinger.EventsBus.Events
 {
     /// <summary>
-    /// Broadcast to all classes. Registration is not necessary.
-    /// Preferable that the method is static
+    /// This event is mass broadcast. Registration is not necessary, however the handler should ideally be static.
     /// </summary>
-    public class StartupEvent : Event
+    public class ResetEventBusEvent : Event
     {
-
     }
 }

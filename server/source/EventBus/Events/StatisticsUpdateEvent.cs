@@ -8,11 +8,11 @@ using System.Threading.Tasks;
 namespace Harbinger.EventsBus.Events
 {
     /// <summary>
-    /// Broadcast to all classes. Registration is not necessary.
-    /// Preferable that the method is static
+    /// Broadcasts to all classes when the EventStatistics is updated
     /// </summary>
-    public class StartupEvent : Event
+    public class StatisticsUpdateEvent : Event
     {
-
+        public StatisticsUpdateEvent() { 
+        }
     }
 }

@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Prebuild xmlns="http://dnpb.sourceforge.net/schemas/prebuild-1.10.xsd" version="1.10">
     <Solution name="Harbinger" frameworkVersion="net7_0">
+        <Files>
+            <File buildAction="None">Makefile.prebuild</File>
+        </Files>
         <Options>
             <UseDependencyFile>true</UseDependencyFile>
             <SelfContained>true</SelfContained>
@@ -40,7 +43,7 @@
             type="Exe"
             rootNamespace="Prebuild"
             startupObject="Prebuild.Prebuild"
-            version="2.0.9"
+            version="2.0.10"
         >
             <Author>Matthew Holmes (matthew@wildfiregames.com)</Author>
             <Author>Dan Moorehead (dan05a@gmail.com)</Author>
@@ -51,7 +54,7 @@
             <Author>WhiteCore build (2015) Rowan Deppeler (greythan@gmail.com)</Author>
             <Author>OpenSimulator build (2017) AJLDuarte</Author>
             <Description>The Prebuild project generator</Description>
-            
+
             <Configuration name="Debug">
                 <Options>
                     <OutputPath>../../../binaries/debug/</OutputPath>
@@ -67,9 +70,6 @@
                 <Match pattern="App.ico" buildAction="EmbeddedResource" />
                 <Match path="data" pattern="prebuild-1.10.xsd" buildAction="EmbeddedResource" />
                 <Match path="data" pattern="autotools.xml" buildAction="EmbeddedResource" />
-                <Match pattern="*.cs" recurse="true">
-                    <Exclude name="obj" pattern="obj" />
-                </Match>
             </Files>
         </Project>
 
@@ -131,7 +131,7 @@
 
             <Reference name="Harbinger.EventBus" />
             <Reference name="Harbinger.FontHelper" />
-            <Reference name="Harbinger.GUI.Forms"/>
+            <Reference name="Harbinger.GUI" />
         </Project>
 
 
@@ -184,24 +184,24 @@
             </TextGen>
         </Project>
 
-        <Project name="Harbinger.GUI.Forms" path="source\GUI\Forms" type="Exe">
-            
+        <Project name="Harbinger.GUI" path="source\GUI\Terminal" type="Exe">
+
             <Author>Tara Piccari (tarapiccari@gmail.com)</Author>
             <Nullable />
             <Configuration name="Debug">
                 <Options>
-                    <OutputPath>../../binaries/debug/</OutputPath>
+                    <OutputPath>../../../binaries/debug/</OutputPath>
                 </Options>
             </Configuration>
             <Configuration name="Release">
                 <Options>
-                    <OutputPath>../../binaries/release/</OutputPath>
+                    <OutputPath>../../../binaries/release/</OutputPath>
                 </Options>
             </Configuration>
 
-            <Reference name="Harbinger.EventBus"/>
+            <Reference name="Harbinger.EventBus" />
             <PackageReference name="Microsoft.Extensions.Logging.Debug" version="7.0.0" />
-            <PackageReference name="Modern.Forms" version="0.3.0"/>
+            <PackageReference name="Terminal.Gui" version="1.13.5" />
 
             <TextGen sourceInSolution="true" name="GitVersion.sw" output="Versions.cs">
                 <Reference name="System" />

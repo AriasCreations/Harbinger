@@ -1,27 +1,27 @@
-﻿using System;
+﻿using Harbinger.EventsBus.Events;
+using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Harbinger.EventsBus
 {
     public class EventBus
     {
-        public static EventBus PRIMARY = new EventBus("Main");
+        public static EventBus PRIMARY = new EventBus("Primary");
 
-        private EventBus(string name)
+        private EventBus(string name, bool updatesEventStats=false)
         {
             nick = name;
+            stats = updatesEventStats;
         }
 
         private string nick;
+        private bool stats;
 
 
         public Dictionary<Type, List<EventContainer>> registry = new();
 
-        public void Scan(Type type)
+        public void Scan(Type type, bool disallowSingleShot=false)
         {
             foreach (MethodInfo method in type.GetMethods())
             {
@@ -32,10 +32,55 @@ namespace Harbinger.EventsBus
                     if (para[0].ParameterType.IsSubclassOf(typeof(Event)))
                     {
                         var isSingleShot = subscribe.isSingleShot;
-                        registerEvent(para[0].ParameterType, new EventContainer(method, subscribe, isSingleShot), isSingleShot);
+                        registerEvent(para[0].ParameterType, new EventContainer(method, subscribe, disallowSingleShot? false : isSingleShot), disallowSingleShot?false: isSingleShot);
                     }
                 }
             }
+        }
+
+        private static EventBus broadcaster;
+
+        /// <summary>
+        /// Broadcasts the event to all classes regardless of registration with the Bus.
+        /// </summary>
+        /// <param name="evt">The Event</param>
+        /// <returns>Cancellation status</returns>
+        public static bool Broadcast(Event evt)
+        {
+            if(broadcaster == null)
+            {
+                broadcaster = new EventBus("Broadcaster");
+
+                foreach (Assembly asm in AppDomain.CurrentDomain.GetAssemblies())
+                {
+                    foreach (Type t in asm.GetTypes())
+                    {
+                        broadcaster.Scan(t);
+                    }
+                }
+            }
+
+
+            return broadcaster.post(evt);
+        }
+
+
+        [Subscribe(Priority.Uncategorizable, true)]
+        public static void onResetEventBus(ResetEventBusEvent evt)
+        {
+            evt.setCancelled(true);
+            PRIMARY.clear();
+        }
+
+        /// <summary>
+        /// Clears all registered events from the bus
+        /// </summary>
+        private void clear()
+        {
+            registry.Clear();
+            EventBusStatistics.TotalHandlers = 0;
+
+            Broadcast(new StatisticsUpdateEvent());
         }
 
         private void registerEvent(Type type, EventContainer container, bool isSingleShot)
@@ -49,6 +94,9 @@ namespace Harbinger.EventsBus
                 registry[type] = new List<EventContainer> { container };
             }
 
+            if(stats)
+                EventBusStatistics.TotalHandlers++;
+
             if (isSingleShot)
             {
                 // Mark this container as a single-shot subscriber
@@ -58,6 +106,14 @@ namespace Harbinger.EventsBus
 
         public bool post(Event evt)
         {
+            if (stats)
+            {
+
+                EventBusStatistics.EventName = evt.GetType().Name;
+                EventBusStatistics.CurrentEvent = evt;
+                EventBusStatistics.CurrentBus = nick;
+                EventBusStatistics.Cancelled = false;
+            }
             if (registry.ContainsKey(evt.GetType()))
             {
                 List<EventContainer> containers = registry[evt.GetType()];
@@ -67,11 +123,27 @@ namespace Harbinger.EventsBus
 
                 foreach (EventContainer container in containers.ToArray()) // Use ToArray to avoid modifying the list while iterating
                 {
+                    if (stats)
+                    {
+
+                        EventBusStatistics.CurrentlyInvokedClass = container.function.DeclaringType.Name;
+                        EventBusStatistics.CurrentlyInvokedMethod = container.function.Name;
+
+                    }
+
+
+                    Broadcast(new StatisticsUpdateEvent());
+
                     container.function.Invoke(null, new object[1] { evt });
+
+                    if(stats)
+                        EventBusStatistics.Cancelled = evt.isCancelled;
 
                     if (container.isSingleShot)
                     {
                         containers.Remove(container);
+                        if (stats)
+                            EventBusStatistics.TotalHandlers--;
                     }
                 }
 
