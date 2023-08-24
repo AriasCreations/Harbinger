@@ -129,13 +129,13 @@
             </TextGen>
 
 
-            <Reference name="Harbinger.EventBus" />
+            <Reference name="Harbinger.EventsBus" />
             <Reference name="Harbinger.FontHelper" />
             <Reference name="Harbinger.GUI" />
         </Project>
 
 
-        <Project name="Harbinger.EventBus" path="source\EventBus" type="Library">
+        <Project name="Harbinger.EventsBus" path="source\EventBus" type="Library">
 
             <Author>Tara Piccari (tarapiccari@gmail.com)</Author>
             <Configuration name="Debug">
@@ -149,6 +149,7 @@
                 </Options>
             </Configuration>
 
+            <InternalsVisibleTo name="Harbinger" />
 
             <TextGen sourceInSolution="true" name="GitVersion.sw" output="Versions.cs">
                 <Reference name="System" />
@@ -172,8 +173,9 @@
                 </Options>
             </Configuration>
 
+            <InternalsVisibleTo name="Harbinger" />
             <PackageReference name="Figgle" version="0.5.1" />
-            <Reference name="Harbinger.EventBus" />
+            <Reference name="Harbinger.EventsBus" />
 
             <TextGen sourceInSolution="true" name="GitVersion.sw" output="Versions.cs">
                 <Reference name="System" />
@@ -199,9 +201,39 @@
                 </Options>
             </Configuration>
 
-            <Reference name="Harbinger.EventBus" />
-            <PackageReference name="Microsoft.Extensions.Logging.Debug" version="7.0.0" />
+            <InternalsVisibleTo name="Harbinger" />
+            <Reference name="Harbinger.EventsBus" />
             <PackageReference name="Terminal.Gui" version="1.13.5" />
+
+            <TextGen sourceInSolution="true" name="GitVersion.sw" output="Versions.cs">
+                <Reference name="System" />
+                <Reference name="System.Diagnostics" />
+                <Reference name="System.IO" />
+                <Reference name="System.Diagnostics.Process" version="7.0.0.0" />
+                <Reference name="System.Reflection" />
+            </TextGen>
+        </Project>
+
+        <Project name="Harbinger.Framework" path="source\Framework" type="Library">
+
+            <Author>Tara Piccari (tarapiccari@gmail.com)</Author>
+            <Description>
+                Provides common resources that would otherwise create a circular dependency
+            </Description>
+            <Nullable />
+            <Configuration name="Debug">
+                <Options>
+                    <OutputPath>../../binaries/debug/</OutputPath>
+                </Options>
+            </Configuration>
+            <Configuration name="Release">
+                <Options>
+                    <OutputPath>../../binaries/release/</OutputPath>
+                </Options>
+            </Configuration>
+
+            <InternalsVisibleTo name="Harbinger" />
+            <Reference name="Harbinger.EventsBus" />
 
             <TextGen sourceInSolution="true" name="GitVersion.sw" output="Versions.cs">
                 <Reference name="System" />
