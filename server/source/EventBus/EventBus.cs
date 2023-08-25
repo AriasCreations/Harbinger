@@ -1,15 +1,18 @@
-﻿using Harbinger.EventsBus.Events;
+﻿using Harbinger.EventsBus.Attributes;
+using Harbinger.EventsBus.Events;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 
+[assembly:EventBusBroadcastable()]
 namespace Harbinger.EventsBus
 {
     public class EventBus
     {
         public static EventBus PRIMARY = new EventBus("Primary");
 
-        private EventBus(string name, bool updatesEventStats=false)
+        internal EventBus(string name, bool updatesEventStats=false)
         {
             nick = name;
             stats = updatesEventStats;
@@ -19,7 +22,7 @@ namespace Harbinger.EventsBus
         private bool stats;
 
 
-        public Dictionary<Type, List<EventContainer>> registry = new();
+        public Dictionary<string, List<EventContainer>> registry = new();
 
         public void Scan(Type type, bool disallowSingleShot=false)
         {
@@ -53,10 +56,23 @@ namespace Harbinger.EventsBus
 
                 foreach (Assembly asm in AppDomain.CurrentDomain.GetAssemblies())
                 {
-                    foreach (Type t in asm.GetTypes())
+                    try
                     {
-                        broadcaster.Scan(t);
+                        if (asm.GetCustomAttribute<EventBusBroadcastableAttribute>() == null) continue;
+
+                    }catch(Exception ex)
+                    {
+                        continue;
                     }
+                    Console.WriteLine($"Scanning: {asm.FullName}");
+                    try
+                    {
+
+                        foreach (Type t in asm.GetTypes())
+                        {
+                            broadcaster.Scan(t);
+                        }
+                    }catch(Exception e) { }
                 }
             }
 
@@ -85,13 +101,13 @@ namespace Harbinger.EventsBus
 
         private void registerEvent(Type type, EventContainer container, bool isSingleShot)
         {
-            if (registry.ContainsKey(type))
+            if (registry.ContainsKey(type.FullName))
             {
-                registry[type].Add(container);
+                registry[type.FullName].Add(container);
             }
             else
             {
-                registry[type] = new List<EventContainer> { container };
+                registry[type.FullName] = new List<EventContainer> { container };
             }
 
             if(stats)
@@ -114,9 +130,9 @@ namespace Harbinger.EventsBus
                 EventBusStatistics.CurrentBus = nick;
                 EventBusStatistics.Cancelled = false;
             }
-            if (registry.ContainsKey(evt.GetType()))
+            if (registry.ContainsKey(evt.GetType().FullName))
             {
-                List<EventContainer> containers = registry[evt.GetType()];
+                List<EventContainer> containers = registry[evt.GetType().FullName];
 
                 containers.Sort((container1, container2) =>
                     container2.subscribeData.priority_level.CompareTo(container1.subscribeData.priority_level));
@@ -131,8 +147,8 @@ namespace Harbinger.EventsBus
 
                     }
 
-
-                    Broadcast(new StatisticsUpdateEvent());
+                    if(stats)
+                        Broadcast(new StatisticsUpdateEvent());
 
                     container.function.Invoke(null, new object[1] { evt });
 

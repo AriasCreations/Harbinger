@@ -11,6 +11,8 @@ namespace Harbinger.FontHelper
 
             EventBus current_bus = EventBus.PRIMARY;
 
+            Fonts.isSelfContained = true;
+
             current_bus.Scan(typeof(Fonts));
             current_bus.post(new StartupEvent());
 

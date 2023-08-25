@@ -569,6 +569,7 @@ namespace Harbinger.FontHelper
             return fonts[v].Render(text);
         }
 
+        internal static bool isSelfContained = false;
         /// <summary>
         /// A single-shot event for the FontHelper executable
         /// </summary>
@@ -576,6 +577,7 @@ namespace Harbinger.FontHelper
         [Subscribe(Priority.Uncategorizable, true)]
         public static void onStartup(StartupEvent evt)
         {
+            if (!isSelfContained) return;
             init();
             Console.Clear();
             Console.Title = $"Harbinger - Font Helper - {GitVersion.FullVersion}";
