@@ -132,6 +132,8 @@
             <Reference name="Harbinger.EventsBus" />
             <Reference name="Harbinger.FontHelper" />
             <Reference name="Harbinger.GUI" />
+            <Reference name="Harbinger.Framework" />
+            <Reference name="Harbinger.Framework.Registry" />
         </Project>
 
 
@@ -203,6 +205,7 @@
 
             <InternalsVisibleTo name="Harbinger" />
             <Reference name="Harbinger.EventsBus" />
+            <Reference name="Harbinger.Framework.Registry" />
             <PackageReference name="Terminal.Gui" version="1.13.5" />
 
             <TextGen sourceInSolution="true" name="GitVersion.sw" output="Versions.cs">
@@ -234,6 +237,88 @@
 
             <InternalsVisibleTo name="Harbinger" />
             <Reference name="Harbinger.EventsBus" />
+            <Reference name="Harbinger.Framework.Registry" />
+            <PackageReference name="Newtonsoft.Json" version="13.0.3" />
+            <PackageReference name="LibreMetaverse" version="2.0.10.575" />
+            <PackageReference name="LibreMetaverse.Types" version="2.0.10.575" />
+            <PackageReference name="LibreMetaverse.StructuredData" version="2.0.10.575" />
+            <PackageReference name="LibreMetaverse.Utilities" version="2.0.10.575" />
+            <PackageReference name="LibreMetaverse.LslTools" version="2.0.10.575" />
+
+            <PackageReference name="DSharpPlus" version="4.4.2" />
+            <PackageReference name="DSharpPlus.SlashCommands" version="4.4.2" />
+            <PackageReference name="DSharpPlus.Interactivity" version="4.4.2" />
+            <PackageReference name="DSharpPlus.Lavalink" version="4.4.2" />
+
+            <TextGen sourceInSolution="true" name="GitVersion.sw" output="Versions.cs">
+                <Reference name="System" />
+                <Reference name="System.Diagnostics" />
+                <Reference name="System.IO" />
+                <Reference name="System.Diagnostics.Process" version="7.0.0.0" />
+                <Reference name="System.Reflection" />
+            </TextGen>
+        </Project>
+
+        <Project name="Harbinger.Framework.Registry" path="source\Registry" type="Library">
+
+            <Author>Tara Piccari (tarapiccari@gmail.com)</Author>
+            <Description>
+                Provides Harbinger Registry data format
+            </Description>
+            <Nullable />
+            <Configuration name="Debug">
+                <Options>
+                    <OutputPath>../../binaries/debug/</OutputPath>
+                </Options>
+            </Configuration>
+            <Configuration name="Release">
+                <Options>
+                    <OutputPath>../../binaries/release/</OutputPath>
+                </Options>
+            </Configuration>
+
+            <InternalsVisibleTo name="Harbinger" />
+            <InternalsVisibleTo name="Harbinger.Framework" />
+            <Reference name="Harbinger.EventsBus" />
+            <PackageReference name="Newtonsoft.Json" version="13.0.3" />
+            <PackageReference name="LibreMetaverse" version="2.0.10.575" />
+            <PackageReference name="LibreMetaverse.Types" version="2.0.10.575" />
+            <PackageReference name="LibreMetaverse.StructuredData" version="2.0.10.575" />
+            <PackageReference name="LibreMetaverse.Utilities" version="2.0.10.575" />
+            <PackageReference name="LibreMetaverse.LslTools" version="2.0.10.575" />
+
+            <PackageReference name="DSharpPlus" version="4.4.2" />
+            <PackageReference name="DSharpPlus.SlashCommands" version="4.4.2" />
+            <PackageReference name="DSharpPlus.Interactivity" version="4.4.2" />
+            <PackageReference name="DSharpPlus.Lavalink" version="4.4.2" />
+
+            <TextGen sourceInSolution="true" name="GitVersion.sw" output="Versions.cs">
+                <Reference name="System" />
+                <Reference name="System.Diagnostics" />
+                <Reference name="System.IO" />
+                <Reference name="System.Diagnostics.Process" version="7.0.0.0" />
+                <Reference name="System.Reflection" />
+            </TextGen>
+        </Project>
+
+        
+        <Project name="Harbinger.RegEdit" path="source\Utility\RegEdit" type="Exe" icon="Harbinger.ico">
+
+            <Author>Tara Piccari (tarapiccari@gmail.com)</Author>
+            <Nullable />
+            <Configuration name="Debug">
+                <Options>
+                    <OutputPath>../../../binaries/debug/</OutputPath>
+                </Options>
+            </Configuration>
+            <Configuration name="Release">
+                <Options>
+                    <OutputPath>../../../binaries/release/</OutputPath>
+                </Options>
+            </Configuration>
+
+            <InternalsVisibleTo name="Harbinger" />
+            <Reference name="Harbinger.Framework.Registry" />
 
             <TextGen sourceInSolution="true" name="GitVersion.sw" output="Versions.cs">
                 <Reference name="System" />
