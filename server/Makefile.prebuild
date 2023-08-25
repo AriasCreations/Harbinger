@@ -319,6 +319,36 @@
 
             <InternalsVisibleTo name="Harbinger" />
             <Reference name="Harbinger.Framework.Registry" />
+            <Reference name="Harbinger" />
+            <Reference name="Harbinger.FontHelper" />
+
+            <TextGen sourceInSolution="true" name="GitVersion.sw" output="Versions.cs">
+                <Reference name="System" />
+                <Reference name="System.Diagnostics" />
+                <Reference name="System.IO" />
+                <Reference name="System.Diagnostics.Process" version="7.0.0.0" />
+                <Reference name="System.Reflection" />
+            </TextGen>
+        </Project>
+        
+        <Project name="Harbinger.RegRead" path="source\Utility\RegRead" type="Exe" icon="Harbinger.ico">
+
+            <Author>Tara Piccari (tarapiccari@gmail.com)</Author>
+            <Nullable />
+            <Configuration name="Debug">
+                <Options>
+                    <OutputPath>../../../binaries/debug/</OutputPath>
+                </Options>
+            </Configuration>
+            <Configuration name="Release">
+                <Options>
+                    <OutputPath>../../../binaries/release/</OutputPath>
+                </Options>
+            </Configuration>
+
+            <InternalsVisibleTo name="Harbinger" />
+            <Reference name="Harbinger.Framework.Registry" />
+            <PackageReference name="Newtonsoft.Json" version="13.0.3" />
 
             <TextGen sourceInSolution="true" name="GitVersion.sw" output="Versions.cs">
                 <Reference name="System" />

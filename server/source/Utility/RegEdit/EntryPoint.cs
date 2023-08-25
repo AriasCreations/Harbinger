@@ -1,4 +1,5 @@
-﻿using Harbinger.Framework.Registry;
+﻿using Harbinger.FontHelper;
+using Harbinger.Framework.Registry;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,6 +19,22 @@ namespace Harbinger.RegEdit
         public static void printUsage()
         {
 
+            Console.WriteLine("-dump\t\tDumps the current in-memory registry to the console");
+            Console.WriteLine("-file [Name]\t\tLoads the filename as a registry hive. Do not provide the extension.");
+            Console.WriteLine("-new [Name]\t\tInitializes a new hive in memory. Will be saved to registry/name.hsrd");
+            Console.WriteLine("-delete [RegPath]\t\tDeletes a registry path, and any empty parent keys recursively");
+            Console.WriteLine("-set [RegPath] [Type] [Name] [value]\t\tSets and creates parent keys.\n\t\t\t\tTypes: Word, Int16, Int32, Int64, Bool");
+            Console.WriteLine("-flush\t\tFlushes the in-memory registry to disk and commits the changes");
+        }
+        static void Main(string[] args)
+        {
+            Fonts.init();
+            EventsBus.EventBus.debug = false;
+            Console.ForegroundColor = ConsoleColor.DarkRed;
+            Console.WriteLine(Fonts.RenderUsing("banner3-D", "Harbinger"));
+            Console.ForegroundColor = ConsoleColor.DarkGreen;
+
+
             Console.WriteLine("We Are Harbinger");
 
             Console.WriteLine("Harbinger Registry Editor - Command Line Interface");
@@ -28,16 +45,8 @@ namespace Harbinger.RegEdit
             Console.WriteLine();
             Console.WriteLine();
 
-            Console.WriteLine("-dump\t\tDumps the current in-memory registry to the console");
-            Console.WriteLine("-file [Name]\t\tLoads the filename as a registry hive. Do not provide the extension.");
-            Console.WriteLine("-new [Name]\t\tInitializes a new hive in memory. Will be saved to registry/name.hsrd");
-            Console.WriteLine("-delete [RegPath]\t\tDeletes a registry path, and any empty parent keys recursively");
-            Console.WriteLine("-set [RegPath] [Type] [Name] [value]\t\tSets and creates parent keys.\n\t\t\t\tTypes: Word, Int16, Int32, Int64, Bool");
-            Console.WriteLine("-flush\t\tFlushes the in-memory registry to disk and commits the changes");
-        }
-        static void Main(string[] args)
-        {
-            if(args.Length == 0)
+
+            if (args.Length == 0)
             {
                 printUsage();
                 return;
@@ -79,8 +88,15 @@ namespace Harbinger.RegEdit
                         }
                     case "-dump":
                         {
+                            Console.ForegroundColor = ConsoleColor.DarkRed;
+
+                            Console.WriteLine($"Byte Count: {RegistryIO.getBytes(HIVE).Length}");
+
                             i--; // No value taken for this arg
                             Console.WriteLine(HIVE.PrettyPrint());
+
+                            Console.ForegroundColor = ConsoleColor.DarkGreen;
+
                             break;
                         }
                     case "-set":
@@ -151,6 +167,7 @@ namespace Harbinger.RegEdit
                             }
 
                             HIVE.placeAtPath(path, x);
+
                             break;
                         }
                     case "-new":
@@ -180,6 +197,9 @@ namespace Harbinger.RegEdit
                 }
 
             }
+
+
+            Console.ForegroundColor = ConsoleColor.White;
         }
     }
 }

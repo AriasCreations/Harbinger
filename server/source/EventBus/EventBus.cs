@@ -21,6 +21,8 @@ namespace Harbinger.EventsBus
         private string nick;
         private bool stats;
 
+        public static bool debug = true;
+
 
         public Dictionary<string, List<EventContainer>> registry = new();
 
@@ -64,7 +66,8 @@ namespace Harbinger.EventsBus
                     {
                         continue;
                     }
-                    Console.WriteLine($"Scanning: {asm.FullName}");
+                    if(debug)
+                        Console.WriteLine($"Scanning: {asm.FullName}");
                     try
                     {
 

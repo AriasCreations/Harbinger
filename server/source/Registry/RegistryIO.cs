@@ -70,6 +70,21 @@ namespace Harbinger.Framework.Registry
             }
         }
 
+        public static byte[] getBytes(Key root)
+        {
+            using (MemoryStream ms = new MemoryStream())
+            {
+                using (BinaryWriter bw = new BinaryWriter(ms))
+                {
+                    writeHeader(bw);
+
+                    root.Write(bw);
+
+                    return ms.ToArray();
+                }
+            }
+        }
+
         /// <summary>
         /// Write the header to the file
         /// </summary>

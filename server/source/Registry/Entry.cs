@@ -1,4 +1,5 @@
 ﻿using Harbinger.EventsBus;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Design.Serialization;
@@ -58,10 +59,12 @@ namespace Harbinger.Framework.Registry
             }
         }
 
+        [JsonIgnore()]
         private Entry? _parent;
         /// <summary>
         /// Parent Entry Key
         /// </summary>
+        [JsonIgnore()]
         public Entry? Parent
         {
             get
@@ -105,6 +108,7 @@ namespace Harbinger.Framework.Registry
         /// <summary>
         /// Static root Key
         /// </summary>
+        [JsonIgnore()]
         public static readonly Key ROOT = new Key("root")
         {
             Type = EntryType.Root
