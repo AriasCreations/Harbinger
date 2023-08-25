@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Harbinger.Framework
 {
-    internal class SecondLifeBotAccount
+    public class SecondLifeBotAccount
     {
         public const string KEY = "root/HKS/bots/secondlife/account";
 

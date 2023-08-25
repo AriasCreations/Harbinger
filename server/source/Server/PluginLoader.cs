@@ -13,29 +13,44 @@ namespace Harbinger
 
         public static void PreloadReferencedAssemblies()
         {
-            Assembly entryAssembly = Assembly.GetEntryAssembly();
-            asms.Clear();
+            LoadAssemblies();
+        }
 
-            if (entryAssembly == null)
+        public static void LoadAssemblies()
+        {
+            HashSet<AssemblyName> assemblies = new HashSet<AssemblyName>();
+
+            foreach (AssemblyName name in Recurse(Assembly.GetEntryAssembly()).ToArray())
             {
-                Console.WriteLine("Cannot determine entry assembly.");
-                return;
-            }
+                Console.WriteLine("Assembly Loaded: " + name);
 
-            foreach (AssemblyName assemblyName in entryAssembly.GetReferencedAssemblies())
+                assemblies.Add(name);
+            }
+        }
+
+        private static List<AssemblyName> Recurse(Assembly asm)
+        {
+            List<AssemblyName> asmName = new List<AssemblyName>();
+
+            foreach(AssemblyName name in asm.GetReferencedAssemblies())
             {
                 try
                 {
-                    Assembly.Load(assemblyName);
-                    Console.WriteLine("Loaded assembly: " + assemblyName.Name);
-
-                    asms.Add(assemblyName.FullName);
-                }
-                catch (Exception e)
+                    if(asms.Contains(name.Name))
+                    {
+                        continue;
+                    }
+                    asms.Add(name.Name);
+                    Assembly asmx = Assembly.Load(name);
+                    Console.WriteLine($"Assembly Loaded: {asmx.GetName()}");
+                    asmName.AddRange(Recurse(asmx));
+                }catch(Exception e)
                 {
-                    Console.WriteLine("Error loading assembly: " + e.Message);
+
                 }
             }
+
+            return asmName;
         }
     }
 }

@@ -23,6 +23,7 @@ namespace Harbinger
         private static long x_ticks = 0;
         private static readonly object lck = new object();
         private static Key LAST_STAT_KEY;
+        public static Timer Ticker;
 
         public static long TotalTicks
         {
@@ -77,14 +78,15 @@ namespace Harbinger
 
         public static void Main(string[] args)
         {
+            
             Console.ForegroundColor = ConsoleColor.White;
             Console.BackgroundColor = ConsoleColor.Black;
             Console.Title = "Loading...";
 
+            HarbingerContext.KeepAlive = new CancellationTokenSource();
             PluginLoader.PreloadReferencedAssemblies();
             Console.WriteLine();
             EventBus.Broadcast(new StartupEvent());
-            HarbingerContext.KeepAlive = new CancellationTokenSource();
 
             Console.CancelKeyPress += Console_CancelKeyPress;
 
@@ -124,15 +126,19 @@ namespace Harbinger
             // Register the server tick event on HarbingerContext
             EventBus.PRIMARY.Scan(typeof(HarbingerContext));
 
-            Thread Main_Ticks = new Thread(() =>
-            {
-                EventBus.PRIMARY.post(new ServerTickEvent());
-            });
 
-            Timer X = new Timer((X) =>
+            HarbingerContext.Ticker = new Timer((Xv) =>
             {
                 EventBus.PRIMARY.post(new ServerTickEvent());
+
+                if(HarbingerContext.KeepAlive.IsCancellationRequested)
+                {
+                    HarbingerContext.Ticker.Dispose();
+                }
+                
             }, null, TimeSpan.FromMilliseconds(250), TimeSpan.FromMilliseconds(250));
+
+            
         }
     }
 }
