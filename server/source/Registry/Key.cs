@@ -1,10 +1,9 @@
-﻿using System;
+﻿using Harbinger.EventsBus;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Harbinger.Framework.Registry
 {
@@ -46,15 +45,30 @@ namespace Harbinger.Framework.Registry
 
         public void Add(Entry item)
         {
-            _entries.Add(item);
-            item.Parent = this;
+            if (EventBus.PRIMARY.post(new RegistryEntryAddedEvent(item, EntryPath + "/" + item.Name)))
+            {
+                return;
+            } else
+            {
+                _entries.Add(item);
+                item.Parent = this;
+
+                updateRoots();
+            }
         }
+
+        public void updateRoots()
+        {
+            if (Type == EntryType.Root) setRoot(this);
+        }
+
 
         public void Clear()
         {
             foreach (Entry item in _entries)
             {
                 item.Parent = null;
+                item.MyRoot = null;
             }
             _entries.Clear();
         }
@@ -67,6 +81,8 @@ namespace Harbinger.Framework.Registry
         public void CopyTo(Entry[] array, int arrayIndex)
         {
             _entries.CopyTo(array, arrayIndex);
+
+            updateRoots();
         }
 
         public IEnumerator<Entry> GetEnumerator()
@@ -81,20 +97,52 @@ namespace Harbinger.Framework.Registry
 
         public void Insert(int index, Entry item)
         {
-            item.Parent = this;
-            _entries.Insert(index, item);
+
+            if (EventBus.PRIMARY.post(new RegistryEntryAddedEvent(item, EntryPath + "/" + item.Name)))
+            {
+                return;
+            }
+            else
+            {
+                _entries.Insert(index, item);
+                item.Parent = this;
+
+                updateRoots();
+            }
         }
 
         public bool Remove(Entry item)
         {
-            item.Parent = null;
-            return _entries.Remove(item);
+            if(EventBus.PRIMARY.post(new RegistryEntryRemovedEvent(item, item.EntryPath, this)))
+            {
+                return false;
+            }else
+            {
+
+                item.Parent = null;
+                item.MyRoot = null;
+                var ret = _entries.Remove(item);
+                updateRoots();
+                return ret;
+            }
         }
 
         public void RemoveAt(int index)
         {
-            _entries[index].Parent = null;
-            _entries.RemoveAt(index);
+            Entry item = _entries[index];
+            if (EventBus.PRIMARY.post(new RegistryEntryRemovedEvent(item, item.EntryPath, this)))
+            {
+                return;
+            }
+            else
+            {
+
+                item.Parent = null;
+                item.MyRoot = null;
+
+                updateRoots();
+                return;
+            }
         }
 
         IEnumerator IEnumerable.GetEnumerator()
@@ -145,6 +193,7 @@ namespace Harbinger.Framework.Registry
             if(replaceWith is Key key)
             {
                 _entries.AddRange(key);
+                updateRoots();
             }
         }
 

@@ -15,8 +15,9 @@ namespace Harbinger.Framework
 
         public static DiscordBotAccount instance = new DiscordBotAccount();
 
-        public string Token { get; set; } = "";
         public Key MY_KEY;
+
+        public DiscordBotCodec codec;
 
         [Subscribe(Priority.Very_High)]
         public static void onRegistryLoaded(RegistryLoadedEvent ev)
@@ -28,14 +29,69 @@ namespace Harbinger.Framework
                 Entry.ROOT.placeAtPath(KEY.Substring(0, KEY.LastIndexOf('/')), instance.MY_KEY);
 
                 instance.MY_KEY = Entry.getByPath(KEY)?.Key();
+                instance.codec = new DiscordBotCodec(instance.MY_KEY);
+            }else
+            {
+                instance.codec = new DiscordBotCodec(instance.MY_KEY);
             }
         }
+    }
 
-        [Subscribe(Priority.Medium)]
-        public static void onShutdown(ShutdownEvent ev)
+
+    public class DiscordBotCodec
+    {
+        public const int VERSION = 1;
+
+        public Word Token { get; set; }
+
+        public VInt32 CurVer { get; set; }
+
+
+        private Key key;
+        public DiscordBotCodec(Key key)
         {
-            if (!instance.MY_KEY.HasNamedKey("token")) instance.MY_KEY.Add(new Word("token", null));
-            instance.MY_KEY.getNamed("token").Word().Value = instance.Token;
+            this.key = key;
+            if (!key.HasNamedKey("version"))
+            {
+                // Initialize at latest version
+                Initialize();
+            }
+            else
+            {
+                VInt32 ver = key.getNamed("version").Int32();
+
+                Load(ver.Value);
+            }
+
+        }
+
+        public void Initialize()
+        {
+            ActivateV1();
+        }
+
+        public void ActivateV1()
+        {
+            Token = new Word("token", null).setWord("0123");
+            CurVer = new VInt32("version", null).setInt32(1);
+
+            key.Add(Token);
+            key.Add(CurVer);
+        }
+
+        public void Load(int value)
+        {
+            switch (value)
+            {
+                case 1:
+                    {
+                        Token = key.getNamed("token").Word();
+                        CurVer = key.getNamed("version").Int32();
+
+
+                        break;
+                    }
+            }
         }
     }
 }

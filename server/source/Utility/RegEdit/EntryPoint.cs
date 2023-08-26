@@ -39,7 +39,7 @@ namespace Harbinger.RegEdit
 
             Console.WriteLine("Harbinger Registry Editor - Command Line Interface");
             Console.WriteLine($"Version: {GitVersion.FullVersion}");
-            Console.WriteLine($"Registry Format Version: {RegistryIO.Version}-{RegistryIO.Version2}");
+            Console.WriteLine($"Registry Format Version: {RegistryIO.Version}.{RegistryIO.Version2}");
             Console.WriteLine();
             Console.WriteLine();
             Console.WriteLine();
@@ -90,6 +90,7 @@ namespace Harbinger.RegEdit
                         {
                             Console.ForegroundColor = ConsoleColor.DarkRed;
 
+                            Console.WriteLine($"Byte Count: {RegistryIO.getBytes(HIVE).Length}");
 
                             i--; // No value taken for this arg
                             Console.WriteLine(HIVE.PrettyPrint());

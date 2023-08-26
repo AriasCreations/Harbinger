@@ -40,6 +40,11 @@ namespace Harbinger.Framework.Registry
                 Value = str;
             }
         }
+        public VInt16 setInt16(short value)
+        {
+            Value = value;
+            return this;
+        }
     }
     public class VInt32 : Entry
     {
@@ -72,6 +77,11 @@ namespace Harbinger.Framework.Registry
             {
                 Value = str;
             }
+        }
+        public VInt32 setInt32(int value)
+        {
+            Value = value;
+            return this;
         }
     }
 
@@ -107,6 +117,11 @@ namespace Harbinger.Framework.Registry
                 Value = str;
             }
         }
+        public VInt64 setInt64(long value)
+        {
+            Value = value;
+            return this;
+        }
     }
 
     public class VBool : Entry
@@ -140,6 +155,12 @@ namespace Harbinger.Framework.Registry
             {
                 Value = str;
             }
+        }
+
+        public VBool setBool(bool value)
+        {
+            Value = value; 
+            return this;
         }
     }
 }

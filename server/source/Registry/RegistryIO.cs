@@ -14,7 +14,7 @@ namespace Harbinger.Framework.Registry
     public class RegistryIO
     {
         public const byte Version = 1;
-        public const byte Version2 = 0;
+        public const byte Version2 = 1;
         /// <summary>
         /// Saves the entire Registry to disk
         /// 
@@ -25,7 +25,7 @@ namespace Harbinger.Framework.Registry
             string filename = Path.Combine(DataFolder, RootHSRD);
             filename = Path.ChangeExtension(filename, HSRDExtension);
 
-            Console.WriteLine($"Saving Registry : \n\nByte Count: {getBytes(Entry.ROOT).Length}{Entry.ROOT.PrettyPrint()}");
+            Console.WriteLine($"Saving Registry : \n\nByte Count: {getBytes(Entry.ROOT).Length}\n{Entry.ROOT.PrettyPrint()}");
 
 
             // Reset the file to zero bytes if it exists
@@ -55,7 +55,7 @@ namespace Harbinger.Framework.Registry
             string filename = Path.ChangeExtension(name, HSRDExtension);
             filename = Path.Combine(DataFolder, filename);
 
-            Console.WriteLine($"Saving Registry {name} : \n\nByte Count: {getBytes(root).Length}{Entry.ROOT.PrettyPrint()}");
+            Console.WriteLine($"Saving Registry {name} : \n\nByte Count: {getBytes(root).Length}\n{Entry.ROOT.PrettyPrint()}");
 
 
             // Reset the file to zero bytes if it exists

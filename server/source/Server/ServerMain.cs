@@ -34,7 +34,7 @@ namespace Harbinger
         private static long x_ticks = 0;
         private static readonly object lck = new object();
         private static Key LAST_STAT_KEY;
-        public static Timer Ticker;
+        public static Thread Ticker;
 
         public static long TotalTicks
         {
@@ -95,6 +95,9 @@ namespace Harbinger
             Console.Title = "Loading...";
 
             HarbingerContext.KeepAlive = new CancellationTokenSource();
+            DelayedExecutorService.setCancellationToken(HarbingerContext.KeepAlive);
+
+
             PluginLoader.PreloadReferencedAssemblies();
             Console.WriteLine();
             EventBus.Broadcast(new StartupEvent());
@@ -107,7 +110,6 @@ namespace Harbinger
             }
 
 
-            HarbingerContext.Ticker.Dispose();
             Console.ForegroundColor = ConsoleColor.White;
             Console.ResetColor();
             return;
@@ -117,6 +119,10 @@ namespace Harbinger
         {
             EventBus.Broadcast(new ShutdownEvent());
             HarbingerContext.KeepAlive.Cancel();
+
+            // EventBus will block the thread until all shutdown event handlers have exited.
+            // We can assume we can safely exit now.
+            Environment.Exit(0);
         }
 
 
@@ -140,18 +146,19 @@ namespace Harbinger
 
             // Register the server tick event on HarbingerContext
             EventBus.PRIMARY.Scan(typeof(HarbingerContext));
+            
 
-
-            HarbingerContext.Ticker = new Timer((Xv) =>
+            HarbingerContext.Ticker = new Thread(() =>
             {
-                EventBus.PRIMARY.post(new ServerTickEvent());
-
-                if(HarbingerContext.KeepAlive.IsCancellationRequested)
+                while (!HarbingerContext.KeepAlive.IsCancellationRequested)
                 {
-                    HarbingerContext.Ticker.Dispose();
+                    EventBus.PRIMARY.post(new ServerTickEvent());
+
+                    Thread.Sleep(ServerTickEvent.TickMilliseconds);
                 }
                 
-            }, null, TimeSpan.FromMilliseconds(250), TimeSpan.FromMilliseconds(250));
+            });
+            HarbingerContext.Ticker.Start();
 
             
         }

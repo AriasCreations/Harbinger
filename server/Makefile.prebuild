@@ -3,6 +3,7 @@
     <Solution name="Harbinger" frameworkVersion="net7_0">
         <Files>
             <File buildAction="None">Makefile.prebuild</File>
+            <File buildAction="None">GitVersion.sw</File>
         </Files>
         <Options>
             <UseDependencyFile>true</UseDependencyFile>

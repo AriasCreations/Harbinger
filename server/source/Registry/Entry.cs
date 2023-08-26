@@ -59,6 +59,20 @@ namespace Harbinger.Framework.Registry
             }
         }
 
+
+        internal void setRoot(Key root)
+        {
+            MyRoot = root;
+
+            if (this is Key k)
+            {
+                foreach (Entry entry in k)
+                {
+                    entry.setRoot(root);
+                }
+            }
+        }
+
         [JsonIgnore()]
         private Entry? _parent;
         /// <summary>
@@ -164,7 +178,9 @@ namespace Harbinger.Framework.Registry
                     if (entry is Key key && nextEntry != "")
                     {
                         path = path.Substring(slash + 1);
+
                         entry = key.getNamed(nextEntry);
+                        
                     }
                     else retentry = entry;
                 }
@@ -172,12 +188,7 @@ namespace Harbinger.Framework.Registry
             }
             catch (Exception e)
             {
-                // The entry wasn't found, generate a new key, place at path, and return
-                string primPath = path.Substring(0, path.LastIndexOf('/'));
-                string name = path.Substring(path.LastIndexOf('/') + 1);
-                Key key = new Key(name, null);
-                ROOT.placeAtPath(primPath, key);
-                return key;
+                return null;
             }
 
         }
@@ -217,11 +228,7 @@ namespace Harbinger.Framework.Registry
             catch (Exception e)
             {
                 // The entry wasn't found, generate a new key, place at path, and return
-                string primPath = path.Substring(0, path.LastIndexOf('/'));
-                string name = path.Substring(path.LastIndexOf('/') + 1);
-                Key key = new Key(name, null);
-                MyRoot.placeAtPath(primPath, key);
-                return key;
+                return null;
             }
 
         }

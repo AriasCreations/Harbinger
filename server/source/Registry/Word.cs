@@ -40,5 +40,11 @@ namespace Harbinger.Framework.Registry
                 Value = str;
             }
         }
+
+        public Word setWord(string value)
+        {
+            Value = value;
+            return this;
+        }
     }
 }
