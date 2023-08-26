@@ -22,7 +22,7 @@ namespace Harbinger.Framework
         public bool isLoggedIn = false;
 
         private Key MyEntry;
-        private SecondLifeAccountCodec codec;
+        public SecondLifeAccountCodec codec;
 
         [Subscribe(Priority.Low)]
         public static void onStartup(RegistryLoadedEvent ev)
