@@ -248,6 +248,7 @@
 
             <PackageReference name="DSharpPlus" version="4.4.2" />
             <PackageReference name="DSharpPlus.SlashCommands" version="4.4.2" />
+            <PackageReference name="DSharpPlus.CommandsNext" version="4.4.2" />
             <PackageReference name="DSharpPlus.Interactivity" version="4.4.2" />
             <PackageReference name="DSharpPlus.Lavalink" version="4.4.2" />
 

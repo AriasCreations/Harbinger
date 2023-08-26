@@ -1,8 +1,12 @@
 ﻿using DSharpPlus;
+using DSharpPlus.CommandsNext;
+using DSharpPlus.CommandsNext.Attributes;
+using DSharpPlus.Entities;
 using DSharpPlus.SlashCommands;
 using Harbinger.EventsBus;
 using Harbinger.EventsBus.Events;
 using Harbinger.Framework.Events;
+using Harbinger.Framework.Registry;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,6 +33,10 @@ namespace Harbinger.Framework.Discord
         public static DiscordClient client;
         public static DiscordConfiguration config;
         public static SlashCommandsExtension slash;
+        public static CommandsNextExtension nxtcmds;
+        public static CommandsNextConfiguration nxtConfig;
+
+
         
         [Subscribe(Priority.High)]
         public static async void onDiscordSettingsLoaded(DiscordSettingsLoadedEvent evt)
@@ -53,6 +61,12 @@ namespace Harbinger.Framework.Discord
             client = new DiscordClient(config);
 
             slash = client.UseSlashCommands();
+            nxtConfig = new CommandsNextConfiguration();
+            nxtConfig.EnableDms = true;
+            
+
+            nxtcmds = client.UseCommandsNext(nxtConfig);
+            
             
             slash.RegisterCommands<UnprivilegedCommands>();
 
@@ -76,7 +90,14 @@ namespace Harbinger.Framework.Discord
         [SlashCommand("version", "Makes the bot respond with its version number!")]
         public async Task versionCommand(InteractionContext ctx)
         {
-            await ctx.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource, new DSharpPlus.Entities.DiscordInteractionResponseBuilder().WithContent($"Hello {ctx.Member.Mention}, my version is {GitVersion.FullVersion}"));
+            await ctx.CreateResponseAsync(new DiscordEmbedBuilder().WithAuthor("Harbinger").WithTitle("Version").AddField("Full Version", GitVersion.FullVersion).AddField("Registry Version", $"{RegistryIO.Version}.{RegistryIO.Version2}").WithColor(DiscordColor.Teal).Build());
+            
+        }
+
+        [Command("version")]
+        public async Task versionCommand(CommandContext ctx)
+        {
+            await ctx.Channel.SendMessageAsync(new DiscordEmbedBuilder().WithAuthor("Harbinger").WithTitle("Version").AddField("Full Version", GitVersion.FullVersion).AddField("Registry Version", $"{RegistryIO.Version}.{RegistryIO.Version2}").WithColor(DiscordColor.Teal).Build());
         }
 
     }
