@@ -90,7 +90,6 @@ namespace Harbinger.RegEdit
                         {
                             Console.ForegroundColor = ConsoleColor.DarkRed;
 
-                            Console.WriteLine($"Byte Count: {RegistryIO.getBytes(HIVE).Length}");
 
                             i--; // No value taken for this arg
                             Console.WriteLine(HIVE.PrettyPrint());

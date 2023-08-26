@@ -172,7 +172,12 @@ namespace Harbinger.Framework.Registry
             }
             catch (Exception e)
             {
-                return null;
+                // The entry wasn't found, generate a new key, place at path, and return
+                string primPath = path.Substring(0, path.LastIndexOf('/'));
+                string name = path.Substring(path.LastIndexOf('/') + 1);
+                Key key = new Key(name, null);
+                ROOT.placeAtPath(primPath, key);
+                return key;
             }
 
         }
@@ -185,7 +190,7 @@ namespace Harbinger.Framework.Registry
                 path = path.Substring(path.IndexOf('/') + 1);
 
                 Entry retentry = null;
-                Entry entry = this;
+                Entry entry = MyRoot; // Get root
                 while (retentry == null)
                 {
                     int slash = path.IndexOf("/");
@@ -211,7 +216,12 @@ namespace Harbinger.Framework.Registry
             }
             catch (Exception e)
             {
-                return null;
+                // The entry wasn't found, generate a new key, place at path, and return
+                string primPath = path.Substring(0, path.LastIndexOf('/'));
+                string name = path.Substring(path.LastIndexOf('/') + 1);
+                Key key = new Key(name, null);
+                MyRoot.placeAtPath(primPath, key);
+                return key;
             }
 
         }
@@ -318,21 +328,10 @@ namespace Harbinger.Framework.Registry
         }
 
         /// <summary>
-        /// Climbs the registry tree until it reaches root
+        /// The root key for the current tree
         /// </summary>
-        /// <returns>The root for the specific hive</returns>
-        public Key climb()
-        {
-            Entry cur = this;
-            while (cur.Type != EntryType.Root)
-            {
-                cur = cur.Parent;
-
-                if (cur == null) return Key();
-            }
-
-            return cur.Key();
-        }
+        [JsonIgnore()]
+        public Key MyRoot;
 
         public virtual string PrettyPrint(int indent=0)
         {

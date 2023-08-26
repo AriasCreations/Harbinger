@@ -14,7 +14,18 @@ using System.Threading;
 [assembly: EventBusBroadcastable()]
 namespace Harbinger
 {
+    public class Harbinger
+    {
 
+        /// <summary>
+        /// This exists only to make sure dotnet loads this library... ugh
+        /// </summary>
+        public static void init()
+        {
+            Framework.Framework.init();
+
+        }
+    }
     public class HarbingerContext
     {
         public const string LAST_UPTIME = "root/HKS/laststats";
@@ -78,7 +89,7 @@ namespace Harbinger
 
         public static void Main(string[] args)
         {
-            
+            Harbinger.init();
             Console.ForegroundColor = ConsoleColor.White;
             Console.BackgroundColor = ConsoleColor.Black;
             Console.Title = "Loading...";
@@ -94,7 +105,11 @@ namespace Harbinger
             {
                 Thread.Sleep(100);
             }
-            
+
+
+            HarbingerContext.Ticker.Dispose();
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.ResetColor();
             return;
         }
 

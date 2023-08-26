@@ -25,7 +25,8 @@ namespace Harbinger.Framework.Registry
             string filename = Path.Combine(DataFolder, RootHSRD);
             filename = Path.ChangeExtension(filename, HSRDExtension);
 
-            Console.WriteLine($"Saving Registry : \n\n{Entry.ROOT.PrettyPrint()}");
+            Console.WriteLine($"Saving Registry : \n\nByte Count: {getBytes(Entry.ROOT).Length}{Entry.ROOT.PrettyPrint()}");
+
 
             // Reset the file to zero bytes if it exists
             ensureFolder();
@@ -54,6 +55,9 @@ namespace Harbinger.Framework.Registry
             string filename = Path.ChangeExtension(name, HSRDExtension);
             filename = Path.Combine(DataFolder, filename);
 
+            Console.WriteLine($"Saving Registry {name} : \n\nByte Count: {getBytes(root).Length}{Entry.ROOT.PrettyPrint()}");
+
+
             // Reset the file to zero bytes if it exists
             ensureFolder();
             resetFile(filename);
@@ -68,6 +72,8 @@ namespace Harbinger.Framework.Registry
                     root.Write(bw);
                 }
             }
+
+            Console.WriteLine("Registry Saved");
         }
 
         public static byte[] getBytes(Key root)

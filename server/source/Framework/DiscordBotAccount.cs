@@ -34,7 +34,7 @@ namespace Harbinger.Framework
         [Subscribe(Priority.Medium)]
         public static void onShutdown(ShutdownEvent ev)
         {
-            if (instance.MY_KEY.HasNamedKey("token")) instance.MY_KEY.Add(new Word("token", null));
+            if (!instance.MY_KEY.HasNamedKey("token")) instance.MY_KEY.Add(new Word("token", null));
             instance.MY_KEY.getNamed("token").Word().Value = instance.Token;
         }
     }

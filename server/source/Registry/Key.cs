@@ -152,9 +152,10 @@ namespace Harbinger.Framework.Registry
         {
             if(Type != EntryType.Root)
             {
-                climb().placeAtPath(path, toPlace);
+                toPlace.MyRoot = MyRoot;
+                MyRoot.placeAtPath(path, toPlace);
                 return;
-            }
+            } 
             string pth = path.Substring(path.IndexOf('/') + 1); // Cut root/ since we can assume we are executing within root
 
             // Iterate over the entire path, and place a empty key until we reach the target path
