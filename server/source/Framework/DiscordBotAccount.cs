@@ -1,5 +1,6 @@
 ﻿using Harbinger.EventsBus;
 using Harbinger.EventsBus.Events;
+using Harbinger.Framework.Events;
 using Harbinger.Framework.Registry;
 using System;
 using System.Collections.Generic;
@@ -34,6 +35,9 @@ namespace Harbinger.Framework
             {
                 instance.codec = new DiscordBotCodec(instance.MY_KEY);
             }
+
+
+            EventBus.PRIMARY.post(new DiscordSettingsLoadedEvent());
         }
     }
 
@@ -62,6 +66,7 @@ namespace Harbinger.Framework
 
                 Load(ver.Value);
             }
+
 
         }
 

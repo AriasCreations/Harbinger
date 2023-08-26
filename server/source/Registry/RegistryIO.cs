@@ -127,6 +127,7 @@ namespace Harbinger.Framework.Registry
                         readHeader(br);
 
                         Entry.ROOT.replaceEntries(Entry.Read(br));
+                        Entry.ROOT.setRoot(Entry.ROOT);
                     }
                 }
             }
@@ -179,6 +180,7 @@ namespace Harbinger.Framework.Registry
                         readHeader(br);
 
                         x.replaceEntries(Entry.Read(br));
+                        x.setRoot(x);
                     }
                 }
             }

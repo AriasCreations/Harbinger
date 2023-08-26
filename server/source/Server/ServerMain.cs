@@ -122,6 +122,7 @@ namespace Harbinger
 
             // EventBus will block the thread until all shutdown event handlers have exited.
             // We can assume we can safely exit now.
+            Console.ForegroundColor = ConsoleColor.White;
             Environment.Exit(0);
         }
 
@@ -134,9 +135,10 @@ namespace Harbinger
             Console.Clear();
             Console.Title = "Harbinger - " + GitVersion.FullVersion;
             Console.BackgroundColor = ConsoleColor.Black;
-            Console.ForegroundColor = ConsoleColor.DarkGreen;
+            Console.ForegroundColor = ConsoleColor.DarkRed;
 
             Console.WriteLine(Fonts.RenderUsing("banner3-D", "Harbinger"));
+            Console.ForegroundColor = ConsoleColor.DarkGreen;
             Console.WriteLine("We Are Harbinger");
             Console.WriteLine($"Version: {GitVersion.FullVersion}");
 

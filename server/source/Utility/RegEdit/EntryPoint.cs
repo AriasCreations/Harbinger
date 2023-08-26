@@ -166,7 +166,12 @@ namespace Harbinger.RegEdit
                                 i++;
                             }
 
-                            HIVE.placeAtPath(path, x);
+                            if (HIVE.getAtPath(path + "/" + name) != null)
+                            {
+                                Entry e = HIVE.getAtPath(path + "/" + name);
+                                e.setValue(value);
+                            }else
+                                HIVE.placeAtPath(path, x);
 
                             break;
                         }
