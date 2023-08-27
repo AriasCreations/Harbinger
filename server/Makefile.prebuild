@@ -303,6 +303,30 @@
             </TextGen>
         </Project>
 
+        <Project name="Harbinger.Framework.HTTP" path="source\Servers\HTTP" type="Library">
+
+            <Author>Tara Piccari (tarapiccari@gmail.com)</Author>
+            <Description>
+                Provides Harbinger Registry data format
+            </Description>
+            <Nullable />
+            <Configuration name="Debug">
+                <Options>
+                    <OutputPath>../../../binaries/debug/</OutputPath>
+                </Options>
+            </Configuration>
+            <Configuration name="Release">
+                <Options>
+                    <OutputPath>../../../binaries/release/</OutputPath>
+                </Options>
+            </Configuration>
+
+            <Reference name="Harbinger.EventsBus" />
+            <Reference name="Harbinger.Framework" />
+            <Reference name="Harbinger.Framework.Registry" />
+
+        </Project>
+
         
         <Project name="Harbinger.RegEdit" path="source\Utility\RegEdit" type="Exe" icon="Harbinger.ico">
 
