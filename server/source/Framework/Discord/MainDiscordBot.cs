@@ -5,6 +5,7 @@ using DSharpPlus.Entities;
 using DSharpPlus.SlashCommands;
 using Harbinger.EventsBus;
 using Harbinger.EventsBus.Events;
+using Harbinger.Framework.Discord.Events;
 using Harbinger.Framework.Events;
 using Harbinger.Framework.Registry;
 using System;
@@ -63,12 +64,17 @@ namespace Harbinger.Framework.Discord
             slash = client.UseSlashCommands();
             nxtConfig = new CommandsNextConfiguration();
             nxtConfig.EnableDms = true;
+            nxtConfig.StringPrefixes = new string[]
+            {
+                "!"
+            };
+
+            
             
 
             nxtcmds = client.UseCommandsNext(nxtConfig);
-            
-            
-            slash.RegisterCommands<UnprivilegedCommands>();
+            _ = new DiscordCommandRegistrationEvent(nxtcmds).send();
+            _ = new DiscordSlashCommandRegistrationEvent(slash).send();
 
 
             await client.ConnectAsync(status: DSharpPlus.Entities.UserStatus.Online, activity: new DSharpPlus.Entities.DiscordActivity(GitVersion.FullVersion));
@@ -85,20 +91,47 @@ namespace Harbinger.Framework.Discord
         }
     }
 
-    public class UnprivilegedCommands : ApplicationCommandModule
+    public class UnprivilegedSlashCommands : ApplicationCommandModule
     {
+        [Subscribe(Priority.Medium)]
+        public static void onRegistration(DiscordSlashCommandRegistrationEvent evt)
+        {
+            evt.commands.RegisterCommands<UnprivilegedSlashCommands>();
+        }
+
+
         [SlashCommand("version", "Makes the bot respond with its version number!")]
         public async Task versionCommand(InteractionContext ctx)
         {
-            await ctx.CreateResponseAsync(new DiscordEmbedBuilder().WithAuthor("Harbinger").WithTitle("Version").AddField("Full Version", GitVersion.FullVersion).AddField("Registry Version", $"{RegistryIO.Version}.{RegistryIO.Version2}").WithColor(DiscordColor.Teal).Build());
+            await ctx.CreateResponseAsync(UniversalCommandResponsesUnprivileged.Version);
             
+        }
+
+    }
+
+    public class UniversalCommandResponsesUnprivileged
+    {
+        public static DiscordEmbed Version
+        {
+            get
+            {
+                return new DiscordEmbedBuilder().WithAuthor("Harbinger").WithTitle("Version").AddField("Full Version", GitVersion.FullVersion).AddField("Registry Version", $"{RegistryIO.Version}.{RegistryIO.Version2}").WithColor(DiscordColor.Teal).Build();
+            }
+        }
+    }
+
+    public class UnprivilegedCommands : BaseCommandModule
+    {
+        [Subscribe(Priority.Medium)]
+        public static void onRegistration(DiscordCommandRegistrationEvent evt)
+        {
+            evt.commands.RegisterCommands<UnprivilegedCommands>();
         }
 
         [Command("version")]
         public async Task versionCommand(CommandContext ctx)
         {
-            await ctx.Channel.SendMessageAsync(new DiscordEmbedBuilder().WithAuthor("Harbinger").WithTitle("Version").AddField("Full Version", GitVersion.FullVersion).AddField("Registry Version", $"{RegistryIO.Version}.{RegistryIO.Version2}").WithColor(DiscordColor.Teal).Build());
+            await ctx.Channel.SendMessageAsync(UniversalCommandResponsesUnprivileged.Version);
         }
-
     }
 }

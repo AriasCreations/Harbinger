@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using YYClass;
 
 [assembly: EventBusBroadcastable()]
 namespace Harbinger.Framework.Registry
@@ -25,7 +26,10 @@ namespace Harbinger.Framework.Registry
             string filename = Path.Combine(DataFolder, RootHSRD);
             filename = Path.ChangeExtension(filename, HSRDExtension);
 
+            Console.ForegroundColor = ConsoleColor.DarkRed;
             Console.WriteLine($"Saving Registry : \n\nByte Count: {getBytes(Entry.ROOT).Length}\n{Entry.ROOT.PrettyPrint()}");
+
+            Console.ForegroundColor = ConsoleColor.DarkGreen;
 
 
             // Reset the file to zero bytes if it exists
@@ -54,9 +58,10 @@ namespace Harbinger.Framework.Registry
         {
             string filename = Path.ChangeExtension(name, HSRDExtension);
             filename = Path.Combine(DataFolder, filename);
+            Console.ForegroundColor = ConsoleColor.DarkRed;
+            Console.WriteLine($"Saving Registry {name} : \n\nByte Count: {getBytes(root).Length}\n{root.PrettyPrint()}");
 
-            Console.WriteLine($"Saving Registry {name} : \n\nByte Count: {getBytes(root).Length}\n{Entry.ROOT.PrettyPrint()}");
-
+            Console.ForegroundColor = ConsoleColor.DarkGreen;
 
             // Reset the file to zero bytes if it exists
             ensureFolder();
