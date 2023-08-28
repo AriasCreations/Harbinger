@@ -303,6 +303,12 @@
                 <Reference name="System.Diagnostics.Process" version="7.0.0.0" />
                 <Reference name="System.Reflection" />
             </TextGen>
+
+            <Files>
+                <File buildAction="EmbeddedResource">Embed.resx</File>
+                <File buildAction="None" copyToOutput="PreserveNewest">HSRD\HSRD.ico</File>
+                <File buildAction="None" copyToOutput="PreserveNewest">HSRD\HSRD_Icon.png</File> 
+            </Files>
         </Project>
 
         <Project name="Harbinger.Framework.Sockets" path="source\Servers\Sockets" type="Library">
@@ -429,5 +435,35 @@
                 <Reference name="System.Reflection" />
             </TextGen>
         </Project>
+
+        <Project name="Harbinger.Prompt" path="source\Utility\Prompt" type="Exe" icon="Prompt.ico">
+            
+            <Author>Tara Piccari (tarapiccari@gmail.com)</Author>
+            <Nullable />
+            <Configuration name="Debug">
+                <Options>
+                    <OutputPath>../../../binaries/debug/</OutputPath>
+                </Options>
+            </Configuration>
+            <Configuration name="Release">
+                <Options>
+                    <OutputPath>../../../binaries/release/</OutputPath>
+                </Options>
+            </Configuration>
+
+            <InternalsVisibleTo name="Harbinger" />
+            <Reference name="Harbinger.EventsBus"/>
+            <Reference name="Harbinger.Framework.Registry"/>
+
+            <TextGen sourceInSolution="true" name="GitVersion.sw" output="Versions.cs">
+                <Reference name="System" />
+                <Reference name="System.Diagnostics" />
+                <Reference name="System.IO" />
+                <Reference name="System.Diagnostics.Process" version="7.0.0.0" />
+                <Reference name="System.Reflection" />
+            </TextGen>
+
+        </Project>
+        
     </Solution>
 </Prebuild>
