@@ -3,6 +3,8 @@ using Harbinger.EventsBus.Attributes;
 using Harbinger.EventsBus.Events;
 using Harbinger.FontHelper;
 using Harbinger.Framework;
+using Harbinger.Framework.HTTP;
+using Harbinger.Framework.HTTPHandlers.Commands;
 using Harbinger.Framework.Registry;
 using Harbinger.GUI;
 using System;
@@ -11,7 +13,6 @@ using System.Linq;
 using System.Threading;
 
 
-[assembly: EventBusBroadcastable()]
 namespace Harbinger
 {
     public class Harbinger
@@ -23,7 +24,8 @@ namespace Harbinger
         public static void init()
         {
             Framework.Framework.init();
-
+            HTTPServer.init();
+            VersionHandler.init();
         }
     }
     public class HarbingerContext
@@ -93,8 +95,9 @@ namespace Harbinger
             Console.ForegroundColor = ConsoleColor.White;
             Console.BackgroundColor = ConsoleColor.Black;
             Console.Title = "Loading...";
+            Thread.Sleep(1000);
 
-            HarbingerContext.KeepAlive = new CancellationTokenSource();
+            HarbingerContext.KeepAlive = Framework.Framework.keepAlive;
             DelayedExecutorService.setCancellationToken(HarbingerContext.KeepAlive);
 
 
@@ -127,7 +130,7 @@ namespace Harbinger
         }
 
 
-        [Subscribe(Priority.Very_High)]
+        [Subscribe(Priority.Uncategorizable)]
         public static void onStartup(StartupEvent startupEvent)
         {
             Fonts.init();

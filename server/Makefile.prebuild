@@ -135,6 +135,8 @@
             <Reference name="Harbinger.GUI" />
             <Reference name="Harbinger.Framework" />
             <Reference name="Harbinger.Framework.Registry" />
+            <Reference name="Harbinger.Framework.Sockets" />
+            <Reference name="Harbinger.Framework.HTTPHandlers" />
         </Project>
 
 
@@ -303,11 +305,11 @@
             </TextGen>
         </Project>
 
-        <Project name="Harbinger.Framework.HTTP" path="source\Servers\HTTP" type="Library">
+        <Project name="Harbinger.Framework.Sockets" path="source\Servers\Sockets" type="Library">
 
             <Author>Tara Piccari (tarapiccari@gmail.com)</Author>
             <Description>
-                Provides Harbinger Registry data format
+                Provides socket servers
             </Description>
             <Nullable />
             <Configuration name="Debug">
@@ -321,14 +323,56 @@
                 </Options>
             </Configuration>
 
+            <InternalsVisibleTo name="Harbinger" />
             <Reference name="Harbinger.EventsBus" />
             <Reference name="Harbinger.Framework" />
             <Reference name="Harbinger.Framework.Registry" />
 
+            <TextGen sourceInSolution="true" name="GitVersion.sw" output="Versions.cs">
+                <Reference name="System" />
+                <Reference name="System.Diagnostics" />
+                <Reference name="System.IO" />
+                <Reference name="System.Diagnostics.Process" version="7.0.0.0" />
+                <Reference name="System.Reflection" />
+            </TextGen>
         </Project>
 
-        
-        <Project name="Harbinger.RegEdit" path="source\Utility\RegEdit" type="Exe" icon="Harbinger.ico">
+        <Project name="Harbinger.Framework.HTTPHandlers" path="source\Handlers\HTTP" type="Library">
+
+            <Author>Tara Piccari (tarapiccari@gmail.com)</Author>
+            <Description>
+                Provides HTTP Event handlers
+            </Description>
+            <Nullable />
+            <Configuration name="Debug">
+                <Options>
+                    <OutputPath>../../../binaries/debug/</OutputPath>
+                </Options>
+            </Configuration>
+            <Configuration name="Release">
+                <Options>
+                    <OutputPath>../../../binaries/release/</OutputPath>
+                </Options>
+            </Configuration>
+
+            <InternalsVisibleTo name="Harbinger" />
+            <Reference name="Harbinger.EventsBus" />
+            <Reference name="Harbinger.Framework" />
+            <Reference name="Harbinger.Framework.Registry" />
+            <Reference name="Harbinger.Framework.Sockets" />
+
+            <TextGen sourceInSolution="true" name="GitVersion.sw" output="Versions.cs">
+                <Reference name="System" />
+                <Reference name="System.Diagnostics" />
+                <Reference name="System.IO" />
+                <Reference name="System.Diagnostics.Process" version="7.0.0.0" />
+                <Reference name="System.Reflection" />
+            </TextGen>
+        </Project>
+
+
+        <Project name="Harbinger.RegEdit" path="source\Utility\RegEdit" type="Exe"
+            icon="Harbinger.ico">
 
             <Author>Tara Piccari (tarapiccari@gmail.com)</Author>
             <Nullable />
@@ -356,8 +400,9 @@
                 <Reference name="System.Reflection" />
             </TextGen>
         </Project>
-        
-        <Project name="Harbinger.RegRead" path="source\Utility\RegRead" type="Exe" icon="Harbinger.ico">
+
+        <Project name="Harbinger.RegRead" path="source\Utility\RegRead" type="Exe"
+            icon="Harbinger.ico">
 
             <Author>Tara Piccari (tarapiccari@gmail.com)</Author>
             <Nullable />

@@ -29,8 +29,8 @@ namespace Harbinger.EventsBus
                         taskList.Remove(runner);
                     }
                     else runner.resetTick();
-                    Thread x = new Thread(runner.start);
-                    x.Start();
+
+                    runner.run();
                 }
             }
 
@@ -105,5 +105,37 @@ namespace Harbinger.EventsBus
         /// Repeating task until server termination
         /// </summary>
         public bool Repeats = false;
+
+        /// <summary>
+        /// Is set by the internal task
+        /// </summary>
+        public bool Finished = true;
+
+        public void run()
+        {
+            if (!Finished) return;
+
+            Finished = false;
+            Thread X = new Thread((Z) =>
+            {
+                if(Z is Runner ts)
+                {
+                    Thread N = new Thread(ts.start);
+                    N.Start();
+                    N.Join();
+
+                    ts.setDone();
+                }
+            });
+            X.Start(this);
+        }
+
+        /// <summary>
+        /// Executed by the internal task when execution has finished
+        /// </summary>
+        public void setDone()
+        {
+            Finished = true;
+        }
     }
 }

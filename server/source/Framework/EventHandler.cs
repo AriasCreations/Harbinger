@@ -7,8 +7,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-
-[assembly: EventBusBroadcastable()]
 namespace Harbinger.Framework
 {
     public class EventHandler
@@ -17,6 +15,7 @@ namespace Harbinger.Framework
         public static void onStart(StartupEvent ev)
         {
             EventBus.PRIMARY.Scan(typeof(SecondLifeBotAccount));
+            EventBus.PRIMARY.Scan(typeof(DiscordBotAccount));
         }
     }
 }

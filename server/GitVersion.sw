@@ -42,6 +42,8 @@ catch (Exception ex)
 }
 Console.WriteLine();
 Console.WriteLine("using System.Reflection;");
+Console.WriteLine("using Harbinger.EventsBus.Attributes;");
+Console.WriteLine("[assembly: EventBusBroadcastable()]");
 Console.WriteLine($"[assembly: AssemblyInformationalVersion(\"{versionInfo}.{patch}-{commitHash}\")]");
 Console.WriteLine($"[assembly: AssemblyVersion(\"{versionInfo}.{patch}.0\")]");
 Console.WriteLine($"\n" +

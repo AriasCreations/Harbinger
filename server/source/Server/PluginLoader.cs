@@ -10,6 +10,7 @@ namespace Harbinger
     {
         public static HashSet<string> asms = new HashSet<string>();
 
+        public static Dictionary<AssemblyName, Assembly> asmsx = new Dictionary<AssemblyName, Assembly>();
 
         public static void PreloadReferencedAssemblies()
         {
@@ -32,16 +33,19 @@ namespace Harbinger
         {
             List<AssemblyName> asmName = new List<AssemblyName>();
 
+
             foreach(AssemblyName name in asm.GetReferencedAssemblies())
             {
                 try
                 {
                     if(asms.Contains(name.Name))
                     {
+                        asmName.AddRange(Recurse(asmsx[name]));
                         continue;
                     }
                     asms.Add(name.Name);
                     Assembly asmx = Assembly.Load(name);
+                    asmsx.Add(name, asmx);
                     Console.WriteLine($"Assembly Loaded: {asmx.GetName()}");
                     asmName.AddRange(Recurse(asmx));
                 }catch(Exception e)
