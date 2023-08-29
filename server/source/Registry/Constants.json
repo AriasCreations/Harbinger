@@ -1,0 +1,11 @@
+{
+  "namespace": "Harbinger.Framework.Registry",
+  "data": {
+    "Embed": {
+      "Creator": "Tara Piccari",
+      "DefaultFileName": "harbinger",
+      "Extension": "hsrd",
+      "RegistryFolder":  "registry"
+    }
+  }
+}

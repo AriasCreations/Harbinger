@@ -305,10 +305,11 @@
             </TextGen>
 
             <Files>
-                <File buildAction="EmbeddedResource">Embed.resx</File>
                 <File buildAction="None" copyToOutput="PreserveNewest">HSRD\HSRD.ico</File>
                 <File buildAction="None" copyToOutput="PreserveNewest">HSRD\HSRD_Icon.png</File> 
             </Files>
+
+            <TextGen name="Constants.json" output="Constants.cs" tool="Bottle" />
         </Project>
 
         <Project name="Harbinger.Framework.Sockets" path="source\Servers\Sockets" type="Library">
