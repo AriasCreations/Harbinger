@@ -431,3 +431,6 @@ FodyWeavers.xsd
 
 # Exclude the generated file
 **/**/**/Versions.cs
+
+*.Bottle.cs
+*.SnapWrap.cs

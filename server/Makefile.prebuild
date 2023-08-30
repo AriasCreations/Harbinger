@@ -42,8 +42,6 @@
             assemblyName="prebuild"
             icon="App.ico"
             type="Exe"
-            rootNamespace="Prebuild"
-            startupObject="Prebuild.Prebuild"
             version="2.0.10"
         >
             <Author>Matthew Holmes (matthew@wildfiregames.com)</Author>
@@ -80,8 +78,8 @@
             language="C#"
             type="Exe"
             version="1.0.1"
-            rootNamespace="dev.zontreck.snap"
-            startupObject="dev.zontreck.snap.Wrap">
+            icon="icon/SnapWrap.ico"
+            >
             <Author>Tara Piccari (tarapiccari@gmail.com)</Author>
             <Description>C# Prebuild Scripting for code generation</Description>
             <Configuration name="Debug">
@@ -101,6 +99,37 @@
             <PackageReference name="Microsoft.CodeAnalysis.CSharp.Scripting" version="4.6.0" />
             <Reference name="System.Diagnostics" />
             <Reference name="System.Diagnostics.Process" />
+
+        </Project>
+
+        <Project name="Bottle"
+            path="Prebuild/source/Bottle"
+            language="C#"
+            type="Exe"
+            version="1.0.0"
+            icon="icon/Bottle.ico">
+            <Author>Tara Piccari (tarapiccari@gmail.com)</Author>
+            <Description>C# Prebuild for code generation utilizing Json files as a resource</Description>
+            <Configuration name="Debug">
+                <Options>
+                    <OutputPath>../../../binaries/debug/</OutputPath>
+                    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+                    <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
+
+                </Options>
+            </Configuration>
+            <Configuration name="Release">
+                <Options>
+                    <OutputPath>../../../binaries/release/</OutputPath>
+                    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+                    <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
+                </Options>
+            </Configuration>
+
+            <Files>
+                <File copyToOutput="Always" preservePath="false">icon/Bottle.ico</File>
+                <File copyToOutput="Always" preservePath="false">icon/Bottle.png</File>
+            </Files>
 
         </Project>
 
@@ -306,7 +335,7 @@
 
             <Files>
                 <File buildAction="None" copyToOutput="PreserveNewest">HSRD\HSRD.ico</File>
-                <File buildAction="None" copyToOutput="PreserveNewest">HSRD\HSRD_Icon.png</File> 
+                <File buildAction="None" copyToOutput="PreserveNewest">HSRD\HSRD_Icon.png</File>
             </Files>
 
             <TextGen name="Constants.json" output="Constants.cs" tool="Bottle" />
@@ -377,6 +406,37 @@
             </TextGen>
         </Project>
 
+        <Project name="Harbinger.Framework.Database" path="source\Database" type="Library">
+            
+            <Author>Tara Piccari (tarapiccari@gmail.com)</Author>
+            <Description>
+                Provides database interfaces
+            </Description>
+            <Nullable />
+            <Configuration name="Debug">
+                <Options>
+                    <OutputPath>../../binaries/debug/</OutputPath>
+                </Options>
+            </Configuration>
+            <Configuration name="Release">
+                <Options>
+                    <OutputPath>../../binaries/release/</OutputPath>
+                </Options>
+            </Configuration>
+
+            <PackageReference name="System.Data.SQLite.Linq" version="1.0.118"/>
+            <PackageReference name="System.Data.SQLite" version="1.0.118"/>
+
+            <TextGen sourceInSolution="true" name="GitVersion.sw" output="Versions.cs">
+                <Reference name="System" />
+                <Reference name="System.Diagnostics" />
+                <Reference name="System.IO" />
+                <Reference name="System.Diagnostics.Process" version="7.0.0.0" />
+                <Reference name="System.Reflection" />
+            </TextGen>
+
+        </Project>
+
 
         <Project name="Harbinger.RegEdit" path="source\Utility\RegEdit" type="Exe"
             icon="Harbinger.ico">
@@ -438,7 +498,7 @@
         </Project>
 
         <Project name="Harbinger.Prompt" path="source\Utility\Prompt" type="Exe" icon="Prompt.ico">
-            
+
             <Author>Tara Piccari (tarapiccari@gmail.com)</Author>
             <Nullable />
             <Configuration name="Debug">
@@ -453,8 +513,8 @@
             </Configuration>
 
             <InternalsVisibleTo name="Harbinger" />
-            <Reference name="Harbinger.EventsBus"/>
-            <Reference name="Harbinger.Framework.Registry"/>
+            <Reference name="Harbinger.EventsBus" />
+            <Reference name="Harbinger.Framework.Registry" />
 
             <TextGen sourceInSolution="true" name="GitVersion.sw" output="Versions.cs">
                 <Reference name="System" />
@@ -465,6 +525,6 @@
             </TextGen>
 
         </Project>
-        
+
     </Solution>
 </Prebuild>
