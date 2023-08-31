@@ -1,13 +1,8 @@
 ﻿using Harbinger.EventsBus;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.Design.Serialization;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Harbinger.Framework.Registry
 {
@@ -136,7 +131,7 @@ namespace Harbinger.Framework.Registry
         internal Entry()
         {
             Type = EntryType.Root;
-            Name = "Root";
+            Name = "root";
             Description = "Registry Root";
             Parent = null;
         }

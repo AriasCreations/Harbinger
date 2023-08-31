@@ -430,6 +430,7 @@
             </Configuration>
             
 
+            <PackageReference name="linq2db" version="5.2.2" />
             <Reference name="Harbinger.EventsBus" />
             <Reference name="Harbinger.Framework.Registry" />
             <Reference name="SharpFileSystem" />
