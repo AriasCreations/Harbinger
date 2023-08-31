@@ -8,25 +8,25 @@ using System.Threading.Tasks;
 namespace Harbinger.Framework.Registry
 {
     /// <summary>
-    /// Signals that a Registry Hive has been loaded successfully.
+    /// Signals that the main Registry Hive has been loaded successfully.
     /// </summary>
     public class RegistryLoadedEvent : Event
     {
         public Key root;
-        public RegistryLoadedEvent(Key root)
+        internal RegistryLoadedEvent(Key root)
         {
             this.root = root;
         }
     }
 
     /// <summary>
-    /// Signals that the Registry was saved successfully.
+    /// Signals that the main Registry was saved successfully.
     /// </summary>
     public class RegistrySavedEvent : Event
     {
         public Key root;
         public string filename;
-        public RegistrySavedEvent(Key root, string filename)
+        internal RegistrySavedEvent(Key root, string filename)
         {
             this.root = root;
             this.filename = filename;

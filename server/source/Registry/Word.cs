@@ -10,8 +10,9 @@ namespace Harbinger.Framework.Registry
 {
     public class Word : Entry
     {
-        public Word(string name, Entry parent) : base(EntryType.Word, name) {
-            Parent = parent;
+        public Word(string name, string value) : base(EntryType.Word, name) {
+            Parent = null;
+            Value = value;
         }
         public string Value { get; set; } = "";
 

@@ -80,10 +80,10 @@ namespace Harbinger.Framework
 
         public void ActivateV1()
         {
-            First = new Word("first", null).setWord("FName");
-            Last = new Word("last", null).setWord("LName");
-            Password = new Word("pass", null).setWord("Password01");
-            CurVer = new VInt32("version", null).setInt32(1);
+            First = new Word("first", "FName");
+            Last = new Word("last", "LName");
+            Password = new Word("pass", "Password01");
+            CurVer = new VInt32("version", 1);
 
             key.Add(First);
             key.Add(Last);

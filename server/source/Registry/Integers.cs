@@ -9,9 +9,10 @@ namespace Harbinger.Framework.Registry
 {
     public class VInt16 : Entry
     {
-        public VInt16(string name, Entry parent) : base(EntryType.Int16, name)
+        public VInt16(string name, short value) : base(EntryType.Int16, name)
         {
-            Parent = parent;
+            Parent = null;
+            Value = value;
         }
         public short Value { get; set; }
 
@@ -48,9 +49,10 @@ namespace Harbinger.Framework.Registry
     }
     public class VInt32 : Entry
     {
-        public VInt32(string name, Entry parent) : base(EntryType.Int32, name)
+        public VInt32(string name, int value) : base(EntryType.Int32, name)
         {
-            Parent = parent;
+            Parent = null;
+            Value = value;
         }
         public int Value { get; set; }
 
@@ -87,9 +89,10 @@ namespace Harbinger.Framework.Registry
 
     public class VInt64 : Entry
     {
-        public VInt64(string name, Entry parent) : base(EntryType.Int64, name)
+        public VInt64(string name, long value) : base(EntryType.Int64, name)
         {
-            Parent = parent;
+            Parent = null;
+            Value = value;
         }
         public long Value { get; set; }
 
@@ -126,9 +129,10 @@ namespace Harbinger.Framework.Registry
 
     public class VBool : Entry
     {
-        public VBool(string name, Entry parent) : base(EntryType.Bool, name)
+        public VBool(string name, bool value) : base(EntryType.Bool, name)
         {
-            Parent = parent;
+            Parent = null;
+            Value = value;
         }
         public bool Value { get; set; }
 
@@ -159,7 +163,47 @@ namespace Harbinger.Framework.Registry
 
         public VBool setBool(bool value)
         {
-            Value = value; 
+            Value = value;
+            return this;
+        }
+    }
+    public class VByte : Entry
+    {
+        public VByte(string name, byte value) : base(EntryType.Byte, name)
+        {
+            Parent = null;
+            Value = value;
+        }
+        public byte Value { get; set; }
+
+        public override void readValue(BinaryReader stream)
+        {
+            Value = stream.ReadByte();
+        }
+
+        public override void Write(BinaryWriter stream)
+        {
+            base.Write(stream);
+            stream.Write(Value);
+        }
+        public override string PrettyPrint(int indent = 0)
+        {
+            return base.PrettyPrint(indent) + $" [{Value}]";
+        }
+
+        public override void setValue(object value)
+        {
+            base.setValue(value);
+
+            if (value is byte str)
+            {
+                Value = str;
+            }
+        }
+
+        public VByte setByte(byte value)
+        {
+            Value = value;
             return this;
         }
     }

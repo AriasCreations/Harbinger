@@ -11,21 +11,21 @@ namespace Harbinger.Framework.Database
 {
     public class XTransaction
     {
-        private Connection connection;
+        private Connection conn;
         public XTransaction(Connection con)
         {
-            connection = con;
+            conn = con;
         }
 
         public XTransaction(ConnectionBuilder builder)
         {
-            connection = builder.build();
+            conn = builder.build();
 
         }
 
         public DbTransaction GetTransaction()
         {
-            return connection.connection.BeginTransaction();
+            return conn.connection.BeginTransaction();
         }
     }
 }

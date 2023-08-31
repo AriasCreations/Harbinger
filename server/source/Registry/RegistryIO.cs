@@ -8,8 +8,8 @@ namespace Harbinger.Framework.Registry
 {
     public class RegistryIO
     {
-        public const byte Version = 1;
-        public const byte Version2 = 1;
+        public const byte Version = 2;
+        public const byte Version2 = 0;
         /// <summary>
         /// Saves the entire Registry to disk
         /// 
@@ -33,7 +33,7 @@ namespace Harbinger.Framework.Registry
             {
                 using(BinaryWriter bw = new BinaryWriter(fs))
                 {
-                    writeHeader(bw);
+                    writeHeaderV2(bw);
 
                     Entry.ROOT.Write(bw);
                 }
@@ -67,7 +67,7 @@ namespace Harbinger.Framework.Registry
             {
                 using(BinaryWriter bw = new BinaryWriter(fs))
                 {
-                    writeHeader(bw);
+                    writeHeaderV2(bw);
 
 
                     root.Write(bw);
@@ -84,7 +84,7 @@ namespace Harbinger.Framework.Registry
             {
                 using (BinaryWriter bw = new BinaryWriter(ms))
                 {
-                    writeHeader(bw);
+                    writeHeaderV2(bw);
 
                     root.Write(bw);
 
@@ -94,19 +94,48 @@ namespace Harbinger.Framework.Registry
         }
 
         /// <summary>
-        /// Write the header to the file
+        /// Write the header version 1 to the file
+        /// 
+        /// Header v1 is 31 bytes total, but can vary depending on the byte count of Creator
         /// </summary>
         /// <param name="bw"></param>
-        private static void writeHeader(BinaryWriter bw)
+        private static void writeHeaderV1(BinaryWriter bw)
         {
             // Write out header!
-            bw.Write(Version);
+            bw.Write(1);
             bw.Write(Version2); // 2
             bw.Write(Embed.Creator); // 1 + 12
             bw.Write(new byte[16]); // 16
 
             // 16 bytes of padding for minor version changes. Potential bitmasks may be added.
             // Minor version upgrades should make padding changes when necessary during an upgrade to maintain compatibility when a major update arrives.
+        }
+
+        /// <summary>
+        /// Writes header version 2 to the file
+        /// 
+        /// Header v2 is 128 bytes total
+        /// Unlike v1, this is fixed in length.
+        /// </summary>
+        /// <param name="bw"></param>
+        private static void writeHeaderV2(BinaryWriter bw)
+        {
+            MemoryStream MS = new MemoryStream(new byte[128], 0, 128, true);
+
+            using (BinaryWriter writer = new BinaryWriter(MS))
+            {
+                writer.Write(2);
+                writer.Write(Version2);
+                writer.Write(Embed.Extension);
+                writer.Write(Embed.Creator);
+
+                // Date & Time saved at
+                writer.Write(DateTime.UnixEpoch.Second);
+                
+
+            }
+
+            bw.Write(MS.ToArray());
         }
 
         /// <summary>
@@ -128,7 +157,21 @@ namespace Harbinger.Framework.Registry
                 {
                     using (BinaryReader br = new BinaryReader(fs))
                     {
-                        readHeader(br);
+                        byte ver1 = br.ReadByte();
+
+                        switch (ver1)
+                        {
+                            case 1:
+                                {
+                                    readHeaderV1(br);
+                                    break;
+                                }
+                            case 2:
+                                {
+                                    readHeaderV2(br);
+                                    break;
+                                }
+                        }
 
                         Entry.ROOT.replaceEntries(Entry.Read(br));
                     }
@@ -138,17 +181,11 @@ namespace Harbinger.Framework.Registry
 
 
             Console.WriteLine("Registry Loaded.");
-
-            EventBus.Broadcast(new RegistryLoadedEvent(Entry.ROOT));
         }
 
-        private static void readHeader(BinaryReader br)
+        private static void readHeaderV1(BinaryReader br)
         {
 
-            if (br.ReadByte() != Version)
-            {
-                throw new OutdatedRegistryException("Primary version mismatch, format is incompatible");
-            }
             if (br.ReadByte() != Version2)
             {
                 // We should be okay, but print a warning to the console. The format will be migrated during saving if there are any differences
@@ -160,6 +197,25 @@ namespace Harbinger.Framework.Registry
 
 
             br.ReadBytes(16);
+        }
+
+        private static void readHeaderV2(BinaryReader br)
+        {
+            byte[] header = br.ReadBytes(127); // First byte was read already.
+            using (MemoryStream ms = new MemoryStream(header))
+            {
+                using (BinaryReader reader = new BinaryReader(ms))
+                {
+                    byte v2 = reader.ReadByte();
+                    switch (v2)
+                    {
+                        default:
+                            {
+                                break;
+                            }
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -181,7 +237,21 @@ namespace Harbinger.Framework.Registry
                 {
                     using (BinaryReader br = new BinaryReader(fs))
                     {
-                        readHeader(br);
+                        byte ver1 = br.ReadByte();
+
+                        switch (ver1)
+                        {
+                            case 1:
+                                {
+                                    readHeaderV1(br);
+                                    break;
+                                }
+                            case 2:
+                                {
+                                    readHeaderV2(br);
+                                    break;
+                                }
+                        }
 
                         x.replaceEntries(Entry.Read(br));
                     }
@@ -189,9 +259,6 @@ namespace Harbinger.Framework.Registry
             }
 
             x.setRoot(x);
-
-            // We may not yet be done scanning all events and registering, so use the broadcast system for this.
-            EventBus.Broadcast(new RegistryLoadedEvent(x));
 
             return x;
         }
@@ -223,6 +290,9 @@ namespace Harbinger.Framework.Registry
         {
             Console.WriteLine("Loading Registry...");
             load();
+
+
+            EventBus.Broadcast(new RegistryLoadedEvent(Entry.ROOT));
         }
 
 
@@ -231,7 +301,8 @@ namespace Harbinger.Framework.Registry
         public static void onShutdown(ShutdownEvent ev)
         {
             Console.WriteLine("Flushing Registry...");
-            save();
+            if(!EventBus.Broadcast(new RegistrySavedEvent(Entry.ROOT, RootHSRD)))
+                save();
         }
 
     }

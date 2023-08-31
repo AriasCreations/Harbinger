@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
 using System.Data.Common;
 using System.Data.SqlClient;
 using System.Data.SQLite;
@@ -21,9 +22,10 @@ namespace Harbinger.Framework.Database
         public DbConnection connection;
 
 
-        public enum DatabaseType
+        public enum DatabaseType : byte
         {
             SQLite,
+            Registry,
             MySQL
         }
 
@@ -89,10 +91,14 @@ namespace Harbinger.Framework.Database
             if(connection.DbType == Connection.DatabaseType.SQLite)
             {
                 connection.connection = new SQLiteConnection($"Data Source={connection.DatabaseName}; Version=3;");
-            } else
+            } else if(connection.DbType == Connection.DatabaseType.MySQL)
             {
                 connection.connection = new SqlConnection($"Server={connection.Host}; Uid={connection.Username}; Pwd={connection.Password}; Database={connection.DatabaseName}");
+            } else if(connection.DbType == Connection.DatabaseType.Registry)
+            {
+                connection.connection = new RegistryConnection($"{connection.DatabaseName}");
             }
+                
 
             connection.connection.Open();
             

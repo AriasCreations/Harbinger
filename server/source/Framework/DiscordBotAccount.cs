@@ -77,8 +77,8 @@ namespace Harbinger.Framework
 
         public void ActivateV1()
         {
-            Token = new Word("token", null).setWord("0123");
-            CurVer = new VInt32("version", null).setInt32(1);
+            Token = new Word("token", "0123");
+            CurVer = new VInt32("version", 1);
 
             key.Add(Token);
             key.Add(CurVer);

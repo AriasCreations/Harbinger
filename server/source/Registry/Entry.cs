@@ -333,6 +333,10 @@ namespace Harbinger.Framework.Registry
         {
             return (Key)this;
         }
+        public VByte Byte()
+        {
+            return (VByte)this;
+        }
 
         /// <summary>
         /// The root key for the current tree
