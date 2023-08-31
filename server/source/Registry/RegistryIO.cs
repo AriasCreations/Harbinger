@@ -2,6 +2,7 @@
 using Harbinger.EventsBus.Events;
 using System;
 using System.IO;
+using YYClass;
 
 
 namespace Harbinger.Framework.Registry
@@ -75,6 +76,25 @@ namespace Harbinger.Framework.Registry
             }
 
             if(!EventBus.debug)
+                Console.WriteLine("Registry Saved");
+        }
+
+        public static void saveHive(Key root, Stream stream)
+        {
+            Console.ForegroundColor = ConsoleColor.DarkRed;
+
+            if (!EventBus.debug)
+                Console.WriteLine($"Saving Registry : \n\nByte Count: {getBytes(root).Length}\n{root.PrettyPrint()}");
+
+            Console.ForegroundColor = ConsoleColor.DarkGreen;
+
+            using (BinaryWriter bw = new BinaryWriter(stream))
+            {
+                writeHeaderV2(bw);
+
+                root.Write(bw);
+            }
+            if (!EventBus.debug)
                 Console.WriteLine("Registry Saved");
         }
 
@@ -256,6 +276,42 @@ namespace Harbinger.Framework.Registry
                         x.replaceEntries(Entry.Read(br));
                     }
                 }
+            }
+
+            x.setRoot(x);
+
+            return x;
+        }
+
+
+        /// <summary>
+        /// Loads the specified custom Hive into memory
+        /// </summary>
+        public static Key loadHive(Stream hsrd)
+        {
+
+            Key x = new Key("root");
+            x.Type = EntryType.Root;
+
+            using (BinaryReader br = new BinaryReader(hsrd))
+            {
+                byte ver1 = br.ReadByte();
+
+                switch (ver1)
+                {
+                    case 1:
+                        {
+                            readHeaderV1(br);
+                            break;
+                        }
+                    case 2:
+                        {
+                            readHeaderV2(br);
+                            break;
+                        }
+                }
+
+                x.replaceEntries(Entry.Read(br));
             }
 
             x.setRoot(x);

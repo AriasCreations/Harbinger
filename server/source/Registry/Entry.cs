@@ -1,5 +1,6 @@
 ﻿using Harbinger.EventsBus;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Design.Serialization;
@@ -28,6 +29,10 @@ namespace Harbinger.Framework.Registry
         /// This may be used for friendlier display of a Entry Name
         /// </summary>
         public string Description { get; set; } = "";
+
+
+        public Stream ValueStream { get; set; }
+
 
         /// <summary>
         /// Entry Path
@@ -257,32 +262,42 @@ namespace Harbinger.Framework.Registry
                     }
                 case EntryType.Word:
                     {
-                        x = new Word(Name, null);
+                        x = new Word(Name, "");
                         break;
                     }
                 case EntryType.Int16:
                     {
-                        x = new VInt16(Name, null);
+                        x = new VInt16(Name, 0);
                         break;
                     }
                 case EntryType.Int32:
                     {
-                        x = new VInt32(Name, null);
+                        x = new VInt32(Name, 0);
                         break;
                     }
                 case EntryType.Int64:
                     {
-                        x = new VInt64(Name, null);
+                        x = new VInt64(Name, 0);
                         break;
                     }
                 case EntryType.Bool:
                     {
-                        x = new VBool(Name, null);
+                        x = new VBool(Name, false);
+                        break;
+                    }
+                case EntryType.Byte:
+                    {
+                        x = new VByte(Name, 0);
                         break;
                     }
                 case EntryType.Root:
                     {
-                        x = new Key("root", null);
+                        x = new Key("root");
+                        break;
+                    }
+                default:
+                    {
+                        x = new BlankEntry(Name);
                         break;
                     }
             }
@@ -377,5 +392,27 @@ namespace Harbinger.Framework.Registry
         {
 
         }
+
+        /// <summary>
+        /// Sets the entry to be completely empty.
+        /// </summary>
+        public void clear()
+        {
+            Type = EntryType.Empty;
+        }
+    }
+
+    public class BlankEntry : Entry
+    {
+        public BlankEntry(string name) : base(EntryType.Empty, name)
+        {
+
+        }
+        public override void readValue(BinaryReader stream)
+        {
+            // done
+        }
+
+
     }
 }

@@ -326,6 +326,10 @@
             <PackageReference name="DSharpPlus.Interactivity" version="4.4.2" />
             <PackageReference name="DSharpPlus.Lavalink" version="4.4.2" />
 
+
+            <Reference name="SharpFileSystem" />
+            <Reference name="SharpFileSystem.SharpZipLib" />
+
             <TextGen sourceInSolution="true" name="GitVersion.sw" output="Versions.cs">
                 <Reference name="System" />
                 <Reference name="System.Diagnostics" />
@@ -439,6 +443,7 @@
                 <Reference name="System.Reflection" />
             </TextGen>
 
+            <TextGen sourceInSolution="false" name="Constants.json" output="Constants.cs" tool="Bottle" />
         </Project>
 
 

@@ -1,0 +1,9 @@
+﻿{
+  "namespace": "Harbinger.Framework.Database",
+  "data": {
+    "Consts": {
+      "DatabaseFolder": "database",
+      "DatabaseName":  "harbinger"
+    }
+  }
+}
