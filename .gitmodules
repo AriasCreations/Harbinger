@@ -1,6 +1,0 @@
-[submodule "server/Prebuild"]
-	path = server/Prebuild
-	url = git@github.com:zontreck/Prebuild
-[submodule "server/SharpFileSystem"]
-	path = server/SharpFileSystem
-	url = git@github.com:zontreck/SharpFileSystem
