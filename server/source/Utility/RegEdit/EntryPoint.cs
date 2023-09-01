@@ -113,7 +113,7 @@ namespace Harbinger.RegEdit
                             {
                                 case "word":
                                     {
-                                        x = new Word(name, null);
+                                        x = new Word(name, "");
                                         has_value = true;
 
                                         // Set value object!
@@ -122,7 +122,7 @@ namespace Harbinger.RegEdit
                                     }
                                 case "int16":
                                     {
-                                        x = new VInt16(name, null);
+                                        x = new VInt16(name, 0);
                                         has_value = true;
                                         value = short.Parse(args[i + 4]);
 
@@ -130,7 +130,7 @@ namespace Harbinger.RegEdit
                                     }
                                 case "int32":
                                     {
-                                        x = new VInt32(name, null);
+                                        x = new VInt32(name, 0);
                                         has_value = true;
                                         value = int.Parse(args[i + 4]);
 
@@ -138,17 +138,24 @@ namespace Harbinger.RegEdit
                                     }
                                 case "int64":
                                     {
-                                        x = new VInt64(name, null);
+                                        x = new VInt64(name, 0);
                                         has_value = true;
                                         value = long.Parse(args[i + 4]);
                                         break;
                                     }
                                 case "bool":
                                     {
-                                        x = new VBool(name, null);
+                                        x = new VBool(name, false);
                                         has_value = true;
                                         var tmp = args[i + 4];
                                         value = (tmp == "1" || tmp.ToLower() == "true") ? true : false;
+                                        break;
+                                    }
+                                case "byte":
+                                    {
+                                        x = new VByte(name, 0);
+                                        has_value = true;
+                                        value = byte.Parse(args[i + 4]);
                                         break;
                                     }
                                 default:
