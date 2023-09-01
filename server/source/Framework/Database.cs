@@ -1,5 +1,6 @@
 ﻿using Harbinger.Framework.Database;
 using Harbinger.Framework.Registry;
+using SQLite;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,7 +34,7 @@ namespace Harbinger.Framework
         public const string KEY = "root/HKS/database";
         public const int VERSION = 1;
 
-        public Connection conn;
+        public DB con;
 
         
         public VInt32 CurVer;
@@ -57,6 +58,7 @@ namespace Harbinger.Framework
                 Load(CurVer.Value);
             }
 
+            con = DB.Instance;
         }
 
         /// <summary>
@@ -70,7 +72,7 @@ namespace Harbinger.Framework
         public void ActivateV1()
         {
             CurVer = new VInt32("version", 1);
-            DatabaseName = new Word("dbname", "Harbinger");
+            DatabaseName = new Word("dbname", Consts.DatabaseName);
 
             MY_KEY.Add(CurVer);
             MY_KEY.Add(DatabaseName);

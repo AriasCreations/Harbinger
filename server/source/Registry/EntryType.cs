@@ -14,7 +14,7 @@ namespace Harbinger.Framework.Registry
         Int64,
         Bool,
         Byte,
-        Empty,
+        Empty, // Undefined value type
         
         Key,    // Contains children
         Root    // Contains Children - Is key but with nullable parent

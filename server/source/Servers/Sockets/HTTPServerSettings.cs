@@ -75,8 +75,8 @@ namespace Harbinger.Framework.HTTP
 
         public void ActivateV1()
         {
-            CurVer = new VInt32("version", null).setInt32(1);
-            HTTPPort = new VInt32("port", null).setInt32(HTTPPORT);
+            CurVer = new VInt32("version", 1);
+            HTTPPort = new VInt32("port", HTTPPORT);
 
             if (!key.HasNamedKey("version"))
                 key.Add(CurVer);
@@ -89,9 +89,9 @@ namespace Harbinger.Framework.HTTP
         public void ActivateV2()
         {
             CurVer.setInt32(2);
-            TCPPort = new VInt32("tcp", null).setInt32(TCPPORT);
+            TCPPort = new VInt32("tcp", TCPPORT);
             HTTPPort.Name = "http";
-            UDPPort = new VInt32("udp", null).setInt32(UDPPORT);
+            UDPPort = new VInt32("udp", UDPPORT);
 
             key.Add(TCPPort);
             key.Add(UDPPort);

@@ -1,39 +1,44 @@
 ﻿using Harbinger.Framework.Registry;
-using SharpFileSystem.SharpZipLib;
+using SQLite;
 using System.IO;
 
 namespace Harbinger.Framework.Database
 {
-    public class DatabaseFile
+    public class DB
     {
-        public SharpZipLibFileSystem FileSystem;
-        public DatabaseFile(string name)
+        private static readonly object lck = new object();
+        private static DB _con;
+        
+        public static DB Instance
         {
-            string path = Path.Combine(RegistryIO.DataFolder, Consts.DatabaseFolder);
-            if(!Directory.Exists(path))
+            get
             {
-                Directory.CreateDirectory(path);
-            }
-            path = Path.Combine(path, name);
-            path = Path.ChangeExtension(path, "zip");
-
-            if(File.Exists(path))
-            {
-                FileSystem = SharpZipLibFileSystem.Open(new FileStream(Path.Combine(path, name + ".zip"), FileMode.OpenOrCreate));
-            }else
-            {
-                FileSystem = SharpZipLibFileSystem.Create(new FileStream(Path.Combine(path, name + ".zip"), FileMode.OpenOrCreate));
+                lock (lck)
+                {
+                    if(_con == null)
+                    {
+                        _con = new DB();
+                    }
+                    return _con;
+                }
             }
         }
-    }
 
-    public class RegistryDatabase
-    {
-        public RegistryFileSystem FileSystem;
+        private SQLiteConnection connection;
 
-        public RegistryDatabase(string name)
+        public DB connect(string DBName)
         {
+            lock (lck)
+            {
+                connection = new SQLiteConnection(DBName);
 
+                return this;
+            }
+        }
+
+        public SQLiteConnection getConnection()
+        {
+            return connection;
         }
     }
 }

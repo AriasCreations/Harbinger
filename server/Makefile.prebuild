@@ -326,10 +326,6 @@
             <PackageReference name="DSharpPlus.Interactivity" version="4.4.2" />
             <PackageReference name="DSharpPlus.Lavalink" version="4.4.2" />
 
-
-            <Reference name="SharpFileSystem" />
-            <Reference name="SharpFileSystem.SharpZipLib" />
-
             <TextGen sourceInSolution="true" name="GitVersion.sw" output="Versions.cs">
                 <Reference name="System" />
                 <Reference name="System.Diagnostics" />
@@ -429,12 +425,12 @@
                 </Options>
             </Configuration>
             
+            
+            <PackageReference name="sqlite-net-pcl" version="1.8.116" />
 
-            <PackageReference name="linq2db" version="5.2.2" />
+
             <Reference name="Harbinger.EventsBus" />
             <Reference name="Harbinger.Framework.Registry" />
-            <Reference name="SharpFileSystem" />
-            <Reference name="SharpFileSystem.SharpZipLib" />
 
             <TextGen sourceInSolution="true" name="GitVersion.sw" output="Versions.cs">
                 <Reference name="System" />
@@ -534,110 +530,6 @@
                 <Reference name="System.Reflection" />
             </TextGen>
 
-        </Project>
-
-
-        <Project name="SharpFileSystem" path="SharpFileSystem/src/SharpFileSystem" type="Library">
-            
-            <Nullable />
-            <Configuration name="Debug">
-                <Options>
-                    <OutputPath>../../../binaries/debug/</OutputPath>
-                </Options>
-            </Configuration>
-            <Configuration name="Release">
-                <Options>
-                    <OutputPath>../../../binaries/release/</OutputPath>
-                </Options>
-            </Configuration>
-
-            <PackageReference name="System.Text.Json" version="7.0.3" />
-            
-            <TextGen sourceInSolution="true" name="SharpFileSystem/GitVersion.sw" output="Versions.cs">
-                <Reference name="System" />
-                <Reference name="System.Diagnostics" />
-                <Reference name="System.IO" />
-                <Reference name="System.Diagnostics.Process" version="7.0.0.0" />
-                <Reference name="System.Reflection" />
-            </TextGen>
-        </Project>
-
-        <Project name="SharpFileSystem.Resources" path="SharpFileSystem/src/SharpFileSystem.Resources" type="Library">
-            
-            <Nullable />
-            <Configuration name="Debug">
-                <Options>
-                    <OutputPath>../../../binaries/debug/</OutputPath>
-                </Options>
-            </Configuration>
-            <Configuration name="Release">
-                <Options>
-                    <OutputPath>../../../binaries/release/</OutputPath>
-                </Options>
-            </Configuration>
-
-            <Reference name="SharpFileSystem" />
-            
-            <TextGen sourceInSolution="true" name="SharpFileSystem/GitVersion.sw" output="Versions.cs">
-                <Reference name="System" />
-                <Reference name="System.Diagnostics" />
-                <Reference name="System.IO" />
-                <Reference name="System.Diagnostics.Process" version="7.0.0.0" />
-                <Reference name="System.Reflection" />
-            </TextGen>
-        </Project>
-
-        <Project name="SharpFileSystem.SevenZip" path="SharpFileSystem/src/SharpFileSystem.SevenZip" type="Library">
-            
-            <Nullable />
-            <Configuration name="Debug">
-                <Options>
-                    <OutputPath>../../../binaries/debug/</OutputPath>
-                </Options>
-            </Configuration>
-            <Configuration name="Release">
-                <Options>
-                    <OutputPath>../../../binaries/release/</OutputPath>
-                </Options>
-            </Configuration>
-
-            <Reference name="SharpFileSystem" />
-            <PackageReference name="Squid-Box.SevenZipSharp" version="1.6.1.23" />
-            
-            <TextGen sourceInSolution="true" name="SharpFileSystem/GitVersion.sw" output="Versions.cs">
-                <Reference name="System" />
-                <Reference name="System.Diagnostics" />
-                <Reference name="System.IO" />
-                <Reference name="System.Diagnostics.Process" version="7.0.0.0" />
-                <Reference name="System.Reflection" />
-            </TextGen>
-        </Project>
-
-
-        <Project name="SharpFileSystem.SharpZipLib" path="SharpFileSystem/src/SharpFileSystem.SharpZipLib" type="Library">
-            
-            <Nullable />
-            <Configuration name="Debug">
-                <Options>
-                    <OutputPath>../../../binaries/debug/</OutputPath>
-                </Options>
-            </Configuration>
-            <Configuration name="Release">
-                <Options>
-                    <OutputPath>../../../binaries/release/</OutputPath>
-                </Options>
-            </Configuration>
-
-            <Reference name="SharpFileSystem" />
-            <PackageReference name="SharpZipLib" version="1.4.2" />
-            
-            <TextGen sourceInSolution="true" name="SharpFileSystem/GitVersion.sw" output="Versions.cs">
-                <Reference name="System" />
-                <Reference name="System.Diagnostics" />
-                <Reference name="System.IO" />
-                <Reference name="System.Diagnostics.Process" version="7.0.0.0" />
-                <Reference name="System.Reflection" />
-            </TextGen>
         </Project>
 
     </Solution>

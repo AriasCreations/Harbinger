@@ -67,8 +67,8 @@ namespace Harbinger
         public static void onStop(ShutdownEvent ev)
         {
             // Save the uptime
-            if (!LAST_STAT_KEY.HasNamedKey("Ticks")) LAST_STAT_KEY.Add(new VInt64("Ticks", LAST_STAT_KEY));
-            LAST_STAT_KEY.getNamed("Ticks").Int64().Value = TotalTicks;
+            if (!LAST_STAT_KEY.HasNamedKey("Ticks")) LAST_STAT_KEY.Add(new VInt64("Ticks", TotalTicks));
+            else LAST_STAT_KEY.getNamed("Ticks").Int64().Value = TotalTicks;
         }
 
         [Subscribe(Priority.High)]
