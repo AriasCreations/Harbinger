@@ -1,3 +1,9 @@
 [submodule "server/Prebuild"]
 	path = server/Prebuild
 	url = git@github.com:zontreck/Prebuild
+[submodule "server/TP.CS.EventsBus"]
+	path = server/TP.CS.EventsBus
+	url = git@github.com:zontreck/TP.CS.EventsBus
+[submodule "server/TP.CS.Registry"]
+	path = server/TP.CS.Registry
+	url = git@github.com:zontreck/TP.CS.Registry

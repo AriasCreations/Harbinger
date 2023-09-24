@@ -159,17 +159,17 @@
             </TextGen>
 
 
-            <Reference name="Harbinger.EventsBus" />
-            <Reference name="Harbinger.FontHelper" />
+            <Reference name="TP.CS.EventsBus" />
+            <Reference name="TP.CS.Registry.FontHelper" />
             <Reference name="Harbinger.GUI" />
             <Reference name="Harbinger.Framework" />
-            <Reference name="Harbinger.Framework.Registry" />
+            <Reference name="TP.CS.Registry" />
             <Reference name="Harbinger.Framework.Sockets" />
             <Reference name="Harbinger.Framework.HTTPHandlers" />
         </Project>
 
 
-        <Project name="Harbinger.EventsBus" path="source\EventBus" type="Library">
+        <Project name="TP.CS.EventsBus" path="TP.CS.EventsBus\source" type="Library">
 
             <Author>Tara Piccari (tarapiccari@gmail.com)</Author>
             <Configuration name="Debug">
@@ -194,22 +194,22 @@
             </TextGen>
         </Project>
 
-        <Project name="Harbinger.FontHelper" path="source\FontHelper" type="Exe">
+        <Project name="TP.CS.Registry.FontHelper" path="TP.CS.Registry\source\FontHelper" type="Exe">
             <Author>Tara Piccari (tarapiccari@gmail.com)</Author>
             <Configuration name="Debug">
                 <Options>
-                    <OutputPath>../../binaries/debug/</OutputPath>
+                    <OutputPath>../../../binaries/debug/</OutputPath>
                 </Options>
             </Configuration>
             <Configuration name="Release">
                 <Options>
-                    <OutputPath>../../binaries/release/</OutputPath>
+                    <OutputPath>../../../binaries/release/</OutputPath>
                 </Options>
             </Configuration>
 
             <InternalsVisibleTo name="Harbinger" />
             <PackageReference name="Figgle" version="0.5.1" />
-            <Reference name="Harbinger.EventsBus" />
+            <Reference name="TP.CS.EventsBus" />
 
             <TextGen sourceInSolution="true" name="GitVersion.sw" output="Versions.cs">
                 <Reference name="System" />
@@ -236,8 +236,8 @@
             </Configuration>
 
             <InternalsVisibleTo name="Harbinger" />
-            <Reference name="Harbinger.EventsBus" />
-            <Reference name="Harbinger.Framework.Registry" />
+            <Reference name="TP.CS.EventsBus" />
+            <Reference name="TP.CS.Registry" />
             <PackageReference name="Terminal.Gui" version="1.13.5" />
 
             <TextGen sourceInSolution="true" name="GitVersion.sw" output="Versions.cs">
@@ -268,8 +268,8 @@
             </Configuration>
 
             <InternalsVisibleTo name="Harbinger" />
-            <Reference name="Harbinger.EventsBus" />
-            <Reference name="Harbinger.Framework.Registry" />
+            <Reference name="TP.CS.EventsBus" />
+            <Reference name="TP.CS.Registry" />
             <Reference name="Harbinger.Framework.Database" />
             <PackageReference name="Newtonsoft.Json" version="13.0.3" />
             <PackageReference name="LibreMetaverse" version="2.0.10.575" />
@@ -293,7 +293,7 @@
             </TextGen>
         </Project>
 
-        <Project name="Harbinger.Framework.Registry" path="source\Registry" type="Library">
+        <Project name="TP.CS.Registry" path="TP.CS.Registry\source\Registry" type="Library">
 
             <Author>Tara Piccari (tarapiccari@gmail.com)</Author>
             <Description>
@@ -302,18 +302,18 @@
             <Nullable />
             <Configuration name="Debug">
                 <Options>
-                    <OutputPath>../../binaries/debug/</OutputPath>
+                    <OutputPath>../../../binaries/debug/</OutputPath>
                 </Options>
             </Configuration>
             <Configuration name="Release">
                 <Options>
-                    <OutputPath>../../binaries/release/</OutputPath>
+                    <OutputPath>../../../binaries/release/</OutputPath>
                 </Options>
             </Configuration>
 
             <InternalsVisibleTo name="Harbinger" />
             <InternalsVisibleTo name="Harbinger.Framework" />
-            <Reference name="Harbinger.EventsBus" />
+            <Reference name="TP.CS.EventsBus" />
             <PackageReference name="Newtonsoft.Json" version="13.0.3" />
             <PackageReference name="LibreMetaverse" version="2.0.10.575" />
             <PackageReference name="LibreMetaverse.Types" version="2.0.10.575" />
@@ -444,7 +444,7 @@
         </Project>
 
 
-        <Project name="Harbinger.RegEdit" path="source\Utility\RegEdit" type="Exe"
+        <Project name="RegEdit" path="TP.CS.Registry\source\RegEdit" type="Exe"
             icon="Harbinger.ico">
 
             <Author>Tara Piccari (tarapiccari@gmail.com)</Author>
@@ -461,9 +461,8 @@
             </Configuration>
 
             <InternalsVisibleTo name="Harbinger" />
-            <Reference name="Harbinger.Framework.Registry" />
-            <Reference name="Harbinger" />
-            <Reference name="Harbinger.FontHelper" />
+            <Reference name="TP.CS.Registry" />
+            <Reference name="TP.CS.Registry.FontHelper" />
 
             <TextGen sourceInSolution="true" name="GitVersion.sw" output="Versions.cs">
                 <Reference name="System" />
@@ -474,7 +473,7 @@
             </TextGen>
         </Project>
 
-        <Project name="Harbinger.RegRead" path="source\Utility\RegRead" type="Exe"
+        <Project name="RegRead" path="TP.CS.Registry\source\RegRead" type="Exe"
             icon="Harbinger.ico">
 
             <Author>Tara Piccari (tarapiccari@gmail.com)</Author>
@@ -491,7 +490,7 @@
             </Configuration>
 
             <InternalsVisibleTo name="Harbinger" />
-            <Reference name="Harbinger.Framework.Registry" />
+            <Reference name="TP.CS.Registry" />
             <PackageReference name="Newtonsoft.Json" version="13.0.3" />
 
             <TextGen sourceInSolution="true" name="GitVersion.sw" output="Versions.cs">
