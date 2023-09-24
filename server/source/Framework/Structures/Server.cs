@@ -1,6 +1,6 @@
-﻿using Harbinger.EventsBus;
+﻿using TP.CS.EventsBus;
 using Harbinger.Framework.Database;
-using Harbinger.Framework.Registry;
+using TP.CS.Registry;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;

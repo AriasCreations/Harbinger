@@ -1,4 +1,4 @@
-﻿using Harbinger.EventsBus;
+﻿using TP.CS.EventsBus;
 using System;
 using System.Collections.Generic;
 using System.Linq;

@@ -1,6 +1,6 @@
-﻿using Harbinger.EventsBus;
+﻿using TP.CS.EventsBus;
 using Harbinger.Framework.HTTP.Events;
-using Harbinger.Framework.Registry;
+using TP.CS.Registry;
 using LibreMetaverse.LslTools;
 using System;
 using System.Collections.Generic;

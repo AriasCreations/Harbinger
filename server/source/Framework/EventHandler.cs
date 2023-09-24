@@ -1,8 +1,8 @@
-﻿using Harbinger.EventsBus;
-using Harbinger.EventsBus.Attributes;
-using Harbinger.EventsBus.Events;
+﻿using TP.CS.EventsBus;
+using TP.CS.EventsBus.Attributes;
+using TP.CS.EventsBus.Events;
 using Harbinger.Framework.Database;
-using Harbinger.Framework.Registry;
+using TP.CS.Registry;
 using Harbinger.Framework.Structures;
 using System;
 using System.Collections.Generic;

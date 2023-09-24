@@ -1,4 +1,4 @@
-﻿using Harbinger.Framework.Registry;
+﻿using TP.CS.Registry;
 using SQLite;
 using System.IO;
 

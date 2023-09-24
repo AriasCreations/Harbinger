@@ -361,9 +361,9 @@
             </Configuration>
 
             <InternalsVisibleTo name="Harbinger" />
-            <Reference name="Harbinger.EventsBus" />
+            <Reference name="TP.CS.EventsBus" />
             <Reference name="Harbinger.Framework" />
-            <Reference name="Harbinger.Framework.Registry" />
+            <Reference name="TP.CS.Registry" />
 
             <TextGen sourceInSolution="true" name="GitVersion.sw" output="Versions.cs">
                 <Reference name="System" />
@@ -393,9 +393,9 @@
             </Configuration>
 
             <InternalsVisibleTo name="Harbinger" />
-            <Reference name="Harbinger.EventsBus" />
+            <Reference name="TP.CS.EventsBus" />
             <Reference name="Harbinger.Framework" />
-            <Reference name="Harbinger.Framework.Registry" />
+            <Reference name="TP.CS.Registry" />
             <Reference name="Harbinger.Framework.Sockets" />
 
             <TextGen sourceInSolution="true" name="GitVersion.sw" output="Versions.cs">
@@ -429,8 +429,8 @@
             <PackageReference name="sqlite-net-pcl" version="1.8.116" />
 
 
-            <Reference name="Harbinger.EventsBus" />
-            <Reference name="Harbinger.Framework.Registry" />
+            <Reference name="TP.CS.EventsBus" />
+            <Reference name="TP.CS.Registry" />
 
             <TextGen sourceInSolution="true" name="GitVersion.sw" output="Versions.cs">
                 <Reference name="System" />
@@ -445,7 +445,7 @@
 
 
         <Project name="RegEdit" path="TP.CS.Registry\source\RegEdit" type="Exe"
-            icon="Harbinger.ico">
+            icon="Tool.ico">
 
             <Author>Tara Piccari (tarapiccari@gmail.com)</Author>
             <Nullable />
@@ -474,7 +474,7 @@
         </Project>
 
         <Project name="RegRead" path="TP.CS.Registry\source\RegRead" type="Exe"
-            icon="Harbinger.ico">
+            icon="Tool.ico">
 
             <Author>Tara Piccari (tarapiccari@gmail.com)</Author>
             <Nullable />
@@ -518,8 +518,8 @@
             </Configuration>
 
             <InternalsVisibleTo name="Harbinger" />
-            <Reference name="Harbinger.EventsBus" />
-            <Reference name="Harbinger.Framework.Registry" />
+            <Reference name="TP.CS.EventsBus" />
+            <Reference name="TP.CS.Registry" />
 
             <TextGen sourceInSolution="true" name="GitVersion.sw" output="Versions.cs">
                 <Reference name="System" />

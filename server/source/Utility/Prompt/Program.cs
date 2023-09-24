@@ -1,5 +1,5 @@
-﻿using Harbinger.EventsBus;
-using Harbinger.Framework.Registry;
+﻿using TP.CS.EventsBus;
+using TP.CS.Registry;
 using System;
 using System.Linq;
 

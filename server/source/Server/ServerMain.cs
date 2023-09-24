@@ -1,11 +1,11 @@
-﻿using Harbinger.EventsBus;
-using Harbinger.EventsBus.Attributes;
-using Harbinger.EventsBus.Events;
-using Harbinger.FontHelper;
+﻿using TP.CS.EventsBus;
+using TP.CS.EventsBus.Attributes;
+using TP.CS.EventsBus.Events;
+using TP.CS.Registry.FontHelper;
 using Harbinger.Framework;
 using Harbinger.Framework.HTTP;
 using Harbinger.Framework.HTTPHandlers.Commands;
-using Harbinger.Framework.Registry;
+using TP.CS.Registry;
 using Harbinger.GUI;
 using System;
 using System.IO;

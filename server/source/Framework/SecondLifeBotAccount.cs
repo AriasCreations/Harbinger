@@ -1,6 +1,6 @@
-﻿using Harbinger.EventsBus;
-using Harbinger.EventsBus.Events;
-using Harbinger.Framework.Registry;
+﻿using TP.CS.EventsBus;
+using TP.CS.EventsBus.Events;
+using TP.CS.Registry;
 using OpenJpegDotNet;
 using OpenMetaverse.ImportExport.Collada14;
 using System;
