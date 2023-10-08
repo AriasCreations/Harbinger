@@ -47,3 +47,5 @@ dotnet Harbinger.Updater.dll -plat mac -manifest ../manifest.json -host $HOST -g
 cd ../..
 cp -rv binaries/release/* mac/
 cp binaries/manifest.json mac/
+
+rm -rf binaries
