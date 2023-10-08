@@ -7,7 +7,7 @@
         </Files>
         <Options>
             <UseDependencyFile>true</UseDependencyFile>
-            <SelfContained>true</SelfContained>
+            <SelfContained>false</SelfContained>
             <UseRuntimeIdentifier>true</UseRuntimeIdentifier>
         </Options>
         <Configuration name="Debug">
@@ -166,20 +166,27 @@
             <Reference name="TP.CS.Registry" />
             <Reference name="Harbinger.Framework.Sockets" />
             <Reference name="Harbinger.Framework.HTTPHandlers" />
+            <Reference name="Harbinger.Updater" />
         </Project>
 
 
-        <Project name="TP.CS.EventsBus" path="TP.CS.EventsBus\source" type="Library">
+        <Project name="TP.CS.EventsBus" path="TP.CS.EventsBus\source" type="Library" copyDependencies="false">
 
             <Author>Tara Piccari (tarapiccari@gmail.com)</Author>
             <Configuration name="Debug">
                 <Options>
                     <OutputPath>../../binaries/debug/</OutputPath>
+                    
+                    <UseDependencyFile>false</UseDependencyFile>
+                    <UseRuntimeIdentifier>false</UseRuntimeIdentifier>
                 </Options>
             </Configuration>
             <Configuration name="Release">
                 <Options>
                     <OutputPath>../../binaries/release/</OutputPath>
+                    
+                    <UseDependencyFile>false</UseDependencyFile>
+                    <UseRuntimeIdentifier>false</UseRuntimeIdentifier>
                 </Options>
             </Configuration>
 
@@ -194,16 +201,20 @@
             </TextGen>
         </Project>
 
-        <Project name="TP.CS.Registry.FontHelper" path="TP.CS.Registry\source\FontHelper" type="Exe">
+        <Project name="TP.CS.Registry.FontHelper" path="TP.CS.Registry\source\FontHelper" type="Exe" copyDependencies="false">
             <Author>Tara Piccari (tarapiccari@gmail.com)</Author>
             <Configuration name="Debug">
                 <Options>
                     <OutputPath>../../../binaries/debug/</OutputPath>
+                    <UseDependencyFile>false</UseDependencyFile>
+                    <UseRuntimeIdentifier>false</UseRuntimeIdentifier>
                 </Options>
             </Configuration>
             <Configuration name="Release">
                 <Options>
                     <OutputPath>../../../binaries/release/</OutputPath>
+                    <UseDependencyFile>false</UseDependencyFile>
+                    <UseRuntimeIdentifier>false</UseRuntimeIdentifier>
                 </Options>
             </Configuration>
 
@@ -224,6 +235,7 @@
 
             <Author>Tara Piccari (tarapiccari@gmail.com)</Author>
             <Nullable />
+
             <Configuration name="Debug">
                 <Options>
                     <OutputPath>../../../binaries/debug/</OutputPath>
@@ -529,6 +541,41 @@
                 <Reference name="System.Reflection" />
             </TextGen>
 
+        </Project>
+
+        <Project name="Harbinger.Updater" path="source\Utility\Update" type="Exe" icon="Prompt.ico" copyDependencies="false">
+            
+            <Author>Tara Piccari (tarapiccari@gmail.com)</Author>
+            <Nullable />
+            <Configuration name="Debug">
+                <Options>
+                    <OutputPath>../../../binaries/debug/updater/</OutputPath>
+                            
+                    <UseDependencyFile>false</UseDependencyFile>
+                    <UseRuntimeIdentifier>false</UseRuntimeIdentifier>
+                </Options>
+            </Configuration>
+            <Configuration name="Release">
+                <Options>
+                    <OutputPath>../../../binaries/release/updater/</OutputPath>
+                            
+                    <UseDependencyFile>false</UseDependencyFile>
+                    <UseRuntimeIdentifier>false</UseRuntimeIdentifier>
+                    
+                </Options>
+            </Configuration>
+
+            <Reference name="TP.CS.Registry.FontHelper" />
+            <PackageReference name="Newtonsoft.Json" version="13.0.3" />
+            <Reference name="Prebuild" />
+
+            <TextGen sourceInSolution="true" name="GitVersion.sw" output="Versions.cs">
+                <Reference name="System" />
+                <Reference name="System.Diagnostics" />
+                <Reference name="System.IO" />
+                <Reference name="System.Diagnostics.Process" version="7.0.0.0" />
+                <Reference name="System.Reflection" />
+            </TextGen>
         </Project>
 
     </Solution>
