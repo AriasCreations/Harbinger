@@ -135,6 +135,9 @@ namespace Harbinger.Updater
                 {
                     string host = cmd["host"];
 
+                    if (cmd.WasPassed("plat")) host += "/" + cmd["plat"];
+
+
                     UpdaterManifest manifest = null;
                     string useManifest = cmd["manifest"];
                     if (File.Exists(useManifest))
@@ -157,7 +160,8 @@ namespace Harbinger.Updater
 
                     manifest.particle.CurrentVersion = GitVersion.FullVersion;
                     manifest.particle.InstallPath = "TBD";
-                    manifest.particle.URL = host;
+                    
+                    manifest.particle.URL = host + "/manifest.json";
 
                     File.WriteAllText(useManifest, JsonConvert.SerializeObject(manifest, Formatting.Indented));
                 }
