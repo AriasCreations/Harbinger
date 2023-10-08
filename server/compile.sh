@@ -12,7 +12,7 @@ mkdir win
 mkdir linux
 mkdir mac
 
-HOST="https://ci.zontreck.dev/jobs/Harbinger Server/lastSuccessfulBuild/artifact/server"
+HOST="https://ci.zontreck.dev/jobs/Harbinger%20Server/lastSuccessfulBuild/artifact/server"
 
 dotnet Prebuild/bootstrap/prebuild.dll /target vs2022 /file Makefile.prebuild /rid linux-x64
 dotnet build -c Release -p:MyRuntimeIdentifier=linux-x64
