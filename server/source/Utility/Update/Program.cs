@@ -66,7 +66,9 @@ namespace Harbinger.Updater
                         // Download the updater
                         foreach(RemoteFile Rf in remote.updaterFiles)
                         {
-                            Directory.CreateDirectory(Path.GetDirectoryName(Rf.localPath));
+                            string target = Path.Combine(Directory.GetCurrentDirectory(), Rf.localPath);
+                            string directory = Directory.GetParent(target).FullName;
+                            Directory.CreateDirectory(directory);
 
                             HRD = HTTP.performRequest(Rf.remotePath, "");
                             File.WriteAllBytes(Rf.localPath, HRD.MessageAsBytes);
@@ -110,7 +112,9 @@ namespace Harbinger.Updater
                     foreach(RemoteFile rf in manifest.remoteFiles)
                     {
                         // Get the directory path name
-                        Directory.CreateDirectory(Directory.GetParent(rf.localPath).FullName);
+                        string target = Path.Combine(Directory.GetCurrentDirectory(), rf.localPath);
+                        string directory = Directory.GetParent(target).FullName;
+                        Directory.CreateDirectory(directory);
 
                         HTTPReplyData hrd = HTTP.performRequest(rf.remotePath, "");
                         File.WriteAllBytes(rf.localPath, hrd.MessageAsBytes);
