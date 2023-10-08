@@ -8,7 +8,7 @@
         <Options>
             <UseDependencyFile>true</UseDependencyFile>
             <SelfContained>false</SelfContained>
-            <UseRuntimeIdentifier>false</UseRuntimeIdentifier>
+            <UseRuntimeIdentifier>true</UseRuntimeIdentifier>
         </Options>
         <Configuration name="Debug">
             <Options>
