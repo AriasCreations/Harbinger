@@ -7,6 +7,10 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using Prebuild.Core.Utilities;
+using LibAC;
+using System.Reflection;
+using System.Diagnostics;
+using System.Threading;
 
 namespace Harbinger.Updater
 {
@@ -44,29 +48,144 @@ namespace Harbinger.Updater
 
                     ParticleManifest manifest = JsonConvert.DeserializeObject<ParticleManifest>(File.ReadAllText("update.current.json"));
 
-                    HttpClient client = new HttpClient();
-                    var reply = client.GetAsync(manifest.URL);
-                    reply.Wait();
-
-                    var val = reply.Result.Content.ReadAsStringAsync();
-                    val.Wait();
-                    UpdaterManifest remote = JsonConvert.DeserializeObject<UpdaterManifest>(val.Result);
+                    HTTPReplyData HRD = HTTP.performRequest(manifest.URL, "");
+                    
+                    UpdaterManifest remote = JsonConvert.DeserializeObject<UpdaterManifest>(HRD.MessageAsString);
 
                     if(remote.particle.CurrentVersion != manifest.CurrentVersion)
                     {
-                        Directory.CreateDirectory("updater.temp");
-                        Directory.SetCurrentDirectory("updater.temp");
+                        string tempPath = Path.Combine(Path.GetTempPath(), "updater.temp");
+                        Directory.CreateDirectory(tempPath);
+
+                        remote.particle.InstallPath = Directory.GetParent(Assembly.GetExecutingAssembly().Location).FullName;
+                        
+                        Directory.SetCurrentDirectory(tempPath);
+                        File.WriteAllText("update.json", JsonConvert.SerializeObject(remote));
+
 
                         // Download the updater
+                        foreach(RemoteFile Rf in remote.updaterFiles)
+                        {
+                            Directory.CreateDirectory(Path.GetDirectoryName(Rf.localPath));
+
+                            HRD = HTTP.performRequest(Rf.remotePath, "");
+                            File.WriteAllBytes(Rf.localPath, HRD.MessageAsBytes);
+                        }
+
+
+                        Process.Start("dotnet", "Harbinger.Updater.dll -doUpdate");
+                        return (int)ECODES.PREPARATIONS_COMPLETE;
                     } else
                     {
                         return (int)ECODES.NO_UPDATE_REQUIRED;
                     }
+                } else if(cmd.WasPassed("doUpdate"))
+                {
+                    Console.WriteLine("Waiting 10 seconds for all processes to spin down before starting...");
+
+                    int seconds = 10;
+                    while (seconds >= 0)
+                    {
+                        Console.Write("Update Starting in " + seconds + " seconds\r  ");
+                        Thread.Sleep(1000);
+
+                        seconds--;
+                    }
+
+                    Console.Write("\nUpdate is starting...\n");
+
+                    UpdaterManifest manifest = JsonConvert.DeserializeObject<UpdaterManifest>(File.ReadAllText("update.json"));
+
+                    Console.WriteLine("Deleting old files...");
+                    Directory.Delete(manifest.particle.InstallPath, true);
+
+                    // Start download now
+                    Console.WriteLine("Downloading files...");
+
+                    // Begin
+                    Directory.CreateDirectory(manifest.particle.InstallPath);
+                    Directory.SetCurrentDirectory(manifest.particle.InstallPath);
+
+                    // Loop through the remote files
+                    foreach(RemoteFile rf in manifest.remoteFiles)
+                    {
+                        // Get the directory path name
+                        Directory.CreateDirectory(Directory.GetParent(rf.localPath).FullName);
+
+                        HTTPReplyData hrd = HTTP.performRequest(rf.remotePath, "");
+                        File.WriteAllBytes(rf.localPath, hrd.MessageAsBytes);
+
+                    }
+
+                    Console.WriteLine("Saving particle manifest...");
+                    File.WriteAllText("update.current.json", JsonConvert.SerializeObject(manifest.particle, Formatting.Indented));
+
+                    Console.WriteLine("Executing Clean Up Script");
+                    Process.Start("dotnet", "Harbinger.Updater.dll -cleanTemp");
+
+                    return (int)ECODES.UPDATED;
+                } else if(cmd.WasPassed("cleanTemp"))
+                {
+                    Console.WriteLine("Cleaning up Temporary Directory");
+                    Thread.Sleep(5000);
+                    Directory.Delete(Path.Combine(Path.GetTempPath(), "updater.temp"), true);
+
+                    return (int)ECODES.NOTHING;
+                } else if(cmd.WasPassed("genManifest"))
+                {
+                    string host = cmd["host"];
+
+                    UpdaterManifest manifest = null;
+                    string useManifest = cmd["manifest"];
+                    if (File.Exists(useManifest))
+                    {
+                        manifest = JsonConvert.DeserializeObject<UpdaterManifest>(File.ReadAllText(useManifest));
+                    }else
+                    {
+                        manifest = new UpdaterManifest();
+                    }
+
+                    if(cmd.WasPassed("updaterMode"))
+                    {
+                        manifest.updaterFiles.Clear();
+                        manifest.updaterFiles.AddRange(Enumerate(Directory.GetCurrentDirectory(), host:host, currentLocal:Directory.GetCurrentDirectory()));
+                    }else
+                    {
+                        manifest.remoteFiles.Clear();
+                        manifest.remoteFiles.AddRange(Enumerate(Directory.GetCurrentDirectory(), host: host, currentLocal: Directory.GetCurrentDirectory()));
+                    }
+
+                    manifest.particle.CurrentVersion = GitVersion.FullVersion;
+                    manifest.particle.InstallPath = "TBD";
+                    manifest.particle.URL = host;
+
+                    File.WriteAllText(useManifest, JsonConvert.SerializeObject(manifest, Formatting.Indented));
                 }
             }
 
 
             return 0;
+        }
+
+        public static RemoteFile[] Enumerate(string path, string currentLocal="", string host="")
+        {
+            List<RemoteFile> working = new();
+            foreach(string X in Directory.EnumerateDirectories(path))
+            {
+                working.AddRange(Enumerate(X, currentLocal, host));
+            }
+
+            foreach(string F in Directory.EnumerateFiles(path))
+            {
+                RemoteFile rf = new RemoteFile();
+                rf.localPath = Path.GetRelativePath(currentLocal, F);
+                
+                rf.remotePath = host + "/" + rf.localPath.Replace("\\", "/");
+
+                working.Add(rf);
+            }
+
+            return working.ToArray();
         }
     }
 }

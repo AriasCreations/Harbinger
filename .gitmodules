@@ -7,3 +7,6 @@
 [submodule "server/TP.CS.Registry"]
 	path = server/TP.CS.Registry
 	url = git@github.com:zontreck/TP.CS.Registry
+[submodule "server/LibAC"]
+	path = server/LibAC
+	url = git@github.com:zontreck/LibZNI

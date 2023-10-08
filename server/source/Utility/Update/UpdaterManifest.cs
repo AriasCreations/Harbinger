@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Harbinger.Updater
 {
-    internal class UpdaterManifest
+    public class UpdaterManifest
     {
         public ParticleManifest particle = new ParticleManifest();
         public List<RemoteFile> remoteFiles = new List<RemoteFile>();
@@ -15,9 +15,11 @@ namespace Harbinger.Updater
         /// A list dedicated just to the Updater component
         /// </summary>
         public List<RemoteFile> updaterFiles = new();
+
+
     }
 
-    internal class RemoteFile
+    public class RemoteFile
     {
         public string localPath;
         public string remotePath;

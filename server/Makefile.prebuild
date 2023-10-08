@@ -549,7 +549,7 @@
             <Nullable />
             <Configuration name="Debug">
                 <Options>
-                    <OutputPath>../../../binaries/debug/updater/</OutputPath>
+                    <OutputPath>../../../binaries/updater/debug/</OutputPath>
                             
                     <UseDependencyFile>false</UseDependencyFile>
                     <UseRuntimeIdentifier>false</UseRuntimeIdentifier>
@@ -557,7 +557,7 @@
             </Configuration>
             <Configuration name="Release">
                 <Options>
-                    <OutputPath>../../../binaries/release/updater/</OutputPath>
+                    <OutputPath>../../../binaries/updater/release/</OutputPath>
                             
                     <UseDependencyFile>false</UseDependencyFile>
                     <UseRuntimeIdentifier>false</UseRuntimeIdentifier>
@@ -567,7 +567,9 @@
 
             <Reference name="TP.CS.Registry.FontHelper" />
             <PackageReference name="Newtonsoft.Json" version="13.0.3" />
+            <PackageReference name="SharpZipLib" version="1.4.2" />
             <Reference name="Prebuild" />
+            <Reference name="LibAC" />
 
             <TextGen sourceInSolution="true" name="GitVersion.sw" output="Versions.cs">
                 <Reference name="System" />
@@ -576,6 +578,31 @@
                 <Reference name="System.Diagnostics.Process" version="7.0.0.0" />
                 <Reference name="System.Reflection" />
             </TextGen>
+        </Project>
+
+
+        <Project name="LibAC" path="LibAC" type="Library">
+            
+            <Author>Tara Piccari (tarapiccari@gmail.com)</Author>
+            <Nullable />
+            <Configuration name="Debug">
+                <Options>
+                    <OutputPath>../binaries/debug/</OutputPath>
+                            
+                    <UseDependencyFile>false</UseDependencyFile>
+                    <UseRuntimeIdentifier>false</UseRuntimeIdentifier>
+                </Options>
+            </Configuration>
+            <Configuration name="Release">
+                <Options>
+                    <OutputPath>../binaries/release/</OutputPath>
+                            
+                    <UseDependencyFile>false</UseDependencyFile>
+                    <UseRuntimeIdentifier>false</UseRuntimeIdentifier>
+                    
+                </Options>
+            </Configuration>
+            <PackageReference name="Newtonsoft.Json" version="13.0.3" />
         </Project>
 
     </Solution>

@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 
 namespace Harbinger.Updater
 {
-    internal class ParticleManifest
+    public class ParticleManifest
     {
         public string URL;
         public string CurrentVersion;
+        public string InstallPath;
     }
 }
